@@ -3,16 +3,17 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CustomButtonRecolorBG : CustomButtonBase
+public class CustomButtonRecolorImageOnHoverMouse : CustomButtonBase
 {
     private Image _backgroundImage;
     [SerializeField] private float _duration;
     [SerializeField] private Color _toColor;
+    [SerializeField] Image _image;
     private Color _originalColor;
 
     private void Start()
     {
-        _backgroundImage = GetComponentInChildren<Image>();
+        _backgroundImage = _image;
         _originalColor = _backgroundImage.color;
     }
 
