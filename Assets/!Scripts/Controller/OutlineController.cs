@@ -80,8 +80,9 @@ public class SelectionController : MonoBehaviour
 
                     // Создание нового поп-апа и установка текста
                     currentPopUp = Instantiate(popUpPrefab, popUpParent);
-                    PopUpBuilding popUpScript = currentPopUp.GetComponent<PopUpBuilding>();
-                    popUpScript.TextComponent.text = selectedObject.BuildingName;
+                    PopUp popUpScript = currentPopUp.GetComponent<PopUp>();
+                    popUpScript.LabelText.text = selectedObject.BuildingNameText;
+                    popUpScript.DescriptionText.text = selectedObject.DescriptionText;
 
                     // Установка позиции поп-апа с учетом смещения вверх на половину высоты
                     RectTransform popUpRect = currentPopUp.GetComponent<RectTransform>();

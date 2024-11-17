@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 
 public class CustomButtonScale : CustomButtonBase
 {
-    private const float ORIGINAL_SCALE = 1.0f;
+    [SerializeField] private float _originalScale = 1.0f;
     [SerializeField] private float _toScale;
     [SerializeField] private float _duration;
 
@@ -21,7 +21,7 @@ public class CustomButtonScale : CustomButtonBase
     {
         base.OnPointerExit(eventData);
 
-        transform.DOScale(ORIGINAL_SCALE, _duration)
+        transform.DOScale(_originalScale, _duration)
             .SetEase(Ease.InOutSine);
     }
 
@@ -29,7 +29,7 @@ public class CustomButtonScale : CustomButtonBase
     {
         base.OnPointerClick(eventData);
 
-        transform.DOScale(ORIGINAL_SCALE, _duration)
+        transform.DOScale(_originalScale, _duration)
         .SetEase(Ease.InOutSine);
     }
 }
