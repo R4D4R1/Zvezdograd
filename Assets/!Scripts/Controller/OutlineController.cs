@@ -73,7 +73,10 @@ public class SelectionController : MonoBehaviour
                     if (selectedObject != null)
                     {
                         selectedObject.GetComponent<Outline>().enabled = false;
-                        Destroy(currentPopUp);
+                        if (currentPopUp != null)
+                        {
+                            currentPopUp.GetComponent<PopUp>().HidePopUp();
+                        }
                     }
                     selectedObject = hitObject;
                     selectedObject.GetComponent<Outline>().enabled = true;
@@ -100,7 +103,10 @@ public class SelectionController : MonoBehaviour
                     {
                         selectedObject.GetComponent<Outline>().enabled = false;
                         selectedObject = null;
-                        Destroy(currentPopUp);
+                        if (currentPopUp != null)
+                        {
+                            currentPopUp.GetComponent<PopUp>().HidePopUp();
+                        }
                     }
                 }
             }
@@ -111,7 +117,10 @@ public class SelectionController : MonoBehaviour
                 {
                     selectedObject.GetComponent<Outline>().enabled = false;
                     selectedObject = null;
-                    Destroy(currentPopUp);
+                    if (currentPopUp != null)
+                    {
+                        currentPopUp.GetComponent<PopUp>().HidePopUp();
+                    }
                 }
             }
         }
