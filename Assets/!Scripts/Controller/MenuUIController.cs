@@ -14,7 +14,6 @@ public class MenuUIController : MonoBehaviour
     private void Start()
     {
         _volumeProfile.profile.TryGet(out _depthOfField);
-        Debug.Log(_depthOfField);
     }
 
     public void TurnOnMenu()

@@ -15,35 +15,33 @@ public class PeopleUnit : MonoBehaviour
 
     [SerializeField] private UnitState currentState = UnitState.Ready;
     [SerializeField] private TextMeshProUGUI _text;
+    [SerializeField] private TextMeshProUGUI _restingTimeText;
     [SerializeField] private Image _image;
 
     private int restingTime = 6;
 
     private void Awake()
     {
-        // Initialize colors
-        EnableUnit(); // Start with unit enabled
+        _restingTimeText.gameObject.SetActive(false);
+        EnableUnit();
     }
 
     public void EnableUnit()
     {
-        // UI change to white color
         Color whiteColor = Color.white;
-        _text.DOColor(whiteColor, 0.5f); // Adjust duration as needed
+        _text.DOColor(whiteColor, 0.5f);
         _image.DOColor(whiteColor, 0.5f);
 
         if (currentState == UnitState.Injured || currentState == UnitState.Resting)
         {
             currentState = UnitState.Ready;
-            Debug.Log(gameObject.name + " is now Ready.");
         }
     }
 
     public void DisableUnit()
     {
-        // UI change to gray color
-        Color grayColor = new Color(0.392f, 0.392f, 0.392f); // RGB 100/255
-        _text.DOColor(grayColor, 0.5f); // Adjust duration as needed
+        Color grayColor = new Color(0.392f, 0.392f, 0.392f);
+        _text.DOColor(grayColor, 0.5f);
         _image.DOColor(grayColor, 0.5f);
     }
 
@@ -52,43 +50,19 @@ public class PeopleUnit : MonoBehaviour
         return currentState;
     }
 
-    public void SetState(UnitState newState)
-    {
-        currentState = newState;
-
-        switch (newState)
-        {
-            case UnitState.Ready:
-                Debug.Log(gameObject.name + " is now Ready.");
-                break;
-            case UnitState.Busy:
-                Debug.Log(gameObject.name + " is now Busy.");
-                break;
-            case UnitState.Injured:
-                Debug.Log(gameObject.name + " is now Injured.");
-                break;
-            case UnitState.Resting:
-                Debug.Log(gameObject.name + " has started resting.");
-                break;
-        }
-    }
-
     public void SetBusy()
     {
         currentState = UnitState.Busy;
-        Debug.Log(gameObject.name + " is now Busy.");
     }
 
     public void SetInjured()
     {
         currentState = UnitState.Injured;
-        Debug.Log(gameObject.name + " is now Injured.");
     }
 
     public void SetReady()
     {
         currentState = UnitState.Ready;
-        Debug.Log(gameObject.name + " is now Ready.");
     }
 
     public void UnitResting()
@@ -96,8 +70,11 @@ public class PeopleUnit : MonoBehaviour
         if (currentState == UnitState.Busy)
         {
             currentState = UnitState.Resting;
+
             restingTime = UnitManager.Instance.GetMaxRestingTime();
-            Debug.Log(gameObject.name + " has started resting.");
+
+            UpdateRestingText();
+            _restingTimeText.gameObject.SetActive(true);
         }
     }
 
@@ -107,15 +84,20 @@ public class PeopleUnit : MonoBehaviour
         {
             restingTime--;
 
-            Debug.Log(gameObject.name + " Resting left = " + restingTime);
+            UpdateRestingText();
 
             if (restingTime <= 0)
             {
                 currentState = UnitState.Ready;
                 restingTime = UnitManager.Instance.GetMaxRestingTime();
+                _restingTimeText.gameObject.SetActive(false);
                 EnableUnit();
-                Debug.Log(gameObject.name + " has finished resting and is now Ready.");
             }
         }
+    }
+
+    private void UpdateRestingText()
+    {
+        _restingTimeText.text = restingTime.ToString();
     }
 }

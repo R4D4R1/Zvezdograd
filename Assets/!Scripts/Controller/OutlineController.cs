@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class SelectionController : MonoBehaviour
 {
-    private SelectableObject currentHoveredObject; // Текущий объект, над которым находится курсор
-    private SelectableObject selectedObject; // Выбранный объект
+    private RepairableBuilding currentHoveredObject; // Текущий объект, над которым находится курсор
+    private RepairableBuilding selectedObject; // Выбранный объект
     private Camera mainCamera; // Основная камера
 
     [SerializeField] private GameObject popUpPrefab; // Префаб панели UI
@@ -26,7 +26,9 @@ public class SelectionController : MonoBehaviour
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            SelectableObject hitObject = hit.collider.GetComponent<SelectableObject>();
+            // Проверка на RepairableBuilding на родителе
+            RepairableBuilding hitObject = hit.collider.GetComponentInParent<RepairableBuilding>();
+
             if (hitObject)
             {
                 if (currentHoveredObject != hitObject)
@@ -34,27 +36,44 @@ public class SelectionController : MonoBehaviour
                     // Отключение обводки у предыдущего объекта
                     if (currentHoveredObject != null && currentHoveredObject != selectedObject)
                     {
-                        currentHoveredObject.GetComponent<Outline>().enabled = false;
+                        // Отключаем обводку у дочернего объекта
+                        Outline previousOutline = currentHoveredObject.GetComponentInChildren<Outline>();
+                        if (previousOutline != null)
+                        {
+                            previousOutline.enabled = false;
+                        }
                     }
                     currentHoveredObject = hitObject;
                     // Включение обводки у нового объекта
                     if (currentHoveredObject != selectedObject)
                     {
-                        currentHoveredObject.GetComponent<Outline>().enabled = true;
+                        Outline newOutline = currentHoveredObject.GetComponentInChildren<Outline>();
+                        if (newOutline != null)
+                        {
+                            newOutline.enabled = true;
+                        }
                     }
                 }
             }
             else if (currentHoveredObject != null && currentHoveredObject != selectedObject)
             {
                 // Отключение обводки, если курсор ушёл с объекта
-                currentHoveredObject.GetComponent<Outline>().enabled = false;
+                Outline outline = currentHoveredObject.GetComponentInChildren<Outline>();
+                if (outline != null)
+                {
+                    outline.enabled = false;
+                }
                 currentHoveredObject = null;
             }
         }
         else if (currentHoveredObject != null && currentHoveredObject != selectedObject)
         {
             // Отключение обводки, если курсор ушёл с объекта
-            currentHoveredObject.GetComponent<Outline>().enabled = false;
+            Outline outline = currentHoveredObject.GetComponentInChildren<Outline>();
+            if (outline != null)
+            {
+                outline.enabled = false;
+            }
             currentHoveredObject = null;
         }
     }
@@ -66,20 +85,31 @@ public class SelectionController : MonoBehaviour
             Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
-                SelectableObject hitObject = hit.collider.GetComponent<SelectableObject>();
+                // Проверка на RepairableBuilding на родителе
+                RepairableBuilding hitObject = hit.collider.GetComponentInParent<RepairableBuilding>();
+
                 if (hitObject)
                 {
                     // Отключение обводки у предыдущего выбранного объекта и удаление текущего поп-апа
                     if (selectedObject != null)
                     {
-                        selectedObject.GetComponent<Outline>().enabled = false;
+                        Outline previousSelectedOutline = selectedObject.GetComponentInChildren<Outline>();
+                        if (previousSelectedOutline != null)
+                        {
+                            previousSelectedOutline.enabled = false;
+                        }
                         if (currentPopUp != null)
                         {
                             currentPopUp.GetComponent<PopUp>().HidePopUp();
                         }
                     }
                     selectedObject = hitObject;
-                    selectedObject.GetComponent<Outline>().enabled = true;
+                    // Включение обводки у нового выбранного объекта
+                    Outline selectedOutline = selectedObject.GetComponentInChildren<Outline>();
+                    if (selectedOutline != null)
+                    {
+                        selectedOutline.enabled = true;
+                    }
 
                     // Создание нового поп-апа и установка текста
                     currentPopUp = Instantiate(popUpPrefab, popUpParent);
@@ -101,7 +131,11 @@ public class SelectionController : MonoBehaviour
                     // Отключение обводки и удаление поп-апа, если выбран пустой объект
                     if (selectedObject != null)
                     {
-                        selectedObject.GetComponent<Outline>().enabled = false;
+                        Outline outline = selectedObject.GetComponentInChildren<Outline>();
+                        if (outline != null)
+                        {
+                            outline.enabled = false;
+                        }
                         selectedObject = null;
                         if (currentPopUp != null)
                         {
@@ -115,7 +149,11 @@ public class SelectionController : MonoBehaviour
                 // Отключение обводки и удаление поп-апа, если выбран пустой объект
                 if (selectedObject != null)
                 {
-                    selectedObject.GetComponent<Outline>().enabled = false;
+                    Outline outline = selectedObject.GetComponentInChildren<Outline>();
+                    if (outline != null)
+                    {
+                        outline.enabled = false;
+                    }
                     selectedObject = null;
                     if (currentPopUp != null)
                     {
