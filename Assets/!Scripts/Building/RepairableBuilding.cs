@@ -53,7 +53,7 @@ public class RepairableBuilding : MonoBehaviour
         UpdateBuildingModel();
     }
 
-    public void Repair()
+    public void RepairBuilding()
     {
         if (state == State.Damaged)
         {
@@ -62,12 +62,12 @@ public class RepairableBuilding : MonoBehaviour
         }
     }
 
-    public void Damage()
+    public void BombBuilding()
     {
         if (state == State.Intact)
         {
             CurrentState = State.Damaged;
-            Debug.Log("Building damaged.");
+            Debug.Log(gameObject.name + " BOMBED!");
         }
     }
 

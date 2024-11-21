@@ -21145,6 +21145,7 @@ GameObject:
   m_Component:
   - component: {fileID: 277297010}
   - component: {fileID: 277297011}
+  - component: {fileID: 277297012}
   m_Layer: 0
   m_Name: FoodTrucks
   m_TagString: Untagged
@@ -21186,6 +21187,18 @@ MonoBehaviour:
   <DescriptionText>k__BackingField: 
   <DamagedBuildingNameText>k__BackingField: 
   <DamagedDescriptionText>k__BackingField: 
+--- !u!114 &277297012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277297009}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2beb56c83b46a74d8abcab25def04e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &299603228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21314,7 +21327,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b3c3af1342ef574ebf496968ba715a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  state: 0
+  state: 1
   <BuildingNameText>k__BackingField: 123
   <DescriptionText>k__BackingField: 123123132
   <DamagedBuildingNameText>k__BackingField: 5464567
@@ -28112,6 +28125,7 @@ GameObject:
   m_Component:
   - component: {fileID: 614800985}
   - component: {fileID: 614800986}
+  - component: {fileID: 614800987}
   m_Layer: 0
   m_Name: City Hall
   m_TagString: Untagged
@@ -28153,6 +28167,18 @@ MonoBehaviour:
   <DescriptionText>k__BackingField: 
   <DamagedBuildingNameText>k__BackingField: 
   <DamagedDescriptionText>k__BackingField: 
+--- !u!114 &614800987
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 614800984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2beb56c83b46a74d8abcab25def04e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &620792663
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28904,6 +28930,7 @@ GameObject:
   m_Component:
   - component: {fileID: 746107638}
   - component: {fileID: 746107639}
+  - component: {fileID: 746107640}
   m_Layer: 0
   m_Name: Hospital
   m_TagString: Untagged
@@ -28945,6 +28972,18 @@ MonoBehaviour:
   <DescriptionText>k__BackingField: 
   <DamagedBuildingNameText>k__BackingField: 
   <DamagedDescriptionText>k__BackingField: 
+--- !u!114 &746107640
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 746107637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2beb56c83b46a74d8abcab25def04e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &755165103
 GameObject:
   m_ObjectHideFlags: 0
@@ -29560,6 +29599,7 @@ GameObject:
   m_Component:
   - component: {fileID: 854172870}
   - component: {fileID: 854172871}
+  - component: {fileID: 854172872}
   m_Layer: 0
   m_Name: Factory OK
   m_TagString: Untagged
@@ -29601,6 +29641,18 @@ MonoBehaviour:
   <DescriptionText>k__BackingField: 
   <DamagedBuildingNameText>k__BackingField: 
   <DamagedDescriptionText>k__BackingField: 
+--- !u!114 &854172872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 854172869}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2beb56c83b46a74d8abcab25def04e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &866148973
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -41557,6 +41609,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1302585860}
   - component: {fileID: 1302585861}
+  - component: {fileID: 1302585862}
   m_Layer: 0
   m_Name: Factory OK
   m_TagString: Untagged
@@ -41598,6 +41651,18 @@ MonoBehaviour:
   <DescriptionText>k__BackingField: 
   <DamagedBuildingNameText>k__BackingField: 
   <DamagedDescriptionText>k__BackingField: 
+--- !u!114 &1302585862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1302585859}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2beb56c83b46a74d8abcab25def04e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1329902924
 GameObject:
   m_ObjectHideFlags: 0
@@ -52669,6 +52734,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1583988138}
   m_CullTransparentMesh: 1
+--- !u!1 &1586382702
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1586382703}
+  - component: {fileID: 1586382704}
+  m_Layer: 0
+  m_Name: BuildingBombingController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1586382703
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1586382702}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1844544011}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1586382704
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1586382702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed49e62656611bc4baf9f3ef461c525d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1599159170
 GameObject:
   m_ObjectHideFlags: 0
@@ -54297,6 +54406,7 @@ Transform:
   - {fileID: 1933060643}
   - {fileID: 1907546250}
   - {fileID: 723655231}
+  - {fileID: 1586382703}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1848749597
@@ -54973,6 +55083,8 @@ MonoBehaviour:
   dayText: {fileID: 384738406}
   periodText: {fileID: 1583988140}
   blackoutImage: {fileID: 554080737}
+  _daysBetweenBombingRegularBuildings: 1
+  _daysBetweenBombingSpecialBuildings: 1
 --- !u!1 &1935419580
 GameObject:
   m_ObjectHideFlags: 0
