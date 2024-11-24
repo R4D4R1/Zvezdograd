@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,6 +26,25 @@ public class ResourceController : MonoBehaviour
         InitializeSliders();
     }
 
+    private void OnEnable()
+    {
+        TimeController.Instance.OnNextTurnBtnPressed += NextTurnBtnPressed;
+    }
+
+    private void OnDisable()
+    {
+        TimeController.Instance.OnNextTurnBtnPressed -= NextTurnBtnPressed;
+    }
+
+    private void NextTurnBtnPressed()
+    {
+        int regularBuildings = BuildingBombingController.Instance.RegularBuildings.Count;
+        for (int i = 0; i < regularBuildings; i++)
+        {
+           // доделать уменьшение стабилности
+        }
+    }
+
     // Инициализация слайдеров
     private void InitializeSliders()
     {
@@ -32,81 +52,54 @@ public class ResourceController : MonoBehaviour
         provisionSlider.maxValue = 5;
         provisionSlider.minValue = 0;
         provisionSlider.value = provision;
-        provisionSlider.onValueChanged.AddListener(UpdateProvision);
+        provisionSlider.onValueChanged.AddListener(AddOrRemoveProvision);
 
         medicineSlider.maxValue = 5;
         medicineSlider.minValue = 0;
         medicineSlider.value = medicine;
-        medicineSlider.onValueChanged.AddListener(UpdateMedicine);
+        medicineSlider.onValueChanged.AddListener(AddOrRemoveMedicine);
 
         rawMaterialsSlider.maxValue = 5;
         rawMaterialsSlider.minValue = 0;
         rawMaterialsSlider.value = rawMaterials;
-        rawMaterialsSlider.onValueChanged.AddListener(UpdateRawMaterials);
+        rawMaterialsSlider.onValueChanged.AddListener(AddOrRemoveRawMaterials);
 
         buildingMaterialsSlider.maxValue = 5;
         buildingMaterialsSlider.minValue = 0;
         buildingMaterialsSlider.value = buildingMaterials;
-        buildingMaterialsSlider.onValueChanged.AddListener(UpdateBuildingMaterials);
+        buildingMaterialsSlider.onValueChanged.AddListener(AddOrRemoveBuildingMaterials);
 
         // Слайдер для стабильности
         stabilitySlider.maxValue = 100;
         stabilitySlider.minValue = 0;
         stabilitySlider.value = stability;
-        stabilitySlider.onValueChanged.AddListener(UpdateStability);
+        stabilitySlider.onValueChanged.AddListener(AddOrRemoveStability);
     }
 
     // Методы обновления значений ресурсов
-    private void UpdateProvision(float value)
+
+    private void AddOrRemoveProvision(float value)
     {
-        provision = Mathf.Clamp(Mathf.RoundToInt(value), 0, 5); // Ограничиваем значение от 0 до 5
+        Mathf.Clamp(provision += Mathf.RoundToInt(value), 0, 5);
     }
 
-    private void UpdateMedicine(float value)
+    private void AddOrRemoveMedicine(float value)
     {
-        medicine = Mathf.Clamp(Mathf.RoundToInt(value), 0, 5); // Ограничиваем значение от 0 до 5
+        Mathf.Clamp(medicine += Mathf.RoundToInt(value), 0, 5);
     }
 
-    private void UpdateRawMaterials(float value)
+    private void AddOrRemoveRawMaterials(float value)
     {
-        rawMaterials = Mathf.Clamp(Mathf.RoundToInt(value), 0, 5); // Ограничиваем значение от 0 до 5
+        Mathf.Clamp(rawMaterials += Mathf.RoundToInt(value), 0, 5);
     }
 
-    private void UpdateBuildingMaterials(float value)
+    private void AddOrRemoveBuildingMaterials(float value)
     {
-        buildingMaterials = Mathf.Clamp(Mathf.RoundToInt(value), 0, 5); // Ограничиваем значение от 0 до 5
+        Mathf.Clamp(buildingMaterials += Mathf.RoundToInt(value), 0, 5);
     }
 
-    // Метод обновления стабильности
-    private void UpdateStability(float value)
+    private void AddOrRemoveStability(float value)
     {
-        stability = Mathf.Clamp(Mathf.RoundToInt(value), 0, 100); // Ограничиваем значение от 0 до 100
-    }
-
-    // Методы для получения значений ресурсов
-    public int GetProvision()
-    {
-        return provision;
-    }
-
-    public int GetMedicine()
-    {
-        return medicine;
-    }
-
-    public int GetRawMaterials()
-    {
-        return rawMaterials;
-    }
-
-    public int GetBuildingMaterials()
-    {
-        return buildingMaterials;
-    }
-
-    // Метод для получения значения стабильности
-    public int GetStability()
-    {
-        return stability;
+        Mathf.Clamp(stability += Mathf.RoundToInt(value), 0, 100);
     }
 }

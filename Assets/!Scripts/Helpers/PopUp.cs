@@ -13,7 +13,7 @@ public class PopUp : MonoBehaviour
     [SerializeField] private float fadeDuration = 0.5f;  // Длительность анимации прозрачности текста при открытии
     [SerializeField] private float scaleDownDuration = 0.2f; // Длительность анимации скейла при закрытии
 
-    private void Awake()
+    private void OnEnable()
     {
         _bgImage.transform.localScale = Vector3.zero;
         SetTextAlpha(0);

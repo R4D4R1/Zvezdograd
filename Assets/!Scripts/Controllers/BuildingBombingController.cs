@@ -5,8 +5,8 @@ public class BuildingBombingController : MonoBehaviour
 {
     public static BuildingBombingController Instance;
 
-    List<RepairableBuilding> regularBuildings = new List<RepairableBuilding>();
-    List<RepairableBuilding> specialBuildings = new List<RepairableBuilding>();
+    public List<RepairableBuilding> RegularBuildings { get; private set; } = new();
+    public List<RepairableBuilding> SpecialBuildings { get; private set; } = new();
 
     private void Awake()
     {
@@ -20,19 +20,19 @@ public class BuildingBombingController : MonoBehaviour
 
     private void Start()
     {
-        var allBuilding = FindObjectsOfType<RepairableBuilding>();
+        var allBuilding = FindObjectsByType<RepairableBuilding>(FindObjectsSortMode.None);
 
         foreach (var building in allBuilding)
         {
             if (building.GetComponent<SpecialBuilding>() != null)
             {
-                specialBuildings.Add(building);
-                Debug.Log("Special Building = " + building.name);
+                SpecialBuildings.Add(building);
+                //Debug.Log("Special Building = " + building.name);
             }
             else
             {
-                regularBuildings.Add(building);
-                Debug.Log("Regular Building = " + building.name);
+                RegularBuildings.Add(building);
+                //Debug.Log("Regular Building = " + building.name);
             }
         }
     }
@@ -45,7 +45,7 @@ public class BuildingBombingController : MonoBehaviour
 
     private RepairableBuilding ChooseBuildingToBomb()
     {
-        int randomBuildingIndex = UnityEngine.Random.Range(0, regularBuildings.Count);
-        return regularBuildings[randomBuildingIndex];
+        int randomBuildingIndex = Random.Range(0, RegularBuildings.Count);
+        return RegularBuildings[randomBuildingIndex];
     }
 }

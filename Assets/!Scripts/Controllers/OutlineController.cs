@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class SelectionController : MonoBehaviour
 {
+    public static SelectionController Instance;
+
     private RepairableBuilding currentHoveredObject; // Текущий объект, над которым находится курсор
     private RepairableBuilding selectedObject; // Выбранный объект
     private Camera mainCamera; // Основная камера
@@ -10,7 +12,17 @@ public class SelectionController : MonoBehaviour
     [SerializeField] private Transform popUpParent; // Родительский объект для поп-апов
     private GameObject currentPopUp; // Текущий экземпляр панели UI
 
-    void Start()
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+            Destroy(gameObject);
+    }
+
+        void Start()
     {
         mainCamera = Camera.main; // Инициализация основной камеры
     }

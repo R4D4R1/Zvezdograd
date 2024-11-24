@@ -71,7 +71,7 @@ public class PeopleUnit : MonoBehaviour
         {
             currentState = UnitState.Resting;
 
-            restingTime = UnitManager.Instance.GetMaxRestingTime();
+            restingTime = PeopleUnitsController.Instance.GetMaxRestingTime();
 
             UpdateRestingText();
             _restingTimeText.gameObject.SetActive(true);
@@ -89,7 +89,7 @@ public class PeopleUnit : MonoBehaviour
             if (restingTime <= 0)
             {
                 currentState = UnitState.Ready;
-                restingTime = UnitManager.Instance.GetMaxRestingTime();
+                restingTime = PeopleUnitsController.Instance.GetMaxRestingTime();
                 _restingTimeText.gameObject.SetActive(false);
                 EnableUnit();
             }

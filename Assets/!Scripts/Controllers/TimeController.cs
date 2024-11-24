@@ -23,6 +23,11 @@ public class TimeController : MonoBehaviour
     [Range(1f, 5f)]
     [SerializeField] private int _daysBetweenBombingSpecialBuildings;
 
+    [SerializeField] private Button _nextTurnBtn;
+    [SerializeField] private MonoBehaviour[] _btnScripts;
+
+    public event Action OnNextTurnBtnPressed;
+
     private enum PeriodOfDay
     {
         Утро,
@@ -98,13 +103,31 @@ public class TimeController : MonoBehaviour
         periodText.text = _currentPeriod.ToString();
     }
 
-    public void OnEndTurnButtonClicked()
+    public void EndTurnButtonClicked()
     {
-        // Затемнить экран перед сменой периода дня
+        _nextTurnBtn.interactable = false;
+
+        foreach (var script in _btnScripts)
+        {
+            script.enabled = false;
+        }
+
+
         blackoutImage.DOFade(1, 1.0f).OnComplete(() =>
         {
-            UpdateTime(); // Меняем период дня после затемнения
-            blackoutImage.DOFade(0, 1.0f); // Убираем затемнение
+            UpdateTime();
+            blackoutImage.DOFade(0, 1.0f).OnComplete(() =>
+            {
+                // Activate Next Turn Btn
+                _nextTurnBtn.interactable = true;
+
+                foreach (var script in _btnScripts)
+                {
+                    script.enabled = true;
+                }
+
+                OnNextTurnBtnPressed.Invoke();
+            });
         });
     }
 }
