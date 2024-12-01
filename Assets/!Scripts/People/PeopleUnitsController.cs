@@ -14,20 +14,19 @@ public class PeopleUnitsController : MonoBehaviour
     }
 
     [SerializeField] private List<PeopleUnit> allUnits;
-    [SerializeField] private int _maxRestingTime = 6;
     private List<PeopleUnit> readyUnits;
 
-    public int GetMaxRestingTime()
+
+    private void OnDisable()
     {
-        return _maxRestingTime;
+        TimeController.Instance.OnNextTurnBtnPressed -= NextTurn;
     }
 
     void Start()
     {
+        TimeController.Instance.OnNextTurnBtnPressed += NextTurn;
         readyUnits = new List<PeopleUnit>();
         UpdateReadyUnits();
-
-        //AssignUnitsToTask(2);
     }
 
     void UpdateReadyUnits()

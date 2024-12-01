@@ -18,7 +18,7 @@ public class PeopleUnit : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _restingTimeText;
     [SerializeField] private Image _image;
 
-    private int restingTime = 6;
+    public int restingTime;
 
     private void Awake()
     {
@@ -71,7 +71,7 @@ public class PeopleUnit : MonoBehaviour
         {
             currentState = UnitState.Resting;
 
-            restingTime = PeopleUnitsController.Instance.GetMaxRestingTime();
+            restingTime = 6;
 
             UpdateRestingText();
             _restingTimeText.gameObject.SetActive(true);
@@ -89,7 +89,7 @@ public class PeopleUnit : MonoBehaviour
             if (restingTime <= 0)
             {
                 currentState = UnitState.Ready;
-                restingTime = PeopleUnitsController.Instance.GetMaxRestingTime();
+                restingTime = 6;
                 _restingTimeText.gameObject.SetActive(false);
                 EnableUnit();
             }

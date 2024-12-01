@@ -14,6 +14,8 @@ public class MainGameUIController : MonoBehaviour
         _selectionController.enabled = false;
 
         BlurController.Instance.BlurBackGroundSmoothly();
+        SelectionController.Instance.Deselect();
+
     }
 
     public void TurnOffMenu()

@@ -5,12 +5,20 @@ using UnityEngine.UI;
 public class ResourceController : MonoBehaviour
 {
     // ѕриватные переменные дл€ ресурсов
+    [Range(0f, 5f)]
     [SerializeField] private int provision = 0;
+
+    [Range(0f, 5f)]
     [SerializeField] private int medicine = 0;
+
+    [Range(0f, 5f)]
     [SerializeField] private int rawMaterials = 0;
+
+    [Range(0f, 5f)]
     [SerializeField] private int buildingMaterials = 0;
 
     // ѕриватна€ переменна€ дл€ стабильности
+    [Range(0f, 100f)]
     [SerializeField] private int stability = 100;
 
     // —лайдеры дл€ ресурсов и стабильности
@@ -24,24 +32,23 @@ public class ResourceController : MonoBehaviour
     {
         // »нициализаци€ слайдеров и прив€зка значений
         InitializeSliders();
-    }
-
-    private void OnEnable()
-    {
         TimeController.Instance.OnNextTurnBtnPressed += NextTurnBtnPressed;
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
         TimeController.Instance.OnNextTurnBtnPressed -= NextTurnBtnPressed;
     }
 
     private void NextTurnBtnPressed()
     {
-        int regularBuildings = BuildingBombingController.Instance.RegularBuildings.Count;
-        for (int i = 0; i < regularBuildings; i++)
+        // «а каждое обычное сломманое здание стабильность батает на 2 с каждым ходом
+        foreach (var building in BuildingBombingController.Instance.RegularBuildings)
         {
-           // доделать уменьшение стабилности
+            if (building.CurrentState == RepairableBuilding.State.Damaged)
+            {
+                AddOrRemoveStability(-2);
+            }
         }
     }
 
@@ -52,54 +59,86 @@ public class ResourceController : MonoBehaviour
         provisionSlider.maxValue = 5;
         provisionSlider.minValue = 0;
         provisionSlider.value = provision;
-        provisionSlider.onValueChanged.AddListener(AddOrRemoveProvision);
+        provisionSlider.interactable = false;
 
         medicineSlider.maxValue = 5;
         medicineSlider.minValue = 0;
         medicineSlider.value = medicine;
-        medicineSlider.onValueChanged.AddListener(AddOrRemoveMedicine);
+        medicineSlider.interactable = false;
 
         rawMaterialsSlider.maxValue = 5;
         rawMaterialsSlider.minValue = 0;
         rawMaterialsSlider.value = rawMaterials;
-        rawMaterialsSlider.onValueChanged.AddListener(AddOrRemoveRawMaterials);
+        rawMaterialsSlider.interactable = false;
 
         buildingMaterialsSlider.maxValue = 5;
         buildingMaterialsSlider.minValue = 0;
         buildingMaterialsSlider.value = buildingMaterials;
-        buildingMaterialsSlider.onValueChanged.AddListener(AddOrRemoveBuildingMaterials);
+        buildingMaterialsSlider.interactable = false;
 
         // —лайдер дл€ стабильности
         stabilitySlider.maxValue = 100;
         stabilitySlider.minValue = 0;
         stabilitySlider.value = stability;
-        stabilitySlider.onValueChanged.AddListener(AddOrRemoveStability);
+        stabilitySlider.interactable = false;
     }
 
     // ћетоды обновлени€ значений ресурсов
 
-    private void AddOrRemoveProvision(float value)
+    private void AddOrRemoveProvision(int value)
     {
-        Mathf.Clamp(provision += Mathf.RoundToInt(value), 0, 5);
+        provision = Mathf.Clamp(provision + value, 0, 5);
+        UpdateProvisionSlider();
     }
 
-    private void AddOrRemoveMedicine(float value)
+    private void AddOrRemoveMedicine(int value)
     {
-        Mathf.Clamp(medicine += Mathf.RoundToInt(value), 0, 5);
+        medicine = Mathf.Clamp(medicine + value, 0, 5);
+        UpdateMedicineSlider();
     }
 
-    private void AddOrRemoveRawMaterials(float value)
+    private void AddOrRemoveRawMaterials(int value)
     {
-        Mathf.Clamp(rawMaterials += Mathf.RoundToInt(value), 0, 5);
+        rawMaterials = Mathf.Clamp(rawMaterials + value, 0, 5);
+        UpdateRawMaterialsSlider();
     }
 
-    private void AddOrRemoveBuildingMaterials(float value)
+    private void AddOrRemoveBuildingMaterials(int value)
     {
-        Mathf.Clamp(buildingMaterials += Mathf.RoundToInt(value), 0, 5);
+        buildingMaterials = Mathf.Clamp(buildingMaterials + value, 0, 5);
+        UpdateBuildingMaterialsSlider();
     }
 
-    private void AddOrRemoveStability(float value)
+    private void AddOrRemoveStability(int value)
     {
-        Mathf.Clamp(stability += Mathf.RoundToInt(value), 0, 100);
+        stability = Mathf.Clamp(stability + value, 0, 100);
+        UpdateStabilitySlider();
+    }
+
+    // ћетоды обновлени€ значений слайдеров
+
+    private void UpdateProvisionSlider()
+    {
+        provisionSlider.value = provision;
+    }
+
+    private void UpdateMedicineSlider()
+    {
+        medicineSlider.value = medicine;
+    }
+
+    private void UpdateRawMaterialsSlider()
+    {
+        rawMaterialsSlider.value = rawMaterials;
+    }
+
+    private void UpdateBuildingMaterialsSlider()
+    {
+        buildingMaterialsSlider.value = buildingMaterials;
+    }
+
+    private void UpdateStabilitySlider()
+    {
+        stabilitySlider.value = stability;
     }
 }

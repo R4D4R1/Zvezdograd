@@ -1,16 +1,18 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class SelectionController : MonoBehaviour
 {
     public static SelectionController Instance;
 
-    private RepairableBuilding currentHoveredObject; // Текущий объект, над которым находится курсор
-    private RepairableBuilding selectedObject; // Выбранный объект
-    private Camera mainCamera; // Основная камера
+    private RepairableBuilding _currentHoveredObject; // Текущий объект, над которым находится курсор
+    private RepairableBuilding _selectedBuilding; // Выбранный объект
+    private Camera _mainCamera; // Основная камера
 
-    [SerializeField] private GameObject popUpPrefab; // Префаб панели UI
-    [SerializeField] private Transform popUpParent; // Родительский объект для поп-апов
-    private GameObject currentPopUp; // Текущий экземпляр панели UI
+    [SerializeField] private GameObject _popUpPrefab; // Префаб панели UI
+    [SerializeField] private GameObject _specialPopUpPrefab; // Repair or Special building
+    [SerializeField] private Transform _popUpParent; // Родительский объект для поп-апов
+    private GameObject _currentPopUp; // Текущий экземпляр панели UI
 
     private void Awake()
     {
@@ -19,12 +21,14 @@ public class SelectionController : MonoBehaviour
             Instance = this;
         }
         else
+        {
             Destroy(gameObject);
+        }
     }
 
-        void Start()
+    void Start()
     {
-        mainCamera = Camera.main; // Инициализация основной камеры
+        _mainCamera = Camera.main; // Инициализация основной камеры
     }
 
     void Update()
@@ -35,7 +39,13 @@ public class SelectionController : MonoBehaviour
 
     void HandleHover()
     {
-        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+        // Check if the pointer is over a UI element
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            return; // Don't handle hover if the pointer is over a UI element
+        }
+
+        Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
             // Проверка на RepairableBuilding на родителе
@@ -43,23 +53,23 @@ public class SelectionController : MonoBehaviour
 
             if (hitObject)
             {
-                if (currentHoveredObject != hitObject)
+                if (_currentHoveredObject != hitObject)
                 {
                     // Отключение обводки у предыдущего объекта
-                    if (currentHoveredObject != null && currentHoveredObject != selectedObject)
+                    if (_currentHoveredObject != null && _currentHoveredObject != _selectedBuilding)
                     {
                         // Отключаем обводку у дочернего объекта
-                        Outline previousOutline = currentHoveredObject.GetComponentInChildren<Outline>();
+                        Outline previousOutline = _currentHoveredObject.GetComponentInChildren<Outline>();
                         if (previousOutline != null)
                         {
                             previousOutline.enabled = false;
                         }
                     }
-                    currentHoveredObject = hitObject;
+                    _currentHoveredObject = hitObject;
                     // Включение обводки у нового объекта
-                    if (currentHoveredObject != selectedObject)
+                    if (_currentHoveredObject != _selectedBuilding)
                     {
-                        Outline newOutline = currentHoveredObject.GetComponentInChildren<Outline>();
+                        Outline newOutline = _currentHoveredObject.GetComponentInChildren<Outline>();
                         if (newOutline != null)
                         {
                             newOutline.enabled = true;
@@ -67,34 +77,40 @@ public class SelectionController : MonoBehaviour
                     }
                 }
             }
-            else if (currentHoveredObject != null && currentHoveredObject != selectedObject)
+            else if (_currentHoveredObject != null && _currentHoveredObject != _selectedBuilding)
             {
                 // Отключение обводки, если курсор ушёл с объекта
-                Outline outline = currentHoveredObject.GetComponentInChildren<Outline>();
+                Outline outline = _currentHoveredObject.GetComponentInChildren<Outline>();
                 if (outline != null)
                 {
                     outline.enabled = false;
                 }
-                currentHoveredObject = null;
+                _currentHoveredObject = null;
             }
         }
-        else if (currentHoveredObject != null && currentHoveredObject != selectedObject)
+        else if (_currentHoveredObject != null && _currentHoveredObject != _selectedBuilding)
         {
             // Отключение обводки, если курсор ушёл с объекта
-            Outline outline = currentHoveredObject.GetComponentInChildren<Outline>();
+            Outline outline = _currentHoveredObject.GetComponentInChildren<Outline>();
             if (outline != null)
             {
                 outline.enabled = false;
             }
-            currentHoveredObject = null;
+            _currentHoveredObject = null;
         }
     }
 
     void HandleSelection()
     {
+        // Check if the pointer is over a UI element
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            return; // Don't handle selection if the pointer is over a UI element
+        }
+
         if (Input.GetMouseButtonDown(0))
         {
-            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+            Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
                 // Проверка на RepairableBuilding на родителе
@@ -103,55 +119,86 @@ public class SelectionController : MonoBehaviour
                 if (hitObject)
                 {
                     // Отключение обводки у предыдущего выбранного объекта и удаление текущего поп-апа
-                    if (selectedObject != null)
+                    if (_selectedBuilding != null)
                     {
-                        Outline previousSelectedOutline = selectedObject.GetComponentInChildren<Outline>();
+                        Outline previousSelectedOutline = _selectedBuilding.GetComponentInChildren<Outline>();
                         if (previousSelectedOutline != null)
                         {
                             previousSelectedOutline.enabled = false;
                         }
-                        if (currentPopUp != null)
+                        if (_currentPopUp != null)
                         {
-                            currentPopUp.GetComponent<PopUp>().HidePopUp();
+                            _currentPopUp.GetComponent<PopUp>().HidePopUp();
                         }
                     }
-                    selectedObject = hitObject;
+                    _selectedBuilding = hitObject;
                     // Включение обводки у нового выбранного объекта
-                    Outline selectedOutline = selectedObject.GetComponentInChildren<Outline>();
+                    Outline selectedOutline = _selectedBuilding.GetComponentInChildren<Outline>();
+
                     if (selectedOutline != null)
                     {
                         selectedOutline.enabled = true;
                     }
 
-                    // Создание нового поп-апа и установка текста
-                    currentPopUp = Instantiate(popUpPrefab, popUpParent);
-                    PopUp popUpScript = currentPopUp.GetComponent<PopUp>();
-                    popUpScript.LabelText.text = selectedObject.BuildingNameText;
-                    popUpScript.DescriptionText.text = selectedObject.DescriptionText;
+                    if (_selectedBuilding.CurrentState == RepairableBuilding.State.Intact
+                        && _selectedBuilding.Type == RepairableBuilding.BuildingType.LivingArea)
+                    {
+                        _currentPopUp = Instantiate(_popUpPrefab, _popUpParent);
+                        PopUp popUpScript = _currentPopUp.GetComponent<PopUp>();
+
+                        popUpScript.LabelText.text = _selectedBuilding.BuildingNameText;
+                        popUpScript.DescriptionText.text = _selectedBuilding.DescriptionText;
+                    }
+
+                    else if (_selectedBuilding.CurrentState == RepairableBuilding.State.Intact
+                        && _selectedBuilding.Type != RepairableBuilding.BuildingType.LivingArea)
+                    {
+                        _currentPopUp = Instantiate(_specialPopUpPrefab, _popUpParent);
+                        PopUp popUpScript = _currentPopUp.GetComponent<PopUp>();
+
+                        popUpScript.LabelText.text = _selectedBuilding.BuildingNameText;
+                        popUpScript.DescriptionText.text = _selectedBuilding.DescriptionText;
+
+                        popUpScript.BuildingToUse = _selectedBuilding;
+                        popUpScript.SetToOpenSpecialMenu();
+                    }
+
+                    else if (_selectedBuilding.CurrentState == RepairableBuilding.State.Damaged)
+                    {
+                        _currentPopUp = Instantiate(_specialPopUpPrefab, _popUpParent);
+                        PopUp popUpScript = _currentPopUp.GetComponent<PopUp>();
+
+                        popUpScript.LabelText.text = _selectedBuilding.DamagedBuildingNameText;
+                        popUpScript.DescriptionText.text = _selectedBuilding.DamagedDescriptionText;
+
+                        popUpScript.BuildingToUse = _selectedBuilding;
+                        popUpScript.SetToRepair();
+                    }
+
 
                     // Установка позиции поп-апа с учетом смещения вверх на половину высоты
-                    RectTransform popUpRect = currentPopUp.GetComponent<RectTransform>();
-                    Vector3 screenPosition = mainCamera.WorldToScreenPoint(hit.point);
+                    RectTransform popUpRect = _currentPopUp.GetComponent<RectTransform>();
+                    Vector3 screenPosition = _mainCamera.WorldToScreenPoint(hit.point);
                     float offsetY = popUpRect.rect.height * 0.5f; // Половина высоты поп-апа
                     float offsetX = popUpRect.rect.width * 0.5f; // Половина ширины поп-апа
 
                     // Сдвиг поп-апа вверх
-                    currentPopUp.transform.position = new Vector3(screenPosition.x + offsetX, screenPosition.y + offsetY, screenPosition.z);
+                    _currentPopUp.transform.position = new Vector3(screenPosition.x + offsetX, screenPosition.y + offsetY, screenPosition.z);
                 }
                 else
                 {
                     // Отключение обводки и удаление поп-апа, если выбран пустой объект
-                    if (selectedObject != null)
+                    if (_selectedBuilding != null)
                     {
-                        Outline outline = selectedObject.GetComponentInChildren<Outline>();
+                        Outline outline = _selectedBuilding.GetComponentInChildren<Outline>();
                         if (outline != null)
                         {
                             outline.enabled = false;
                         }
-                        selectedObject = null;
-                        if (currentPopUp != null)
+                        _selectedBuilding = null;
+                        if (_currentPopUp != null)
                         {
-                            currentPopUp.GetComponent<PopUp>().HidePopUp();
+                            _currentPopUp.GetComponent<PopUp>().HidePopUp();
                         }
                     }
                 }
@@ -159,20 +206,64 @@ public class SelectionController : MonoBehaviour
             else
             {
                 // Отключение обводки и удаление поп-апа, если выбран пустой объект
-                if (selectedObject != null)
+                if (_selectedBuilding != null)
                 {
-                    Outline outline = selectedObject.GetComponentInChildren<Outline>();
+                    Outline outline = _selectedBuilding.GetComponentInChildren<Outline>();
                     if (outline != null)
                     {
                         outline.enabled = false;
                     }
-                    selectedObject = null;
-                    if (currentPopUp != null)
+                    _selectedBuilding = null;
+                    if (_currentPopUp != null)
                     {
-                        currentPopUp.GetComponent<PopUp>().HidePopUp();
+                        _currentPopUp.GetComponent<PopUp>().HidePopUp();
                     }
                 }
             }
         }
     }
+
+    public void Deselect()
+    {
+        // Отключение обводки и удаление поп-апа, если выбран объект
+        if (_selectedBuilding != null)
+        {
+            Outline outline = _selectedBuilding.GetComponentInChildren<Outline>();
+            if (outline != null)
+            {
+                outline.enabled = false;
+            }
+            _selectedBuilding = null;
+            if (_currentPopUp != null)
+            {
+                _currentPopUp.GetComponent<PopUp>().HidePopUp();
+                _currentPopUp = null;
+            }
+        }
+    }
+
+    //private void ShowPopUp(RepairableBuilding selectedObject)
+    //{
+    //    // Determine the prefab based on the state and type
+    //    GameObject popUpPrefab = selectedObject.CurrentState == RepairableBuilding.State.Intact
+    //                             && selectedObject.Type == RepairableBuilding.BuildingType.LivingArea
+    //                             ? _popUpPrefab
+    //                             : _specialPopUpPrefab;
+
+    //    // Instantiate the popup and get the PopUp script
+    //    _currentPopUp = Instantiate(popUpPrefab, _popUpParent);
+    //    PopUp popUpScript = _currentPopUp.GetComponent<PopUp>();
+
+    //    // Determine the text based on the state
+    //    if (selectedObject.CurrentState == RepairableBuilding.State.Intact)
+    //    {
+    //        popUpScript.LabelText.text = selectedObject.BuildingNameText;
+    //        popUpScript.DescriptionText.text = selectedObject.DescriptionText;
+    //    }
+    //    else if (selectedObject.CurrentState == RepairableBuilding.State.Damaged)
+    //    {
+    //        popUpScript.LabelText.text = selectedObject.DamagedBuildingNameText;
+    //        popUpScript.DescriptionText.text = selectedObject.DamagedDescriptionText;
+    //    }
+    //}
 }

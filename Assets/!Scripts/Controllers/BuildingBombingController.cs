@@ -45,7 +45,16 @@ public class BuildingBombingController : MonoBehaviour
 
     private RepairableBuilding ChooseBuildingToBomb()
     {
-        int randomBuildingIndex = Random.Range(0, RegularBuildings.Count);
-        return RegularBuildings[randomBuildingIndex];
+        RepairableBuilding buildingToReturn = null;
+        while(buildingToReturn == null)
+        {
+            int randomBuildingIndex = Random.Range(0, RegularBuildings.Count);
+            if(RegularBuildings[randomBuildingIndex].CurrentState == RepairableBuilding.State.Intact)
+            {
+                buildingToReturn = RegularBuildings[randomBuildingIndex];
+            }
+        }
+        return buildingToReturn;
+
     }
 }

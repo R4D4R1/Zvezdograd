@@ -9,19 +9,14 @@ public class RepairableBuilding : MonoBehaviour
         Damaged
     }
 
-    [SerializeField] private State state;
-
-    [field: SerializeField] public string BuildingNameText { get; protected set; }
-    [field: SerializeField] public string DescriptionText { get; protected set; }
-    [field: SerializeField] public string DamagedBuildingNameText { get; private set; }
-    [field: SerializeField] public string DamagedDescriptionText { get; private set; }
-
-    private GameObject intactBuildingModel;
-    private GameObject damagedBuildingModel;
-    private string originalBuildingNameText;
-    private string originalDescriptionText;
-
-    public event Action OnStateChanged;
+    public enum BuildingType
+    {
+        LivingArea,
+        Hospital,
+        FoodTrucks,
+        Factory,
+        CityHall
+    }
 
     public State CurrentState
     {
@@ -32,19 +27,36 @@ public class RepairableBuilding : MonoBehaviour
             {
                 state = value;
                 UpdateBuildingModel();
-                UpdateBuildingText();
                 OnStateChanged?.Invoke();
             }
         }
     }
 
+    public BuildingType Type => buildingType; // Public getter for buildingType
+
+    [SerializeField] private State state;
+    [SerializeField] private BuildingType buildingType;
+    [SerializeField] private int peopleToRepair;
+
+    [field: SerializeField] public string BuildingNameText { get; protected set; }
+    [field: SerializeField] public string DescriptionText { get; protected set; }
+    [field: SerializeField] public string DamagedBuildingNameText { get; private set; }
+    [field: SerializeField] public string DamagedDescriptionText { get; private set; }
+    [field: SerializeField] public int DaysToRepair { get; private set; }
+
+    private GameObject _intactBuildingModel;
+    private GameObject _damagedBuildingModel;
+    private string _originalBuildingNameText;
+    private string _originalDescriptionText;
+
+    public event Action OnStateChanged;
+
     private void Awake()
     {
         FindBuildingModels();
-        originalBuildingNameText = BuildingNameText;
-        originalDescriptionText = DescriptionText;
+        _originalBuildingNameText = BuildingNameText;
+        _originalDescriptionText = DescriptionText;
         UpdateBuildingModel();
-        UpdateBuildingText();
     }
 
     private void Start()
@@ -59,6 +71,7 @@ public class RepairableBuilding : MonoBehaviour
         {
             CurrentState = State.Intact;
             Debug.Log("Building repaired and is now intact.");
+            PeopleUnitsController.Instance.AssignUnitsToTask(peopleToRepair);
         }
     }
 
@@ -79,7 +92,7 @@ public class RepairableBuilding : MonoBehaviour
 
         if (intactComponent != null)
         {
-            intactBuildingModel = intactComponent.gameObject;
+            _intactBuildingModel = intactComponent.gameObject;
         }
         else
         {
@@ -88,7 +101,7 @@ public class RepairableBuilding : MonoBehaviour
 
         if (damagedComponent != null)
         {
-            damagedBuildingModel = damagedComponent.gameObject;
+            _damagedBuildingModel = damagedComponent.gameObject;
         }
         else
         {
@@ -98,30 +111,10 @@ public class RepairableBuilding : MonoBehaviour
 
     private void UpdateBuildingModel()
     {
-        if (intactBuildingModel != null && damagedBuildingModel != null)
+        if (_intactBuildingModel != null && _damagedBuildingModel != null)
         {
-            intactBuildingModel.SetActive(state == State.Intact);
-            damagedBuildingModel.SetActive(state == State.Damaged);
+            _intactBuildingModel.SetActive(state == State.Intact);
+            _damagedBuildingModel.SetActive(state == State.Damaged);
         }
-    }
-
-    private void UpdateBuildingText()
-    {
-        if (state == State.Damaged)
-        {
-            BuildingNameText = DamagedBuildingNameText;
-            DescriptionText = DamagedDescriptionText;
-        }
-        else if (state == State.Intact)
-        {
-            BuildingNameText = originalBuildingNameText;
-            DescriptionText = originalDescriptionText;
-        }
-    }
-
-    private void OnDestroy()
-    {
-        // Unsubscribe from the event to prevent memory leaks
-        OnStateChanged -= UpdateBuildingText;
     }
 }
