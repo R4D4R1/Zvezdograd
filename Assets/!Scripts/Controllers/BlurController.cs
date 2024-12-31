@@ -5,8 +5,6 @@ using DG.Tweening;
 
 public class BlurController : MonoBehaviour
 {
-    public static BlurController Instance;
-
     private DepthOfField _depthOfField;
 
     [SerializeField] private Volume _volumeProfile;
@@ -16,13 +14,6 @@ public class BlurController : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-            Destroy(gameObject);
-
         _volumeProfile.profile.TryGet(out _depthOfField);
     }
 

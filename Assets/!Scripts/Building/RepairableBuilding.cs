@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class RepairableBuilding : MonoBehaviour
+public class RepairableBuilding : SelectableBuilding
 {
     public enum State
     {
@@ -34,34 +34,29 @@ public class RepairableBuilding : MonoBehaviour
 
     public BuildingType Type => buildingType; // Public getter for buildingType
 
-    [SerializeField] private State state;
-    [SerializeField] private BuildingType buildingType;
-    [SerializeField] private int peopleToRepair;
-
-    [field: SerializeField] public string BuildingNameText { get; protected set; }
-    [field: SerializeField] public string DescriptionText { get; protected set; }
-    [field: SerializeField] public string DamagedBuildingNameText { get; private set; }
-    [field: SerializeField] public string DamagedDescriptionText { get; private set; }
-    [field: SerializeField] public int DaysToRepair { get; private set; }
-
     private GameObject _intactBuildingModel;
     private GameObject _damagedBuildingModel;
-    private string _originalBuildingNameText;
-    private string _originalDescriptionText;
+
+
+    [field: SerializeField] public string DamagedBuildingNameText { get; private set; }
+    [field: SerializeField] public string DamagedDescriptionText { get; private set; }
+    [field: SerializeField] public int PeopleToRepair { get; private set; }
+    [field: SerializeField] public int TurnsToRepair { get; private set; }
+    [field: SerializeField] public int BuildingMaterialsToRepair { get; private set; }
+
+    [SerializeField] private State state;
+    [SerializeField] private BuildingType buildingType;
 
     public event Action OnStateChanged;
 
     private void Awake()
     {
-        FindBuildingModels();
-        _originalBuildingNameText = BuildingNameText;
-        _originalDescriptionText = DescriptionText;
-        UpdateBuildingModel();
+        
     }
 
-    private void Start()
+    public void InitBuilding()
     {
-        // Ensure the building model is set correctly at the start
+        FindBuildingModels();
         UpdateBuildingModel();
     }
 
@@ -70,8 +65,15 @@ public class RepairableBuilding : MonoBehaviour
         if (state == State.Damaged)
         {
             CurrentState = State.Intact;
-            Debug.Log("Building repaired and is now intact.");
-            PeopleUnitsController.Instance.AssignUnitsToTask(peopleToRepair);
+            //Debug.Log("Building repaired and is now intact.");
+
+            //Check for materials
+
+            if (ControllersManager.Instance.resourceController.GetBuildingMaterials() >= BuildingMaterialsToRepair)
+            {
+                ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToRepair, TurnsToRepair);
+                ControllersManager.Instance.resourceController.AddOrRemoveBuildingMaterials(-BuildingMaterialsToRepair);
+            }
         }
     }
 
@@ -80,7 +82,7 @@ public class RepairableBuilding : MonoBehaviour
         if (state == State.Intact)
         {
             CurrentState = State.Damaged;
-            Debug.Log(gameObject.name + " BOMBED!");
+            //Debug.Log(gameObject.name + " BOMBED!");
         }
     }
 

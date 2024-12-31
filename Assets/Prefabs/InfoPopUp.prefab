@@ -92,8 +92,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 23
-  m_fontSizeBase: 23
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 12
@@ -182,15 +182,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 5009751767173041556}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 518574ff494e65946a3195e89f7800cb, type: 3}
+  m_Script: {fileID: 11500000, guid: ea4acf107e979e447900a860e547be7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LabelText: {fileID: 1782043389777533537}
-  DescriptionText: {fileID: 8834275512949852142}
   _bgImage: {fileID: 741691652290135802}
   scaleDuration: 0.5
   fadeDuration: 0.5
   scaleDownDuration: 0.2
+  LabelText: {fileID: 1782043389777533537}
+  DescriptionText: {fileID: 8834275512949852142}
 --- !u!1 &7085881243885194045
 GameObject:
   m_ObjectHideFlags: 0
@@ -259,8 +259,8 @@ MonoBehaviour:
   m_text: "\u041F\u0420\u0418\u041C\u0415\u0420 \u0422\u0415\u041A\u0421\u0422\u0410
     123456789"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: a59e0559552b0c14badf4af5f1ec777c, type: 2}
-  m_sharedMaterial: {fileID: -4801621254923690706, guid: a59e0559552b0c14badf4af5f1ec777c, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 4bb083453e0cbe34d85f10e4a278a660, type: 2}
+  m_sharedMaterial: {fileID: 4434354080333963164, guid: 4bb083453e0cbe34d85f10e4a278a660, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -284,8 +284,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 15
-  m_fontSizeBase: 15
+  m_fontSize: 17
+  m_fontSizeBase: 17
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 12

@@ -5,6 +5,6 @@ public class KillAllTweensOnDestroy : MonoBehaviour
 {
     void OnDestroy()
     {
-        DOTween.KillAll(complete: false);
+        DOTween.KillAll();
     }
 }

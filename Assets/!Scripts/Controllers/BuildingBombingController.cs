@@ -3,20 +3,8 @@ using UnityEngine;
 
 public class BuildingBombingController : MonoBehaviour
 {
-    public static BuildingBombingController Instance;
-
     public List<RepairableBuilding> RegularBuildings { get; private set; } = new();
     public List<RepairableBuilding> SpecialBuildings { get; private set; } = new();
-
-    private void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-            Destroy(gameObject);
-    }
 
     private void Start()
     {

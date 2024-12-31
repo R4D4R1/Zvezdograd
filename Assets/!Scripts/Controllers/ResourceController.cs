@@ -5,16 +5,16 @@ using UnityEngine.UI;
 public class ResourceController : MonoBehaviour
 {
     // ѕриватные переменные дл€ ресурсов
-    [Range(0f, 5f)]
+    [Range(0f, 10f)]
     [SerializeField] private int provision = 0;
 
-    [Range(0f, 5f)]
+    [Range(0f, 10f)]
     [SerializeField] private int medicine = 0;
 
-    [Range(0f, 5f)]
+    [Range(0f, 10f)]
     [SerializeField] private int rawMaterials = 0;
 
-    [Range(0f, 5f)]
+    [Range(0f, 10f)]
     [SerializeField] private int buildingMaterials = 0;
 
     // ѕриватна€ переменна€ дл€ стабильности
@@ -28,22 +28,23 @@ public class ResourceController : MonoBehaviour
     public Slider buildingMaterialsSlider;
     public Slider stabilitySlider;
 
+
     void Start()
     {
         // »нициализаци€ слайдеров и прив€зка значений
         InitializeSliders();
-        TimeController.Instance.OnNextTurnBtnPressed += NextTurnBtnPressed;
+        ControllersManager.Instance.timeController.OnNextTurnBtnPressed += NextTurnBtnPressed;
     }
 
     private void OnDestroy()
     {
-        TimeController.Instance.OnNextTurnBtnPressed -= NextTurnBtnPressed;
+        ControllersManager.Instance.timeController.OnNextTurnBtnPressed -= NextTurnBtnPressed;
     }
 
     private void NextTurnBtnPressed()
     {
         // «а каждое обычное сломманое здание стабильность батает на 2 с каждым ходом
-        foreach (var building in BuildingBombingController.Instance.RegularBuildings)
+        foreach (var building in ControllersManager.Instance.buildingBombingController.RegularBuildings)
         {
             if (building.CurrentState == RepairableBuilding.State.Damaged)
             {
@@ -56,22 +57,22 @@ public class ResourceController : MonoBehaviour
     private void InitializeSliders()
     {
         // —лайдеры дл€ ресурсов
-        provisionSlider.maxValue = 5;
+        provisionSlider.maxValue = 10;
         provisionSlider.minValue = 0;
         provisionSlider.value = provision;
         provisionSlider.interactable = false;
 
-        medicineSlider.maxValue = 5;
+        medicineSlider.maxValue = 10;
         medicineSlider.minValue = 0;
         medicineSlider.value = medicine;
         medicineSlider.interactable = false;
 
-        rawMaterialsSlider.maxValue = 5;
+        rawMaterialsSlider.maxValue = 10;
         rawMaterialsSlider.minValue = 0;
         rawMaterialsSlider.value = rawMaterials;
         rawMaterialsSlider.interactable = false;
 
-        buildingMaterialsSlider.maxValue = 5;
+        buildingMaterialsSlider.maxValue = 10;
         buildingMaterialsSlider.minValue = 0;
         buildingMaterialsSlider.value = buildingMaterials;
         buildingMaterialsSlider.interactable = false;
@@ -83,33 +84,54 @@ public class ResourceController : MonoBehaviour
         stabilitySlider.interactable = false;
     }
 
+    public int GetProvision()
+    {
+        return provision;
+    }
+    public int GetMedicine()
+    {
+        return medicine;
+    }
+    public int GetRawMaterials()
+    {
+        return rawMaterials;
+    }
+    public int GetBuildingMaterials()
+    {
+        return buildingMaterials;
+    }
+    public int GetStability()
+    {
+        return stability;
+    }
+
     // ћетоды обновлени€ значений ресурсов
 
-    private void AddOrRemoveProvision(int value)
+    public void AddOrRemoveProvision(int value)
     {
-        provision = Mathf.Clamp(provision + value, 0, 5);
+        provision = Mathf.Clamp(provision + value, 0, 10);
         UpdateProvisionSlider();
     }
 
-    private void AddOrRemoveMedicine(int value)
+    public void AddOrRemoveMedicine(int value)
     {
-        medicine = Mathf.Clamp(medicine + value, 0, 5);
+        medicine = Mathf.Clamp(medicine + value, 0, 10);
         UpdateMedicineSlider();
     }
 
-    private void AddOrRemoveRawMaterials(int value)
+    public void AddOrRemoveRawMaterials(int value)
     {
-        rawMaterials = Mathf.Clamp(rawMaterials + value, 0, 5);
+        rawMaterials = Mathf.Clamp(rawMaterials + value, 0, 10);
         UpdateRawMaterialsSlider();
     }
 
-    private void AddOrRemoveBuildingMaterials(int value)
+    public void AddOrRemoveBuildingMaterials(int value)
     {
-        buildingMaterials = Mathf.Clamp(buildingMaterials + value, 0, 5);
+        buildingMaterials = Mathf.Clamp(buildingMaterials + value, 0, 10);
         UpdateBuildingMaterialsSlider();
     }
 
-    private void AddOrRemoveStability(int value)
+    public void AddOrRemoveStability(int value)
     {
         stability = Mathf.Clamp(stability + value, 0, 100);
         UpdateStabilitySlider();

@@ -6,8 +6,6 @@ using DG.Tweening;
 
 public class TimeController : MonoBehaviour
 {
-    public static TimeController Instance;
-
     [SerializeField] private Light morningLight;
     [SerializeField] private Light dayLight;
     [SerializeField] private Light eveningLight;
@@ -28,7 +26,7 @@ public class TimeController : MonoBehaviour
 
     public event Action OnNextTurnBtnPressed;
 
-    private enum PeriodOfDay
+    public enum PeriodOfDay
     {
         Утро,
         День,
@@ -38,49 +36,40 @@ public class TimeController : MonoBehaviour
     private DateTime _startDate = new DateTime(1941, 8, 30);
     private DateTime _endDate = new DateTime(1941, 9, 30);
     public DateTime CurrentDate { get; private set; }
-    private PeriodOfDay _currentPeriod;
+    public PeriodOfDay CurrentPeriod { get; private set; }
     private int _daysWithoutBombing;
 
-    private void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-            Destroy(gameObject);
-    }
 
     private void Start()
     {
         _daysWithoutBombing = 0;
         CurrentDate = _startDate;
-        _currentPeriod = PeriodOfDay.Утро;
+        CurrentPeriod = PeriodOfDay.Утро;
         UpdateLighting();
         UpdateText();
     }
 
     private void UpdateTime()
     {
-        switch (_currentPeriod)
+        switch (CurrentPeriod)
         {
             case PeriodOfDay.Утро:
-                _currentPeriod = PeriodOfDay.День;
+                CurrentPeriod = PeriodOfDay.День;
                 break;
 
             case PeriodOfDay.День:
-                _currentPeriod = PeriodOfDay.Вечер;
+                CurrentPeriod = PeriodOfDay.Вечер;
                 break;
 
             case PeriodOfDay.Вечер:
-                _currentPeriod = PeriodOfDay.Утро;
+                CurrentPeriod = PeriodOfDay.Утро;
 
                 CurrentDate = CurrentDate.AddDays(1);
 
                 _daysWithoutBombing++;
                 if (_daysWithoutBombing == _daysBetweenBombingRegularBuildings)
                 {
-                    BuildingBombingController.Instance.BombRegularBuilding();
+                    ControllersManager.Instance.buildingBombingController.BombRegularBuilding();
                     _daysWithoutBombing = 0;
                 }
 
@@ -92,15 +81,15 @@ public class TimeController : MonoBehaviour
 
     private void UpdateLighting()
     {
-        morningLight.enabled = (_currentPeriod == PeriodOfDay.Утро);
-        dayLight.enabled = (_currentPeriod == PeriodOfDay.День);
-        eveningLight.enabled = (_currentPeriod == PeriodOfDay.Вечер);
+        morningLight.enabled = (CurrentPeriod == PeriodOfDay.Утро);
+        dayLight.enabled = (CurrentPeriod == PeriodOfDay.День);
+        eveningLight.enabled = (CurrentPeriod == PeriodOfDay.Вечер);
     }
 
     private void UpdateText()
     {
         dayText.text = CurrentDate.ToString("d MMMM");
-        periodText.text = _currentPeriod.ToString();
+        periodText.text = CurrentPeriod.ToString();
     }
 
     public void EndTurnButtonClicked()
