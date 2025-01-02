@@ -1,45 +1,40 @@
 using UnityEngine;
 using System.Collections.Generic;
-using DG.Tweening;  // Для анимации перемещения
+using DG.Tweening;
 
 public class PeopleUnitsController : MonoBehaviour
 {
-    [SerializeField] private List<PeopleUnit> allUnits;  // Список всех юнитов
-    private List<PeopleUnit> readyUnits = new();  // Список готовых юнитов
-    private Vector3[] initialPositions;  // Массив для хранения начальных позиций
+    [SerializeField] private List<PeopleUnit> allUnits;
+    private List<PeopleUnit> readyUnits = new();
+    private List<float> initialPositions = new();
 
-    // Возвращает количество готовых юнитов и выводит это значение в консоль
-    public int GetReadyUnits()
-    {
-        return readyUnits.Count;
-    }
-
-    // Вызывается при инициализации объекта
     private void Awake()
     {
-        // Получаем начальные позиции всех юнитов с RectTransform
-        initialPositions = new Vector3[allUnits.Count];
-        for (int i = 0; i < allUnits.Count; i++)
+        foreach (var unit in allUnits)
         {
-            initialPositions[i] = allUnits[i].GetComponent<RectTransform>().position;  // Начальная позиция юнита
+            initialPositions.Add(unit.transform.localPosition.x);
         }
 
         UpdateReadyUnits();
     }
 
-    // Подписка на событие перехода к следующему ходу при старте объекта
     void Start()
     {
         ControllersManager.Instance.timeController.OnNextTurnBtnPressed += NextTurn;
     }
 
-    // Отписка от события при отключении объекта
     private void OnDisable()
     {
         ControllersManager.Instance.timeController.OnNextTurnBtnPressed -= NextTurn;
     }
 
-    // Обновляет список готовых юнитов
+    // Возвращает количество готовых юнитов и выводит это значение в консоль
+    public int GetReadyUnits()
+    {
+        //Debug.Log(readyUnits.Count);
+        return readyUnits.Count;
+    }
+
     void UpdateReadyUnits()
     {
         readyUnits.Clear();
@@ -52,13 +47,11 @@ public class PeopleUnitsController : MonoBehaviour
         }
     }
 
-    // Проверяет, достаточно ли готовых юнитов для выполнения задания
     public bool AreUnitsReady(int units)
     {
         return units <= readyUnits.Count;
     }
 
-    // Назначает юнитов на задание, если их достаточно
     public void AssignUnitsToTask(int requiredUnits, int restingTurns)
     {
         if (AreUnitsReady(requiredUnits))
@@ -76,45 +69,22 @@ public class PeopleUnitsController : MonoBehaviour
                     assignedUnits++;
                 }
             }
+
+            AnimateUnitPositions();
         }
         else
         {
             Debug.Log("Not enough units");
         }
-
-        SortUnitsByRestingTime();
     }
 
-    // Метод для сортировки юнитов по времени отдыха по возрастанию
-    public void SortUnitsByRestingTime()
-    {
-        // Сортируем всех юнитов по времени отдыха
-        readyUnits.Sort((unit1, unit2) => unit1.restingTime.CompareTo(unit2.restingTime));
-
-        // Теперь распределяем юнитов по начальным позициям
-        for (int i = 0; i < readyUnits.Count; i++)
-        {
-            PeopleUnit unit = readyUnits[i];
-
-            // Перемещаем юнита на доступную позицию
-            if (i < initialPositions.Length)
-            {
-                // Применяем анимацию перемещения на позицию
-                RectTransform rectTransform = unit.GetComponent<RectTransform>();
-                rectTransform.DOMove(initialPositions[i], 0.5f).SetEase(Ease.InOutSine);
-            }
-        }
-    }
-
-    // Метод, вызываемый при переходе к следующему ходу
     public void NextTurn()
     {
         UpdateRestingTimeForAllUnits();
         RestAllBusyUnits();
-        SortUnitsByRestingTime();  // После обновления времени отдыха, сортируем юнитов
+        AnimateUnitPositions();
     }
 
-    // Переводит все занятые юниты в состояние отдыха
     public void RestAllBusyUnits()
     {
         foreach (var unit in allUnits)
@@ -126,7 +96,6 @@ public class PeopleUnitsController : MonoBehaviour
         }
     }
 
-    // Обновляет оставшееся время отдыха для всех юнитов, находящихся в состоянии отдыха
     public void UpdateRestingTimeForAllUnits()
     {
         foreach (var unit in allUnits)
@@ -135,6 +104,17 @@ public class PeopleUnitsController : MonoBehaviour
             {
                 unit.UpdateRestingTime();
             }
+        }
+    }
+
+
+    private void AnimateUnitPositions()
+    {
+        allUnits.Sort((x, y) => x.restingTime.CompareTo(y.restingTime));
+
+        for (int i = 0; i < allUnits.Count; i++)
+        {
+            allUnits[i].transform.DOLocalMoveX(initialPositions[i], 0.5f);
         }
     }
 }

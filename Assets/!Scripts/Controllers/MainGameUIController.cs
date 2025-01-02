@@ -1,15 +1,24 @@
 using UnityEngine;
+using DG.Tweening;
 
 public class MainGameUIController : MonoBehaviour
 {
     [SerializeField] private GameObject _settingsMenu;
-    [SerializeField] private GameObject _turnOffUIObjects;
+    [SerializeField] private GameObject _turnOffUIParent;
     [SerializeField] private SelectionController _selectionController;
+    [SerializeField] private float fadeDuration = 0.5f; // Длительность анимации
+    private CanvasGroup _turnOffUICanvasGroup;
 
     private bool _canToggleMenu = false; // Флаг для управления открытием меню через Escape
 
     private void Start()
     {
+        _turnOffUICanvasGroup = _turnOffUIParent.GetComponent<CanvasGroup>();
+        if (_turnOffUICanvasGroup == null)
+        {
+            _turnOffUICanvasGroup = _turnOffUIParent.AddComponent<CanvasGroup>();
+        }
+
         DisableEscapeMenuToggle();
     }
 
@@ -29,19 +38,28 @@ public class MainGameUIController : MonoBehaviour
 
     public void TurnOnUI()
     {
-        _turnOffUIObjects.SetActive(true);
+        _turnOffUIParent.SetActive(true);
         _selectionController.enabled = true;
 
         ControllersManager.Instance.blurController.UnBlurBackGroundSmoothly();
+        _turnOffUICanvasGroup.DOFade(1f, fadeDuration).OnComplete(() => {
+            _turnOffUICanvasGroup.interactable = true;
+            _turnOffUICanvasGroup.blocksRaycasts = true;
+        });
     }
 
     public void TurnOffUI()
     {
-        _turnOffUIObjects.SetActive(false);
         _selectionController.enabled = false;
 
         ControllersManager.Instance.blurController.BlurBackGroundSmoothly();
         ControllersManager.Instance.selectionController.Deselect();
+
+        _turnOffUICanvasGroup.DOFade(0f, fadeDuration).OnComplete(() => {
+            _turnOffUIParent.SetActive(false);
+            _turnOffUICanvasGroup.interactable = false;
+            _turnOffUICanvasGroup.blocksRaycasts = false;
+        });
     }
 
     public void EnableEscapeMenuToggle()
