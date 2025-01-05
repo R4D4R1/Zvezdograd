@@ -1,7 +1,6 @@
 using UnityEngine;
 
-public class CollectableBuilding : MonoBehaviour
+public class CollectableBuilding : SelectableBuilding
 {
-    [field: SerializeField] public string BuildingNameText { get; protected set; }
-    [field: SerializeField] public string DescriptionText { get; protected set; }
+
 }

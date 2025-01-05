@@ -155,13 +155,13 @@ public class SelectionController : MonoBehaviour
                         }
 
                     }
-                    else
+
+                    if (_selectedBuilding is CollectableBuilding collectableBuilding)
                     {
                         _currentPopUp = Instantiate(_specialPopUpPrefab, _popUpParent);
                         SpecialPopUp popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
 
-                        popUpObject.LabelText.text = _selectedBuilding.BuildingNameText;
-                        popUpObject.DescriptionText.text = _selectedBuilding.DescriptionText;
+                        popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "—Œ¡–¿“‹");
                     }
 
 
