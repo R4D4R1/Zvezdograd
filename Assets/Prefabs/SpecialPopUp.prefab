@@ -193,7 +193,8 @@ MonoBehaviour:
   LabelText: {fileID: 2365699358528326218}
   DescriptionText: {fileID: 2242772262373175910}
   ButtonText: {fileID: 8689131165978746162}
-  BuildingToUse: {fileID: 0}
+  RepairableBuilding: {fileID: 0}
+  CollectableBulding: {fileID: 0}
   CurrentFunc: 0
 --- !u!1 &5524714594630589531
 GameObject:
@@ -544,7 +545,7 @@ PrefabInstance:
     - target: {fileID: 8794236699216237910, guid: 518557c92eb656d458303b3d42b8d3d3, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
-      objectReference: {fileID: 1630331053249576043, guid: e6849141a51eb784f9f3fe50df4ea0c9, type: 3}
+      objectReference: {fileID: 4725186005183685786, guid: e62f4af096b3a264cb61b5b7576eb19f, type: 3}
     - target: {fileID: 8794236699216237910, guid: 518557c92eb656d458303b3d42b8d3d3, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
       value: 2
@@ -555,7 +556,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8794236699216237910, guid: 518557c92eb656d458303b3d42b8d3d3, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: DisableEscapeMenuToggle
+      value: PlayButtonPressSound
       objectReference: {fileID: 0}
     - target: {fileID: 8794236699216237910, guid: 518557c92eb656d458303b3d42b8d3d3, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
@@ -563,7 +564,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8794236699216237910, guid: 518557c92eb656d458303b3d42b8d3d3, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
-      value: MainGameUIController, Assembly-CSharp
+      value: SoundController, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 8794236699216237910, guid: 518557c92eb656d458303b3d42b8d3d3, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -576,7 +577,7 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 1596765332264549557, guid: 518557c92eb656d458303b3d42b8d3d3, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 4153561453791315033}
+      addedObject: {fileID: 6625068903086140279}
   m_SourcePrefab: {fileID: 100100000, guid: 518557c92eb656d458303b3d42b8d3d3, type: 3}
 --- !u!224 &3405067741071197033 stripped
 RectTransform:
@@ -588,7 +589,7 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1596765332264549557, guid: 518557c92eb656d458303b3d42b8d3d3, type: 3}
   m_PrefabInstance: {fileID: 3173839447646639576}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &4153561453791315033
+--- !u!114 &6625068903086140279
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

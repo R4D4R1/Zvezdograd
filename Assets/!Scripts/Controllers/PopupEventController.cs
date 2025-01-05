@@ -74,7 +74,7 @@ public class PopupEventController : MonoBehaviour
 
     private void ShowPopup(string title, string mainText, string buttonText)
     {
-        EventPopUp.Instance.ShowPopUp(title, mainText, buttonText);
+        EventPopUp.Instance.ShowEventPopUp(title, mainText, buttonText);
         //Debug.Log($"Попап: {title} - {mainText} - {buttonText}");
     }
 }

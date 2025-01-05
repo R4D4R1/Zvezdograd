@@ -6,14 +6,14 @@ using UnityEngine.EventSystems;
 public class CustomButtonRecolorText : CustomButtonBase
 {
     private TMP_Text _buttonText;
-    private Color _originalColor;
+    [SerializeField] private Color _originalColor;
     [SerializeField] private Color _toColor;
     [SerializeField] private float _duration;
 
     private void Awake()
     {
         _buttonText = GetComponentInChildren<TMP_Text>();
-        _originalColor = _buttonText.color;
+        //_originalColor = _buttonText.color;
     }
 
     public override void OnPointerEnter(PointerEventData eventData)

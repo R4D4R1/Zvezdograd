@@ -94,6 +94,7 @@ public class TimeController : MonoBehaviour
 
     public void EndTurnButtonClicked()
     {
+        ControllersManager.Instance.selectionController.enabled = false;
         _nextTurnBtn.interactable = false;
 
         foreach (var script in _btnScripts)
@@ -105,6 +106,8 @@ public class TimeController : MonoBehaviour
         blackoutImage.DOFade(1, 1.0f).OnComplete(() =>
         {
             UpdateTime();
+            OnNextTurnBtnPressed.Invoke();
+
             blackoutImage.DOFade(0, 1.0f).OnComplete(() =>
             {
                 // Activate Next Turn Btn
@@ -114,8 +117,9 @@ public class TimeController : MonoBehaviour
                 {
                     script.enabled = true;
                 }
+                ControllersManager.Instance.selectionController.enabled = true;
 
-                OnNextTurnBtnPressed.Invoke();
+                //OnNextTurnBtnPressed.Invoke();
             });
         });
     }

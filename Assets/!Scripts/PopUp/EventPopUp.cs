@@ -26,11 +26,11 @@ public class EventPopUp : InfoPopUp
         });
     }
 
-    public void ShowPopUp(string Label, string Description, string Button)
+    public void ShowEventPopUp(string Label, string Description, string Button)
     {
+        ControllersManager.Instance.mainGameUIController.TurnOffUI();
         ControllersManager.Instance.mainGameUIController.DisableEscapeMenuToggle();
         ControllersManager.Instance.blurController.BlurBackGroundSmoothly();
-        ControllersManager.Instance.mainGameUIController.TurnOffUI();
 
         LabelText.text = "";
         DescriptionText.text = "";
@@ -50,13 +50,12 @@ public class EventPopUp : InfoPopUp
 
     public override void HidePopUp()
     {
+        _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration);
+
         ControllersManager.Instance.mainGameUIController.EnableEscapeMenuToggle();
         ControllersManager.Instance.mainGameUIController.TurnOnUI();
         ControllersManager.Instance.blurController.UnBlurBackGroundSmoothly();
 
-        _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration).OnComplete(() =>
-        {
-            //Something
-        });
+        SetTextAlpha(0);
     }
 }

@@ -188,7 +188,7 @@ MonoBehaviour:
   _bgImage: {fileID: 741691652290135802}
   scaleDuration: 0.5
   fadeDuration: 0.5
-  scaleDownDuration: 0.2
+  scaleDownDuration: 0.1
   LabelText: {fileID: 1782043389777533537}
   DescriptionText: {fileID: 8834275512949852142}
 --- !u!1 &7085881243885194045

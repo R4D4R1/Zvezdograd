@@ -9,10 +9,15 @@ public class SpecialPopUp : InfoPopUp
     public enum PopUpFuncs
     {
         Repair,
-        OpenSpecialMenu
+        OpenSpecialMenu,
+        Collect
     }
 
-    public RepairableBuilding BuildingToUse;
+    [HideInInspector]
+    public RepairableBuilding RepairableBuilding;
+    [HideInInspector]
+    public CollectableBuilding CollectableBulding;
+
     public PopUpFuncs CurrentFunc;
 
     private void OnEnable()
@@ -23,37 +28,44 @@ public class SpecialPopUp : InfoPopUp
 
     public void OpenRepairMenu()
     {
-        RepairPopUp.Instance.ShowRepairPopUp(BuildingToUse);
+        RepairPopUp.Instance.ShowRepairPopUp(RepairableBuilding);
     }
 
     public void OpenSpecialMenu()
     {
-        if (BuildingToUse.Type == RepairableBuilding.BuildingType.Hospital)
+        if (RepairableBuilding.Type == RepairableBuilding.BuildingType.Hospital)
         {
             
         }
 
-        if (BuildingToUse.Type == RepairableBuilding.BuildingType.CityHall)
+        if (RepairableBuilding.Type == RepairableBuilding.BuildingType.CityHall)
         {
 
         }
 
-        if (BuildingToUse.Type == RepairableBuilding.BuildingType.Factory)
+        if (RepairableBuilding.Type == RepairableBuilding.BuildingType.Factory)
         {
 
         }
 
-        if (BuildingToUse.Type == RepairableBuilding.BuildingType.FoodTrucks)
+        if (RepairableBuilding.Type == RepairableBuilding.BuildingType.FoodTrucks)
         {
 
         }
+    }
 
+    public void OpenCollectMenu()
+    {
+        CollectPopUp.Instance.ShowCollectPopUp(CollectableBulding);
     }
 
     public void UseButton()
     {
         switch (CurrentFunc)
         {
+            case PopUpFuncs.Collect:
+                OpenCollectMenu();
+                break;
             case PopUpFuncs.Repair:
                 OpenRepairMenu();
                 break;
@@ -86,7 +98,6 @@ public class SpecialPopUp : InfoPopUp
             LabelText.DOFade(1, fadeDuration);
             DescriptionText.DOFade(1, fadeDuration);
             ButtonText.DOFade(1, fadeDuration);
-
         });
     }
 
@@ -99,5 +110,10 @@ public class SpecialPopUp : InfoPopUp
     public void SetToOpenSpecialMenu()
     {
         CurrentFunc = PopUpFuncs.OpenSpecialMenu;
+    }
+
+    public void SetToCollect()
+    {
+        CurrentFunc = PopUpFuncs.Collect;
     }
 }

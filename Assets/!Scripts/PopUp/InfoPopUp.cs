@@ -47,14 +47,14 @@ public class InfoPopUp : MonoBehaviour
 
     public virtual void HidePopUp()
     {
-        _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration).OnComplete(async () =>
+        _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration).OnComplete(() =>
         {
-            await UniTask.Delay(300);
+            SetTextAlpha(0);
             Destroy(gameObject);
         });
     }
 
-    protected void SetTextAlpha(float alpha)
+    protected virtual void SetTextAlpha(float alpha)
     {
         Color labelColor = LabelText.color;
         labelColor.a = alpha;

@@ -96,6 +96,12 @@ public class SelectionController : MonoBehaviour
             {
                 SelectableBuilding hitObject = hit.collider.GetComponentInParent<SelectableBuilding>();
 
+                // Если объект уже выделен, пропускаем выделение
+                if (hitObject == _selectedBuilding)
+                {
+                    return;
+                }
+
                 if (hitObject)
                 {
                     if (_selectedBuilding != null)
@@ -110,6 +116,7 @@ public class SelectionController : MonoBehaviour
                             _currentPopUp.GetComponent<InfoPopUp>().HidePopUp();
                         }
                     }
+
                     _selectedBuilding = hitObject;
                     Outline selectedOutline = _selectedBuilding.GetComponentInChildren<Outline>();
 
@@ -129,7 +136,6 @@ public class SelectionController : MonoBehaviour
                             InfoPopUp popUpObject = _currentPopUp.GetComponent<InfoPopUp>();
                             popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText);
                         }
-
                         else if (repairableBuilding.CurrentState == RepairableBuilding.State.Intact
                             && repairableBuilding.Type != RepairableBuilding.BuildingType.LivingArea)
                         {
@@ -138,10 +144,9 @@ public class SelectionController : MonoBehaviour
 
                             popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "ОТКРЫТЬ");
 
-                            popUpObject.BuildingToUse = repairableBuilding;
+                            popUpObject.RepairableBuilding = repairableBuilding;
                             popUpObject.SetToOpenSpecialMenu();
                         }
-
                         else if (repairableBuilding.CurrentState == RepairableBuilding.State.Damaged)
                         {
                             _currentPopUp = Instantiate(_specialPopUpPrefab, _popUpParent);
@@ -149,11 +154,9 @@ public class SelectionController : MonoBehaviour
 
                             popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "РЕМОНТ");
 
-
-                            popUpObject.BuildingToUse = repairableBuilding;
+                            popUpObject.RepairableBuilding = repairableBuilding;
                             popUpObject.SetToRepair();
                         }
-
                     }
 
                     if (_selectedBuilding is CollectableBuilding collectableBuilding)
@@ -162,8 +165,10 @@ public class SelectionController : MonoBehaviour
                         SpecialPopUp popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
 
                         popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "СОБРАТЬ");
-                    }
 
+                        popUpObject.CollectableBulding = collectableBuilding;
+                        popUpObject.SetToCollect();
+                    }
 
                     // Спавн поп апа в правом верхнем углу в любом разрешении
                     RectTransform popUpRect = _currentPopUp.GetComponent<RectTransform>();
@@ -174,36 +179,12 @@ public class SelectionController : MonoBehaviour
                 }
                 else
                 {
-                    if (_selectedBuilding != null)
-                    {
-                        Outline outline = _selectedBuilding.GetComponentInChildren<Outline>();
-                        if (outline != null)
-                        {
-                            outline.enabled = false;
-                        }
-                        _selectedBuilding = null;
-                        if (_currentPopUp != null)
-                        {
-                            _currentPopUp.GetComponent<SpecialPopUp>().HidePopUp();
-                        }
-                    }
+                    Deselect();
                 }
             }
             else
             {
-                if (_selectedBuilding != null)
-                {
-                    Outline outline = _selectedBuilding.GetComponentInChildren<Outline>();
-                    if (outline != null)
-                    {
-                        outline.enabled = false;
-                    }
-                    _selectedBuilding = null;
-                    if (_currentPopUp != null)
-                    {
-                        _currentPopUp.GetComponent<InfoPopUp>().HidePopUp();
-                    }
-                }
+                Deselect();
             }
         }
     }

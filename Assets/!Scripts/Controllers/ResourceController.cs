@@ -17,6 +17,12 @@ public class ResourceController : MonoBehaviour
     [Range(0f, 10f)]
     [SerializeField] private int buildingMaterials = 0;
 
+    private int _maxProvision;
+    private int _maxMedicine;
+    private int _maxRawMaterials;
+    private int _maxBuildingMaterials;
+    private int _maxStability;
+
     // ѕриватна€ переменна€ дл€ стабильности
     [Range(0f, 100f)]
     [SerializeField] private int stability = 100;
@@ -33,6 +39,13 @@ public class ResourceController : MonoBehaviour
     {
         // »нициализаци€ слайдеров и прив€зка значений
         InitializeSliders();
+
+        _maxProvision = provision;
+        _maxMedicine = medicine;
+        _maxBuildingMaterials = buildingMaterials;
+        _maxRawMaterials = rawMaterials;
+        _maxStability = stability;
+
         ControllersManager.Instance.timeController.OnNextTurnBtnPressed += NextTurnBtnPressed;
     }
 
@@ -103,6 +116,27 @@ public class ResourceController : MonoBehaviour
     public int GetStability()
     {
         return stability;
+    }
+
+    public int GetMaxProvision()
+    {
+        return _maxProvision;
+    }
+    public int GetMaxMedicine()
+    {
+        return _maxMedicine;
+    }
+    public int GetMaxRawMaterials()
+    {
+        return _maxRawMaterials;
+    }
+    public int GetMaxBuildingMaterials()
+    {
+        return _maxBuildingMaterials;
+    }
+    public int GetMaxStability()
+    {
+        return _maxStability;
     }
 
     // ћетоды обновлени€ значений ресурсов

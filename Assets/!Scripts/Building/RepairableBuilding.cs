@@ -37,7 +37,6 @@ public class RepairableBuilding : SelectableBuilding
     private GameObject _intactBuildingModel;
     private GameObject _damagedBuildingModel;
 
-
     [field: SerializeField] public string DamagedBuildingNameText { get; private set; }
     [field: SerializeField] public string DamagedDescriptionText { get; private set; }
     [field: SerializeField] public int PeopleToRepair { get; private set; }

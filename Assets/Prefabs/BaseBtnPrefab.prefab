@@ -52,6 +52,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d381df23e9e3b5243a23008abd13ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _originalColor: {r: 1, g: 1, b: 1, a: 1}
   _toColor: {r: 1, g: 0, b: 0.101960786, a: 1}
   _duration: 0.2
 --- !u!114 &889287222603788300
