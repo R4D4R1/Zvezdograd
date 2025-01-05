@@ -37,7 +37,7 @@ public class SelectionController : MonoBehaviour
         {
             SelectableBuilding hitObject = hit.collider.GetComponentInParent<SelectableBuilding>();
 
-            if (hitObject)
+            if (hitObject && hitObject.BuildingIsActive) // Проверяем, активное ли здание
             {
                 if (_currentHoveredObject != hitObject)
                 {
@@ -96,14 +96,13 @@ public class SelectionController : MonoBehaviour
             {
                 SelectableBuilding hitObject = hit.collider.GetComponentInParent<SelectableBuilding>();
 
-                // Если объект уже выделен, пропускаем выделение
-                if (hitObject == _selectedBuilding)
+                if (hitObject && hitObject.BuildingIsActive) // Проверяем, активное ли здание
                 {
-                    return;
-                }
+                    if (hitObject == _selectedBuilding)
+                    {
+                        return;
+                    }
 
-                if (hitObject)
-                {
                     if (_selectedBuilding != null)
                     {
                         Outline previousSelectedOutline = _selectedBuilding.GetComponentInChildren<Outline>();
@@ -130,7 +129,7 @@ public class SelectionController : MonoBehaviour
                     if (_selectedBuilding is RepairableBuilding repairableBuilding)
                     {
                         if (repairableBuilding.CurrentState == RepairableBuilding.State.Intact
-                            && repairableBuilding.Type == RepairableBuilding.BuildingType.LivingArea)
+                          && repairableBuilding.Type == RepairableBuilding.BuildingType.LivingArea)
                         {
                             _currentPopUp = Instantiate(_popUpPrefab, _popUpParent);
                             InfoPopUp popUpObject = _currentPopUp.GetComponent<InfoPopUp>();
@@ -170,7 +169,7 @@ public class SelectionController : MonoBehaviour
                         popUpObject.SetToCollect();
                     }
 
-                    // Спавн поп апа в правом верхнем углу в любом разрешении
+                    // Спавн попапа
                     RectTransform popUpRect = _currentPopUp.GetComponent<RectTransform>();
                     Vector2 screenPosition = RectTransformUtility.WorldToScreenPoint(_mainCamera, hit.point);
                     Vector2 localPoint;
