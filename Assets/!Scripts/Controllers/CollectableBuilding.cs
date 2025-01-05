@@ -13,7 +13,7 @@ public class CollectableBuilding : SelectableBuilding
 
     public void CollectBuilding()
     {
-
+            ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToCollect, TurnsToCollect);
+            ControllersManager.Instance.resourceController.AddOrRemoveRawMaterials(RawMaterialsGet);
     }
-
 }

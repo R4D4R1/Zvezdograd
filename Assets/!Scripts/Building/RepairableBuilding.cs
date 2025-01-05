@@ -64,15 +64,15 @@ public class RepairableBuilding : SelectableBuilding
         if (state == State.Damaged)
         {
             CurrentState = State.Intact;
-            //Debug.Log("Building repaired and is now intact.");
 
-            //Check for materials
+            //if (ControllersManager.Instance.resourceController.GetBuildingMaterials() >= BuildingMaterialsToRepair)
+            //{
+            //    ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToRepair, TurnsToRepair);
+            //    ControllersManager.Instance.resourceController.AddOrRemoveBuildingMaterials(-BuildingMaterialsToRepair);
+            //}
 
-            if (ControllersManager.Instance.resourceController.GetBuildingMaterials() >= BuildingMaterialsToRepair)
-            {
-                ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToRepair, TurnsToRepair);
-                ControllersManager.Instance.resourceController.AddOrRemoveBuildingMaterials(-BuildingMaterialsToRepair);
-            }
+            ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToRepair, TurnsToRepair);
+            ControllersManager.Instance.resourceController.AddOrRemoveBuildingMaterials(-BuildingMaterialsToRepair);
         }
     }
 

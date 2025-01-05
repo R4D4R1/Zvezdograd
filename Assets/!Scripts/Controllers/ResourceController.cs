@@ -43,7 +43,7 @@ public class ResourceController : MonoBehaviour
         _maxProvision = provision;
         _maxMedicine = medicine;
         _maxBuildingMaterials = buildingMaterials;
-        _maxRawMaterials = rawMaterials;
+        _maxRawMaterials = 10;
         _maxStability = stability;
 
         ControllersManager.Instance.timeController.OnNextTurnBtnPressed += NextTurnBtnPressed;
