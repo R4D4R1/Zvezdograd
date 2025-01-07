@@ -10,6 +10,8 @@ public class SelectionController : MonoBehaviour
     [SerializeField] private GameObject _popUpPrefab;
     [SerializeField] private GameObject _specialPopUpPrefab;
     [SerializeField] private Transform _popUpParent;
+    [SerializeField] private RepairPopUp _repairPopUp;
+    [SerializeField] private CollectPopUp _collectPopUp;
     private GameObject _currentPopUp;
     private Canvas _canvas;
 
@@ -151,6 +153,7 @@ public class SelectionController : MonoBehaviour
                             _currentPopUp = Instantiate(_specialPopUpPrefab, _popUpParent);
                             SpecialPopUp popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
 
+                            popUpObject.InitializeRepair(_repairPopUp);
                             popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "–≈ÃŒÕ“");
 
                             popUpObject.RepairableBuilding = repairableBuilding;
@@ -163,6 +166,7 @@ public class SelectionController : MonoBehaviour
                         _currentPopUp = Instantiate(_specialPopUpPrefab, _popUpParent);
                         SpecialPopUp popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
 
+                        popUpObject.InitializeCollect(_collectPopUp);
                         popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "—Œ¡–¿“‹");
 
                         popUpObject.CollectableBuilding = collectableBuilding;

@@ -28,7 +28,8 @@ public class RepairPopUp : InfoPopUp
 
         _demandsText.text = $" - {_buildingToUse.PeopleToRepair} отряда ( у вас {ControllersManager.Instance.peopleUnitsController.GetReadyUnits()} )\n" +
             $" - {_buildingToUse.BuildingMaterialsToRepair} стройматериалов ( у вас {ControllersManager.Instance.resourceController.GetBuildingMaterials()} )\n" +
-            $" - {_buildingToUse.TurnsToRepair} ходов";
+            $" - Займет {_buildingToUse.TurnsToRepair} ходов\n" +
+            $" - Подразделения будут отдыхать {_buildingToUse.TurnsToRest} ходов";
 
         _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {

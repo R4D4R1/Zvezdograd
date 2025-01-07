@@ -75,7 +75,15 @@ public class RepairableBuilding : SelectableBuilding
 
         if (BuildingIsActive)
         {
-            GetComponent<MeshRenderer>().material = originalMaterial;
+            var meshRenderer = transform.GetChild(0).GetComponent<MeshRenderer>();
+            if (meshRenderer != null)
+            {
+                meshRenderer.material = originalMaterial;
+            }
+            else
+            {
+                Debug.LogWarning("MeshRenderer not found on the first child.");
+            }
         }
     }
 
@@ -92,7 +100,15 @@ public class RepairableBuilding : SelectableBuilding
 
             BuildingIsActive = false;
 
-            GetComponent<MeshRenderer>().material = greyMaterial;
+            var meshRenderer = transform.GetChild(0).GetComponent<MeshRenderer>();
+            if (meshRenderer != null)
+            {
+                meshRenderer.material = greyMaterial;
+            }
+            else
+            {
+                Debug.LogWarning("MeshRenderer not found on the first child.");
+            }
         }
     }
 

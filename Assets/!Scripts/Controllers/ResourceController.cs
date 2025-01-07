@@ -27,6 +27,15 @@ public class ResourceController : MonoBehaviour
     [Range(0f, 100f)]
     [SerializeField] private int stability = 100;
 
+    // Цвета для минимального и максимального значений
+    [SerializeField] private Color minColor = Color.red;    // Красный цвет
+    [SerializeField] private Color maxColor = Color.blue;   // Синий цвет
+
+    // Ссылка на Image заливки слайдера стабильности
+    [SerializeField] private Image stabilityFillImage;
+
+
+
     // Слайдеры для ресурсов и стабильности
     public Slider provisionSlider;
     public Slider medicineSlider;
@@ -196,5 +205,16 @@ public class ResourceController : MonoBehaviour
     private void UpdateStabilitySlider()
     {
         stabilitySlider.value = stability;
+        UpdateStabilityFillColor(); // Обновление цвета заливки
+    }
+
+    private void UpdateStabilityFillColor()
+    {
+        if (stabilityFillImage != null)
+        {
+            // Интерполяция цвета в зависимости от текущего значения стабильности
+            float t = stability / 100f; // Нормализация значения (от 0 до 1)
+            stabilityFillImage.color = Color.Lerp(minColor, maxColor, t);
+        }
     }
 }

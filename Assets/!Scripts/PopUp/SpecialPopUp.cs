@@ -20,15 +20,14 @@ public class SpecialPopUp : InfoPopUp
 
     public PopUpFuncs CurrentFunc;
 
+    private CollectPopUp _collectPopUp;
+    private RepairPopUp _repairPopUp;
+    
+
     private void OnEnable()
     {
         _bgImage.transform.localScale = Vector3.zero;
         SetTextAlpha(0);
-    }
-
-    public void OpenRepairMenu()
-    {
-        RepairPopUp.Instance.ShowRepairPopUp(RepairableBuilding);
     }
 
     public void OpenSpecialMenu()
@@ -54,20 +53,15 @@ public class SpecialPopUp : InfoPopUp
         }
     }
 
-    public void OpenCollectMenu()
-    {
-        CollectPopUp.Instance.ShowCollectPopUp(CollectableBuilding);
-    }
-
     public void UseButton()
     {
         switch (CurrentFunc)
         {
             case PopUpFuncs.Collect:
-                OpenCollectMenu();
+                _collectPopUp.ShowCollectPopUp(CollectableBuilding);
                 break;
             case PopUpFuncs.Repair:
-                OpenRepairMenu();
+                _repairPopUp.ShowRepairPopUp(RepairableBuilding);
                 break;
             case PopUpFuncs.OpenSpecialMenu:
                 OpenSpecialMenu();
@@ -81,6 +75,21 @@ public class SpecialPopUp : InfoPopUp
         ControllersManager.Instance.mainGameUIController.TurnOffUI();
 
         HidePopUp();
+    }
+
+    public void InitializeRepair(RepairPopUp repairPopUp)
+    {
+        _repairPopUp = repairPopUp;
+    }
+
+    public void InitializeCollect(CollectPopUp collectPopUp)
+    {
+        _collectPopUp = collectPopUp;
+    }
+
+    public void InitializeSpecial()
+    {
+
     }
 
     public void ShowPopUp(string Label, string Description, string Button)

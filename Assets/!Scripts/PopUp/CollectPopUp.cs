@@ -12,14 +12,6 @@ public class CollectPopUp : InfoPopUp
 
     private CollectableBuilding _buildingToUse;
 
-    public static CollectPopUp Instance;
-    private void Awake()
-    {
-        if (Instance == null)
-            Instance = this;
-        else
-            Destroy(Instance.gameObject);
-    }
 
     public void ShowCollectPopUp(CollectableBuilding collectableBuilding)
     {
@@ -33,7 +25,8 @@ public class CollectPopUp : InfoPopUp
         _demandsText.text = $" - Осталось {_buildingToUse.RawMaterialsLeft} сырья \n" +
             $" - Вы получите {_buildingToUse.RawMaterialsGet} сырья ( у вас {ControllersManager.Instance.resourceController.GetRawMaterials()} )\n" +
             $" - Необходимо {_buildingToUse.PeopleToCollect} подразделений ( у вас {ControllersManager.Instance.peopleUnitsController.GetReadyUnits()} )\n" +
-            $" - Займет {_buildingToUse.TurnsToCollect} ходов";
+            $" - Займет {_buildingToUse.TurnsToCollect} ходов\n" +
+            $" - Подразделения будут отдыхать {_buildingToUse.TurnsToRest} ходов";
 
         _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
