@@ -28,10 +28,8 @@ public class PeopleUnitsController : MonoBehaviour
         ControllersManager.Instance.timeController.OnNextTurnBtnPressed -= NextTurn;
     }
 
-    // ¬озвращает количество готовых юнитов и выводит это значение в консоль
     public int GetReadyUnits()
     {
-        //Debug.Log(readyUnits.Count);
         return readyUnits.Count;
     }
 
@@ -52,7 +50,7 @@ public class PeopleUnitsController : MonoBehaviour
         return units <= readyUnits.Count;
     }
 
-    public void AssignUnitsToTask(int requiredUnits, int restingTurns)
+    public void AssignUnitsToTask(int requiredUnits, int busyTurns, int restingTurns)
     {
         if (AreUnitsReady(requiredUnits))
         {
@@ -63,9 +61,8 @@ public class PeopleUnitsController : MonoBehaviour
             {
                 if (assignedUnits < requiredUnits)
                 {
-                    unit.SetBusy();
+                    unit.SetBusyForTurns(busyTurns, restingTurns);
                     unit.DisableUnit();
-                    unit.SetRestingTime(restingTurns);
                     assignedUnits++;
                 }
             }
@@ -80,37 +77,17 @@ public class PeopleUnitsController : MonoBehaviour
 
     public void NextTurn()
     {
-        UpdateRestingTimeForAllUnits();
-        RestAllBusyUnits();
+        foreach (var unit in allUnits)
+        {
+            unit.UpdateUnitState();
+        }
+
         AnimateUnitPositions();
     }
 
-    public void RestAllBusyUnits()
-    {
-        foreach (var unit in allUnits)
-        {
-            if (unit.GetCurrentState() == PeopleUnit.UnitState.Busy)
-            {
-                unit.UnitResting();
-            }
-        }
-    }
-
-    public void UpdateRestingTimeForAllUnits()
-    {
-        foreach (var unit in allUnits)
-        {
-            if (unit.GetCurrentState() == PeopleUnit.UnitState.Resting)
-            {
-                unit.UpdateRestingTime();
-            }
-        }
-    }
-
-
     private void AnimateUnitPositions()
     {
-        allUnits.Sort((x, y) => x.restingTime.CompareTo(y.restingTime));
+        allUnits.Sort((x, y) => x.busyTime.CompareTo(y.busyTime));
 
         for (int i = 0; i < allUnits.Count; i++)
         {

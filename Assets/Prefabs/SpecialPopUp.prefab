@@ -192,7 +192,10 @@ MonoBehaviour:
   scaleDownDuration: 0.2
   LabelText: {fileID: 2365699358528326218}
   DescriptionText: {fileID: 2242772262373175910}
-  buttonText: {fileID: 8689131165978746162}
+  ButtonText: {fileID: 8689131165978746162}
+  RepairableBuilding: {fileID: 0}
+  CollectableBuilding: {fileID: 0}
+  CurrentFunc: 0
 --- !u!1 &5524714594630589531
 GameObject:
   m_ObjectHideFlags: 0

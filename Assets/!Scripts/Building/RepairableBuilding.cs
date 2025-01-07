@@ -39,18 +39,23 @@ public class RepairableBuilding : SelectableBuilding
 
     [field: SerializeField] public string DamagedBuildingNameText { get; private set; }
     [field: SerializeField] public string DamagedDescriptionText { get; private set; }
+    [field: SerializeField] public int BuildingMaterialsToRepair { get; private set; }
     [field: SerializeField] public int PeopleToRepair { get; private set; }
     [field: SerializeField] public int TurnsToRepair { get; private set; }
-    [field: SerializeField] public int BuildingMaterialsToRepair { get; private set; }
-
+    [field: SerializeField] public int TurnsToRest { get; private set; }
+    
     [SerializeField] private State state;
     [SerializeField] private BuildingType buildingType;
+    [SerializeField] private Material originalMaterial;
+    [SerializeField] private Material greyMaterial;
 
     public event Action OnStateChanged;
 
-    private void Awake()
+    private int _turnsToWork = 0;
+
+    private void Start()
     {
-        
+        _turnsToWork = TurnsToRepair;
     }
 
     public void InitBuilding()
@@ -59,20 +64,35 @@ public class RepairableBuilding : SelectableBuilding
         UpdateBuildingModel();
     }
 
+
+    private void TryTurnOnBuilding()
+    {
+        _turnsToWork--;
+        if (_turnsToWork == 0)
+        {
+            BuildingIsActive = true;
+        }
+
+        if (BuildingIsActive)
+        {
+            GetComponent<MeshRenderer>().material = originalMaterial;
+        }
+    }
+
     public void RepairBuilding()
     {
         if (state == State.Damaged)
         {
             CurrentState = State.Intact;
 
-            //if (ControllersManager.Instance.resourceController.GetBuildingMaterials() >= BuildingMaterialsToRepair)
-            //{
-            //    ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToRepair, TurnsToRepair);
-            //    ControllersManager.Instance.resourceController.AddOrRemoveBuildingMaterials(-BuildingMaterialsToRepair);
-            //}
-
-            ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToRepair, TurnsToRepair);
+            ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToRepair, TurnsToRepair, TurnsToRest);
             ControllersManager.Instance.resourceController.AddOrRemoveBuildingMaterials(-BuildingMaterialsToRepair);
+
+            _turnsToWork = TurnsToRepair;
+
+            BuildingIsActive = false;
+
+            GetComponent<MeshRenderer>().material = greyMaterial;
         }
     }
 

@@ -14,23 +14,24 @@ public class PeopleUnit : MonoBehaviour
     }
 
     [SerializeField] private UnitState currentState = UnitState.Ready;
-    [SerializeField] private TextMeshProUGUI _text;
-    [SerializeField] private TextMeshProUGUI _restingTimeText;
+    [SerializeField] private TextMeshProUGUI _statusText; // Текст для состояния
     [SerializeField] private Image _image;
 
-    public int restingTime;
+    public int restingTime; // Время отдыха
+    public int busyTime;    // Время работы
 
     private void Awake()
     {
-        _restingTimeText.gameObject.SetActive(false);
+        _statusText.gameObject.SetActive(false);
         EnableUnit();
     }
 
     public void EnableUnit()
     {
         Color whiteColor = Color.white;
-        _text.DOColor(whiteColor, 0.5f);
         _image.DOColor(whiteColor, 0.5f);
+
+        _statusText.gameObject.SetActive(false);
 
         if (currentState == UnitState.Injured || currentState == UnitState.Resting)
         {
@@ -41,7 +42,6 @@ public class PeopleUnit : MonoBehaviour
     public void DisableUnit()
     {
         Color grayColor = new Color(0.392f, 0.392f, 0.392f);
-        _text.DOColor(grayColor, 0.5f);
         _image.DOColor(grayColor, 0.5f);
     }
 
@@ -50,24 +50,42 @@ public class PeopleUnit : MonoBehaviour
         return currentState;
     }
 
-    public void SetBusy()
+    public void SetBusyForTurns(int busyTurns, int restingTurns)
     {
         currentState = UnitState.Busy;
-    }
-
-    public void SetInjured()
-    {
-        currentState = UnitState.Injured;
-    }
-
-    public void SetReady()
-    {
-        currentState = UnitState.Ready;
-    }
-
-    public void SetRestingTime(int restingTurns)
-    {
+        busyTime = busyTurns;
         restingTime = restingTurns;
+
+        UpdateStatusText();
+        _statusText.gameObject.SetActive(true);
+    }
+
+    public void UpdateUnitState()
+    {
+        if (currentState == UnitState.Busy)
+        {
+            busyTime--;
+            UpdateStatusText();
+
+            if (busyTime <= 0)
+            {
+                UnitResting(); // Переход в состояние "отдыха"
+            }
+        }
+        else if (currentState == UnitState.Resting)
+        {
+            restingTime--;
+            UpdateStatusText();
+
+            if (restingTime <= 0)
+            {
+                currentState = UnitState.Ready;
+                restingTime = 0;
+
+                _statusText.gameObject.SetActive(false);
+                EnableUnit();
+            }
+        }
     }
 
     public void UnitResting()
@@ -75,30 +93,21 @@ public class PeopleUnit : MonoBehaviour
         if (currentState == UnitState.Busy)
         {
             currentState = UnitState.Resting;
-            UpdateRestingText();
-            _restingTimeText.gameObject.SetActive(true);
+            UpdateStatusText();
+
+            _statusText.gameObject.SetActive(true);
         }
     }
 
-    public void UpdateRestingTime()
+    private void UpdateStatusText()
     {
-        if (currentState == UnitState.Resting)
+        if (currentState == UnitState.Busy)
         {
-            restingTime--;
-            UpdateRestingText();
-
-            if (restingTime <= 0)
-            {
-                currentState = UnitState.Ready;
-                restingTime = 0;
-                _restingTimeText.gameObject.SetActive(false);
-                EnableUnit();
-            }
+            _statusText.text = $"Занят ({busyTime})";
         }
-    }
-
-    private void UpdateRestingText()
-    {
-        _restingTimeText.text = restingTime.ToString();
+        else if (currentState == UnitState.Resting)
+        {
+            _statusText.text = $"Отдых ({restingTime})";
+        }
     }
 }
