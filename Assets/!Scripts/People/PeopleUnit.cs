@@ -1,7 +1,7 @@
-using TMPro; // Импортируем TextMeshPro
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening; // Импортируем DOTween
+using DG.Tweening;
 
 public class PeopleUnit : MonoBehaviour
 {

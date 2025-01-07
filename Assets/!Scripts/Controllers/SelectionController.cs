@@ -165,7 +165,7 @@ public class SelectionController : MonoBehaviour
 
                         popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "—Œ¡–¿“‹");
 
-                        popUpObject.CollectableBulding = collectableBuilding;
+                        popUpObject.CollectableBuilding = collectableBuilding;
                         popUpObject.SetToCollect();
                     }
 

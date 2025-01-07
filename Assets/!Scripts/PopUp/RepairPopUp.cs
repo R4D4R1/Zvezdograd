@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using DG.Tweening;
+using Cysharp.Threading.Tasks;
 
 public class RepairPopUp : InfoPopUp
 {
@@ -8,13 +9,14 @@ public class RepairPopUp : InfoPopUp
 
     [SerializeField] private TextMeshProUGUI _demandsText;
     [SerializeField] private TextMeshProUGUI _errorText;
-    [SerializeField] private TextMeshProUGUI _buttonText;
+    [SerializeField] private TextMeshProUGUI _applyButtonText;
+    [SerializeField] private TextMeshProUGUI _denyButtonText;
 
     private RepairableBuilding _buildingToUse;
 
     private void Awake()
     {
-        if(Instance == null)
+        if (Instance == null)
             Instance = this;
         else
             Destroy(Instance.gameObject);
@@ -33,7 +35,8 @@ public class RepairPopUp : InfoPopUp
             LabelText.DOFade(1, fadeDuration);
             DescriptionText.DOFade(1, fadeDuration);
             _demandsText.DOFade(1, fadeDuration);
-            _buttonText.DOFade(1, fadeDuration);
+            _applyButtonText.DOFade(1, fadeDuration);
+            _denyButtonText.DOFade(1, fadeDuration);
         });
     }
 
@@ -45,18 +48,20 @@ public class RepairPopUp : InfoPopUp
         ControllersManager.Instance.mainGameUIController.TurnOnUI();
         ControllersManager.Instance.blurController.UnBlurBackGroundSmoothly();
 
+        _errorText.enabled = false;
+
         SetTextAlpha(0);
     }
 
     public void RepairBuilding()
     {
 
-        if (EnoughPeopleToReapir() && EnoughMaterialsToRepair() )
+        if (EnoughPeopleToReapir() && EnoughMaterialsToRepair())
         {
             HidePopUp();
             _buildingToUse.RepairBuilding();
         }
-        else if(!EnoughPeopleToReapir())
+        else if (!EnoughPeopleToReapir())
         {
             _errorText.text = "ÍÅ ÄÎÑÒÀÒÎ×ÍÎ ËÞÄÅÉ";
             _errorText.enabled = true;
@@ -70,7 +75,7 @@ public class RepairPopUp : InfoPopUp
 
     public bool EnoughPeopleToReapir()
     {
-        if(ControllersManager.Instance.peopleUnitsController.GetReadyUnits()>=_buildingToUse.PeopleToRepair)
+        if (ControllersManager.Instance.peopleUnitsController.GetReadyUnits() >= _buildingToUse.PeopleToRepair)
             return true;
         else
             return false;
@@ -82,10 +87,12 @@ public class RepairPopUp : InfoPopUp
             return true;
         else
             return false;
-    }            
+    }
 
-    protected override void SetTextAlpha(float alpha)
+    protected override async void SetTextAlpha(float alpha)
     {
+        await UniTask.Delay(300);
+
         Color labelColor = LabelText.color;
         labelColor.a = alpha;
         LabelText.color = labelColor;
@@ -98,8 +105,12 @@ public class RepairPopUp : InfoPopUp
         demandsColor.a = alpha;
         _demandsText.color = demandsColor;
 
-        Color buttonColor = _buttonText.color;
-        buttonColor.a = alpha;
-        _buttonText.color = buttonColor;
+        Color applyButtonColor = _applyButtonText.color;
+        applyButtonColor.a = alpha;
+        _applyButtonText.color = applyButtonColor;
+
+        Color denyButtonColor = _denyButtonText.color;
+        denyButtonColor.a = alpha;
+        _denyButtonText.color = denyButtonColor;
     }
 }

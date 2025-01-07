@@ -16,7 +16,7 @@ public class SpecialPopUp : InfoPopUp
     [HideInInspector]
     public RepairableBuilding RepairableBuilding;
     [HideInInspector]
-    public CollectableBuilding CollectableBulding;
+    public CollectableBuilding CollectableBuilding;
 
     public PopUpFuncs CurrentFunc;
 
@@ -35,7 +35,7 @@ public class SpecialPopUp : InfoPopUp
     {
         if (RepairableBuilding.Type == RepairableBuilding.BuildingType.Hospital)
         {
-            
+
         }
 
         if (RepairableBuilding.Type == RepairableBuilding.BuildingType.CityHall)
@@ -56,7 +56,7 @@ public class SpecialPopUp : InfoPopUp
 
     public void OpenCollectMenu()
     {
-        CollectPopUp.Instance.ShowCollectPopUp(CollectableBulding);
+        CollectPopUp.Instance.ShowCollectPopUp(CollectableBuilding);
     }
 
     public void UseButton()

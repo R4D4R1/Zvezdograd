@@ -9,35 +9,43 @@ public class CustomButtonRecolorText : CustomButtonBase
     [SerializeField] private Color _originalColor;
     [SerializeField] private Color _toColor;
     [SerializeField] private float _duration;
+    [SerializeField] private bool _turnBackToOriginalColor = true;
 
     private void Awake()
     {
         _buttonText = GetComponentInChildren<TMP_Text>();
-        //_originalColor = _buttonText.color;
     }
 
     public override void OnPointerEnter(PointerEventData eventData)
     {
         base.OnPointerEnter(eventData);
 
-        _buttonText.DOColor(_toColor, _duration)
+        if (_turnBackToOriginalColor)
+        {
+            _buttonText.DOColor(_toColor, _duration)
             .SetEase(Ease.InOutSine);
+        }
     }
 
     public override void OnPointerExit(PointerEventData eventData)
     {
         base.OnPointerExit(eventData);
 
-        _buttonText.DOColor(_originalColor, _duration)
-    .SetEase(Ease.InOutSine);
+        if (_turnBackToOriginalColor)
+        {
+            _buttonText.DOColor(_originalColor, _duration)
+            .SetEase(Ease.InOutSine);
+        }
     }
 
     public override void OnPointerClick(PointerEventData eventData)
     {
         base.OnPointerClick(eventData);
 
-        _buttonText.DOColor(_originalColor, _duration)
-        .SetEase(Ease.InOutSine);
+        if (_turnBackToOriginalColor)
+        {
+            _buttonText.DOColor(_originalColor, _duration)
+            .SetEase(Ease.InOutSine);
+        }
     }
-
 }

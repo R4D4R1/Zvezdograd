@@ -1,13 +1,14 @@
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
 public class CollectPopUp : InfoPopUp
 {
-
     [SerializeField] private TextMeshProUGUI _demandsText;
     [SerializeField] private TextMeshProUGUI _errorText;
-    [SerializeField] private TextMeshProUGUI _buttonText;
+    [SerializeField] private TextMeshProUGUI _applyButtonText;
+    [SerializeField] private TextMeshProUGUI _denyButtonText;
 
     private CollectableBuilding _buildingToUse;
 
@@ -39,7 +40,8 @@ public class CollectPopUp : InfoPopUp
             LabelText.DOFade(1, fadeDuration);
             DescriptionText.DOFade(1, fadeDuration);
             _demandsText.DOFade(1, fadeDuration);
-            _buttonText.DOFade(1, fadeDuration);
+            _applyButtonText.DOFade(1, fadeDuration);
+            _denyButtonText.DOFade(1, fadeDuration);
         });
     }
 
@@ -101,11 +103,15 @@ public class CollectPopUp : InfoPopUp
         ControllersManager.Instance.mainGameUIController.TurnOnUI();
         ControllersManager.Instance.blurController.UnBlurBackGroundSmoothly();
 
+        _errorText.enabled = false;
+
         SetTextAlpha(0);
     }
 
-    protected override void SetTextAlpha(float alpha)
+    protected override async void SetTextAlpha(float alpha)
     {
+        await UniTask.Delay(300);
+
         Color labelColor = LabelText.color;
         labelColor.a = alpha;
         LabelText.color = labelColor;
@@ -118,8 +124,12 @@ public class CollectPopUp : InfoPopUp
         demandsColor.a = alpha;
         _demandsText.color = demandsColor;
 
-        Color buttonColor = _buttonText.color;
-        buttonColor.a = alpha;
-        _buttonText.color = buttonColor;
+        Color applyButtonColor = _applyButtonText.color;
+        applyButtonColor.a = alpha;
+        _applyButtonText.color = applyButtonColor;
+
+        Color denyButtonColor = _denyButtonText.color;
+        denyButtonColor.a = alpha;
+        _denyButtonText.color = denyButtonColor;
     }
 }
