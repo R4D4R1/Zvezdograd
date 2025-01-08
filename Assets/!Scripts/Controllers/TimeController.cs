@@ -118,8 +118,6 @@ public class TimeController : MonoBehaviour
                     script.enabled = true;
                 }
                 ControllersManager.Instance.selectionController.enabled = true;
-
-                //OnNextTurnBtnPressed.Invoke();
             });
         });
     }

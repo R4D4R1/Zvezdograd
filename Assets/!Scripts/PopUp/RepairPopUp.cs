@@ -3,33 +3,18 @@ using TMPro;
 using DG.Tweening;
 using Cysharp.Threading.Tasks;
 
-public class RepairPopUp : InfoPopUp
+public class RepairPopUp : DemandPopUp
 {
-    public static RepairPopUp Instance;
-
-    [SerializeField] private TextMeshProUGUI _demandsText;
-    [SerializeField] private TextMeshProUGUI _errorText;
-    [SerializeField] private TextMeshProUGUI _applyButtonText;
-    [SerializeField] private TextMeshProUGUI _denyButtonText;
-
     private RepairableBuilding _buildingToUse;
-
-    private void Awake()
-    {
-        if (Instance == null)
-            Instance = this;
-        else
-            Destroy(Instance.gameObject);
-    }
 
     public void ShowRepairPopUp(RepairableBuilding buildingToRepair)
     {
         _buildingToUse = buildingToRepair;
 
         _demandsText.text = $" - {_buildingToUse.PeopleToRepair} отряда ( у вас {ControllersManager.Instance.peopleUnitsController.GetReadyUnits()} )\n" +
-            $" - {_buildingToUse.BuildingMaterialsToRepair} стройматериалов ( у вас {ControllersManager.Instance.resourceController.GetBuildingMaterials()} )\n" +
+            $" - {_buildingToUse.BuildingMaterialsToRepair} стройматериалов ( у вас {ControllersManager.Instance.resourceController.GetReadyMaterials()} )\n" +
             $" - Займет {_buildingToUse.TurnsToRepair} ходов\n" +
-            $" - Подразделения будут отдыхать {_buildingToUse.TurnsToRest} ходов";
+            $" - Подразделения будут отдыхать {_buildingToUse.TurnsToRestFromRepair} ходов";
 
         _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
@@ -39,19 +24,6 @@ public class RepairPopUp : InfoPopUp
             _applyButtonText.DOFade(1, fadeDuration);
             _denyButtonText.DOFade(1, fadeDuration);
         });
-    }
-
-    public override void HidePopUp()
-    {
-        _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration);
-
-        ControllersManager.Instance.mainGameUIController.EnableEscapeMenuToggle();
-        ControllersManager.Instance.mainGameUIController.TurnOnUI();
-        ControllersManager.Instance.blurController.UnBlurBackGroundSmoothly();
-
-        _errorText.enabled = false;
-
-        SetTextAlpha(0);
     }
 
     public void RepairBuilding()
@@ -84,34 +56,9 @@ public class RepairPopUp : InfoPopUp
 
     public bool EnoughMaterialsToRepair()
     {
-        if (ControllersManager.Instance.resourceController.GetBuildingMaterials() >= _buildingToUse.BuildingMaterialsToRepair)
+        if (ControllersManager.Instance.resourceController.GetReadyMaterials() >= _buildingToUse.BuildingMaterialsToRepair)
             return true;
         else
             return false;
-    }
-
-    protected override async void SetTextAlpha(float alpha)
-    {
-        await UniTask.Delay(300);
-
-        Color labelColor = LabelText.color;
-        labelColor.a = alpha;
-        LabelText.color = labelColor;
-
-        Color descriptionColor = DescriptionText.color;
-        descriptionColor.a = alpha;
-        DescriptionText.color = descriptionColor;
-
-        Color demandsColor = _demandsText.color;
-        demandsColor.a = alpha;
-        _demandsText.color = demandsColor;
-
-        Color applyButtonColor = _applyButtonText.color;
-        applyButtonColor.a = alpha;
-        _applyButtonText.color = applyButtonColor;
-
-        Color denyButtonColor = _denyButtonText.color;
-        denyButtonColor.a = alpha;
-        _denyButtonText.color = denyButtonColor;
     }
 }

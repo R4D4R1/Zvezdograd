@@ -42,25 +42,24 @@ public class RepairableBuilding : SelectableBuilding
     [field: SerializeField] public int BuildingMaterialsToRepair { get; private set; }
     [field: SerializeField] public int PeopleToRepair { get; private set; }
     [field: SerializeField] public int TurnsToRepair { get; private set; }
-    [field: SerializeField] public int TurnsToRest { get; private set; }
+    [field: SerializeField] public int TurnsToRestFromRepair { get; private set; }
     
-    [SerializeField] private State state;
-    [SerializeField] private BuildingType buildingType;
-    [SerializeField] private Material originalMaterial;
-    [SerializeField] private Material greyMaterial;
+    [SerializeField] protected State state;
+    [SerializeField] protected BuildingType buildingType;
+    [SerializeField] protected Material originalMaterial;
+    [SerializeField] protected Material greyMaterial;
 
     public event Action OnStateChanged;
 
-    private int _turnsToWork = 0;
+    protected int _turnsToWork = 0;
 
-    private void Start()
-    {
-        _turnsToWork = TurnsToRepair;
-    }
 
     public void InitBuilding()
     {
         FindBuildingModels();
+        ControllersManager.Instance.timeController.OnNextTurnBtnPressed += TryTurnOnBuilding;
+        _turnsToWork = TurnsToRepair;
+
         UpdateBuildingModel();
     }
 
@@ -93,8 +92,8 @@ public class RepairableBuilding : SelectableBuilding
         {
             CurrentState = State.Intact;
 
-            ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToRepair, TurnsToRepair, TurnsToRest);
-            ControllersManager.Instance.resourceController.AddOrRemoveBuildingMaterials(-BuildingMaterialsToRepair);
+            ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToRepair, TurnsToRepair, TurnsToRestFromRepair);
+            ControllersManager.Instance.resourceController.AddOrRemoveReadyMaterials(-BuildingMaterialsToRepair);
 
             _turnsToWork = TurnsToRepair;
 

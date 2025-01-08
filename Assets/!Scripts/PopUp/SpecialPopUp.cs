@@ -8,21 +8,35 @@ public class SpecialPopUp : InfoPopUp
 
     public enum PopUpFuncs
     {
-        Repair,
-        OpenSpecialMenu,
-        Collect
+        OpenRepairMenu,
+        OpenFactoryMenu,
+        OpenCollectMenu
     }
 
     [HideInInspector]
     public RepairableBuilding RepairableBuilding;
     [HideInInspector]
     public CollectableBuilding CollectableBuilding;
+    [HideInInspector]
+    public FactoryBuilding FactoryBuilding;
 
     public PopUpFuncs CurrentFunc;
 
     private CollectPopUp _collectPopUp;
     private RepairPopUp _repairPopUp;
-    
+    private FactoryPopUp _factoryPopUp;
+
+    private void Start()
+    {
+        Init();
+    }
+
+    private void Init()
+    {
+        _collectPopUp = ControllersManager.Instance.selectionController.GetCollectPopUp();
+        _repairPopUp = ControllersManager.Instance.selectionController.GetRepairPopUp();
+        _factoryPopUp = ControllersManager.Instance.selectionController.GetFactoryPopUp();
+    }
 
     private void OnEnable()
     {
@@ -30,41 +44,18 @@ public class SpecialPopUp : InfoPopUp
         SetTextAlpha(0);
     }
 
-    public void OpenSpecialMenu()
-    {
-        if (RepairableBuilding.Type == RepairableBuilding.BuildingType.Hospital)
-        {
-
-        }
-
-        if (RepairableBuilding.Type == RepairableBuilding.BuildingType.CityHall)
-        {
-
-        }
-
-        if (RepairableBuilding.Type == RepairableBuilding.BuildingType.Factory)
-        {
-
-        }
-
-        if (RepairableBuilding.Type == RepairableBuilding.BuildingType.FoodTrucks)
-        {
-
-        }
-    }
-
     public void UseButton()
     {
         switch (CurrentFunc)
         {
-            case PopUpFuncs.Collect:
+            case PopUpFuncs.OpenCollectMenu:
                 _collectPopUp.ShowCollectPopUp(CollectableBuilding);
                 break;
-            case PopUpFuncs.Repair:
+            case PopUpFuncs.OpenRepairMenu:
                 _repairPopUp.ShowRepairPopUp(RepairableBuilding);
                 break;
-            case PopUpFuncs.OpenSpecialMenu:
-                OpenSpecialMenu();
+            case PopUpFuncs.OpenFactoryMenu:
+                _factoryPopUp.ShowFactoryPopUp(FactoryBuilding);
                 break;
             default:
                 break;
@@ -75,21 +66,6 @@ public class SpecialPopUp : InfoPopUp
         ControllersManager.Instance.mainGameUIController.TurnOffUI();
 
         HidePopUp();
-    }
-
-    public void InitializeRepair(RepairPopUp repairPopUp)
-    {
-        _repairPopUp = repairPopUp;
-    }
-
-    public void InitializeCollect(CollectPopUp collectPopUp)
-    {
-        _collectPopUp = collectPopUp;
-    }
-
-    public void InitializeSpecial()
-    {
-
     }
 
     public void ShowPopUp(string Label, string Description, string Button)
@@ -113,16 +89,15 @@ public class SpecialPopUp : InfoPopUp
 
     public void SetToRepair()
     {
-        CurrentFunc = PopUpFuncs.Repair;
+        CurrentFunc = PopUpFuncs.OpenRepairMenu;
+    }
+    public void SetToCollect()
+    {
+        CurrentFunc = PopUpFuncs.OpenCollectMenu;
     }
 
     public void SetToOpenSpecialMenu()
     {
-        CurrentFunc = PopUpFuncs.OpenSpecialMenu;
-    }
-
-    public void SetToCollect()
-    {
-        CurrentFunc = PopUpFuncs.Collect;
+        CurrentFunc = PopUpFuncs.OpenFactoryMenu;
     }
 }

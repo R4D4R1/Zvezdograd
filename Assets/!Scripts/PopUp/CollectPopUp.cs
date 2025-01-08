@@ -3,15 +3,9 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
-public class CollectPopUp : InfoPopUp
+public class CollectPopUp : DemandPopUp
 {
-    [SerializeField] private TextMeshProUGUI _demandsText;
-    [SerializeField] private TextMeshProUGUI _errorText;
-    [SerializeField] private TextMeshProUGUI _applyButtonText;
-    [SerializeField] private TextMeshProUGUI _denyButtonText;
-
     private CollectableBuilding _buildingToUse;
-
 
     public void ShowCollectPopUp(CollectableBuilding collectableBuilding)
     {
@@ -41,7 +35,7 @@ public class CollectPopUp : InfoPopUp
     public void CollectBuilding()
     {
 
-        if (EnoughPeopleToCollect() && EnoughRawMaterialsToStore() && RawMaterialsLeft())
+        if (EnoughPeopleToCollect() && EnoughRawMaterialsToStore() && EnoughRawMaterialsInBuilding())
         {
             HidePopUp();
             _buildingToUse.CollectBuilding();
@@ -79,50 +73,11 @@ public class CollectPopUp : InfoPopUp
             return false;
     }
 
-    public bool RawMaterialsLeft()
+    public bool EnoughRawMaterialsInBuilding()
     {
         if (_buildingToUse.RawMaterialsLeft > 0)
             return true;
         else
             return false;
-    }
-
-
-    public override void HidePopUp()
-    {
-        _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration);
-
-        ControllersManager.Instance.mainGameUIController.EnableEscapeMenuToggle();
-        ControllersManager.Instance.mainGameUIController.TurnOnUI();
-        ControllersManager.Instance.blurController.UnBlurBackGroundSmoothly();
-
-        _errorText.enabled = false;
-
-        SetTextAlpha(0);
-    }
-
-    protected override async void SetTextAlpha(float alpha)
-    {
-        await UniTask.Delay(300);
-
-        Color labelColor = LabelText.color;
-        labelColor.a = alpha;
-        LabelText.color = labelColor;
-
-        Color descriptionColor = DescriptionText.color;
-        descriptionColor.a = alpha;
-        DescriptionText.color = descriptionColor;
-
-        Color demandsColor = _demandsText.color;
-        demandsColor.a = alpha;
-        _demandsText.color = demandsColor;
-
-        Color applyButtonColor = _applyButtonText.color;
-        applyButtonColor.a = alpha;
-        _applyButtonText.color = applyButtonColor;
-
-        Color denyButtonColor = _denyButtonText.color;
-        denyButtonColor.a = alpha;
-        _denyButtonText.color = denyButtonColor;
     }
 }

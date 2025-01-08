@@ -29,15 +29,14 @@ public class CollectableBuilding : SelectableBuilding
 
     private void TryTurnOnBuilding()
     {
-        _turnsToWork--;
-        if (_turnsToWork == 0)
+        if (!BuildingIsActive)
         {
-            BuildingIsActive = true;
-        }
-
-        if (BuildingIsActive)
-        {
-            GetComponent<MeshRenderer>().material = originalMaterial;
+            _turnsToWork--;
+            if (_turnsToWork == 0)
+            {
+                BuildingIsActive = true;
+                GetComponent<MeshRenderer>().material = originalMaterial;
+            }
         }
     }
 

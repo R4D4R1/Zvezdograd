@@ -15,12 +15,12 @@ public class ResourceController : MonoBehaviour
     [SerializeField] private int rawMaterials = 0;
 
     [Range(0f, 10f)]
-    [SerializeField] private int buildingMaterials = 0;
+    [SerializeField] private int readyMaterials = 0;
 
     private int _maxProvision;
     private int _maxMedicine;
     private int _maxRawMaterials;
-    private int _maxBuildingMaterials;
+    private int _maxReadyMaterials;
     private int _maxStability;
 
     // Приватная переменная для стабильности
@@ -49,11 +49,11 @@ public class ResourceController : MonoBehaviour
         // Инициализация слайдеров и привязка значений
         InitializeSliders();
 
-        _maxProvision = provision;
-        _maxMedicine = medicine;
-        _maxBuildingMaterials = buildingMaterials;
+        _maxProvision = 10;
+        _maxMedicine = 10;
+        _maxReadyMaterials = 10;
         _maxRawMaterials = 10;
-        _maxStability = stability;
+        _maxStability = 100;
 
         ControllersManager.Instance.timeController.OnNextTurnBtnPressed += NextTurnBtnPressed;
     }
@@ -96,7 +96,7 @@ public class ResourceController : MonoBehaviour
 
         buildingMaterialsSlider.maxValue = 10;
         buildingMaterialsSlider.minValue = 0;
-        buildingMaterialsSlider.value = buildingMaterials;
+        buildingMaterialsSlider.value = readyMaterials;
         buildingMaterialsSlider.interactable = false;
 
         // Слайдер для стабильности
@@ -118,9 +118,9 @@ public class ResourceController : MonoBehaviour
     {
         return rawMaterials;
     }
-    public int GetBuildingMaterials()
+    public int GetReadyMaterials()
     {
-        return buildingMaterials;
+        return readyMaterials;
     }
     public int GetStability()
     {
@@ -139,9 +139,9 @@ public class ResourceController : MonoBehaviour
     {
         return _maxRawMaterials;
     }
-    public int GetMaxBuildingMaterials()
+    public int GetMaxReadyMaterials()
     {
-        return _maxBuildingMaterials;
+        return _maxReadyMaterials;
     }
     public int GetMaxStability()
     {
@@ -168,10 +168,10 @@ public class ResourceController : MonoBehaviour
         UpdateRawMaterialsSlider();
     }
 
-    public void AddOrRemoveBuildingMaterials(int value)
+    public void AddOrRemoveReadyMaterials(int value)
     {
-        buildingMaterials = Mathf.Clamp(buildingMaterials + value, 0, 10);
-        UpdateBuildingMaterialsSlider();
+        readyMaterials = Mathf.Clamp(readyMaterials + value, 0, 10);
+        UpdateReadyMaterialsSlider();
     }
 
     public void AddOrRemoveStability(int value)
@@ -197,9 +197,9 @@ public class ResourceController : MonoBehaviour
         rawMaterialsSlider.value = rawMaterials;
     }
 
-    private void UpdateBuildingMaterialsSlider()
+    private void UpdateReadyMaterialsSlider()
     {
-        buildingMaterialsSlider.value = buildingMaterials;
+        buildingMaterialsSlider.value = readyMaterials;
     }
 
     private void UpdateStabilitySlider()

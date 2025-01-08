@@ -10,10 +10,27 @@ public class SelectionController : MonoBehaviour
     [SerializeField] private GameObject _popUpPrefab;
     [SerializeField] private GameObject _specialPopUpPrefab;
     [SerializeField] private Transform _popUpParent;
+
     [SerializeField] private RepairPopUp _repairPopUp;
     [SerializeField] private CollectPopUp _collectPopUp;
+    [SerializeField] private FactoryPopUp _factoryPopUp;
+
     private GameObject _currentPopUp;
     private Canvas _canvas;
+
+
+    public RepairPopUp GetRepairPopUp()
+    {
+        return _repairPopUp;
+    }
+    public CollectPopUp GetCollectPopUp()
+    {
+        return _collectPopUp;
+    }
+    public FactoryPopUp GetFactoryPopUp()
+    {
+        return _factoryPopUp;
+    }
 
     void Start()
     {
@@ -138,14 +155,14 @@ public class SelectionController : MonoBehaviour
                             popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText);
                         }
                         else if (repairableBuilding.CurrentState == RepairableBuilding.State.Intact
-                            && repairableBuilding.Type != RepairableBuilding.BuildingType.LivingArea)
+                           && repairableBuilding.Type == RepairableBuilding.BuildingType.Factory)
                         {
                             _currentPopUp = Instantiate(_specialPopUpPrefab, _popUpParent);
                             SpecialPopUp popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
 
                             popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "Œ“ –€“‹");
 
-                            popUpObject.RepairableBuilding = repairableBuilding;
+                            popUpObject.FactoryBuilding = repairableBuilding as FactoryBuilding;
                             popUpObject.SetToOpenSpecialMenu();
                         }
                         else if (repairableBuilding.CurrentState == RepairableBuilding.State.Damaged)
@@ -153,7 +170,6 @@ public class SelectionController : MonoBehaviour
                             _currentPopUp = Instantiate(_specialPopUpPrefab, _popUpParent);
                             SpecialPopUp popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
 
-                            popUpObject.InitializeRepair(_repairPopUp);
                             popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "–≈ÃŒÕ“");
 
                             popUpObject.RepairableBuilding = repairableBuilding;
@@ -166,7 +182,6 @@ public class SelectionController : MonoBehaviour
                         _currentPopUp = Instantiate(_specialPopUpPrefab, _popUpParent);
                         SpecialPopUp popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
 
-                        popUpObject.InitializeCollect(_collectPopUp);
                         popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "—Œ¡–¿“‹");
 
                         popUpObject.CollectableBuilding = collectableBuilding;

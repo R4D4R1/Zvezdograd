@@ -55,7 +55,6 @@ public class PeopleUnitsController : MonoBehaviour
         if (AreUnitsReady(requiredUnits))
         {
             int assignedUnits = 0;
-            UpdateReadyUnits();
 
             foreach (var unit in readyUnits)
             {
@@ -67,6 +66,7 @@ public class PeopleUnitsController : MonoBehaviour
                 }
             }
 
+            UpdateReadyUnits();
             AnimateUnitPositions();
         }
         else
@@ -80,8 +80,11 @@ public class PeopleUnitsController : MonoBehaviour
         foreach (var unit in allUnits)
         {
             unit.UpdateUnitState();
+            Debug.ClearDeveloperConsole();
+            Debug.Log(unit.GetCurrentState().ToString());
         }
 
+        UpdateReadyUnits();
         AnimateUnitPositions();
     }
 
