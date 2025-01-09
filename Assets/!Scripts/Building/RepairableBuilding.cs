@@ -53,7 +53,6 @@ public class RepairableBuilding : SelectableBuilding
 
     protected int _turnsToWork = 0;
 
-
     public void InitBuilding()
     {
         FindBuildingModels();
@@ -64,24 +63,23 @@ public class RepairableBuilding : SelectableBuilding
     }
 
 
-    private void TryTurnOnBuilding()
+    protected virtual void TryTurnOnBuilding()
     {
-        _turnsToWork--;
-        if (_turnsToWork == 0)
+        if (!BuildingIsActive)
         {
-            BuildingIsActive = true;
-        }
-
-        if (BuildingIsActive)
-        {
-            var meshRenderer = transform.GetChild(0).GetComponent<MeshRenderer>();
-            if (meshRenderer != null)
+            _turnsToWork--;
+            if (_turnsToWork == 0)
             {
-                meshRenderer.material = originalMaterial;
-            }
-            else
-            {
-                Debug.LogWarning("MeshRenderer not found on the first child.");
+                BuildingIsActive = true;
+                var meshRenderer = transform.GetChild(0).GetComponent<MeshRenderer>();
+                if (meshRenderer != null)
+                {
+                    meshRenderer.material = originalMaterial;
+                }
+                else
+                {
+                    Debug.LogWarning("MeshRenderer not found on the first child.");
+                }
             }
         }
     }

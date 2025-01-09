@@ -80,8 +80,6 @@ public class PeopleUnitsController : MonoBehaviour
         foreach (var unit in allUnits)
         {
             unit.UpdateUnitState();
-            Debug.ClearDeveloperConsole();
-            Debug.Log(unit.GetCurrentState().ToString());
         }
 
         UpdateReadyUnits();

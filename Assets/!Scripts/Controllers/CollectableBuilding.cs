@@ -34,6 +34,9 @@ public class CollectableBuilding : SelectableBuilding
             _turnsToWork--;
             if (_turnsToWork == 0)
             {
+                RawMaterialsLeft -= RawMaterialsGet;
+                ControllersManager.Instance.resourceController.AddOrRemoveRawMaterials(RawMaterialsGet);
+
                 BuildingIsActive = true;
                 GetComponent<MeshRenderer>().material = originalMaterial;
             }
@@ -43,8 +46,6 @@ public class CollectableBuilding : SelectableBuilding
     public void CollectBuilding()
     {
         ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToCollect, TurnsToCollect, TurnsToRest);
-        RawMaterialsLeft -= RawMaterialsGet;
-        ControllersManager.Instance.resourceController.AddOrRemoveRawMaterials(RawMaterialsGet);
 
         _turnsToWork = TurnsToCollect;
 

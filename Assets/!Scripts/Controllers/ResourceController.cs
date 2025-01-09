@@ -40,7 +40,7 @@ public class ResourceController : MonoBehaviour
     public Slider provisionSlider;
     public Slider medicineSlider;
     public Slider rawMaterialsSlider;
-    public Slider buildingMaterialsSlider;
+    public Slider ReadyMaterialsSlider;
     public Slider stabilitySlider;
 
 
@@ -94,10 +94,10 @@ public class ResourceController : MonoBehaviour
         rawMaterialsSlider.value = rawMaterials;
         rawMaterialsSlider.interactable = false;
 
-        buildingMaterialsSlider.maxValue = 10;
-        buildingMaterialsSlider.minValue = 0;
-        buildingMaterialsSlider.value = readyMaterials;
-        buildingMaterialsSlider.interactable = false;
+        ReadyMaterialsSlider.maxValue = 10;
+        ReadyMaterialsSlider.minValue = 0;
+        ReadyMaterialsSlider.value = readyMaterials;
+        ReadyMaterialsSlider.interactable = false;
 
         // Слайдер для стабильности
         stabilitySlider.maxValue = 100;
@@ -199,7 +199,7 @@ public class ResourceController : MonoBehaviour
 
     private void UpdateReadyMaterialsSlider()
     {
-        buildingMaterialsSlider.value = readyMaterials;
+        ReadyMaterialsSlider.value = readyMaterials;
     }
 
     private void UpdateStabilitySlider()

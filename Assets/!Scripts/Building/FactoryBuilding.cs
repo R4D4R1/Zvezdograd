@@ -13,25 +13,31 @@ public class FactoryBuilding : RepairableBuilding
     [field: SerializeField] public int RawMaterialsToCreateArmyMaterials { get; private set; }
 
 
-    private void TryTurnOnBuilding()
+    protected override void TryTurnOnBuilding()
     {
-        _turnsToWork--;
-        if (_turnsToWork == 0)
+        if (!BuildingIsActive)
         {
-            BuildingIsActive = true;
-        }
+            var meshRenderer = transform.GetChild(0).GetComponent<MeshRenderer>();
 
-        var meshRenderer = transform.GetChild(0).GetComponent<MeshRenderer>();
-        if (meshRenderer != null)
-        {
-            meshRenderer.material = originalMaterial;
+            _turnsToWork--;
+            if (_turnsToWork == 0)
+            {
+                BuildingIsActive = true;
+
+                ControllersManager.Instance.resourceController.AddOrRemoveReadyMaterials(ReadyMaterialsGet);
+
+                if (meshRenderer != null)
+                {
+                    meshRenderer.material = originalMaterial;
+                }
+            }
         }
     }
 
     public void CreateReadyMaterials()
     {
         ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToCreateReadyMaterials, TurnsToCreateReadyMaterials, TurnsToRestFromReadyMaterialsJob);
-        ControllersManager.Instance.resourceController.AddOrRemoveRawMaterials(ReadyMaterialsGet);
+        ControllersManager.Instance.resourceController.AddOrRemoveRawMaterials(-RawMaterialsToCreateReadyMaterials);
 
         _turnsToWork = TurnsToCreateReadyMaterials;
 

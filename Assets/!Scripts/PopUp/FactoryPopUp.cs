@@ -60,9 +60,9 @@ public class FactoryPopUp : InfoPopUp
         }
         else if(!EnoughRawMaterialsForReadyMaterials())
         {
-            Debug.Log(ControllersManager.Instance.resourceController.GetReadyMaterials());
-            Debug.Log(_buildingToUse.ReadyMaterialsGet);
-            Debug.Log(ControllersManager.Instance.resourceController.GetMaxReadyMaterials());
+            //Debug.Log(ControllersManager.Instance.resourceController.GetReadyMaterials());
+            //Debug.Log(_buildingToUse.ReadyMaterialsGet);
+            //Debug.Log(ControllersManager.Instance.resourceController.GetMaxReadyMaterials());
 
             _errorText.text = "Õ≈“” —€–‹ﬂ";
             _errorText.enabled = true;
