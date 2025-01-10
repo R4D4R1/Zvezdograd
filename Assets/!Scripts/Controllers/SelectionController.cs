@@ -209,18 +209,20 @@ public class SelectionController : MonoBehaviour
 
     public void Deselect()
     {
-        if (_selectedBuilding != null)
+        // Отключаем аутлайн у всех объектов с компонентом Outline
+        Outline[] allOutlines = FindObjectsOfType<Outline>();
+        foreach (Outline outline in allOutlines)
         {
-            Outline outline = _selectedBuilding.GetComponentInChildren<Outline>();
-            if (outline != null)
-            {
-                outline.enabled = false;
-            }
-            _selectedBuilding = null;
-            if (_currentPopUp != null)
-            {
-                _currentPopUp.GetComponent<InfoPopUp>().HidePopUp();
-            }
+            outline.enabled = false;
+        }
+
+        // Сбрасываем текущий выбранный объект
+        _selectedBuilding = null;
+
+        // Прячем текущий попап
+        if (_currentPopUp != null)
+        {
+            _currentPopUp.GetComponent<InfoPopUp>().HidePopUp();
         }
     }
 }

@@ -28,7 +28,7 @@ public class FactoryBuilding : RepairableBuilding
 
                 if (meshRenderer != null)
                 {
-                    meshRenderer.material = originalMaterial;
+                    RestoreOriginalMaterials();
                 }
             }
         }

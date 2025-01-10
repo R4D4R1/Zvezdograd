@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class RepairableBuilding : SelectableBuilding
@@ -34,20 +35,18 @@ public class RepairableBuilding : SelectableBuilding
 
     public BuildingType Type => buildingType; // Public getter for buildingType
 
-    private GameObject _intactBuildingModel;
-    private GameObject _damagedBuildingModel;
-
     [field: SerializeField] public string DamagedBuildingNameText { get; private set; }
     [field: SerializeField] public string DamagedDescriptionText { get; private set; }
     [field: SerializeField] public int BuildingMaterialsToRepair { get; private set; }
     [field: SerializeField] public int PeopleToRepair { get; private set; }
     [field: SerializeField] public int TurnsToRepair { get; private set; }
     [field: SerializeField] public int TurnsToRestFromRepair { get; private set; }
-    
+
     [SerializeField] protected State state;
     [SerializeField] protected BuildingType buildingType;
-    [SerializeField] protected Material originalMaterial;
     [SerializeField] protected Material greyMaterial;
+
+    private List<Material[]> _originalMaterials = new List<Material[]>(); // Список для хранения оригинальных материалов
 
     public event Action OnStateChanged;
 
@@ -62,7 +61,6 @@ public class RepairableBuilding : SelectableBuilding
         UpdateBuildingModel();
     }
 
-
     protected virtual void TryTurnOnBuilding()
     {
         if (!BuildingIsActive)
@@ -71,15 +69,7 @@ public class RepairableBuilding : SelectableBuilding
             if (_turnsToWork == 0)
             {
                 BuildingIsActive = true;
-                var meshRenderer = transform.GetChild(0).GetComponent<MeshRenderer>();
-                if (meshRenderer != null)
-                {
-                    meshRenderer.material = originalMaterial;
-                }
-                else
-                {
-                    Debug.LogWarning("MeshRenderer not found on the first child.");
-                }
+                RestoreOriginalMaterials();
             }
         }
     }
@@ -94,18 +84,9 @@ public class RepairableBuilding : SelectableBuilding
             ControllersManager.Instance.resourceController.AddOrRemoveReadyMaterials(-BuildingMaterialsToRepair);
 
             _turnsToWork = TurnsToRepair;
-
             BuildingIsActive = false;
 
-            var meshRenderer = transform.GetChild(0).GetComponent<MeshRenderer>();
-            if (meshRenderer != null)
-            {
-                meshRenderer.material = greyMaterial;
-            }
-            else
-            {
-                Debug.LogWarning("MeshRenderer not found on the first child.");
-            }
+            ReplaceMaterialsWithGrey();
         }
     }
 
@@ -114,8 +95,44 @@ public class RepairableBuilding : SelectableBuilding
         if (state == State.Intact)
         {
             CurrentState = State.Damaged;
-            //Debug.Log(gameObject.name + " BOMBED!");
         }
+    }
+
+    private void ReplaceMaterialsWithGrey()
+    {
+        var renderers = GetComponentsInChildren<MeshRenderer>();
+        _originalMaterials.Clear(); // Очищаем список на случай повторного вызова
+
+        foreach (var renderer in renderers)
+        {
+            // Сохраняем оригинальные материалы
+            _originalMaterials.Add(renderer.materials);
+
+            // Заменяем материалы на серый
+            var greyMaterials = new Material[renderer.materials.Length];
+            for (int i = 0; i < greyMaterials.Length; i++)
+            {
+                greyMaterials[i] = greyMaterial;
+            }
+            renderer.materials = greyMaterials;
+        }
+    }
+
+    protected void RestoreOriginalMaterials()
+    {
+        var renderers = GetComponentsInChildren<MeshRenderer>();
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            if (i < _originalMaterials.Count)
+            {
+                renderers[i].materials = _originalMaterials[i];
+            }
+            else
+            {
+                //Debug.LogWarning("Mismatch between renderers and original materials list.");
+            }
+        }
+        _originalMaterials.Clear(); // Очищаем список после восстановления
     }
 
     private void FindBuildingModels()
@@ -150,5 +167,17 @@ public class RepairableBuilding : SelectableBuilding
             _intactBuildingModel.SetActive(state == State.Intact);
             _damagedBuildingModel.SetActive(state == State.Damaged);
         }
+
+        if (BuildingIsActive)
+        {
+            RestoreOriginalMaterials();
+        }
+        else
+        {
+            ReplaceMaterialsWithGrey();
+        }
     }
+
+    private GameObject _intactBuildingModel;
+    private GameObject _damagedBuildingModel;
 }
