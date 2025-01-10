@@ -129,7 +129,7 @@ public class FactoryPopUp : InfoPopUp
 
     public bool EnoughRawMaterialsForReadyMaterials()
     {
-        if (ControllersManager.Instance.resourceController.GetRawMaterials() > _buildingToUse.RawMaterialsToCreateReadyMaterials)
+        if (ControllersManager.Instance.resourceController.GetRawMaterials() >= _buildingToUse.RawMaterialsToCreateReadyMaterials)
             return true;
         else
             return false;
@@ -137,7 +137,7 @@ public class FactoryPopUp : InfoPopUp
 
     public bool EnoughRawMaterialsForArmyMaterrials()
     {
-        if (ControllersManager.Instance.resourceController.GetRawMaterials() > _buildingToUse.RawMaterialsToCreateArmyMaterials)
+        if (ControllersManager.Instance.resourceController.GetRawMaterials() >= _buildingToUse.RawMaterialsToCreateArmyMaterials)
             return true;
         else
             return false;
