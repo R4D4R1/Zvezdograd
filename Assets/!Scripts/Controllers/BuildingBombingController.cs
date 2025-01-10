@@ -5,6 +5,7 @@ public class BuildingBombingController : MonoBehaviour
 {
     public List<RepairableBuilding> RegularBuildings { get; private set; } = new();
     public List<RepairableBuilding> SpecialBuildings { get; private set; } = new();
+    [SerializeField] private int _specialBuildingBombChance;
 
     private void Start()
     {
@@ -36,7 +37,7 @@ public class BuildingBombingController : MonoBehaviour
         RepairableBuilding buildingToReturn = null;
         while(buildingToReturn == null)
         {
-            if (Random.Range(0, 100) <= 5)
+            if (Random.Range(0, 100) <= _specialBuildingBombChance)
             {
                 int randomBuildingIndex = Random.Range(0, SpecialBuildings.Count);
                 if (SpecialBuildings[randomBuildingIndex].CurrentState == RepairableBuilding.State.Intact)
