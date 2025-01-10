@@ -98,7 +98,7 @@ public class RepairableBuilding : SelectableBuilding
         }
     }
 
-    private void ReplaceMaterialsWithGrey()
+    protected void ReplaceMaterialsWithGrey()
     {
         var renderers = GetComponentsInChildren<MeshRenderer>();
         _originalMaterials.Clear(); // Очищаем список на случай повторного вызова
@@ -121,10 +121,13 @@ public class RepairableBuilding : SelectableBuilding
     protected void RestoreOriginalMaterials()
     {
         var renderers = GetComponentsInChildren<MeshRenderer>();
+
         for (int i = 0; i < renderers.Length; i++)
         {
+
             if (i < _originalMaterials.Count)
             {
+                Debug.Log("Return material");
                 renderers[i].materials = _originalMaterials[i];
             }
             else
@@ -168,14 +171,14 @@ public class RepairableBuilding : SelectableBuilding
             _damagedBuildingModel.SetActive(state == State.Damaged);
         }
 
-        if (BuildingIsActive)
-        {
-            RestoreOriginalMaterials();
-        }
-        else
-        {
-            ReplaceMaterialsWithGrey();
-        }
+        //if (BuildingIsActive)
+        //{
+        //    RestoreOriginalMaterials();
+        //}
+        //else
+        //{
+        //    ReplaceMaterialsWithGrey();
+        //}
     }
 
     private GameObject _intactBuildingModel;

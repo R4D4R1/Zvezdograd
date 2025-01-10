@@ -17,7 +17,7 @@ public class FactoryBuilding : RepairableBuilding
     {
         if (!BuildingIsActive)
         {
-            var meshRenderer = transform.GetChild(0).GetComponent<MeshRenderer>();
+            //var meshRenderer = transform.GetChild(0).GetComponent<MeshRenderer>();
 
             _turnsToWork--;
             if (_turnsToWork == 0)
@@ -26,10 +26,14 @@ public class FactoryBuilding : RepairableBuilding
 
                 ControllersManager.Instance.resourceController.AddOrRemoveReadyMaterials(ReadyMaterialsGet);
 
-                if (meshRenderer != null)
-                {
-                    RestoreOriginalMaterials();
-                }
+                Debug.Log("Test1");
+                RestoreOriginalMaterials();
+
+
+                //if (meshRenderer != null)
+                //{
+                //    RestoreOriginalMaterials();
+                //}
             }
         }
     }
@@ -43,11 +47,14 @@ public class FactoryBuilding : RepairableBuilding
 
         BuildingIsActive = false;
 
-        var meshRenderer = transform.GetChild(0).GetComponent<MeshRenderer>();
-        if (meshRenderer != null)
-        {
-            meshRenderer.material = greyMaterial;
-        }
+        ReplaceMaterialsWithGrey();
+
+
+        //var meshRenderer = transform.GetChild(0).GetComponent<MeshRenderer>();
+        //if (meshRenderer != null)
+        //{
+        //    meshRenderer.material = greyMaterial;
+        //}
     }
 
     public void CreateArmyMaterials()
