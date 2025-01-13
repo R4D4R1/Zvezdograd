@@ -28,13 +28,7 @@ public class FactoryPopUp : InfoPopUp
 
         _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
-            LabelText.DOFade(1, fadeDuration);
-            DescriptionText.DOFade(1, fadeDuration);
-
-            _errorText.DOFade(1, fadeDuration);
-            _createReadyMaterialButtonText.DOFade(1, fadeDuration);
-            _creatArmyMaterialButtonText.DOFade(1, fadeDuration);
-            _denyButtonText.DOFade(1, fadeDuration);
+            SetAlpha(1);
         });
     }
 
@@ -48,7 +42,7 @@ public class FactoryPopUp : InfoPopUp
 
         _errorText.enabled = false;
 
-        SetTextAlpha(0);
+        SetAlpha(0);
     }
 
     public void CreateReadyMaterials()
@@ -60,10 +54,6 @@ public class FactoryPopUp : InfoPopUp
         }
         else if(!EnoughRawMaterialsForReadyMaterials())
         {
-            //Debug.Log(ControllersManager.Instance.resourceController.GetReadyMaterials());
-            //Debug.Log(_buildingToUse.ReadyMaterialsGet);
-            //Debug.Log(ControllersManager.Instance.resourceController.GetMaxReadyMaterials());
-
             _errorText.text = "ÍÅÒÓ ÑÛÐÜß";
             _errorText.enabled = true;
         }
@@ -116,9 +106,6 @@ public class FactoryPopUp : InfoPopUp
 
     public bool EnoughPeopleToCreateReadyMaterials()
     {
-        //Debug.Log(ControllersManager.Instance.peopleUnitsController.GetReadyUnits());
-        //Debug.Log(_buildingToUse.PeopleToCreateArmyMaterials);
-
         if (ControllersManager.Instance.peopleUnitsController.GetReadyUnits() >= _buildingToUse.PeopleToCreateArmyMaterials)
             return true;
         else
@@ -139,30 +126,5 @@ public class FactoryPopUp : InfoPopUp
             return true;
         else
             return false;
-    }
-
-    protected override async void SetTextAlpha(float alpha)
-    {
-        await UniTask.Delay(300);
-
-        Color labelColor = LabelText.color;
-        labelColor.a = alpha;
-        LabelText.color = labelColor;
-
-        Color descriptionColor = DescriptionText.color;
-        descriptionColor.a = alpha;
-        DescriptionText.color = descriptionColor;
-
-        Color demandsColor = _createReadyMaterialButtonText.color;
-        demandsColor.a = alpha;
-        _createReadyMaterialButtonText.color = demandsColor;
-
-        Color applyButtonColor = _creatArmyMaterialButtonText.color;
-        applyButtonColor.a = alpha;
-        _creatArmyMaterialButtonText.color = applyButtonColor;
-
-        Color denyButtonColor = _denyButtonText.color;
-        denyButtonColor.a = alpha;
-        _denyButtonText.color = denyButtonColor;
     }
 }

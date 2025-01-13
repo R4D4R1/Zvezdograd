@@ -20,31 +20,6 @@ public class DemandPopUp : InfoPopUp
 
         _errorText.enabled = false;
 
-        SetTextAlpha(0);
-    }
-
-    protected override async void SetTextAlpha(float alpha)
-    {
-        await UniTask.Delay(300);
-
-        Color labelColor = LabelText.color;
-        labelColor.a = alpha;
-        LabelText.color = labelColor;
-
-        Color descriptionColor = DescriptionText.color;
-        descriptionColor.a = alpha;
-        DescriptionText.color = descriptionColor;
-
-        Color demandsColor = _demandsText.color;
-        demandsColor.a = alpha;
-        _demandsText.color = demandsColor;
-
-        Color applyButtonColor = _applyButtonText.color;
-        applyButtonColor.a = alpha;
-        _applyButtonText.color = applyButtonColor;
-
-        Color denyButtonColor = _denyButtonText.color;
-        denyButtonColor.a = alpha;
-        _denyButtonText.color = denyButtonColor;
+        SetAlpha(0);
     }
 }

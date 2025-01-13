@@ -25,6 +25,7 @@ public class TimeController : MonoBehaviour
     [SerializeField] private MonoBehaviour[] _btnScripts;
 
     public event Action OnNextTurnBtnPressed;
+    public event Action OnNextDayEvent;
 
     public enum PeriodOfDay
     {
@@ -71,6 +72,7 @@ public class TimeController : MonoBehaviour
                 {
                     ControllersManager.Instance.buildingBombingController.BombRegularBuilding();
                     _daysWithoutBombing = 0;
+                    OnNextDayEvent.Invoke();
                 }
 
                 break;
@@ -121,4 +123,6 @@ public class TimeController : MonoBehaviour
             });
         });
     }
+
+
 }

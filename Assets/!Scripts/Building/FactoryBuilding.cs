@@ -59,6 +59,7 @@ public class FactoryBuilding : RepairableBuilding
 
     public void CreateArmyMaterials()
     {
+        // Добавить логику
         Debug.Log("Army created");
     }
 }

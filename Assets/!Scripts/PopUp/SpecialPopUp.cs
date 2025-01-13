@@ -34,8 +34,8 @@ public class SpecialPopUp : InfoPopUp
     private CollectPopUp _collectPopUp;
     private RepairPopUp _repairPopUp;
     private FactoryPopUp _factoryPopUp;
-    private CityHallBuilding _cityHallPopUp;
-    private FoodTrucksBuilding _foodTrucksPopUp;
+    private CityHallPopUp _cityHallPopUp;
+    private FoodTruckPopUp _foodTrucksPopUp;
     private HospitalPopUp _hospitalPopUp;
 
     private void Start()
@@ -56,7 +56,7 @@ public class SpecialPopUp : InfoPopUp
     private void OnEnable()
     {
         _bgImage.transform.localScale = Vector3.zero;
-        SetTextAlpha(0);
+        SetAlpha(0);
     }
 
     public void UseButton()
@@ -72,9 +72,9 @@ public class SpecialPopUp : InfoPopUp
             case PopUpFuncs.OpenFactoryMenu:
                 _factoryPopUp.ShowFactoryPopUp(FactoryBuilding);
                 break;
-            //case PopUpFuncs.OpenCityHallMenu:
-            //    _cityHallPopUp.ShowFactoryPopUp(FactoryBuilding);
-            //    break;
+            case PopUpFuncs.OpenCityHallMenu:
+                _cityHallPopUp.ShowCityHallPopUp(CityHallBuilding);
+                break;
             //case PopUpFuncs.OpenFoodTrucksMenu:
             //    _foodTrucksPopUp.ShowFactoryPopUp(FactoryBuilding);
             //    break;
@@ -104,24 +104,7 @@ public class SpecialPopUp : InfoPopUp
             DescriptionText.text = Description;
             ButtonText.text = Button;
 
-            LabelText.DOFade(1, fadeDuration);
-            DescriptionText.DOFade(1, fadeDuration);
-            ButtonText.DOFade(1, fadeDuration);
+            SetAlpha(1);
         });
-    }
-
-    public void SetToRepair()
-    {
-        CurrentFunc = PopUpFuncs.OpenRepairMenu;
-    }
-
-    public void SetToCollect()
-    {
-        CurrentFunc = PopUpFuncs.OpenCollectMenu;
-    }
-
-    public void SetToOpenSpecialMenu()
-    {
-        CurrentFunc = PopUpFuncs.OpenFactoryMenu;
     }
 }

@@ -5,6 +5,7 @@ public class BuildingBombingController : MonoBehaviour
 {
     public List<RepairableBuilding> RegularBuildings { get; private set; } = new();
     public List<RepairableBuilding> SpecialBuildings { get; private set; } = new();
+    [Range(0f, 100f)]
     [SerializeField] private int _specialBuildingBombChance;
 
     private void Start()

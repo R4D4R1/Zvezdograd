@@ -21,19 +21,19 @@ public class RepairableBuilding : SelectableBuilding
 
     public State CurrentState
     {
-        get => state;
+        get => _state;
         set
         {
-            if (state != value)
+            if (_state != value)
             {
-                state = value;
+                _state = value;
                 UpdateBuildingModel();
                 OnStateChanged?.Invoke();
             }
         }
     }
 
-    public BuildingType Type => buildingType; // Public getter for buildingType
+    public BuildingType Type => _buildingType; // Public getter for buildingType
 
     [field: SerializeField] public string DamagedBuildingNameText { get; private set; }
     [field: SerializeField] public string DamagedDescriptionText { get; private set; }
@@ -42,9 +42,9 @@ public class RepairableBuilding : SelectableBuilding
     [field: SerializeField] public int TurnsToRepair { get; private set; }
     [field: SerializeField] public int TurnsToRestFromRepair { get; private set; }
 
-    [SerializeField] protected State state;
-    [SerializeField] protected BuildingType buildingType;
-    [SerializeField] protected Material greyMaterial;
+    [SerializeField] protected State _state;
+    [SerializeField] protected BuildingType _buildingType;
+    [SerializeField] protected Material _greyMaterial;
 
     private List<Material[]> _originalMaterials = new List<Material[]>(); // —писок дл€ хранени€ оригинальных материалов
 
@@ -76,7 +76,7 @@ public class RepairableBuilding : SelectableBuilding
 
     public void RepairBuilding()
     {
-        if (state == State.Damaged)
+        if (_state == State.Damaged)
         {
             CurrentState = State.Intact;
 
@@ -92,7 +92,7 @@ public class RepairableBuilding : SelectableBuilding
 
     public void BombBuilding()
     {
-        if (state == State.Intact)
+        if (_state == State.Intact)
         {
             CurrentState = State.Damaged;
         }
@@ -112,7 +112,7 @@ public class RepairableBuilding : SelectableBuilding
             var greyMaterials = new Material[renderer.materials.Length];
             for (int i = 0; i < greyMaterials.Length; i++)
             {
-                greyMaterials[i] = greyMaterial;
+                greyMaterials[i] = _greyMaterial;
             }
             renderer.materials = greyMaterials;
         }
@@ -167,8 +167,8 @@ public class RepairableBuilding : SelectableBuilding
     {
         if (_intactBuildingModel != null && _damagedBuildingModel != null)
         {
-            _intactBuildingModel.SetActive(state == State.Intact);
-            _damagedBuildingModel.SetActive(state == State.Damaged);
+            _intactBuildingModel.SetActive(_state == State.Intact);
+            _damagedBuildingModel.SetActive(_state == State.Damaged);
         }
 
         //if (BuildingIsActive)

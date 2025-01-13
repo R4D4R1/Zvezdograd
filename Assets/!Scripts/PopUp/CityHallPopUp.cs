@@ -1,4 +1,3 @@
-using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using System;
 using TMPro;
@@ -6,21 +5,82 @@ using UnityEngine;
 
 public class CityHallPopUp : InfoPopUp
 {
-    private FactoryBuilding _buildingToUse;
-    [SerializeField] protected TextMeshProUGUI _errorText;
-    [SerializeField] protected TextMeshProUGUI _denyButtonText;
+    private CityHallBuilding _buildingToUse;
+    [SerializeField] private TextMeshProUGUI _errorText;
 
-    public void ShowFactoryPopUp(FactoryBuilding factoryBuilding)
+    [SerializeField] private int _daysLeftToSendArmyMaterialsOriginal = 3;
+    [SerializeField] private TextMeshProUGUI _militaryTimerText;
+
+    private int _daysLeftToSendArmyMaterials;
+
+    [Range(0f, 10f)]
+    [SerializeField] private int _relationWithGoverment;
+    [SerializeField] private TextMeshProUGUI _relationWithGovermentText;
+
+
+
+    // Здание совета
+
+    // Делать поставки вооружения с завода - написан срок
+    // За непоставк у в срок - минус 2 очка / за поставку плюс 2
+
+
+    //передать для государства медикаменты
+    //передать стройматериалы
+    //передать провизию
+
+
+    private void Start()
     {
-        _buildingToUse = factoryBuilding;
+        _daysLeftToSendArmyMaterials = _daysLeftToSendArmyMaterialsOriginal;
+        ControllersManager.Instance.timeController.OnNextDayEvent += TimeController_OnNextDayEvent;
+        UpdateMilitaryTimerText();
+        UpdateRelationWithGovermentText();
+    }
+
+    private void TimeController_OnNextDayEvent()
+    {
+        if (_daysLeftToSendArmyMaterials > 0)
+        {
+            _daysLeftToSendArmyMaterials--;
+            UpdateMilitaryTimerText();
+        }
+
+        if (_daysLeftToSendArmyMaterials == 0)
+        {
+            _daysLeftToSendArmyMaterials = _daysLeftToSendArmyMaterialsOriginal;
+            if (_relationWithGoverment > 1)
+            {
+                _relationWithGoverment -= 2;
+                UpdateRelationWithGovermentText();
+                UpdateMilitaryTimerText();
+            }
+            else
+            {
+                // GAMEOVER
+            }
+        }
+    }
+
+    private void UpdateRelationWithGovermentText()
+    {
+        _relationWithGovermentText.text = "Отношение - " + _relationWithGoverment.ToString();
+    }
+
+    private void UpdateMilitaryTimerText()
+    {
+        _militaryTimerText.text = "Крайний срок отправки воен. помощи - " + _daysLeftToSendArmyMaterials.ToString() + "дн.";
+    }
+
+
+
+    public void ShowCityHallPopUp(CityHallBuilding cityHallBuilding)
+    {
+        _buildingToUse = cityHallBuilding;
 
         _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
-            LabelText.DOFade(1, fadeDuration);
-            DescriptionText.DOFade(1, fadeDuration);
-
-            _errorText.DOFade(1, fadeDuration);
-            _denyButtonText.DOFade(1, fadeDuration);
+            SetAlpha(1);
         });
     }
 
@@ -34,23 +94,6 @@ public class CityHallPopUp : InfoPopUp
 
         _errorText.enabled = false;
 
-        SetTextAlpha(0);
-    }
-
-    protected override async void SetTextAlpha(float alpha)
-    {
-        await UniTask.Delay(300);
-
-        Color labelColor = LabelText.color;
-        labelColor.a = alpha;
-        LabelText.color = labelColor;
-
-        Color descriptionColor = DescriptionText.color;
-        descriptionColor.a = alpha;
-        DescriptionText.color = descriptionColor;
-
-        Color denyButtonColor = _denyButtonText.color;
-        denyButtonColor.a = alpha;
-        _denyButtonText.color = denyButtonColor;
+        SetAlpha(0);
     }
 }

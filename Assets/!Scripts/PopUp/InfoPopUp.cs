@@ -2,7 +2,6 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using DG.Tweening;
-using Cysharp.Threading.Tasks;
 
 public class InfoPopUp : MonoBehaviour
 {
@@ -14,19 +13,19 @@ public class InfoPopUp : MonoBehaviour
 
     public TextMeshProUGUI LabelText;
     public TextMeshProUGUI DescriptionText;
+    [SerializeField] private CanvasGroup _canvasGroup;
 
     private void OnEnable()
     {
         _bgImage.transform.localScale = Vector3.zero;
-        SetTextAlpha(0);
+        SetAlpha(0);
     }
 
     public virtual void ShowPopUp()
     {
         _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
-            LabelText.DOFade(1, fadeDuration);
-            DescriptionText.DOFade(1, fadeDuration);
+            SetAlpha(1);
         });
     }
 
@@ -40,8 +39,7 @@ public class InfoPopUp : MonoBehaviour
             LabelText.text = Label;
             DescriptionText.text = Description;
 
-            LabelText.DOFade(1, fadeDuration);
-            DescriptionText.DOFade(1, fadeDuration);
+            SetAlpha(1);
         });
     }
 
@@ -49,19 +47,13 @@ public class InfoPopUp : MonoBehaviour
     {
         _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration).OnComplete(() =>
         {
-            SetTextAlpha(0);
+            SetAlpha(0);
             Destroy(gameObject);
         });
     }
 
-    protected virtual void SetTextAlpha(float alpha)
+    protected void SetAlpha(float alpha)
     {
-        Color labelColor = LabelText.color;
-        labelColor.a = alpha;
-        LabelText.color = labelColor;
-
-        Color descriptionColor = DescriptionText.color;
-        descriptionColor.a = alpha;
-        DescriptionText.color = descriptionColor;
+        _canvasGroup.DOFade(alpha, fadeDuration);
     }
 }

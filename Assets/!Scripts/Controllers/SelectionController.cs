@@ -14,8 +14,8 @@ public class SelectionController : MonoBehaviour
     [field: SerializeField] public RepairPopUp _repairPopUp {  get; private set; }
     [field: SerializeField] public CollectPopUp _collectPopUp { get; private set; }
     [field: SerializeField] public FactoryPopUp _factoryPopUp { get; private set; }
-    [field: SerializeField] public CityHallBuilding _cityHallPopUp { get; private set; }
-    [field: SerializeField] public FoodTrucksBuilding _foodTrucksPopUp { get; private set; }
+    [field: SerializeField] public CityHallPopUp _cityHallPopUp { get; private set; }
+    [field: SerializeField] public FoodTruckPopUp _foodTrucksPopUp { get; private set; }
     [field: SerializeField] public HospitalPopUp _hospitalPopUp { get; private set; }
 
     private GameObject _currentPopUp;
@@ -150,13 +150,31 @@ public class SelectionController : MonoBehaviour
                             _currentPopUp = Instantiate(_specialPopUpPrefab, _popUpParent);
                             SpecialPopUp popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
 
+                            Debug.Log("test");
                             popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "Œ“ –€“‹");
+                            
+                            if(repairableBuilding.Type == RepairableBuilding.BuildingType.Hospital)
+                            {
+                                popUpObject.HospitalBuilding = repairableBuilding as HospitalBuilding;
+                                popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenHospitalMenu;
+                            }
+                            if (repairableBuilding.Type == RepairableBuilding.BuildingType.Factory)
+                            {
+                                popUpObject.FactoryBuilding = repairableBuilding as FactoryBuilding;
 
-                            popUpObject.FactoryBuilding = repairableBuilding as FactoryBuilding;
-                            popUpObject.CityHallBuilding = repairableBuilding as CityHallBuilding;
-                            popUpObject.FoodTrucksBuilding = repairableBuilding as FoodTrucksBuilding;
-                            popUpObject.HospitalBuilding = repairableBuilding as HospitalBuilding;
-                            popUpObject.SetToOpenSpecialMenu();
+                                popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenFactoryMenu;
+                            }
+                            if (repairableBuilding.Type == RepairableBuilding.BuildingType.CityHall)
+                            {
+                                popUpObject.CityHallBuilding = repairableBuilding as CityHallBuilding;
+                                popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenCityHallMenu;
+                            }
+                            if (repairableBuilding.Type == RepairableBuilding.BuildingType.FoodTrucks)
+                            {
+                                popUpObject.FoodTrucksBuilding = repairableBuilding as FoodTrucksBuilding;
+                                popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenFoodTrucksMenu;
+                            }
+
                         }
                         else if (repairableBuilding.CurrentState == RepairableBuilding.State.Damaged)
                         {
@@ -166,7 +184,7 @@ public class SelectionController : MonoBehaviour
                             popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "–≈ÃŒÕ“");
 
                             popUpObject.RepairableBuilding = repairableBuilding;
-                            popUpObject.SetToRepair();
+                            popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenRepairMenu;
                         }
                     }
 
@@ -178,7 +196,7 @@ public class SelectionController : MonoBehaviour
                         popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "—Œ¡–¿“‹");
 
                         popUpObject.CollectableBuilding = collectableBuilding;
-                        popUpObject.SetToCollect();
+                        popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenCollectMenu;
                     }
 
                     // —Ô‡‚Ì ÔÓÔ‡Ô‡

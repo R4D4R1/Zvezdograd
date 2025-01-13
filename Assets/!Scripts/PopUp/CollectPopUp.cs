@@ -24,11 +24,7 @@ public class CollectPopUp : DemandPopUp
 
         _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
-            LabelText.DOFade(1, fadeDuration);
-            DescriptionText.DOFade(1, fadeDuration);
-            _demandsText.DOFade(1, fadeDuration);
-            _applyButtonText.DOFade(1, fadeDuration);
-            _denyButtonText.DOFade(1, fadeDuration);
+            SetAlpha(1);
         });
     }
 

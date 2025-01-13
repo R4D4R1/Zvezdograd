@@ -20,9 +20,7 @@ public class EventPopUp : InfoPopUp
     {
         _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
-            LabelText.DOFade(1, fadeDuration);
-            DescriptionText.DOFade(1, fadeDuration);
-            ButtonText.DOFade(1, fadeDuration);
+            SetAlpha(1f);
         });
     }
 
@@ -42,9 +40,7 @@ public class EventPopUp : InfoPopUp
             DescriptionText.text = Description;
             ButtonText.text = Button;
 
-            LabelText.DOFade(1, fadeDuration);
-            DescriptionText.DOFade(1, fadeDuration);
-            ButtonText.DOFade(1, fadeDuration);
+            SetAlpha(1);
         });
     }
 
@@ -56,6 +52,6 @@ public class EventPopUp : InfoPopUp
         ControllersManager.Instance.mainGameUIController.TurnOnUI();
         ControllersManager.Instance.blurController.UnBlurBackGroundSmoothly();
 
-        SetTextAlpha(0);
+        SetAlpha(0);
     }
 }
