@@ -11,26 +11,16 @@ public class SelectionController : MonoBehaviour
     [SerializeField] private GameObject _specialPopUpPrefab;
     [SerializeField] private Transform _popUpParent;
 
-    [SerializeField] private RepairPopUp _repairPopUp;
-    [SerializeField] private CollectPopUp _collectPopUp;
-    [SerializeField] private FactoryPopUp _factoryPopUp;
+    [field: SerializeField] public RepairPopUp _repairPopUp {  get; private set; }
+    [field: SerializeField] public CollectPopUp _collectPopUp { get; private set; }
+    [field: SerializeField] public FactoryPopUp _factoryPopUp { get; private set; }
+    [field: SerializeField] public CityHallBuilding _cityHallPopUp { get; private set; }
+    [field: SerializeField] public FoodTrucksBuilding _foodTrucksPopUp { get; private set; }
+    [field: SerializeField] public HospitalPopUp _hospitalPopUp { get; private set; }
 
     private GameObject _currentPopUp;
     private Canvas _canvas;
 
-
-    public RepairPopUp GetRepairPopUp()
-    {
-        return _repairPopUp;
-    }
-    public CollectPopUp GetCollectPopUp()
-    {
-        return _collectPopUp;
-    }
-    public FactoryPopUp GetFactoryPopUp()
-    {
-        return _factoryPopUp;
-    }
 
     void Start()
     {
@@ -155,7 +145,7 @@ public class SelectionController : MonoBehaviour
                             popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText);
                         }
                         else if (repairableBuilding.CurrentState == RepairableBuilding.State.Intact
-                           && repairableBuilding.Type == RepairableBuilding.BuildingType.Factory)
+                           && repairableBuilding.Type != RepairableBuilding.BuildingType.LivingArea)
                         {
                             _currentPopUp = Instantiate(_specialPopUpPrefab, _popUpParent);
                             SpecialPopUp popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
@@ -163,6 +153,9 @@ public class SelectionController : MonoBehaviour
                             popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "Œ“ –€“‹");
 
                             popUpObject.FactoryBuilding = repairableBuilding as FactoryBuilding;
+                            popUpObject.CityHallBuilding = repairableBuilding as CityHallBuilding;
+                            popUpObject.FoodTrucksBuilding = repairableBuilding as FoodTrucksBuilding;
+                            popUpObject.HospitalBuilding = repairableBuilding as HospitalBuilding;
                             popUpObject.SetToOpenSpecialMenu();
                         }
                         else if (repairableBuilding.CurrentState == RepairableBuilding.State.Damaged)

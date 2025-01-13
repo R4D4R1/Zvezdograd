@@ -9,8 +9,11 @@ public class SpecialPopUp : InfoPopUp
     public enum PopUpFuncs
     {
         OpenRepairMenu,
+        OpenCollectMenu,
         OpenFactoryMenu,
-        OpenCollectMenu
+        OpenCityHallMenu,
+        OpenFoodTrucksMenu,
+        OpenHospitalMenu,
     }
 
     [HideInInspector]
@@ -19,12 +22,21 @@ public class SpecialPopUp : InfoPopUp
     public CollectableBuilding CollectableBuilding;
     [HideInInspector]
     public FactoryBuilding FactoryBuilding;
+    [HideInInspector]
+    public CityHallBuilding CityHallBuilding;
+    [HideInInspector]
+    public FoodTrucksBuilding FoodTrucksBuilding;
+    [HideInInspector]
+    public HospitalBuilding HospitalBuilding;
 
     public PopUpFuncs CurrentFunc;
 
     private CollectPopUp _collectPopUp;
     private RepairPopUp _repairPopUp;
     private FactoryPopUp _factoryPopUp;
+    private CityHallBuilding _cityHallPopUp;
+    private FoodTrucksBuilding _foodTrucksPopUp;
+    private HospitalPopUp _hospitalPopUp;
 
     private void Start()
     {
@@ -33,9 +45,12 @@ public class SpecialPopUp : InfoPopUp
 
     private void Init()
     {
-        _collectPopUp = ControllersManager.Instance.selectionController.GetCollectPopUp();
-        _repairPopUp = ControllersManager.Instance.selectionController.GetRepairPopUp();
-        _factoryPopUp = ControllersManager.Instance.selectionController.GetFactoryPopUp();
+        _collectPopUp = ControllersManager.Instance.selectionController._collectPopUp;
+        _repairPopUp = ControllersManager.Instance.selectionController._repairPopUp;
+        _factoryPopUp = ControllersManager.Instance.selectionController._factoryPopUp;
+        _cityHallPopUp = ControllersManager.Instance.selectionController._cityHallPopUp;
+        _foodTrucksPopUp = ControllersManager.Instance.selectionController._foodTrucksPopUp;
+        _hospitalPopUp = ControllersManager.Instance.selectionController._hospitalPopUp;
     }
 
     private void OnEnable()
@@ -57,6 +72,15 @@ public class SpecialPopUp : InfoPopUp
             case PopUpFuncs.OpenFactoryMenu:
                 _factoryPopUp.ShowFactoryPopUp(FactoryBuilding);
                 break;
+            //case PopUpFuncs.OpenCityHallMenu:
+            //    _cityHallPopUp.ShowFactoryPopUp(FactoryBuilding);
+            //    break;
+            //case PopUpFuncs.OpenFoodTrucksMenu:
+            //    _foodTrucksPopUp.ShowFactoryPopUp(FactoryBuilding);
+            //    break;
+            //case PopUpFuncs.OpenHospitalMenu:
+            //    _hospitalPopUp.ShowFactoryPopUp(FactoryBuilding);
+            //    break;
             default:
                 break;
         }
@@ -86,11 +110,11 @@ public class SpecialPopUp : InfoPopUp
         });
     }
 
-
     public void SetToRepair()
     {
         CurrentFunc = PopUpFuncs.OpenRepairMenu;
     }
+
     public void SetToCollect()
     {
         CurrentFunc = PopUpFuncs.OpenCollectMenu;

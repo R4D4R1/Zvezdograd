@@ -8,9 +8,9 @@ public class InfoPopUp : MonoBehaviour
 {
 
     [SerializeField] protected Image _bgImage;
-    [SerializeField] protected float scaleDuration = 0.5f; // Duration of the scale animation when opening
-    [SerializeField] protected float fadeDuration = 0.5f;  // Duration of the fade animation when opening
-    [SerializeField] protected float scaleDownDuration = 0.2f; // Duration of the scale animation when closing
+    [SerializeField] protected float scaleDuration = 0.5f;
+    [SerializeField] protected float fadeDuration = 0.5f;
+    [SerializeField] protected float scaleDownDuration = 0.2f;
 
     public TextMeshProUGUI LabelText;
     public TextMeshProUGUI DescriptionText;

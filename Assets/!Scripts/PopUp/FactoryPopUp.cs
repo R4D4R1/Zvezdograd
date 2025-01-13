@@ -100,8 +100,6 @@ public class FactoryPopUp : InfoPopUp
 
     public bool EnoughSpaceToStoreReadyMaterials()
     {
-
-
         if (ControllersManager.Instance.resourceController.GetReadyMaterials() + _buildingToUse.ReadyMaterialsGet < ControllersManager.Instance.resourceController.GetMaxReadyMaterials())
             return true;
         else
