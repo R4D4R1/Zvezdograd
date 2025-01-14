@@ -150,7 +150,6 @@ public class SelectionController : MonoBehaviour
                             _currentPopUp = Instantiate(_specialPopUpPrefab, _popUpParent);
                             SpecialPopUp popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
 
-                            Debug.Log("test");
                             popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "ќ“ –џ“№");
                             
                             if(repairableBuilding.Type == RepairableBuilding.BuildingType.Hospital)
@@ -221,7 +220,7 @@ public class SelectionController : MonoBehaviour
     public void Deselect()
     {
         // ќтключаем аутлайн у всех объектов с компонентом Outline
-        Outline[] allOutlines = FindObjectsOfType<Outline>();
+        Outline[] allOutlines = Object.FindObjectsByType<Outline>(FindObjectsSortMode.None);
         foreach (Outline outline in allOutlines)
         {
             outline.enabled = false;
@@ -230,10 +229,17 @@ public class SelectionController : MonoBehaviour
         // —брасываем текущий выбранный объект
         _selectedBuilding = null;
 
-        // ѕр€чем текущий попап
+        // ѕр€чем все попапы на сцене
+        InfoPopUp[] allPopUps = Object.FindObjectsByType<InfoPopUp>(FindObjectsSortMode.None);
+        foreach (InfoPopUp popUp in allPopUps)
+        {
+            popUp.HidePopUp();
+        }
+
+        // —брасываем текущий попап, если он есть
         if (_currentPopUp != null)
         {
-            _currentPopUp.GetComponent<InfoPopUp>().HidePopUp();
+            _currentPopUp = null;
         }
     }
 }

@@ -2,6 +2,8 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using DG.Tweening;
+using System.Collections;
+using Cysharp.Threading.Tasks;
 
 public class InfoPopUp : MonoBehaviour
 {
@@ -45,12 +47,14 @@ public class InfoPopUp : MonoBehaviour
 
     public virtual void HidePopUp()
     {
+        //Debug.Log(gameObject.name + "CLOSE");
+
         _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration).OnComplete(() =>
         {
-            SetAlpha(0);
             Destroy(gameObject);
         });
     }
+
 
     protected void SetAlpha(float alpha)
     {
