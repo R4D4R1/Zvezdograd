@@ -38,6 +38,8 @@ public class MainGameUIController : MonoBehaviour
 
     public void TurnOnUI()
     {
+        Debug.Log("Turn on ui");
+
         _turnOffUIParent.SetActive(true);
         _selectionController.enabled = true;
 
@@ -50,6 +52,7 @@ public class MainGameUIController : MonoBehaviour
 
     public void TurnOffUI()
     {
+        Debug.Log("Turn off ui");
         _selectionController.enabled = false;
 
         ControllersManager.Instance.blurController.BlurBackGroundSmoothly();

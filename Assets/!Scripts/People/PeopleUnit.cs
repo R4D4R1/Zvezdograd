@@ -103,11 +103,11 @@ public class PeopleUnit : MonoBehaviour
     {
         if (currentState == UnitState.Busy)
         {
-            _statusText.text = $"«¿Õﬂ“";
+            _statusText.text = $"«¿Õﬂ“" + busyTime;
         }
         else if (currentState == UnitState.Resting)
         {
-            _statusText.text = $"Œ“ƒ€’";
+            _statusText.text = $"Œ“ƒ€’" + restingTime;
         }
     }
 }

@@ -86,7 +86,6 @@ public class SpecialPopUp : InfoPopUp
         }
 
         ControllersManager.Instance.mainGameUIController.DisableEscapeMenuToggle();
-        ControllersManager.Instance.blurController.BlurBackGroundSmoothly();
         ControllersManager.Instance.mainGameUIController.TurnOffUI();
 
         HidePopUp();
@@ -94,6 +93,8 @@ public class SpecialPopUp : InfoPopUp
 
     public void ShowPopUp(string Label, string Description, string Button)
     {
+        IsActive = true;
+
         LabelText.text = "";
         DescriptionText.text = "";
         ButtonText.text = "";

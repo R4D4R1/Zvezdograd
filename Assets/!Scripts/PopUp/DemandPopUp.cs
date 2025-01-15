@@ -12,14 +12,18 @@ public class DemandPopUp : InfoPopUp
 
     public override void HidePopUp()
     {
-        _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration);
+        if (IsActive)
+        {
+            IsActive = false;
 
-        ControllersManager.Instance.mainGameUIController.EnableEscapeMenuToggle();
-        ControllersManager.Instance.mainGameUIController.TurnOnUI();
-        ControllersManager.Instance.blurController.UnBlurBackGroundSmoothly();
+            _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration);
 
-        _errorText.enabled = false;
+            _errorText.enabled = false;
 
-        SetAlpha(0);
+            ControllersManager.Instance.mainGameUIController.EnableEscapeMenuToggle();
+            ControllersManager.Instance.mainGameUIController.TurnOnUI();
+
+            SetAlpha(0);
+        }
     }
 }

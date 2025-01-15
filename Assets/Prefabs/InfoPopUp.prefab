@@ -236,8 +236,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _bgImage: {fileID: 741691652290135802}
-  scaleDuration: 0.5
-  fadeDuration: 0.5
+  scaleDuration: 0.2
+  fadeDuration: 0.2
   scaleDownDuration: 0.1
   LabelText: {fileID: 1782043389777533537}
   DescriptionText: {fileID: 8834275512949852142}

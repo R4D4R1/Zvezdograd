@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using DG.Tweening;
 using System.Collections;
 using Cysharp.Threading.Tasks;
+using System;
 
 public class InfoPopUp : MonoBehaviour
 {
@@ -17,6 +18,8 @@ public class InfoPopUp : MonoBehaviour
     public TextMeshProUGUI DescriptionText;
     [SerializeField] private CanvasGroup _canvasGroup;
 
+    public bool IsActive { get; protected set; } = false;
+
     private void OnEnable()
     {
         _bgImage.transform.localScale = Vector3.zero;
@@ -25,6 +28,8 @@ public class InfoPopUp : MonoBehaviour
 
     public virtual void ShowPopUp()
     {
+        IsActive = true;
+
         _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
             SetAlpha(1);
@@ -33,6 +38,8 @@ public class InfoPopUp : MonoBehaviour
 
     public void ShowPopUp(string Label, string Description)
     {
+        IsActive = true;
+
         LabelText.text = "";
         DescriptionText.text = "";
 
@@ -40,19 +47,21 @@ public class InfoPopUp : MonoBehaviour
         {
             LabelText.text = Label;
             DescriptionText.text = Description;
-
             SetAlpha(1);
         });
     }
 
     public virtual void HidePopUp()
     {
-        //Debug.Log(gameObject.name + "CLOSE");
-
-        _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration).OnComplete(() =>
+        if (IsActive)
         {
-            Destroy(gameObject);
-        });
+            _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration).OnComplete(async () =>
+            {
+                IsActive = false;
+                await UniTask.Delay(1000);
+                Destroy(gameObject);
+            });
+        }
     }
 
 

@@ -24,25 +24,32 @@ public class FactoryPopUp : InfoPopUp
 
     public void ShowFactoryPopUp(FactoryBuilding factoryBuilding)
     {
+
         _buildingToUse = factoryBuilding;
 
         _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
+            IsActive = true;
+
             SetAlpha(1);
         });
     }
 
     public override void HidePopUp()
     {
-        _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration);
+        if (IsActive)
+        {
+            IsActive = false;
 
-        ControllersManager.Instance.mainGameUIController.EnableEscapeMenuToggle();
-        ControllersManager.Instance.mainGameUIController.TurnOnUI();
-        ControllersManager.Instance.blurController.UnBlurBackGroundSmoothly();
+            _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration);
 
-        _errorText.enabled = false;
+            _errorText.enabled = false;
 
-        SetAlpha(0);
+            ControllersManager.Instance.mainGameUIController.EnableEscapeMenuToggle();
+            ControllersManager.Instance.mainGameUIController.TurnOnUI();
+
+            SetAlpha(0);
+        }
     }
 
     public void CreateReadyMaterials()

@@ -24,6 +24,8 @@ public class CollectPopUp : DemandPopUp
 
         _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
+            IsActive = true;
+
             SetAlpha(1);
         });
     }

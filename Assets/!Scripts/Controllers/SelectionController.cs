@@ -121,7 +121,7 @@ public class SelectionController : MonoBehaviour
                         }
                         if (_currentPopUp != null)
                         {
-                            _currentPopUp.GetComponent<InfoPopUp>().HidePopUp();
+                            Deselect();
                         }
                     }
 
@@ -235,6 +235,7 @@ public class SelectionController : MonoBehaviour
         {
             popUp.HidePopUp();
         }
+
 
         // —брасываем текущий попап, если он есть
         if (_currentPopUp != null)

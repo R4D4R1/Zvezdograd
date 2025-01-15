@@ -28,9 +28,41 @@ public class CityHallPopUp : InfoPopUp
         ControllersManager.Instance.timeController.OnNextDayEvent += TimeController_OnNextDayEvent;
     }
 
+    public void ShowCityHallPopUp(CityHallBuilding cityHallBuilding)
+    {
+        _buildingToUse = cityHallBuilding;
+
+        UpdateMilitaryTimerText();
+        UpdateRelationWithGovermentText();
+
+        _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
+        {
+            IsActive = true;
+
+            SetAlpha(1);
+        });
+    }
+
+    public override void HidePopUp()
+    {
+        if (IsActive)
+        {
+            IsActive = false;
+
+            _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration);
+
+            _errorText.enabled = false;
+
+            ControllersManager.Instance.mainGameUIController.EnableEscapeMenuToggle();
+            ControllersManager.Instance.mainGameUIController.TurnOnUI();
+
+            SetAlpha(0);
+        }
+    }
+
     private void TimeController_OnNextDayEvent()
     {
-        if(_buildingToUse.DayPassed())
+        if (_buildingToUse.DayPassed())
         {
             UpdateRelationWithGovermentText();
             UpdateMilitaryTimerText();
@@ -49,33 +81,5 @@ public class CityHallPopUp : InfoPopUp
     private void UpdateMilitaryTimerText()
     {
         _militaryTimerText.text = "Крайний срок отправки воен. помощи - " + _buildingToUse._daysLeftToSendArmyMaterials.ToString() + "дн.";
-    }
-
-
-
-    public void ShowCityHallPopUp(CityHallBuilding cityHallBuilding)
-    {
-        _buildingToUse = cityHallBuilding;
-
-        UpdateMilitaryTimerText();
-        UpdateRelationWithGovermentText();
-
-        _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
-        {
-            SetAlpha(1);
-        });
-    }
-
-    public override void HidePopUp()
-    {
-        _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration);
-
-        ControllersManager.Instance.mainGameUIController.EnableEscapeMenuToggle();
-        ControllersManager.Instance.mainGameUIController.TurnOnUI();
-        ControllersManager.Instance.blurController.UnBlurBackGroundSmoothly();
-
-        _errorText.enabled = false;
-
-        SetAlpha(0);
     }
 }

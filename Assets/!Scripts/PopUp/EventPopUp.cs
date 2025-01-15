@@ -18,6 +18,8 @@ public class EventPopUp : InfoPopUp
 
     public override void ShowPopUp()
     {
+        IsActive = true;
+
         _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
             SetAlpha(1f);
@@ -40,18 +42,24 @@ public class EventPopUp : InfoPopUp
             DescriptionText.text = Description;
             ButtonText.text = Button;
 
+            IsActive = true;
+
             SetAlpha(1);
         });
     }
 
     public override void HidePopUp()
     {
-        _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration);
+        if (IsActive)
+        {
+            IsActive = false;
 
-        ControllersManager.Instance.mainGameUIController.EnableEscapeMenuToggle();
-        ControllersManager.Instance.mainGameUIController.TurnOnUI();
-        ControllersManager.Instance.blurController.UnBlurBackGroundSmoothly();
+            _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration);
 
-        SetAlpha(0);
+            ControllersManager.Instance.mainGameUIController.EnableEscapeMenuToggle();
+            ControllersManager.Instance.mainGameUIController.TurnOnUI();
+
+            SetAlpha(0);
+        }
     }
 }
