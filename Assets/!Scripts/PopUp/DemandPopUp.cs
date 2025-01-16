@@ -14,9 +14,13 @@ public class DemandPopUp : InfoPopUp
     {
         if (IsActive)
         {
-            IsActive = false;
+            ControllersManager.Instance.mainGameUIController.Running();
 
-            _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration);
+            _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration).OnComplete(() =>
+            {
+                IsActive = false;
+                ControllersManager.Instance.mainGameUIController.InGame();
+            });
 
             _errorText.enabled = false;
 

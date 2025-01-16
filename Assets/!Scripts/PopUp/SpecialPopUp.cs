@@ -23,8 +23,6 @@ public class SpecialPopUp : InfoPopUp
     [HideInInspector]
     public FactoryBuilding FactoryBuilding;
     [HideInInspector]
-    public CityHallBuilding CityHallBuilding;
-    [HideInInspector]
     public FoodTrucksBuilding FoodTrucksBuilding;
     [HideInInspector]
     public HospitalBuilding HospitalBuilding;
@@ -73,11 +71,11 @@ public class SpecialPopUp : InfoPopUp
                 _factoryPopUp.ShowFactoryPopUp(FactoryBuilding);
                 break;
             case PopUpFuncs.OpenCityHallMenu:
-                _cityHallPopUp.ShowCityHallPopUp(CityHallBuilding);
+                _cityHallPopUp.ShowCityHallPopUp();
                 break;
-            //case PopUpFuncs.OpenFoodTrucksMenu:
-            //    _foodTrucksPopUp.ShowFactoryPopUp(FactoryBuilding);
-            //    break;
+            case PopUpFuncs.OpenFoodTrucksMenu:
+                _foodTrucksPopUp.ShowFoodTruckPopUp(FoodTrucksBuilding);
+                break;
             //case PopUpFuncs.OpenHospitalMenu:
             //    _hospitalPopUp.ShowFactoryPopUp(FactoryBuilding);
             //    break;
@@ -85,7 +83,7 @@ public class SpecialPopUp : InfoPopUp
                 break;
         }
 
-        ControllersManager.Instance.mainGameUIController.DisableEscapeMenuToggle();
+        //ControllersManager.Instance.mainGameUIController.DisableEscapeMenuToggle();
         ControllersManager.Instance.mainGameUIController.TurnOffUI();
 
         HidePopUp();
@@ -104,6 +102,8 @@ public class SpecialPopUp : InfoPopUp
             LabelText.text = Label;
             DescriptionText.text = Description;
             ButtonText.text = Button;
+
+            ControllersManager.Instance.mainGameUIController.InPopUp(this);
 
             SetAlpha(1);
         });

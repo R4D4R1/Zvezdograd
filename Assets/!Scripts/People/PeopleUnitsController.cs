@@ -88,7 +88,7 @@ public class PeopleUnitsController : MonoBehaviour
 
     private void AnimateUnitPositions()
     {
-        allUnits.Sort((x, y) => x.busyTime.CompareTo(y.busyTime));
+        allUnits.Sort((x, y) => x.BusyTime.CompareTo(y.BusyTime));
 
         for (int i = 0; i < allUnits.Count; i++)
         {

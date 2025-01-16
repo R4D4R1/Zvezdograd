@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class CityHallPopUp : InfoPopUp
 {
-    private CityHallBuilding _buildingToUse;
+    [SerializeField] private CityHallBuilding _buildingToUse;
     [SerializeField] private TextMeshProUGUI _errorText;
 
     [SerializeField] private TextMeshProUGUI _relationWithGovermentText;
@@ -28,16 +28,16 @@ public class CityHallPopUp : InfoPopUp
         ControllersManager.Instance.timeController.OnNextDayEvent += TimeController_OnNextDayEvent;
     }
 
-    public void ShowCityHallPopUp(CityHallBuilding cityHallBuilding)
+    public void ShowCityHallPopUp()
     {
-        _buildingToUse = cityHallBuilding;
-
         UpdateMilitaryTimerText();
         UpdateRelationWithGovermentText();
 
         _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
             IsActive = true;
+
+            ControllersManager.Instance.mainGameUIController.InPopUp(this);
 
             SetAlpha(1);
         });
@@ -47,9 +47,13 @@ public class CityHallPopUp : InfoPopUp
     {
         if (IsActive)
         {
-            IsActive = false;
+            ControllersManager.Instance.mainGameUIController.Running();
 
-            _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration);
+            _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration).OnComplete(() =>
+            {
+                IsActive = false;
+                ControllersManager.Instance.mainGameUIController.InGame();
+            });
 
             _errorText.enabled = false;
 

@@ -20,6 +20,8 @@ public class RepairPopUp : DemandPopUp
         {
             IsActive = true;
 
+            ControllersManager.Instance.mainGameUIController.InPopUp(this);
+
             SetAlpha(1.0f);
         });
     }

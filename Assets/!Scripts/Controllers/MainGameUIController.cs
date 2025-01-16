@@ -1,15 +1,26 @@
 using UnityEngine;
 using DG.Tweening;
+using Cysharp.Threading.Tasks;
 
 public class MainGameUIController : MonoBehaviour
 {
+    [SerializeField] private GameUIState currentState = GameUIState.InMenu;
     [SerializeField] private GameObject _settingsMenu;
     [SerializeField] private GameObject _turnOffUIParent;
-    [SerializeField] private SelectionController _selectionController;
     [SerializeField] private float fadeDuration = 0.5f; // Длительность анимации
-    private CanvasGroup _turnOffUICanvasGroup;
 
-    private bool _canToggleMenu = false; // Флаг для управления открытием меню через Escape
+    private CanvasGroup _turnOffUICanvasGroup;
+    private bool _canToggleMenu = true; // Флаг для управления открытием меню через Escape
+    private InfoPopUp _popUpToClose;
+
+    public enum GameUIState
+    {
+        InGame,
+        InMenu,
+        InPopUp,
+        IsRunning
+    }
+
 
     private void Start()
     {
@@ -19,11 +30,12 @@ public class MainGameUIController : MonoBehaviour
             _turnOffUICanvasGroup = _turnOffUIParent.AddComponent<CanvasGroup>();
         }
 
-        DisableEscapeMenuToggle();
+        //DisableEscapeMenuToggle();
     }
 
     public void TurnOnMenu()
     {
+        InMenu();
         _settingsMenu.SetActive(true);
         TurnOffUI();
         ControllersManager.Instance.mainGameController.HideCity();
@@ -32,28 +44,32 @@ public class MainGameUIController : MonoBehaviour
     public void TurnOffMenu()
     {
         _settingsMenu.SetActive(false);
-        TurnOnUI();
         ControllersManager.Instance.mainGameController.ShowCity();
+        TurnOnUI();
     }
 
-    public void TurnOnUI()
+    public async void TurnOnUI()
     {
-        Debug.Log("Turn on ui");
-
         _turnOffUIParent.SetActive(true);
-        _selectionController.enabled = true;
 
         ControllersManager.Instance.blurController.UnBlurBackGroundSmoothly();
         _turnOffUICanvasGroup.DOFade(1f, fadeDuration).OnComplete(() => {
             _turnOffUICanvasGroup.interactable = true;
             _turnOffUICanvasGroup.blocksRaycasts = true;
+            InGame();
         });
+
+        if (currentState == GameUIState.InMenu)
+        {
+            await UniTask.Delay(ControllersManager.Instance.mainGameController.GetAnimDuration() + 100);
+        }
+
+        ControllersManager.Instance.selectionController.enabled = true;
     }
 
     public void TurnOffUI()
     {
-        Debug.Log("Turn off ui");
-        _selectionController.enabled = false;
+        ControllersManager.Instance.selectionController.enabled = false;
 
         ControllersManager.Instance.blurController.BlurBackGroundSmoothly();
         ControllersManager.Instance.selectionController.Deselect();
@@ -75,21 +91,52 @@ public class MainGameUIController : MonoBehaviour
         _canToggleMenu = false;
     }
 
-    private void Update()
+    public void Running()
     {
-        // Проверяем, можно ли переключить меню с помощью Escape
-        if (_canToggleMenu && Input.GetKeyUp(KeyCode.Escape))
-        {
-            if (_settingsMenu.activeSelf)
-            {
-                TurnOffMenu();
-            }
-            else
-            {
-                TurnOnMenu();
-            }
-        }
+        currentState = GameUIState.IsRunning;
     }
+    public void InGame()
+    {
+        currentState = GameUIState.InGame;
+    }
+
+    public void InMenu()
+    {
+        currentState = GameUIState.InMenu;
+    }
+
+    public void InPopUp(InfoPopUp popUp)
+    {
+        _popUpToClose = popUp;
+        currentState = GameUIState.InPopUp;
+    }
+
+    //private void Update()
+    //{
+    //     Проверяем, можно ли переключить меню с помощью Escape
+    //    if (_canToggleMenu && Input.GetKeyUp(KeyCode.Escape))
+    //    {
+    //        if (currentState != GameUIState.IsRunning)
+    //        {
+    //            if (currentState == GameUIState.InGame)
+    //            {
+    //                TurnOnMenu();
+    //            }
+    //            else if (currentState == GameUIState.InMenu)
+    //            {
+    //                TurnOffMenu();
+    //            }
+    //            else if (currentState == GameUIState.InPopUp)
+    //            {
+    //                _popUpToClose.HidePopUp();
+    //                ControllersManager.Instance.selectionController.Deselect();
+
+    //                TurnOnUI();
+    //                ControllersManager.Instance.mainGameController.ShowCity();
+    //            }
+    //        }
+    //    }
+    //}
 
     public void LoadMainMenu()
     {

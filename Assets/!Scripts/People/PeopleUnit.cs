@@ -17,8 +17,8 @@ public class PeopleUnit : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _statusText; // Текст для состояния
     [SerializeField] private Image _image;
 
-    public int restingTime; // Время отдыха
-    public int busyTime;    // Время работы
+    public int BusyTime { get; private set; }    // Время работы
+    public int RestingTime { get; private set; } // Время отдыха
 
     private void Awake()
     {
@@ -53,8 +53,8 @@ public class PeopleUnit : MonoBehaviour
     public void SetBusyForTurns(int busyTurns, int restingTurns)
     {
         currentState = UnitState.Busy;
-        busyTime = busyTurns;
-        restingTime = restingTurns;
+        BusyTime = busyTurns;
+        RestingTime = restingTurns;
 
         UpdateStatusText();
         _statusText.gameObject.SetActive(true);
@@ -64,23 +64,23 @@ public class PeopleUnit : MonoBehaviour
     {
         if (currentState == UnitState.Busy)
         {
-            busyTime--;
+            BusyTime--;
             UpdateStatusText();
 
-            if (busyTime <= 0)
+            if (BusyTime <= 0)
             {
                 UnitResting(); // Переход в состояние "отдыха"
             }
         }
         else if (currentState == UnitState.Resting)
         {
-            restingTime--;
+            RestingTime--;
             UpdateStatusText();
 
-            if (restingTime <= 0)
+            if (RestingTime <= 0)
             {
                 currentState = UnitState.Ready;
-                restingTime = 0;
+                RestingTime = 0;
 
                 _statusText.gameObject.SetActive(false);
                 EnableUnit();
@@ -103,11 +103,11 @@ public class PeopleUnit : MonoBehaviour
     {
         if (currentState == UnitState.Busy)
         {
-            _statusText.text = $"ЗАНЯТ" + busyTime;
+            _statusText.text = $"ЗАНЯТ " + BusyTime;
         }
         else if (currentState == UnitState.Resting)
         {
-            _statusText.text = $"ОТДЫХ" + restingTime;
+            _statusText.text = $"ОТДЫХ " + RestingTime;
         }
     }
 }

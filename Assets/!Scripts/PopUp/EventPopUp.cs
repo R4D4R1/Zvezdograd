@@ -22,6 +22,8 @@ public class EventPopUp : InfoPopUp
 
         _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
+            ControllersManager.Instance.mainGameUIController.InPopUp(this);
+
             SetAlpha(1f);
         });
     }
@@ -29,7 +31,7 @@ public class EventPopUp : InfoPopUp
     public void ShowEventPopUp(string Label, string Description, string Button)
     {
         ControllersManager.Instance.mainGameUIController.TurnOffUI();
-        ControllersManager.Instance.mainGameUIController.DisableEscapeMenuToggle();
+        //ControllersManager.Instance.mainGameUIController.DisableEscapeMenuToggle();
         ControllersManager.Instance.blurController.BlurBackGroundSmoothly();
 
         LabelText.text = "";
@@ -44,6 +46,8 @@ public class EventPopUp : InfoPopUp
 
             IsActive = true;
 
+            ControllersManager.Instance.mainGameUIController.InPopUp(this);
+
             SetAlpha(1);
         });
     }
@@ -52,9 +56,14 @@ public class EventPopUp : InfoPopUp
     {
         if (IsActive)
         {
-            IsActive = false;
+            ControllersManager.Instance.mainGameUIController.Running();
 
-            _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration);
+
+            _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration).OnComplete(() =>
+            {
+                IsActive = false;
+                ControllersManager.Instance.mainGameUIController.InGame();
+            });
 
             ControllersManager.Instance.mainGameUIController.EnableEscapeMenuToggle();
             ControllersManager.Instance.mainGameUIController.TurnOnUI();

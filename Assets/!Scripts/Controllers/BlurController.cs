@@ -19,13 +19,11 @@ public class BlurController : MonoBehaviour
 
     public void BlurBackGroundSmoothly()
     {
-        Debug.Log("Blur");
         DOTween.To(() => _depthOfField.focalLength.value, x => _depthOfField.focalLength.value = x, _blurValue, _timeOfDepthAppearing);
     }
 
     public void UnBlurBackGroundSmoothly()
     {
-        Debug.Log("Un Blur");
         DOTween.To(() => _depthOfField.focalLength.value, x => _depthOfField.focalLength.value = x, 1, _timeOfDepthAppearing);
     }
 

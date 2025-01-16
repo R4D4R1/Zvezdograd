@@ -26,6 +26,8 @@ public class CollectPopUp : DemandPopUp
         {
             IsActive = true;
 
+            ControllersManager.Instance.mainGameUIController.InPopUp(this);
+
             SetAlpha(1);
         });
     }

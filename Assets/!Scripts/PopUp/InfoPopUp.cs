@@ -10,9 +10,9 @@ public class InfoPopUp : MonoBehaviour
 {
 
     [SerializeField] protected Image _bgImage;
-    [SerializeField] protected float scaleDuration = 0.5f;
-    [SerializeField] protected float fadeDuration = 0.5f;
-    [SerializeField] protected float scaleDownDuration = 0.2f;
+    [SerializeField] protected float scaleDuration = 0.2f;
+    [SerializeField] protected float fadeDuration = 0.2f;
+    [SerializeField] protected float scaleDownDuration = 0.1f;
 
     public TextMeshProUGUI LabelText;
     public TextMeshProUGUI DescriptionText;
@@ -33,11 +33,15 @@ public class InfoPopUp : MonoBehaviour
         _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
             SetAlpha(1);
+
+            ControllersManager.Instance.mainGameUIController.InPopUp(this);
         });
     }
 
     public void ShowPopUp(string Label, string Description)
     {
+        ControllersManager.Instance.mainGameUIController.InPopUp(this);
+
         IsActive = true;
 
         LabelText.text = "";
@@ -55,9 +59,13 @@ public class InfoPopUp : MonoBehaviour
     {
         if (IsActive)
         {
+            ControllersManager.Instance.mainGameUIController.Running();
+
             _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration).OnComplete(async () =>
             {
                 IsActive = false;
+                ControllersManager.Instance.mainGameUIController.InGame();
+
                 await UniTask.Delay(1000);
                 Destroy(gameObject);
             });

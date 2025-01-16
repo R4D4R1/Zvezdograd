@@ -152,28 +152,29 @@ public class SelectionController : MonoBehaviour
 
                             popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "Œ“ –€“‹");
                             
-                            if(repairableBuilding.Type == RepairableBuilding.BuildingType.Hospital)
+                            if (repairableBuilding.Type == RepairableBuilding.BuildingType.CityHall)
                             {
-                                popUpObject.HospitalBuilding = repairableBuilding as HospitalBuilding;
-                                popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenHospitalMenu;
+                                popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenCityHallMenu;
                             }
+
                             if (repairableBuilding.Type == RepairableBuilding.BuildingType.Factory)
                             {
                                 popUpObject.FactoryBuilding = repairableBuilding as FactoryBuilding;
 
                                 popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenFactoryMenu;
                             }
-                            if (repairableBuilding.Type == RepairableBuilding.BuildingType.CityHall)
-                            {
-                                popUpObject.CityHallBuilding = repairableBuilding as CityHallBuilding;
-                                popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenCityHallMenu;
-                            }
+
                             if (repairableBuilding.Type == RepairableBuilding.BuildingType.FoodTrucks)
                             {
                                 popUpObject.FoodTrucksBuilding = repairableBuilding as FoodTrucksBuilding;
                                 popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenFoodTrucksMenu;
                             }
 
+                            if (repairableBuilding.Type == RepairableBuilding.BuildingType.Hospital)
+                            {
+                                popUpObject.HospitalBuilding = repairableBuilding as HospitalBuilding;
+                                popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenHospitalMenu;
+                            }
                         }
                         else if (repairableBuilding.CurrentState == RepairableBuilding.State.Damaged)
                         {
