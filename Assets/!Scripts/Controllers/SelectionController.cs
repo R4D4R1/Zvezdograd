@@ -15,7 +15,7 @@ public class SelectionController : MonoBehaviour
     [field: SerializeField] public CollectPopUp _collectPopUp { get; private set; }
     [field: SerializeField] public FactoryPopUp _factoryPopUp { get; private set; }
     [field: SerializeField] public CityHallPopUp _cityHallPopUp { get; private set; }
-    [field: SerializeField] public FoodTruckPopUp _foodTrucksPopUp { get; private set; }
+    [field: SerializeField] public FoodTrucksPopUp _foodTrucksPopUp { get; private set; }
     [field: SerializeField] public HospitalPopUp _hospitalPopUp { get; private set; }
 
     private GameObject _currentPopUp;

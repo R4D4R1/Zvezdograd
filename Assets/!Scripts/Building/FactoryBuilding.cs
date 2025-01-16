@@ -13,7 +13,7 @@ public class FactoryBuilding : RepairableBuilding
     [field: SerializeField] public int ReadyMaterialsGet { get; private set; }
     [field: SerializeField] public int RawMaterialsToCreateArmyMaterials { get; private set; }
 
-    private bool _isCreating;
+    private bool _isWorking;
     private bool _isCreatingReadyMaterials;
     private int _turnsToWork;
 
@@ -21,7 +21,7 @@ public class FactoryBuilding : RepairableBuilding
     {
         if (!BuildingIsSelactable)
         {
-            if (!_isCreating)
+            if (!_isWorking)
             {
                 _turnsToRepair--;
                 if (_turnsToRepair == 0)
@@ -33,7 +33,7 @@ public class FactoryBuilding : RepairableBuilding
                     RestoreOriginalMaterials();
                 }
             }
-            if (_isCreating)
+            if (_isWorking)
             {
                 _turnsToWork--;
                 if (_turnsToWork == 0)
@@ -50,12 +50,11 @@ public class FactoryBuilding : RepairableBuilding
                     }
 
                     BuildingIsSelactable = true;
-                    _isCreating = false;
+                    _isWorking = false;
                     RestoreOriginalMaterials();
                 }
             }
         }
-        
     }
 
     public void CreateReadyMaterials()
@@ -64,7 +63,7 @@ public class FactoryBuilding : RepairableBuilding
         ControllersManager.Instance.resourceController.AddOrRemoveRawMaterials(-RawMaterialsToCreateReadyMaterials);
 
         BuildingIsSelactable = false;
-        _isCreating = true;
+        _isWorking = true;
         _isCreatingReadyMaterials = true;
         _turnsToWork = TurnsToCreateReadyMaterials;
 
@@ -76,7 +75,7 @@ public class FactoryBuilding : RepairableBuilding
         ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToCreateArmyMaterials, TurnsToCreateArmyMaterials, TurnsToRestFromArmyMaterialsJob);
         
         BuildingIsSelactable = false;
-        _isCreating = true;
+        _isWorking = true;
         _isCreatingReadyMaterials = false;
         _turnsToWork = TurnsToCreateArmyMaterials;
 

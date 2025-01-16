@@ -33,7 +33,7 @@ public class SpecialPopUp : InfoPopUp
     private RepairPopUp _repairPopUp;
     private FactoryPopUp _factoryPopUp;
     private CityHallPopUp _cityHallPopUp;
-    private FoodTruckPopUp _foodTrucksPopUp;
+    private FoodTrucksPopUp _foodTrucksPopUp;
     private HospitalPopUp _hospitalPopUp;
 
     private void Start()
