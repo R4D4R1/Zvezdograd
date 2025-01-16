@@ -1,9 +1,8 @@
-using TMPro;
 using UnityEngine;
 
 public class CityHallBuilding : RepairableBuilding
 {
-
+    public static CityHallBuilding Instance { get; private set; }
     [field: SerializeField] public int _daysLeftToSendArmyMaterialsOriginal { get; private set; } = 3;
 
     [field: SerializeField] public int _relationWithGoverment { get; private set; }
@@ -12,8 +11,15 @@ public class CityHallBuilding : RepairableBuilding
 
     private void Start()
     {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+
         _daysLeftToSendArmyMaterials = _daysLeftToSendArmyMaterialsOriginal;
     }
+
+
 
     public bool DayPassed()
     {
@@ -42,15 +48,24 @@ public class CityHallBuilding : RepairableBuilding
 
     protected override void TryTurnOnBuilding()
     {
-        if (!BuildingIsActive)
+        if (!BuildingIsSelactable)
         {
-            _turnsToWork--;
-            if (_turnsToWork == 0)
+            _turnsToRepair--;
+            if (_turnsToRepair == 0)
             {
-                BuildingIsActive = true;
+                BuildingIsSelactable = true;
 
                 RestoreOriginalMaterials();
             }
         }
+    }
+
+    public void AddRelationWithGov(int value)
+    {
+        _relationWithGoverment += Mathf.Clamp(Mathf.Abs(value), 0, 10);
+    }
+    public void ArmyMaterialsSent()
+    {
+        _daysLeftToSendArmyMaterials = _daysLeftToSendArmyMaterialsOriginal;
     }
 }

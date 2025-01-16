@@ -29,7 +29,7 @@ public class CollectableBuilding : SelectableBuilding
 
     private void TryTurnOnBuilding()
     {
-        if (!BuildingIsActive)
+        if (!BuildingIsSelactable)
         {
             _turnsToWork--;
             if (_turnsToWork == 0)
@@ -37,7 +37,7 @@ public class CollectableBuilding : SelectableBuilding
                 RawMaterialsLeft -= RawMaterialsGet;
                 ControllersManager.Instance.resourceController.AddOrRemoveRawMaterials(RawMaterialsGet);
 
-                BuildingIsActive = true;
+                BuildingIsSelactable = true;
                 GetComponent<MeshRenderer>().material = originalMaterial;
             }
         }
@@ -49,7 +49,7 @@ public class CollectableBuilding : SelectableBuilding
 
         _turnsToWork = TurnsToCollect;
 
-        BuildingIsActive = false;
+        BuildingIsSelactable = false;
 
         GetComponent<MeshRenderer>().material = greyMaterial;
     }

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class FactoryBuilding : RepairableBuilding
@@ -12,30 +13,49 @@ public class FactoryBuilding : RepairableBuilding
     [field: SerializeField] public int ReadyMaterialsGet { get; private set; }
     [field: SerializeField] public int RawMaterialsToCreateArmyMaterials { get; private set; }
 
+    private bool _isCreating;
+    private bool _isCreatingReadyMaterials;
+    private int _turnsToWork;
 
     protected override void TryTurnOnBuilding()
     {
-        if (!BuildingIsActive)
+        if (!BuildingIsSelactable)
         {
-            //var meshRenderer = transform.GetChild(0).GetComponent<MeshRenderer>();
-
-            _turnsToWork--;
-            if (_turnsToWork == 0)
+            if (!_isCreating)
             {
-                BuildingIsActive = true;
+                _turnsToRepair--;
+                if (_turnsToRepair == 0)
+                {
+                    BuildingIsSelactable = true;
 
-                ControllersManager.Instance.resourceController.AddOrRemoveReadyMaterials(ReadyMaterialsGet);
+                    ControllersManager.Instance.resourceController.AddOrRemoveReadyMaterials(ReadyMaterialsGet);
 
-                Debug.Log("Test1");
-                RestoreOriginalMaterials();
+                    RestoreOriginalMaterials();
+                }
+            }
+            if (_isCreating)
+            {
+                _turnsToWork--;
+                if (_turnsToWork == 0)
+                {
+                    if (_isCreatingReadyMaterials)
+                    {
+                        ControllersManager.Instance.resourceController.AddOrRemoveReadyMaterials(ReadyMaterialsGet);
+                    }
+                    else
+                    {
+                        CityHallBuilding.Instance.AddRelationWithGov(2);
+                        CityHallBuilding.Instance.ArmyMaterialsSent();
+                        Debug.Log("Army Materials Created");
+                    }
 
-
-                //if (meshRenderer != null)
-                //{
-                //    RestoreOriginalMaterials();
-                //}
+                    BuildingIsSelactable = true;
+                    _isCreating = false;
+                    RestoreOriginalMaterials();
+                }
             }
         }
+        
     }
 
     public void CreateReadyMaterials()
@@ -43,23 +63,23 @@ public class FactoryBuilding : RepairableBuilding
         ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToCreateReadyMaterials, TurnsToCreateReadyMaterials, TurnsToRestFromReadyMaterialsJob);
         ControllersManager.Instance.resourceController.AddOrRemoveRawMaterials(-RawMaterialsToCreateReadyMaterials);
 
+        BuildingIsSelactable = false;
+        _isCreating = true;
+        _isCreatingReadyMaterials = true;
         _turnsToWork = TurnsToCreateReadyMaterials;
 
-        BuildingIsActive = false;
-
         ReplaceMaterialsWithGrey();
-
-
-        //var meshRenderer = transform.GetChild(0).GetComponent<MeshRenderer>();
-        //if (meshRenderer != null)
-        //{
-        //    meshRenderer.material = greyMaterial;
-        //}
     }
 
     public void CreateArmyMaterials()
     {
-        // Добавить логику
-        Debug.Log("Army created");
+        ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToCreateArmyMaterials, TurnsToCreateArmyMaterials, TurnsToRestFromArmyMaterialsJob);
+        
+        BuildingIsSelactable = false;
+        _isCreating = true;
+        _isCreatingReadyMaterials = false;
+        _turnsToWork = TurnsToCreateArmyMaterials;
+
+        ReplaceMaterialsWithGrey();
     }
 }

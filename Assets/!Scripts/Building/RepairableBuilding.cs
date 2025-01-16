@@ -50,25 +50,25 @@ public class RepairableBuilding : SelectableBuilding
 
     public event Action OnStateChanged;
 
-    protected int _turnsToWork = 0;
+    protected int _turnsToRepair = 0;
 
     public void InitBuilding()
     {
         FindBuildingModels();
         ControllersManager.Instance.timeController.OnNextTurnBtnPressed += TryTurnOnBuilding;
-        _turnsToWork = TurnsToRepair;
+        _turnsToRepair = TurnsToRepair;
 
         UpdateBuildingModel();
     }
 
     protected virtual void TryTurnOnBuilding()
     {
-        if (!BuildingIsActive)
+        if (!BuildingIsSelactable)
         {
-            _turnsToWork--;
-            if (_turnsToWork == 0)
+            _turnsToRepair--;
+            if (_turnsToRepair == 0)
             {
-                BuildingIsActive = true;
+                BuildingIsSelactable = true;
                 RestoreOriginalMaterials();
             }
         }
@@ -83,8 +83,8 @@ public class RepairableBuilding : SelectableBuilding
             ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToRepair, TurnsToRepair, TurnsToRestFromRepair);
             ControllersManager.Instance.resourceController.AddOrRemoveReadyMaterials(-BuildingMaterialsToRepair);
 
-            _turnsToWork = TurnsToRepair;
-            BuildingIsActive = false;
+            _turnsToRepair = TurnsToRepair;
+            BuildingIsSelactable = false;
 
             ReplaceMaterialsWithGrey();
         }
@@ -127,7 +127,6 @@ public class RepairableBuilding : SelectableBuilding
 
             if (i < _originalMaterials.Count)
             {
-                Debug.Log("Return material");
                 renderers[i].materials = _originalMaterials[i];
             }
             else
@@ -170,15 +169,6 @@ public class RepairableBuilding : SelectableBuilding
             _intactBuildingModel.SetActive(_state == State.Intact);
             _damagedBuildingModel.SetActive(_state == State.Damaged);
         }
-
-        //if (BuildingIsActive)
-        //{
-        //    RestoreOriginalMaterials();
-        //}
-        //else
-        //{
-        //    ReplaceMaterialsWithGrey();
-        //}
     }
 
     private GameObject _intactBuildingModel;

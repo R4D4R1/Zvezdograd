@@ -46,7 +46,7 @@ public class SelectionController : MonoBehaviour
         {
             SelectableBuilding hitObject = hit.collider.GetComponentInParent<SelectableBuilding>();
 
-            if (hitObject && hitObject.BuildingIsActive) // Проверяем, активное ли здание
+            if (hitObject && hitObject.BuildingIsSelactable) // Проверяем, активное ли здание
             {
                 if (_currentHoveredObject != hitObject)
                 {
@@ -105,7 +105,7 @@ public class SelectionController : MonoBehaviour
             {
                 SelectableBuilding hitObject = hit.collider.GetComponentInParent<SelectableBuilding>();
 
-                if (hitObject && hitObject.BuildingIsActive) // Проверяем, активное ли здание
+                if (hitObject && hitObject.BuildingIsSelactable) // Проверяем, активное ли здание
                 {
                     if (hitObject == _selectedBuilding)
                     {
