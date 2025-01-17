@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class FoodTrucksPopUp : InfoPopUp
 {
-    private FoodTrucksBuilding _buildingToUse;
     [SerializeField] protected TextMeshProUGUI _errorText;
     [SerializeField] protected TextMeshProUGUI _denyButtonText;
 
@@ -35,7 +34,7 @@ public class FoodTrucksPopUp : InfoPopUp
             activeBtn.SetActive(false);
             inactiveBtn.SetActive(true);
 
-            _buildingToUse.SendPeopleToGiveProvision();
+            FoodTrucksBuilding.Instance.SendPeopleToGiveProvision();
         }
         else if (!EnoughProvisionToGiveAway())
         {
@@ -62,10 +61,8 @@ public class FoodTrucksPopUp : InfoPopUp
         }
     }
 
-    public void ShowFoodTruckPopUp(FoodTrucksBuilding foodTrucks)
+    public void ShowFoodTruckPopUp()
     {
-        _buildingToUse = foodTrucks;
-
         _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
             IsActive = true;
@@ -96,7 +93,7 @@ public class FoodTrucksPopUp : InfoPopUp
 
     public bool EnoughProvisionToGiveAway()
     {
-        if (ControllersManager.Instance.resourceController.GetProvision() > _buildingToUse.FoodToGive)
+        if (ControllersManager.Instance.resourceController.GetProvision() > FoodTrucksBuilding.Instance.FoodToGive)
             return true;
         else
             return false;
@@ -104,7 +101,7 @@ public class FoodTrucksPopUp : InfoPopUp
 
     public bool EnoughPeopleToCreateReadyMaterials()
     {
-        if (ControllersManager.Instance.peopleUnitsController.GetReadyUnits() >= _buildingToUse.PeopleToGiveProvision)
+        if (ControllersManager.Instance.peopleUnitsController.GetReadyUnits() >= FoodTrucksBuilding.Instance.PeopleToGiveProvision)
             return true;
         else
             return false;

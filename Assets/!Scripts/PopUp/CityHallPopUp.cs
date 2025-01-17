@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class CityHallPopUp : InfoPopUp
 {
-    [SerializeField] private CityHallBuilding _buildingToUse;
     [SerializeField] private TextMeshProUGUI _errorText;
 
     [SerializeField] private TextMeshProUGUI _relationWithGovermentText;
@@ -65,7 +64,7 @@ public class CityHallPopUp : InfoPopUp
 
     private void TimeController_OnNextDayEvent()
     {
-        if (_buildingToUse.DayPassed())
+        if (CityHallBuilding.Instance.DayPassed())
         {
             UpdateRelationWithGovermentText();
             UpdateMilitaryTimerText();
@@ -78,11 +77,11 @@ public class CityHallPopUp : InfoPopUp
 
     private void UpdateRelationWithGovermentText()
     {
-        _relationWithGovermentText.text = "Отношение - " + _buildingToUse._relationWithGoverment.ToString();
+        _relationWithGovermentText.text = "Отношение - " + CityHallBuilding.Instance._relationWithGoverment.ToString();
     }
 
     private void UpdateMilitaryTimerText()
     {
-        _militaryTimerText.text = "Крайний срок отправки воен. помощи - " + _buildingToUse._daysLeftToSendArmyMaterials.ToString() + "дн.";
+        _militaryTimerText.text = "Крайний срок отправки воен. помощи - " + CityHallBuilding.Instance._daysLeftToSendArmyMaterials.ToString() + "дн.";
     }
 }
