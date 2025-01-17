@@ -8,7 +8,6 @@ using System;
 
 public class InfoPopUp : MonoBehaviour
 {
-
     [SerializeField] protected Image _bgImage;
     [SerializeField] protected float scaleDuration = 0.2f;
     [SerializeField] protected float fadeDuration = 0.2f;
@@ -17,6 +16,8 @@ public class InfoPopUp : MonoBehaviour
     public TextMeshProUGUI LabelText;
     public TextMeshProUGUI DescriptionText;
     [SerializeField] private CanvasGroup _canvasGroup;
+
+    protected bool _isDestroyable = true;
 
     public bool IsActive { get; protected set; } = false;
 
@@ -33,15 +34,11 @@ public class InfoPopUp : MonoBehaviour
         _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
             SetAlpha(1);
-
-            ControllersManager.Instance.mainGameUIController.InPopUp(this);
         });
     }
 
     public void ShowPopUp(string Label, string Description)
     {
-        ControllersManager.Instance.mainGameUIController.InPopUp(this);
-
         IsActive = true;
 
         LabelText.text = "";
@@ -55,20 +52,33 @@ public class InfoPopUp : MonoBehaviour
         });
     }
 
-    public virtual void HidePopUp()
+    public void HidePopUp()
     {
         if (IsActive)
         {
-            ControllersManager.Instance.mainGameUIController.Running();
-
-            _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration).OnComplete(async () =>
+            if (_isDestroyable)
             {
-                IsActive = false;
-                ControllersManager.Instance.mainGameUIController.InGame();
 
-                await UniTask.Delay(1000);
-                Destroy(gameObject);
-            });
+                _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration).OnComplete(async () =>
+                {
+                    IsActive = false;
+
+                    await UniTask.Delay(1000);
+                    Destroy(gameObject);
+                });
+            }
+            else
+            {
+                _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration).OnComplete(() =>
+                {
+                    IsActive = false;
+                });
+
+                ControllersManager.Instance.mainGameUIController.EnableEscapeMenuToggle();
+                ControllersManager.Instance.mainGameUIController.TurnOnUI();
+
+                SetAlpha(0);
+            }
         }
     }
 

@@ -22,41 +22,21 @@ public class FactoryPopUp : InfoPopUp
 
     // ÂÛÏÎËÍÈÒÜ ÇÀÄÀ×Ó ÑÎÇÄÀÒÜ È ÎÒÏÐÀÂÈÒÜ ÒÅÕÍÈÊÓ
 
+    private void Start()
+    {
+        _errorText.enabled = false;
+        _isDestroyable = false;
+    }
     public void ShowFactoryPopUp(FactoryBuilding factoryBuilding)
     {
         _buildingToUse = factoryBuilding;
-
-        ControllersManager.Instance.mainGameUIController.Running();
 
         _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
             IsActive = true;
 
-            ControllersManager.Instance.mainGameUIController.InPopUp(this);
-
             SetAlpha(1);
         });
-    }
-
-    public override void HidePopUp()
-    {
-        if (IsActive)
-        {
-            ControllersManager.Instance.mainGameUIController.Running();
-
-            _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration).OnComplete(() =>
-            {
-                IsActive = false;
-                ControllersManager.Instance.mainGameUIController.InGame();
-            });
-
-            _errorText.enabled = false;
-
-            ControllersManager.Instance.mainGameUIController.EnableEscapeMenuToggle();
-            ControllersManager.Instance.mainGameUIController.TurnOnUI();
-
-            SetAlpha(0);
-        }
     }
 
     public void CreateReadyMaterials()

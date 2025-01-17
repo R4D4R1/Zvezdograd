@@ -19,15 +19,15 @@ MonoBehaviour:
   m_RendererDataList:
   - {fileID: 11400000, guid: 65bc7dbf4170f435aa868c779acfb082, type: 2}
   m_DefaultRendererIndex: 0
-  m_RequireDepthTexture: 0
-  m_RequireOpaqueTexture: 0
+  m_RequireDepthTexture: 1
+  m_RequireOpaqueTexture: 1
   m_OpaqueDownsampling: 0
   m_SupportsTerrainHoles: 1
   m_SupportsHDR: 1
   m_HDRColorBufferPrecision: 0
-  m_MSAA: 1
+  m_MSAA: 8
   m_RenderScale: 0.8
-  m_UpscalingFilter: 3
+  m_UpscalingFilter: 0
   m_FsrOverrideSharpness: 0
   m_FsrSharpness: 0.92
   m_EnableLODCrossFade: 1
@@ -53,8 +53,8 @@ MonoBehaviour:
   m_AdditionalLightsShadowResolutionTierHigh: 1024
   m_ReflectionProbeBlending: 1
   m_ReflectionProbeBoxProjection: 1
-  m_ShadowDistance: 50
-  m_ShadowCascadeCount: 1
+  m_ShadowDistance: 500
+  m_ShadowCascadeCount: 4
   m_Cascade2Split: 0.25
   m_Cascade3Split: {x: 0.1, y: 0.3}
   m_Cascade4Split: {x: 0.067, y: 0.2, z: 0.467}
@@ -76,22 +76,22 @@ MonoBehaviour:
   m_DebugLevel: 0
   m_StoreActionsOptimization: 0
   m_UseAdaptivePerformance: 1
-  m_ColorGradingMode: 0
+  m_ColorGradingMode: 1
   m_ColorGradingLutSize: 32
   m_AllowPostProcessAlphaOutput: 0
   m_UseFastSRGBLinearConversion: 1
   m_SupportDataDrivenLensFlare: 1
   m_SupportScreenSpaceLensFlare: 1
-  m_GPUResidentDrawerMode: 0
+  m_GPUResidentDrawerMode: 1
   m_SmallMeshScreenPercentage: 0
-  m_GPUResidentDrawerEnableOcclusionCullingInCameras: 0
+  m_GPUResidentDrawerEnableOcclusionCullingInCameras: 1
   m_ShadowType: 1
   m_LocalShadowsSupported: 0
   m_LocalShadowsAtlasResolution: 256
   m_MaxPixelLights: 0
   m_ShadowAtlasResolution: 256
   m_VolumeFrameworkUpdateMode: 0
-  m_VolumeProfile: {fileID: 11400000, guid: 10fc4df2da32a41aaa32d77bc913491c, type: 2}
+  m_VolumeProfile: {fileID: 11400000, guid: 57dafa79dd70721499224b3b79d7b680, type: 2}
   apvScenesData:
     obsoleteSceneBounds:
       m_Keys: []

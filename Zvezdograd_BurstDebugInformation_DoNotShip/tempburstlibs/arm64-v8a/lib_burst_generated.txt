@@ -9,7 +9,7 @@ Library: D:\UnityProjects\Zvezdograd\Temp\BurstOutput\tempburstlibs\arm64-v8a\li
 --target-framework=NetFramework
 --generate-link-xml=Temp\burst.link.xml
 --temp-folder=D:\UnityProjects\Zvezdograd\Temp\Burst
---key-folder=D:/UnityHub/Editor/6000.0.34f1/Editor/Data/PlaybackEngines/AndroidPlayer
+--key-folder=C:/Program Files/Unity/Hub/Editor/6000.0.34f1/Editor/Data/PlaybackEngines/AndroidPlayer
 --decode-folder=D:\UnityProjects\Zvezdograd\Library\Burst
 --output=D:\UnityProjects\Zvezdograd\Temp\BurstOutput\tempburstlibs\arm64-v8a\lib_burst_generated
 --pdb-search-paths=Temp/ManagedSymbols/
@@ -96,7 +96,7 @@ Library: D:\UnityProjects\Zvezdograd\Temp\BurstOutput\tempburstlibs\arm64-v8a\li
 --float-mode=Fast
 --generate-link-xml=Temp\burst.link.xml
 --temp-folder=D:\UnityProjects\Zvezdograd\Temp\Burst
---key-folder=D:/UnityHub/Editor/6000.0.34f1/Editor/Data/PlaybackEngines/AndroidPlayer
+--key-folder=C:/Program Files/Unity/Hub/Editor/6000.0.34f1/Editor/Data/PlaybackEngines/AndroidPlayer
 --decode-folder=D:\UnityProjects\Zvezdograd\Library\Burst
 --output=D:\UnityProjects\Zvezdograd\Temp\BurstOutput\tempburstlibs\arm64-v8a\lib_burst_generated
 --pdb-search-paths=Temp/ManagedSymbols/

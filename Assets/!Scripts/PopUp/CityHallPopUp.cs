@@ -23,6 +23,9 @@ public class CityHallPopUp : InfoPopUp
 
     private void Start()
     {
+        _errorText.enabled = false;
+        _isDestroyable = false;
+
         ControllersManager.Instance.timeController.OnNextDayEvent += TimeController_OnNextDayEvent;
     }
 
@@ -35,31 +38,8 @@ public class CityHallPopUp : InfoPopUp
         {
             IsActive = true;
 
-            ControllersManager.Instance.mainGameUIController.InPopUp(this);
-
             SetAlpha(1);
         });
-    }
-
-    public override void HidePopUp()
-    {
-        if (IsActive)
-        {
-            ControllersManager.Instance.mainGameUIController.Running();
-
-            _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration).OnComplete(() =>
-            {
-                IsActive = false;
-                ControllersManager.Instance.mainGameUIController.InGame();
-            });
-
-            _errorText.enabled = false;
-
-            ControllersManager.Instance.mainGameUIController.EnableEscapeMenuToggle();
-            ControllersManager.Instance.mainGameUIController.TurnOnUI();
-
-            SetAlpha(0);
-        }
     }
 
     private void TimeController_OnNextDayEvent()

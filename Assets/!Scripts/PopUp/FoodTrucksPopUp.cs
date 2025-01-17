@@ -20,6 +20,9 @@ public class FoodTrucksPopUp : InfoPopUp
 
     private void Start()
     {
+        _errorText.enabled = false;
+        _isDestroyable = false;
+
         activeBtn.SetActive(true);
         inactiveBtn.SetActive(false);
         ControllersManager.Instance.timeController.OnNextDayEvent += NextDayStarted;
@@ -70,26 +73,6 @@ public class FoodTrucksPopUp : InfoPopUp
             SetAlpha(1);
         });
     }
-
-    public override void HidePopUp()
-    {
-        if (IsActive)
-        {
-
-            _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration).OnComplete(() =>
-            {
-                IsActive = false;
-            });
-
-            _errorText.enabled = false;
-
-            ControllersManager.Instance.mainGameUIController.EnableEscapeMenuToggle();
-            ControllersManager.Instance.mainGameUIController.TurnOnUI();
-
-            SetAlpha(0);
-        }
-    }
-
 
     public bool EnoughProvisionToGiveAway()
     {

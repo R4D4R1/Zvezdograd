@@ -5,6 +5,7 @@ using DG.Tweening;
 public class EventPopUp : InfoPopUp
 {
     public static EventPopUp Instance;
+    public TextMeshProUGUI ButtonText;
 
     private void Awake()
     {
@@ -14,7 +15,11 @@ public class EventPopUp : InfoPopUp
             Destroy(Instance.gameObject);
     }
 
-    public TextMeshProUGUI ButtonText;
+    private void Start()
+    {
+        _isDestroyable = false;
+    }
+
 
     public override void ShowPopUp()
     {
@@ -22,8 +27,6 @@ public class EventPopUp : InfoPopUp
 
         _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
-            ControllersManager.Instance.mainGameUIController.InPopUp(this);
-
             SetAlpha(1f);
         });
     }
@@ -46,29 +49,7 @@ public class EventPopUp : InfoPopUp
 
             IsActive = true;
 
-            ControllersManager.Instance.mainGameUIController.InPopUp(this);
-
             SetAlpha(1);
         });
-    }
-
-    public override void HidePopUp()
-    {
-        if (IsActive)
-        {
-            ControllersManager.Instance.mainGameUIController.Running();
-
-
-            _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration).OnComplete(() =>
-            {
-                IsActive = false;
-                ControllersManager.Instance.mainGameUIController.InGame();
-            });
-
-            ControllersManager.Instance.mainGameUIController.EnableEscapeMenuToggle();
-            ControllersManager.Instance.mainGameUIController.TurnOnUI();
-
-            SetAlpha(0);
-        }
     }
 }

@@ -4,23 +4,13 @@ using Cysharp.Threading.Tasks;
 
 public class MainGameUIController : MonoBehaviour
 {
-    [SerializeField] private GameUIState currentState = GameUIState.InMenu;
     [SerializeField] private GameObject _settingsMenu;
     [SerializeField] private GameObject _turnOffUIParent;
     [SerializeField] private float fadeDuration = 0.5f; // Длительность анимации
 
     private CanvasGroup _turnOffUICanvasGroup;
-    private bool _canToggleMenu = true; // Флаг для управления открытием меню через Escape
+    //private bool _canToggleMenu = true; // Флаг для управления открытием меню через Escape
     private InfoPopUp _popUpToClose;
-
-    public enum GameUIState
-    {
-        InGame,
-        InMenu,
-        InPopUp,
-        IsRunning
-    }
-
 
     private void Start()
     {
@@ -35,7 +25,6 @@ public class MainGameUIController : MonoBehaviour
 
     public void TurnOnMenu()
     {
-        InMenu();
         _settingsMenu.SetActive(true);
         TurnOffUI();
         ControllersManager.Instance.mainGameController.HideCity();
@@ -48,7 +37,7 @@ public class MainGameUIController : MonoBehaviour
         TurnOnUI();
     }
 
-    public async void TurnOnUI()
+    public void TurnOnUI()
     {
         _turnOffUIParent.SetActive(true);
 
@@ -56,13 +45,7 @@ public class MainGameUIController : MonoBehaviour
         _turnOffUICanvasGroup.DOFade(1f, fadeDuration).OnComplete(() => {
             _turnOffUICanvasGroup.interactable = true;
             _turnOffUICanvasGroup.blocksRaycasts = true;
-            InGame();
         });
-
-        if (currentState == GameUIState.InMenu)
-        {
-            await UniTask.Delay(ControllersManager.Instance.mainGameController.GetAnimDuration() + 100);
-        }
 
         ControllersManager.Instance.selectionController.enabled = true;
     }
@@ -83,32 +66,12 @@ public class MainGameUIController : MonoBehaviour
 
     public void EnableEscapeMenuToggle()
     {
-        _canToggleMenu = true;
+        //_canToggleMenu = true;
     }
 
     public void DisableEscapeMenuToggle()
     {
-        _canToggleMenu = false;
-    }
-
-    public void Running()
-    {
-        currentState = GameUIState.IsRunning;
-    }
-    public void InGame()
-    {
-        currentState = GameUIState.InGame;
-    }
-
-    public void InMenu()
-    {
-        currentState = GameUIState.InMenu;
-    }
-
-    public void InPopUp(InfoPopUp popUp)
-    {
-        _popUpToClose = popUp;
-        currentState = GameUIState.InPopUp;
+        //_canToggleMenu = false;
     }
 
     //private void Update()

@@ -103,8 +103,6 @@ public class SpecialPopUp : InfoPopUp
             DescriptionText.text = Description;
             ButtonText.text = Button;
 
-            ControllersManager.Instance.mainGameUIController.InPopUp(this);
-
             SetAlpha(1);
         });
     }
