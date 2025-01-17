@@ -3,9 +3,17 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
-public class CollectPopUp : DemandPopUp
+public class CollectPopUp : EnoughPeoplePopUp
 {
     private CollectableBuilding _buildingToUse;
+
+    [SerializeField] protected TextMeshProUGUI _demandsText;
+
+    private void Start()
+    {
+        _errorText.enabled = false;
+        _isDestroyable = false;
+    }
 
     public void ShowCollectPopUp(CollectableBuilding collectableBuilding)
     {
@@ -33,12 +41,12 @@ public class CollectPopUp : DemandPopUp
     public void CollectBuilding()
     {
 
-        if (EnoughPeopleToCollect() && EnoughRawMaterialsToStore() && EnoughRawMaterialsInBuilding())
+        if (EnoughPeopleTo(_buildingToUse.PeopleToCollect) && EnoughRawMaterialsToStore() && EnoughRawMaterialsInBuilding())
         {
             HidePopUp();
             _buildingToUse.CollectBuilding();
         }
-        else if (!EnoughPeopleToCollect())
+        else if (!EnoughPeopleTo(_buildingToUse.PeopleToCollect))
         {
             _errorText.text = "ÍÅ ÄÎÑÒÀÒÎ×ÍÎ ËÞÄÅÉ";
             _errorText.enabled = true;
@@ -53,14 +61,6 @@ public class CollectPopUp : DemandPopUp
             _errorText.text = "ÐÅÑÓÐÑÛ ÇÀÊÎÍ×ÈËÈÑÜ";
             _errorText.enabled = true;
         }
-    }
-
-    public bool EnoughPeopleToCollect()
-    {
-        if (ControllersManager.Instance.peopleUnitsController.GetReadyUnits() >= _buildingToUse.PeopleToCollect)
-            return true;
-        else
-            return false;
     }
 
     public bool EnoughRawMaterialsToStore()

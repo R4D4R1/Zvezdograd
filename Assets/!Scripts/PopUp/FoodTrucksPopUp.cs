@@ -3,11 +3,8 @@ using System;
 using TMPro;
 using UnityEngine;
 
-public class FoodTrucksPopUp : InfoPopUp
+public class FoodTrucksPopUp : EnoughPeoplePopUp
 {
-    [SerializeField] protected TextMeshProUGUI _errorText;
-    [SerializeField] protected TextMeshProUGUI _denyButtonText;
-
     [SerializeField] private TextMeshProUGUI _foodTimerText;
 
     [SerializeField] private int _stabilityNegativeRemoveValue;
@@ -28,9 +25,19 @@ public class FoodTrucksPopUp : InfoPopUp
         ControllersManager.Instance.timeController.OnNextDayEvent += NextDayStarted;
     }
 
+    public void ShowFoodTruckPopUp()
+    {
+        _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
+        {
+            IsActive = true;
+
+            SetAlpha(1);
+        });
+    }
+
     public void GivaAwayFood()
     {
-        if (EnoughPeopleToCreateReadyMaterials() && EnoughProvisionToGiveAway())
+        if (EnoughPeopleTo(FoodTrucksBuilding.Instance.PeopleToGiveProvision) && EnoughProvisionToGiveAway())
         {
             _foodWasGivenAwayToday = true;
 
@@ -44,7 +51,7 @@ public class FoodTrucksPopUp : InfoPopUp
             _errorText.text = "ÍÅÒ ÏÐÎÂÈÇÈÈ";
             _errorText.enabled = true;
         }
-        else if (!EnoughPeopleToCreateReadyMaterials())
+        else if (!EnoughPeopleTo(FoodTrucksBuilding.Instance.PeopleToGiveProvision))
         {
             _errorText.text = "ÍÅ ÄÎÑÒÀÒÎ×ÍÎ ËÞÄÅÉ";
             _errorText.enabled = true;
@@ -64,27 +71,9 @@ public class FoodTrucksPopUp : InfoPopUp
         }
     }
 
-    public void ShowFoodTruckPopUp()
-    {
-        _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
-        {
-            IsActive = true;
-
-            SetAlpha(1);
-        });
-    }
-
     public bool EnoughProvisionToGiveAway()
     {
         if (ControllersManager.Instance.resourceController.GetProvision() > FoodTrucksBuilding.Instance.FoodToGive)
-            return true;
-        else
-            return false;
-    }
-
-    public bool EnoughPeopleToCreateReadyMaterials()
-    {
-        if (ControllersManager.Instance.peopleUnitsController.GetReadyUnits() >= FoodTrucksBuilding.Instance.PeopleToGiveProvision)
             return true;
         else
             return false;

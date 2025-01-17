@@ -4,13 +4,11 @@ using System;
 using TMPro;
 using UnityEngine;
 
-public class FactoryPopUp : InfoPopUp
+public class FactoryPopUp : EnoughPeoplePopUp
 {
     private FactoryBuilding _buildingToUse;
-    [SerializeField] protected TextMeshProUGUI _errorText;
     [SerializeField] protected TextMeshProUGUI _createReadyMaterialButtonText;
     [SerializeField] protected TextMeshProUGUI _creatArmyMaterialButtonText;
-    [SerializeField] protected TextMeshProUGUI _denyButtonText;
 
     // мю гюбнде лш лнфел декюрэ люрепхюкш хг яшпэъ
     // лш лнфел янгдюбюрэ хг люрепхюкнб гюйюгш мюопхлеп вюярх бннпсфемхъ
@@ -41,12 +39,12 @@ public class FactoryPopUp : InfoPopUp
 
     public void CreateReadyMaterials()
     {
-        if (EnoughPeopleToCreateReadyMaterials() && EnoughRawMaterialsForReadyMaterials() && EnoughSpaceToStoreReadyMaterials())
+        if (EnoughPeopleTo(_buildingToUse.PeopleToCreateReadyMaterials) && EnoughRawMaterialsForReadyMaterials() && EnoughSpaceToStoreReadyMaterials())
         {
             HidePopUp();
             _buildingToUse.CreateReadyMaterials();
         }
-        else if(!EnoughRawMaterialsForReadyMaterials())
+        else if (!EnoughRawMaterialsForReadyMaterials())
         {
             _errorText.text = "мерс яшпэъ";
             _errorText.enabled = true;
@@ -56,7 +54,7 @@ public class FactoryPopUp : InfoPopUp
             _errorText.text = "мерс леярю дкъ люрепхюкнб";
             _errorText.enabled = true;
         }
-        else if (!EnoughPeopleToCreateReadyMaterials())
+        else if (!EnoughPeopleTo(_buildingToUse.PeopleToCreateReadyMaterials))
         {
             _errorText.text = "ме днярюрнвмн кчдеи";
             _errorText.enabled = true;
@@ -65,7 +63,7 @@ public class FactoryPopUp : InfoPopUp
 
     public void CreateArmySupplies()
     {
-        if (EnoughPeopleToCreateArmyMaterials() && EnoughRawMaterialsForArmyMaterrials())
+        if (EnoughPeopleTo(_buildingToUse.PeopleToCreateArmyMaterials) && EnoughRawMaterialsForArmyMaterrials())
         {
             HidePopUp();
             _buildingToUse.CreateArmyMaterials();
@@ -75,7 +73,7 @@ public class FactoryPopUp : InfoPopUp
             _errorText.text = "мерс яшпэъ";
             _errorText.enabled = true;
         }
-        else if (!EnoughPeopleToCreateReadyMaterials())
+        else if (!EnoughPeopleTo(_buildingToUse.PeopleToCreateArmyMaterials))
         {
             _errorText.text = "ме днярюрнвмн кчдеи";
             _errorText.enabled = true;
@@ -85,22 +83,6 @@ public class FactoryPopUp : InfoPopUp
     public bool EnoughSpaceToStoreReadyMaterials()
     {
         if (ControllersManager.Instance.resourceController.GetReadyMaterials() + _buildingToUse.ReadyMaterialsGet < ControllersManager.Instance.resourceController.GetMaxReadyMaterials())
-            return true;
-        else
-            return false;
-    }
-
-    public bool EnoughPeopleToCreateArmyMaterials()
-    {
-        if (ControllersManager.Instance.peopleUnitsController.GetReadyUnits() >= _buildingToUse.PeopleToCreateReadyMaterials)
-            return true;
-        else
-            return false;
-    }
-
-    public bool EnoughPeopleToCreateReadyMaterials()
-    {
-        if (ControllersManager.Instance.peopleUnitsController.GetReadyUnits() >= _buildingToUse.PeopleToCreateArmyMaterials)
             return true;
         else
             return false;

@@ -3,9 +3,17 @@ using TMPro;
 using DG.Tweening;
 using Cysharp.Threading.Tasks;
 
-public class RepairPopUp : DemandPopUp
+public class RepairPopUp : EnoughPeoplePopUp
 {
     private RepairableBuilding _buildingToUse;
+
+    [SerializeField] protected TextMeshProUGUI _demandsText;
+
+    private void Start()
+    {
+        _errorText.enabled = false;
+        _isDestroyable = false;
+    }
 
     public void ShowRepairPopUp(RepairableBuilding buildingToRepair)
     {
@@ -27,12 +35,12 @@ public class RepairPopUp : DemandPopUp
     public void RepairBuilding()
     {
 
-        if (EnoughPeopleToReapir() && EnoughMaterialsToRepair())
+        if (EnoughPeopleTo(_buildingToUse.PeopleToRepair) && EnoughMaterialsToRepair())
         {
             HidePopUp();
             _buildingToUse.RepairBuilding();
         }
-        else if (!EnoughPeopleToReapir())
+        else if (!EnoughPeopleTo(_buildingToUse.PeopleToRepair))
         {
             _errorText.text = "ÍÅ ÄÎÑÒÀÒÎ×ÍÎ ËÞÄÅÉ";
             _errorText.enabled = true;
@@ -42,14 +50,6 @@ public class RepairPopUp : DemandPopUp
             _errorText.text = "ÍÅ ÄÎÑÒÀÒÎ×ÍÎ ÐÅÑÓÐÑÎÂ";
             _errorText.enabled = true;
         }
-    }
-
-    public bool EnoughPeopleToReapir()
-    {
-        if (ControllersManager.Instance.peopleUnitsController.GetReadyUnits() >= _buildingToUse.PeopleToRepair)
-            return true;
-        else
-            return false;
     }
 
     public bool EnoughMaterialsToRepair()

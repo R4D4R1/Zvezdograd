@@ -34,7 +34,6 @@ public class EventPopUp : InfoPopUp
     public void ShowEventPopUp(string Label, string Description, string Button)
     {
         ControllersManager.Instance.mainGameUIController.TurnOffUI();
-        //ControllersManager.Instance.mainGameUIController.DisableEscapeMenuToggle();
         ControllersManager.Instance.blurController.BlurBackGroundSmoothly();
 
         LabelText.text = "";

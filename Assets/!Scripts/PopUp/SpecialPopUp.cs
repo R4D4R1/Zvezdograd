@@ -76,9 +76,9 @@ public class SpecialPopUp : InfoPopUp
             case PopUpFuncs.OpenFoodTrucksMenu:
                 _foodTrucksPopUp.ShowFoodTruckPopUp();
                 break;
-            //case PopUpFuncs.OpenHospitalMenu:
-            //    _hospitalPopUp.ShowFactoryPopUp(FactoryBuilding);
-            //    break;
+            case PopUpFuncs.OpenHospitalMenu:
+                _hospitalPopUp.ShowHospitalPopUp();
+                break;
             default:
                 break;
         }
