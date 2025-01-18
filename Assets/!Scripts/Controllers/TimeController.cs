@@ -70,7 +70,7 @@ public class TimeController : MonoBehaviour
                 _daysWithoutBombing++;
                 if (_daysWithoutBombing == _daysBetweenBombingRegularBuildings)
                 {
-                    ControllersManager.Instance.buildingBombingController.BombRegularBuilding();
+                    ControllersManager.Instance.buildingController.BombRegularBuilding();
                     _daysWithoutBombing = 0;
                     OnNextDayEvent.Invoke();
                 }

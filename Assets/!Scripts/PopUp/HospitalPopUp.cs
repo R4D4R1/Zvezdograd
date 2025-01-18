@@ -1,5 +1,6 @@
 using DG.Tweening;
 using System;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -59,21 +60,21 @@ public class HospitalPopUp : EnoughPeoplePopUp
 
     public void GiveAwayMedicine()
     {
-        if (EnoughPeopleTo(HospitalBuilding.Instance.PeopleToGiveMedicine) && EnoughMedicineToGiveAway())
+        if (EnoughPeopleTo(GetHospitalBuilding().PeopleToGiveMedicine) && EnoughMedicineToGiveAway())
         {
             //_foodWasGivenAwayToday = true;
 
             activeBtn.SetActive(false);
             inactiveBtn.SetActive(true);
 
-            HospitalBuilding.Instance.SendPeopleToGiveMedicine();
+            GetHospitalBuilding().SendPeopleToGiveMedicine();
         }
         else if (!EnoughMedicineToGiveAway())
         {
             _errorText.text = "ÍÅ ÄÎÑÒÀÒÎ×ÍÎ ÌÅÄÈÖÈÍÛ";
             _errorText.enabled = true;
         }
-        else if (!EnoughPeopleTo(HospitalBuilding.Instance.PeopleToGiveMedicine))
+        else if (!EnoughPeopleTo(GetHospitalBuilding().PeopleToGiveMedicine))
         {
             _errorText.text = "ÍÅ ÄÎÑÒÀÒÎ×ÍÎ ËÞÄÅÉ";
             _errorText.enabled = true;
@@ -82,9 +83,14 @@ public class HospitalPopUp : EnoughPeoplePopUp
 
     private bool EnoughMedicineToGiveAway()
     {
-        if (ControllersManager.Instance.resourceController.GetMedicine() > HospitalBuilding.Instance.MedicineToGive)
+        if (ControllersManager.Instance.resourceController.GetMedicine() > GetHospitalBuilding().MedicineToGive)
             return true;
         else
             return false;
+    }
+
+    public HospitalBuilding GetHospitalBuilding()
+    {
+        return ControllersManager.Instance.buildingController.SpecialBuildings.OfType<HospitalBuilding>().FirstOrDefault();
     }
 }

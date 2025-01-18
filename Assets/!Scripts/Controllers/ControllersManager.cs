@@ -10,7 +10,7 @@ public class ControllersManager : MonoBehaviour
     public TimeController timeController { get; private set; }
     public ResourceController resourceController { get; private set; }
     public PeopleUnitsController peopleUnitsController { get; private set; }
-    public BuildingBombingController buildingBombingController { get; private set; }
+    public BuildingController buildingController { get; private set; }
     public BlurController blurController { get; private set; }
     public SoundController SoundController { get; private set; }
     public Camera MainCamera { get; private set; } // Добавлено поле для кэширования основной камеры
@@ -33,7 +33,7 @@ public class ControllersManager : MonoBehaviour
         mainGameController = GetComponentInChildren<MainGameController>();
         timeController = GetComponentInChildren<TimeController>();
         resourceController = GetComponentInChildren<ResourceController>();
-        buildingBombingController = GetComponentInChildren<BuildingBombingController>();
+        buildingController = GetComponentInChildren<BuildingController>();
         blurController = GetComponentInChildren<BlurController>();
         SoundController = GetComponentInChildren<SoundController>();
 

@@ -1,5 +1,6 @@
 using DG.Tweening;
 using System;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -7,11 +8,8 @@ public class FoodTrucksPopUp : EnoughPeoplePopUp
 {
     [SerializeField] private TextMeshProUGUI _foodTimerText;
 
-    [SerializeField] private int _stabilityNegativeRemoveValue;
-
     [SerializeField] private GameObject activeBtn;
     [SerializeField] private GameObject inactiveBtn;
-
 
     private bool _foodWasGivenAwayToday = false;
 
@@ -37,21 +35,21 @@ public class FoodTrucksPopUp : EnoughPeoplePopUp
 
     public void GivaAwayFood()
     {
-        if (EnoughPeopleTo(FoodTrucksBuilding.Instance.PeopleToGiveProvision) && EnoughProvisionToGiveAway())
+        if (EnoughPeopleTo(GetFoodTruckBuilding().PeopleToGiveProvision) && EnoughProvisionToGiveAway())
         {
             _foodWasGivenAwayToday = true;
 
             activeBtn.SetActive(false);
             inactiveBtn.SetActive(true);
 
-            FoodTrucksBuilding.Instance.SendPeopleToGiveProvision();
+            GetFoodTruckBuilding().SendPeopleToGiveProvision();
         }
         else if (!EnoughProvisionToGiveAway())
         {
             _errorText.text = "ÍÅÒ ÏÐÎÂÈÇÈÈ";
             _errorText.enabled = true;
         }
-        else if (!EnoughPeopleTo(FoodTrucksBuilding.Instance.PeopleToGiveProvision))
+        else if (!EnoughPeopleTo(GetFoodTruckBuilding().PeopleToGiveProvision))
         {
             _errorText.text = "ÍÅ ÄÎÑÒÀÒÎ×ÍÎ ËÞÄÅÉ";
             _errorText.enabled = true;
@@ -62,7 +60,7 @@ public class FoodTrucksPopUp : EnoughPeoplePopUp
     {
         if (!_foodWasGivenAwayToday)
         {
-            ControllersManager.Instance.resourceController.AddOrRemoveStability(_stabilityNegativeRemoveValue);
+            ControllersManager.Instance.resourceController.AddOrRemoveStability(GetFoodTruckBuilding().StabilityNegativeRemoveValue);
         }
         else
         {
@@ -73,9 +71,14 @@ public class FoodTrucksPopUp : EnoughPeoplePopUp
 
     public bool EnoughProvisionToGiveAway()
     {
-        if (ControllersManager.Instance.resourceController.GetProvision() > FoodTrucksBuilding.Instance.FoodToGive)
+        if (ControllersManager.Instance.resourceController.GetProvision() > GetFoodTruckBuilding().FoodToGive)
             return true;
         else
             return false;
+    }
+
+    public FoodTrucksBuilding GetFoodTruckBuilding()
+    {
+        return ControllersManager.Instance.buildingController.SpecialBuildings.OfType<FoodTrucksBuilding>().FirstOrDefault();
     }
 }

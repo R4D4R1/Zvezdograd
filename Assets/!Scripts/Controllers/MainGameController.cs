@@ -50,12 +50,12 @@ public class MainGameController : MonoBehaviour
             outline.enabled = false;
         }
 
-        foreach (RepairableBuilding building in ControllersManager.Instance.buildingBombingController.SpecialBuildings)
+        foreach (RepairableBuilding building in ControllersManager.Instance.buildingController.SpecialBuildings)
         {
             building.InitBuilding();
         }
 
-        foreach (RepairableBuilding building in ControllersManager.Instance.buildingBombingController.RegularBuildings)
+        foreach (RepairableBuilding building in ControllersManager.Instance.buildingController.RegularBuildings)
         {
             building.InitBuilding();
         }

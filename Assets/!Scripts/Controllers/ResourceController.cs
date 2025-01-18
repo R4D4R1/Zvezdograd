@@ -66,7 +66,7 @@ public class ResourceController : MonoBehaviour
     private void NextTurnBtnPressed()
     {
         // «а каждое обычное сломманое здание стабильность батает на 2 с каждым ходом
-        foreach (var building in ControllersManager.Instance.buildingBombingController.RegularBuildings)
+        foreach (var building in ControllersManager.Instance.buildingController.RegularBuildings)
         {
             if (building.CurrentState == RepairableBuilding.State.Damaged)
             {
