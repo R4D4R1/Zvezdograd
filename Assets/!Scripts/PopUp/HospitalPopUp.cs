@@ -6,46 +6,33 @@ using UnityEngine;
 
 public class HospitalPopUp : EnoughPeoplePopUp
 {
-    //[SerializeField] private TextMeshProUGUI _medicineTimerText;
-
-    [SerializeField] private int _stabilityNegativeRemoveValue;
-    [SerializeField] private int _originalDaysToGiveMedicine;
+    [SerializeField] private TextMeshProUGUI _medicineTimerText;
 
     [SerializeField] private GameObject activeBtn;
     [SerializeField] private GameObject inactiveBtn;
 
-    private bool _foodWasGivenAwayInLastTwoDay = false;
-    private int _daysToGiveMedicine;
-
     private void Start()
     {
-        _daysToGiveMedicine = _originalDaysToGiveMedicine;
         _errorText.enabled = false;
         _isDestroyable = false;
 
         activeBtn.SetActive(true);
         inactiveBtn.SetActive(false);
-        ControllersManager.Instance.timeController.OnNextDayEvent += NextDayStarted;
+
+        UpdateMedicineTimerText();
+
+        ControllersManager.Instance.timeController.OnNextDayEvent += OnNextDayEvent;
     }
 
-    private void NextDayStarted()
+    private void OnNextDayEvent()
     {
-        _daysToGiveMedicine--;
-
-        if (_daysToGiveMedicine == 0)
+        if (ControllersManager.Instance.buildingController.GetHospitalBuilding().MedicineWasGiven())
         {
-            if (!_foodWasGivenAwayInLastTwoDay)
-            {
-                ControllersManager.Instance.resourceController.AddOrRemoveStability(_stabilityNegativeRemoveValue);
-            }
-            else
-            {
-                activeBtn.SetActive(true);
-                inactiveBtn.SetActive(false);
-            }
-
-            _daysToGiveMedicine = _originalDaysToGiveMedicine;
+            activeBtn.SetActive(true);
+            inactiveBtn.SetActive(false);
         }
+
+        UpdateMedicineTimerText();
     }
 
     public void ShowHospitalPopUp()
@@ -60,21 +47,20 @@ public class HospitalPopUp : EnoughPeoplePopUp
 
     public void GiveAwayMedicine()
     {
-        if (EnoughPeopleTo(GetHospitalBuilding().PeopleToGiveMedicine) && EnoughMedicineToGiveAway())
+        if (EnoughPeopleTo(ControllersManager.Instance.buildingController.GetHospitalBuilding().PeopleToGiveMedicine)
+            && EnoughMedicineToGiveAway())
         {
-            //_foodWasGivenAwayToday = true;
-
             activeBtn.SetActive(false);
             inactiveBtn.SetActive(true);
 
-            GetHospitalBuilding().SendPeopleToGiveMedicine();
+            ControllersManager.Instance.buildingController.GetHospitalBuilding().SendPeopleToGiveMedicine();
         }
         else if (!EnoughMedicineToGiveAway())
         {
             _errorText.text = "ÍÅ ÄÎÑÒÀÒÎ×ÍÎ ÌÅÄÈÖÈÍÛ";
             _errorText.enabled = true;
         }
-        else if (!EnoughPeopleTo(GetHospitalBuilding().PeopleToGiveMedicine))
+        else if (!EnoughPeopleTo(ControllersManager.Instance.buildingController.GetHospitalBuilding().PeopleToGiveMedicine))
         {
             _errorText.text = "ÍÅ ÄÎÑÒÀÒÎ×ÍÎ ËŞÄÅÉ";
             _errorText.enabled = true;
@@ -83,14 +69,17 @@ public class HospitalPopUp : EnoughPeoplePopUp
 
     private bool EnoughMedicineToGiveAway()
     {
-        if (ControllersManager.Instance.resourceController.GetMedicine() > GetHospitalBuilding().MedicineToGive)
+        if (ControllersManager.Instance.resourceController.GetMedicine() > ControllersManager.Instance.buildingController.GetHospitalBuilding().MedicineToGive)
             return true;
         else
             return false;
     }
 
-    public HospitalBuilding GetHospitalBuilding()
+    private void UpdateMedicineTimerText()
     {
-        return ControllersManager.Instance.buildingController.SpecialBuildings.OfType<HospitalBuilding>().FirstOrDefault();
+        Debug.Log(ControllersManager.Instance.buildingController.GetHospitalBuilding().DaysToGiveMedicine.ToString());
+
+        _medicineTimerText.text = "Êğàéíèé ñğîê îòïğàâêè ìåä. ïîìîùè - " +
+            ControllersManager.Instance.buildingController.GetHospitalBuilding().DaysToGiveMedicine.ToString() + " äí.";
     }
 }

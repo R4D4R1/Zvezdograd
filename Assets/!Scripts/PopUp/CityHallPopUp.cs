@@ -26,7 +26,7 @@ public class CityHallPopUp : InfoPopUp
         _errorText.enabled = false;
         _isDestroyable = false;
 
-        ControllersManager.Instance.timeController.OnNextDayEvent += TimeController_OnNextDayEvent;
+        ControllersManager.Instance.timeController.OnNextDayEvent += OnNextDayEvent;
     }
 
     public void ShowCityHallPopUp()
@@ -42,9 +42,9 @@ public class CityHallPopUp : InfoPopUp
         });
     }
 
-    private void TimeController_OnNextDayEvent()
+    private void OnNextDayEvent()
     {
-        if (CityHallBuilding.Instance.DayPassed())
+        if (ControllersManager.Instance.buildingController.GetCityHallBuilding().DayPassed())
         {
             UpdateRelationWithGovermentText();
             UpdateMilitaryTimerText();
@@ -57,11 +57,13 @@ public class CityHallPopUp : InfoPopUp
 
     private void UpdateRelationWithGovermentText()
     {
-        _relationWithGovermentText.text = "Отношение - " + CityHallBuilding.Instance._relationWithGoverment.ToString();
+        _relationWithGovermentText.text = "Отношение - " +
+            ControllersManager.Instance.buildingController.GetCityHallBuilding()._relationWithGoverment.ToString();
     }
 
     private void UpdateMilitaryTimerText()
     {
-        _militaryTimerText.text = "Крайний срок отправки воен. помощи - " + CityHallBuilding.Instance._daysLeftToSendArmyMaterials.ToString() + "дн.";
+        _militaryTimerText.text = "Крайний срок отправки воен. помощи - " +
+            ControllersManager.Instance.buildingController.GetCityHallBuilding()._daysLeftToSendArmyMaterials.ToString() + "дн.";
     }
 }

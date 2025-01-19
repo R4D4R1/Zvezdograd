@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class BuildingController : MonoBehaviour
@@ -9,7 +10,7 @@ public class BuildingController : MonoBehaviour
     [Range(0f, 100f)]
     [SerializeField] private int _specialBuildingBombChance;
 
-    private void Start()
+    private void Awake()
     {
         var allBuilding = FindObjectsByType<RepairableBuilding>(FindObjectsSortMode.None);
 
@@ -18,12 +19,10 @@ public class BuildingController : MonoBehaviour
             if (building.GetComponent<SpecialBuilding>() != null)
             {
                 SpecialBuildings.Add(building);
-                //Debug.Log("Special Building = " + building.name);
             }
             else
             {
                 RegularBuildings.Add(building);
-                //Debug.Log("Regular Building = " + building.name);
             }
         }
     }
@@ -59,5 +58,20 @@ public class BuildingController : MonoBehaviour
 
         return buildingToReturn;
 
+    }
+
+    public CityHallBuilding GetCityHallBuilding()
+    {
+        return SpecialBuildings.OfType<CityHallBuilding>().FirstOrDefault();
+    }
+
+    public FoodTrucksBuilding GetFoodTruckBuilding()
+    {
+        return SpecialBuildings.OfType<FoodTrucksBuilding>().FirstOrDefault();
+    }
+
+    public HospitalBuilding GetHospitalBuilding()
+    {
+        return SpecialBuildings.OfType<HospitalBuilding>().FirstOrDefault();
     }
 }

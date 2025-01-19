@@ -6,12 +6,10 @@ using UnityEngine;
 
 public class FoodTrucksPopUp : EnoughPeoplePopUp
 {
-    [SerializeField] private TextMeshProUGUI _foodTimerText;
-
     [SerializeField] private GameObject activeBtn;
     [SerializeField] private GameObject inactiveBtn;
 
-    private bool _foodWasGivenAwayToday = false;
+    //private bool _foodWasGivenAwayToday = false;
 
     private void Start()
     {
@@ -20,7 +18,7 @@ public class FoodTrucksPopUp : EnoughPeoplePopUp
 
         activeBtn.SetActive(true);
         inactiveBtn.SetActive(false);
-        ControllersManager.Instance.timeController.OnNextDayEvent += NextDayStarted;
+        ControllersManager.Instance.timeController.OnNextDayEvent += OnNextDayEvent;
     }
 
     public void ShowFoodTruckPopUp()
@@ -33,52 +31,42 @@ public class FoodTrucksPopUp : EnoughPeoplePopUp
         });
     }
 
+    private void OnNextDayEvent()
+    {
+        if (ControllersManager.Instance.buildingController.GetFoodTruckBuilding().FoodWasGivenAwayToday())
+        {
+            activeBtn.SetActive(true);
+            inactiveBtn.SetActive(false);
+        }
+
+    }
+
     public void GivaAwayFood()
     {
-        if (EnoughPeopleTo(GetFoodTruckBuilding().PeopleToGiveProvision) && EnoughProvisionToGiveAway())
+        if (EnoughPeopleTo(ControllersManager.Instance.buildingController.GetFoodTruckBuilding().PeopleToGiveProvision) && EnoughProvisionToGiveAway())
         {
-            _foodWasGivenAwayToday = true;
-
             activeBtn.SetActive(false);
             inactiveBtn.SetActive(true);
 
-            GetFoodTruckBuilding().SendPeopleToGiveProvision();
+            ControllersManager.Instance.buildingController.GetFoodTruckBuilding().SendPeopleToGiveProvision();
         }
         else if (!EnoughProvisionToGiveAway())
         {
             _errorText.text = "ÍÅÒ ÏÐÎÂÈÇÈÈ";
             _errorText.enabled = true;
         }
-        else if (!EnoughPeopleTo(GetFoodTruckBuilding().PeopleToGiveProvision))
+        else if (!EnoughPeopleTo(ControllersManager.Instance.buildingController.GetFoodTruckBuilding().PeopleToGiveProvision))
         {
             _errorText.text = "ÍÅ ÄÎÑÒÀÒÎ×ÍÎ ËÞÄÅÉ";
             _errorText.enabled = true;
         }
     }
 
-    private void NextDayStarted()
-    {
-        if (!_foodWasGivenAwayToday)
-        {
-            ControllersManager.Instance.resourceController.AddOrRemoveStability(GetFoodTruckBuilding().StabilityNegativeRemoveValue);
-        }
-        else
-        {
-            activeBtn.SetActive(true);
-            inactiveBtn.SetActive(false);
-        }
-    }
-
     public bool EnoughProvisionToGiveAway()
     {
-        if (ControllersManager.Instance.resourceController.GetProvision() > GetFoodTruckBuilding().FoodToGive)
+        if (ControllersManager.Instance.resourceController.GetProvision() > ControllersManager.Instance.buildingController.GetFoodTruckBuilding().FoodToGive)
             return true;
         else
             return false;
-    }
-
-    public FoodTrucksBuilding GetFoodTruckBuilding()
-    {
-        return ControllersManager.Instance.buildingController.SpecialBuildings.OfType<FoodTrucksBuilding>().FirstOrDefault();
     }
 }

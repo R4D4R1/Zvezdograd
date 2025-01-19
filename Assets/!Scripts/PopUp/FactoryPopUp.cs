@@ -25,6 +25,7 @@ public class FactoryPopUp : EnoughPeoplePopUp
         _errorText.enabled = false;
         _isDestroyable = false;
     }
+
     public void ShowFactoryPopUp(FactoryBuilding factoryBuilding)
     {
         _buildingToUse = factoryBuilding;

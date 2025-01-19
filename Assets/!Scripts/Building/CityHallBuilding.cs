@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class CityHallBuilding : RepairableBuilding
 {
-    public static CityHallBuilding Instance { get; private set; }
     [field: SerializeField] public int _daysLeftToSendArmyMaterialsOriginal { get; private set; } = 3;
 
     [field: SerializeField] public int _relationWithGoverment { get; private set; }
@@ -11,14 +10,8 @@ public class CityHallBuilding : RepairableBuilding
 
     private void Start()
     {
-        if (Instance == null)
-            Instance = this;
-        else
-            Destroy(gameObject);
-
         _daysLeftToSendArmyMaterials = _daysLeftToSendArmyMaterialsOriginal;
     }
-
 
 
     public bool DayPassed()
@@ -31,7 +24,7 @@ public class CityHallBuilding : RepairableBuilding
             if (_relationWithGoverment > 1)
             {
                 _relationWithGoverment -= 2;
-                Debug.Log("FAILED TO SEND ARMY MATERIALS");
+                Debug.Log("ARMY MATERIALS SENT");
 
                 return true;
             }

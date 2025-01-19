@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 
 public class FactoryBuilding : RepairableBuilding
@@ -44,8 +45,8 @@ public class FactoryBuilding : RepairableBuilding
                     }
                     else
                     {
-                        CityHallBuilding.Instance.AddRelationWithGov(2);
-                        CityHallBuilding.Instance.ArmyMaterialsSent();
+                        ControllersManager.Instance.buildingController.GetCityHallBuilding().AddRelationWithGov(2);
+                        ControllersManager.Instance.buildingController.GetCityHallBuilding().ArmyMaterialsSent();
                         Debug.Log("Army Materials Created");
                     }
 
