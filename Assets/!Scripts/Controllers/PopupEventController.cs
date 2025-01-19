@@ -5,8 +5,11 @@ using Newtonsoft.Json;
 
 public class PopupEventController : MonoBehaviour
 {
-    public TextAsset specificEventsJson;
-    public TextAsset randomEventsJson;
+    [SerializeField] private TextAsset _specificEventsJson;
+    [SerializeField] private TextAsset _randomEventsJson;
+
+    [Range(0,100)]
+    [SerializeField] private int _randomEventChance;
 
     private Dictionary<string, PopupEvent> specificEvents;
     private List<PopupEvent> randomEvents;
@@ -25,7 +28,7 @@ public class PopupEventController : MonoBehaviour
     private void LoadEvents()
     {
         specificEvents = new Dictionary<string, PopupEvent>();
-        var specificEventsData = JsonConvert.DeserializeObject<PopupEventData>(specificEventsJson.text);
+        var specificEventsData = JsonConvert.DeserializeObject<PopupEventData>(_specificEventsJson.text);
         foreach (var e in specificEventsData.events)
         {
             string eventKey = e.date + e.period;
@@ -33,7 +36,7 @@ public class PopupEventController : MonoBehaviour
         }
 
         randomEvents = new List<PopupEvent>();
-        var randomEventsData = JsonConvert.DeserializeObject<PopupEventData>(randomEventsJson.text);
+        var randomEventsData = JsonConvert.DeserializeObject<PopupEventData>(_randomEventsJson.text);
         randomEvents.AddRange(randomEventsData.events);
     }
 
@@ -58,16 +61,20 @@ public class PopupEventController : MonoBehaviour
     {
         if (currentDate >= randomEventStartDate && !usedRandomEventDays.Contains(currentDate))
         {
-            if (UnityEngine.Random.Range(0, 100) < 90)
+
+            if (UnityEngine.Random.Range(0, 100) < _randomEventChance)
             {
+
                 int randomIndex = UnityEngine.Random.Range(0, randomEvents.Count);
                 var randomEvent = randomEvents[randomIndex];
 
-                if (randomEvent.date == currentDate.ToString("yyyy-MM-dd") && randomEvent.period == currentPeriod)
-                {
-                    ShowPopup(randomEvent.title, randomEvent.mainText, randomEvent.buttonText);
-                    usedRandomEventDays.Add(currentDate);
-                }
+                ShowPopup(randomEvent.title, randomEvent.mainText, randomEvent.buttonText);
+                usedRandomEventDays.Add(currentDate);
+
+            }
+            else
+            {
+
             }
         }
     }

@@ -77,8 +77,6 @@ public class HospitalPopUp : EnoughPeoplePopUp
 
     private void UpdateMedicineTimerText()
     {
-        Debug.Log(ControllersManager.Instance.buildingController.GetHospitalBuilding().DaysToGiveMedicine.ToString());
-
         _medicineTimerText.text = "Крайний срок отправки мед. помощи - " +
             ControllersManager.Instance.buildingController.GetHospitalBuilding().DaysToGiveMedicine.ToString() + " дн.";
     }
