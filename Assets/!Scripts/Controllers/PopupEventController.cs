@@ -14,7 +14,7 @@ public class PopupEventController : MonoBehaviour
     private Dictionary<string, PopupEvent> specificEvents;
     private List<PopupEvent> randomEvents;
 
-    private DateTime randomEventStartDate = new DateTime(1941, 9, 1);
+    private DateTime randomEventStartDate = new DateTime(1942, 9, 1);
 
     private HashSet<DateTime> usedRandomEventDays;
 
@@ -22,7 +22,7 @@ public class PopupEventController : MonoBehaviour
     {
         LoadEvents();
         usedRandomEventDays = new HashSet<DateTime>();
-        ControllersManager.Instance.timeController.OnNextTurnBtnPressed += OnDateChanged;
+        ControllersManager.Instance.timeController.OnNextTurnBtnPressed += OnPeriodChanged;
     }
 
     private void LoadEvents()
@@ -40,7 +40,7 @@ public class PopupEventController : MonoBehaviour
         randomEvents.AddRange(randomEventsData.events);
     }
 
-    private void OnDateChanged()
+    private void OnPeriodChanged()
     {
         DateTime currentDate = ControllersManager.Instance.timeController.CurrentDate;
         string currentPeriod = ControllersManager.Instance.timeController.CurrentPeriod.ToString();
