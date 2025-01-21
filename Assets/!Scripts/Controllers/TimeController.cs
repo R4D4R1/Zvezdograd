@@ -34,8 +34,8 @@ public class TimeController : MonoBehaviour
         Вечер
     }
 
-    private DateTime _startDate = new DateTime(1941, 8, 30);
-    private DateTime _endDate = new DateTime(1941, 9, 30);
+    private DateTime _startDate = new DateTime(1942, 8, 30);
+    private DateTime _endDate = new DateTime(1942, 9, 30);
     public DateTime CurrentDate { get; private set; }
     public PeriodOfDay CurrentPeriod { get; private set; }
     private int _daysWithoutBombing;

@@ -35,14 +35,23 @@ public class PeopleUnit : MonoBehaviour
 
         if (currentState == UnitState.Injured || currentState == UnitState.Resting)
         {
+            BusyTime = 0;
             currentState = UnitState.Ready;
         }
     }
 
     public void DisableUnit()
     {
-        Color grayColor = new Color(0.392f, 0.392f, 0.392f);
-        _image.DOColor(grayColor, 0.5f);
+        if (currentState == UnitState.Busy)
+        {
+            Color grayColor = new Color(0.392f, 0.392f, 0.392f);
+            _image.DOColor(grayColor, 0.5f);
+        }
+        else if (currentState == UnitState.Injured)
+        {
+            Color darkRedColor = new Color(0.545f, 0f, 0f);
+            _image.DOColor(darkRedColor, 0.5f);
+        }
     }
 
     public UnitState GetCurrentState()
@@ -55,6 +64,14 @@ public class PeopleUnit : MonoBehaviour
         currentState = UnitState.Busy;
         BusyTime = busyTurns;
         RestingTime = restingTurns;
+
+        UpdateStatusText();
+        _statusText.gameObject.SetActive(true);
+    }
+
+    public void SetInjured()
+    {
+        currentState = UnitState.Injured;
 
         UpdateStatusText();
         _statusText.gameObject.SetActive(true);
@@ -86,6 +103,12 @@ public class PeopleUnit : MonoBehaviour
                 EnableUnit();
             }
         }
+        else if (currentState == UnitState.Injured)
+        {
+            // Sorting with busy time
+            BusyTime = 999;
+            UpdateStatusText();
+        }
     }
 
     public void UnitResting()
@@ -94,8 +117,6 @@ public class PeopleUnit : MonoBehaviour
         {
             currentState = UnitState.Resting;
             UpdateStatusText();
-
-            _statusText.gameObject.SetActive(true);
         }
     }
 
@@ -108,6 +129,10 @@ public class PeopleUnit : MonoBehaviour
         else if (currentState == UnitState.Resting)
         {
             _statusText.text = $"Œ“ƒ€’ " + RestingTime;
+        }
+        else if (currentState == UnitState.Injured)
+        {
+            _statusText.text = $"–¿Õ≈Õ ";
         }
     }
 }

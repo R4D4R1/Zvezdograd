@@ -45,11 +45,6 @@ public class PeopleUnitsController : MonoBehaviour
         }
     }
 
-    public bool AreUnitsReady(int units)
-    {
-        return units <= readyUnits.Count;
-    }
-
     public void AssignUnitsToTask(int requiredUnits, int busyTurns, int restingTurns)
     {
         if (AreUnitsReady(requiredUnits))
@@ -75,6 +70,30 @@ public class PeopleUnitsController : MonoBehaviour
         }
     }
 
+    public void InjureRandomReadyUnit()
+    {
+        if (readyUnits.Count > 0)
+        {
+            // Выбираем случайный юнит из списка readyUnits
+            int randomIndex = Random.Range(0, readyUnits.Count);
+            PeopleUnit randomUnit = readyUnits[randomIndex];
+
+            // Устанавливаем состояние юнита как Injured
+            randomUnit.SetInjured();
+            randomUnit.DisableUnit();
+
+            // Обновляем список готовых юнитов
+            UpdateReadyUnits();
+            AnimateUnitPositions();
+
+            Debug.Log($"Unit {randomUnit.name} has been injured.");
+        }
+        else
+        {
+            Debug.Log("No ready units available to injure.");
+        }
+    }
+
     public void NextTurn()
     {
         foreach (var unit in allUnits)
@@ -94,5 +113,10 @@ public class PeopleUnitsController : MonoBehaviour
         {
             allUnits[i].transform.DOLocalMoveX(initialPositions[i], 0.5f);
         }
+    }
+
+    public bool AreUnitsReady(int units)
+    {
+        return units <= readyUnits.Count;
     }
 }
