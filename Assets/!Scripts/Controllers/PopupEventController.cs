@@ -50,6 +50,9 @@ public class PopupEventController : MonoBehaviour
         if (specificEvents.TryGetValue(eventKey, out PopupEvent popupEvent))
         {
             ShowPopup(popupEvent.title, popupEvent.mainText, popupEvent.buttonText);
+
+            // добавить задачу медецина совет еда
+
         }
         else
         {
@@ -64,17 +67,13 @@ public class PopupEventController : MonoBehaviour
 
             if (UnityEngine.Random.Range(0, 100) < _randomEventChance)
             {
-
                 int randomIndex = UnityEngine.Random.Range(0, randomEvents.Count);
                 var randomEvent = randomEvents[randomIndex];
 
                 ShowPopup(randomEvent.title, randomEvent.mainText, randomEvent.buttonText);
+
+
                 usedRandomEventDays.Add(currentDate);
-
-            }
-            else
-            {
-
             }
         }
     }

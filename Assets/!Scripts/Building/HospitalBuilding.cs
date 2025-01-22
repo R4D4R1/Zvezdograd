@@ -25,7 +25,7 @@ public class HospitalBuilding : RepairableBuilding
         _medicineWasGivenAwayInLastTwoDay = true;
 
         ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToGiveMedicine, TurnsToToGiveMedicine, TurnsToRestFromMedicineJob);
-        ControllersManager.Instance.resourceController.AddOrRemoveProvision(-MedicineToGive);
+        ControllersManager.Instance.resourceController.AddOrRemoveMedicine(-MedicineToGive);
     }
 
     public bool MedicineWasGiven()
