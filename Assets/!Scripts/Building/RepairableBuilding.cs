@@ -59,20 +59,25 @@ public class RepairableBuilding : SelectableBuilding
     {
         FindBuildingModels();
         ControllersManager.Instance.timeController.OnNextTurnBtnPressed += TryTurnOnBuilding;
-        ControllersManager.Instance.timeController.OnNextTurnBtnPressed += UpdateAmountOfTurnsNeededToRepair;
+        ControllersManager.Instance.timeController.OnNextTurnBtnPressed += UpdateAmountOfTurnsNeededToDoSMTH;
 
         _turnsToRepair = TurnsToRepairOriginal;
 
         UpdateBuildingModel();
+        UpdateAmountOfTurnsNeededToDoSMTH();
     }
 
-    private void UpdateAmountOfTurnsNeededToRepair()
+    protected virtual void UpdateAmountOfTurnsNeededToDoSMTH()
     {
-        if(ControllersManager.Instance.resourceController.GetStability() > 50)
+        if (ControllersManager.Instance.resourceController.GetStability() > 75)
+        {
+            TurnsToRepair = TurnsToRepairOriginal - 1;
+        }
+        else if(ControllersManager.Instance.resourceController.GetStability() <= 75)
         {
             TurnsToRepair = TurnsToRepairOriginal;
         }
-        if (ControllersManager.Instance.resourceController.GetStability() <= 50)
+        else if(ControllersManager.Instance.resourceController.GetStability() <= 50)
         {
             TurnsToRepair = TurnsToRepairOriginal + 1;
         }
