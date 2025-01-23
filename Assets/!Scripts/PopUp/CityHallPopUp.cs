@@ -10,6 +10,10 @@ public class CityHallPopUp : InfoPopUp
 
     [SerializeField] private TextMeshProUGUI _militaryTimerText;
 
+    [SerializeField] private TextMeshProUGUI _helpFromGovTimerText;
+
+    private CityHallBuilding _building;
+
     // Здание совета
 
     // Делать поставки вооружения с завода - написан срок
@@ -23,6 +27,8 @@ public class CityHallPopUp : InfoPopUp
 
     private void Start()
     {
+        _building = ControllersManager.Instance.buildingController.GetCityHallBuilding();
+
         _errorText.enabled = false;
         _isDestroyable = false;
 
@@ -31,8 +37,7 @@ public class CityHallPopUp : InfoPopUp
 
     public void ShowCityHallPopUp()
     {
-        UpdateMilitaryTimerText();
-        UpdateRelationWithGovermentText();
+        UpdateAllText();
 
         _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
@@ -44,10 +49,9 @@ public class CityHallPopUp : InfoPopUp
 
     private void OnNextDayEvent()
     {
-        if (ControllersManager.Instance.buildingController.GetCityHallBuilding().DayPassed())
+        if (_building.DayPassed())
         {
-            UpdateRelationWithGovermentText();
-            UpdateMilitaryTimerText();
+            UpdateAllText();
         }
         else
         {
@@ -55,15 +59,28 @@ public class CityHallPopUp : InfoPopUp
         }
     }
 
+    private void UpdateAllText()
+    {
+        UpdateRelationWithGovermentText();
+        UpdateMilitaryTimerText();
+        UpdateHelpFromGovTimerText();
+    }
+
     private void UpdateRelationWithGovermentText()
     {
         _relationWithGovermentText.text = "Отношение - " +
-            ControllersManager.Instance.buildingController.GetCityHallBuilding()._relationWithGoverment.ToString();
+            _building.RelationWithGoverment.ToString();
     }
 
     private void UpdateMilitaryTimerText()
     {
         _militaryTimerText.text = "Крайний срок отправки воен. помощи - " +
-            ControllersManager.Instance.buildingController.GetCityHallBuilding()._daysLeftToSendArmyMaterials.ToString() + "дн.";
+            _building.DaysLeftToSendArmyMaterials.ToString() + "дн.";
+    }
+
+    private void UpdateHelpFromGovTimerText()
+    {
+        _helpFromGovTimerText.text = "Помощь прибудет через - " +
+            _building.DaysLeftToRecieveGovHelp.ToString() + "дн.";
     }
 }

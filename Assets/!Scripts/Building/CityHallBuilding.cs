@@ -2,19 +2,19 @@ using UnityEngine;
 
 public class CityHallBuilding : RepairableBuilding
 {
-    [field: SerializeField] public int _relationWithGoverment { get; private set; }
+    [field: SerializeField] public int RelationWithGoverment { get; private set; }
 
     [SerializeField] private int _daysLeftToSendArmyMaterialsOriginal;
-    public int _daysLeftToSendArmyMaterials { get; private set; }
+    public int DaysLeftToSendArmyMaterials { get; private set; }
 
     [SerializeField] private int _daysLeftToRecieveGovHelpOriginal;
-    private int _daysLeftToRecieveGovHelp;
+    public int DaysLeftToRecieveGovHelp { get; private set; }
 
 
     private void Start()
     {
-        _daysLeftToRecieveGovHelp = _daysLeftToRecieveGovHelpOriginal;
-        _daysLeftToSendArmyMaterials = _daysLeftToSendArmyMaterialsOriginal;
+        DaysLeftToRecieveGovHelp = _daysLeftToRecieveGovHelpOriginal;
+        DaysLeftToSendArmyMaterials = _daysLeftToSendArmyMaterialsOriginal;
         ControllersManager.Instance.timeController.OnNextDayEvent += TimeController_OnNextDayEvent;
     }
 
@@ -39,25 +39,25 @@ public class CityHallBuilding : RepairableBuilding
 
     public void DayPassedForGovHelp()
     {
-        _daysLeftToRecieveGovHelp--;
-        if (_daysLeftToRecieveGovHelp == 0)
+        DaysLeftToRecieveGovHelp--;
+        if (DaysLeftToRecieveGovHelp == 0)
         {
-            _daysLeftToRecieveGovHelp = _daysLeftToRecieveGovHelpOriginal;
+            DaysLeftToRecieveGovHelp = _daysLeftToRecieveGovHelpOriginal;
             RecieveHelpFromGov();
         }
     }
 
     public bool DayPassed()
     {
-        _daysLeftToSendArmyMaterials--;
+        DaysLeftToSendArmyMaterials--;
 
-        if (_daysLeftToSendArmyMaterials == 0)
+        if (DaysLeftToSendArmyMaterials == 0)
         {
-            _daysLeftToSendArmyMaterials = _daysLeftToSendArmyMaterialsOriginal;
+            DaysLeftToSendArmyMaterials = _daysLeftToSendArmyMaterialsOriginal;
 
-            if (_relationWithGoverment > 1)
+            if (RelationWithGoverment > 1)
             {
-                _relationWithGoverment -= 2;
+                RelationWithGoverment -= 2;
                 Debug.Log("ARMY MATERIALS SENT");
 
                 return true;
@@ -79,13 +79,13 @@ public class CityHallBuilding : RepairableBuilding
         int foodAmount = 0;
         int medicineAmount = 0;
 
-        if (_relationWithGoverment < 4)
+        if (RelationWithGoverment < 4)
         {
             foodAmount = 2;
             medicineAmount = 1;
             //Debug.Log("Supplies received: 2 food, 1 medicine (Poor relationship)");
         }
-        else if (_relationWithGoverment < 8)
+        else if (RelationWithGoverment < 8)
         {
             foodAmount = 3;
             medicineAmount = 2;
@@ -105,11 +105,11 @@ public class CityHallBuilding : RepairableBuilding
 
     public void AddRelationWithGov(int value)
     {
-        _relationWithGoverment += Mathf.Clamp(Mathf.Abs(value), 0, 10);
+        RelationWithGoverment += Mathf.Clamp(Mathf.Abs(value), 0, 10);
     }
 
     public void ArmyMaterialsSent()
     {
-        _daysLeftToSendArmyMaterials = _daysLeftToSendArmyMaterialsOriginal;
+        DaysLeftToSendArmyMaterials = _daysLeftToSendArmyMaterialsOriginal;
     }
 }

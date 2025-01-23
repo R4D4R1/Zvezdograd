@@ -66,7 +66,7 @@ public class SelectionController : MonoBehaviour
                         {
                             newOutline.enabled = true;
                         }
-                        Bootstrapper.Instance.SoundController.PlayHoverSound();
+                        Bootstrapper.Instance?.SoundController?.PlayHoverSound();
                     }
                 }
             }
@@ -133,7 +133,7 @@ public class SelectionController : MonoBehaviour
                         selectedOutline.enabled = true;
                     }
 
-                    Bootstrapper.Instance.SoundController.PlaySelectionSound();
+                    Bootstrapper.Instance?.SoundController?.PlaySelectionSound();
 
                     if (_selectedBuilding is RepairableBuilding repairableBuilding)
                     {

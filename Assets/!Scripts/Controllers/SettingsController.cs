@@ -33,7 +33,7 @@ public class SettingsController : MonoBehaviour
 
     private void Start()
     {
-        _SFXAudioSource = Bootstrapper.Instance.SoundController.GetComponent<AudioSource>();
+        _SFXAudioSource = Bootstrapper.Instance?.SoundController?.GetComponent<AudioSource>();
 
         // Получение и фильтрация доступных разрешений экрана
         resolutions = Screen.resolutions;
@@ -67,11 +67,14 @@ public class SettingsController : MonoBehaviour
         graphicsDropdown.AddOptions(graphicsOptions);
 
         // Установка текущего уровня качества графики
-        graphicsQualityIndex = QualitySettings.GetQualityLevel() > 0 ? 1 : 0;
+        //graphicsQualityIndex = QualitySettings.GetQualityLevel();
 
         fullscreenToggle.isOn = isFullscreen;
         musicVolumeSlider.value = musicVolume;
         SFXVolumeSlider.value = soundVolume;
+
+        Debug.Log(graphicsQualityIndex);
+
         graphicsDropdown.value = graphicsQualityIndex;
         graphicsDropdown.RefreshShownValue();
 
@@ -127,7 +130,6 @@ public class SettingsController : MonoBehaviour
         soundVolume = SFXVolumeSlider.value;
         QualitySettings.SetQualityLevel(graphicsDropdown.value);
 
-        SaveSettings();
 
         currentResolutionIndex = resolutionIndex;
         isFullscreen = fullscreenToggle.isOn;
@@ -135,6 +137,8 @@ public class SettingsController : MonoBehaviour
 
         applyButton.interactable = false;
         resetButton.interactable = false;
+
+        SaveSettings();
     }
 
     public void ResetSettings()
@@ -160,6 +164,10 @@ public class SettingsController : MonoBehaviour
         PlayerPrefs.SetFloat(SoundVolumeKey, soundVolume);
         PlayerPrefs.SetInt(GraphicsQualityKey, graphicsQualityIndex);
         PlayerPrefs.Save();
+
+        Debug.Log(graphicsDropdown.value);
+        Debug.Log(graphicsQualityIndex);
+
     }
 
     private void LoadSettings()

@@ -20,7 +20,7 @@ public class CustomButtonRecolorText : CustomButtonBase
     {
         base.OnPointerEnter(eventData);
 
-        Bootstrapper.Instance.SoundController.PlayHoverSound();
+        Bootstrapper.Instance?.SoundController?.PlayHoverSound();
 
         if (_turnBackToOriginalColor)
         {
@@ -44,7 +44,7 @@ public class CustomButtonRecolorText : CustomButtonBase
     {
         base.OnPointerClick(eventData);
 
-        Bootstrapper.Instance.SoundController.PlayButtonPressSound();
+        Bootstrapper.Instance?.SoundController?.PlayButtonPressSound();
 
         if (_turnBackToOriginalColor)
         {
