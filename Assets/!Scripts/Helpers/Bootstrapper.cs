@@ -6,6 +6,8 @@ public class Bootstrapper : MonoBehaviour
 
     public LoadLevelController loadLevelController { get; private set; }
     public GameController gameController { get; private set; }
+    public SoundController SoundController { get; private set; }
+
 
     private void Awake()
     {
@@ -22,6 +24,8 @@ public class Bootstrapper : MonoBehaviour
 
         loadLevelController = GetComponentInChildren<LoadLevelController>();
         gameController = GetComponentInChildren<GameController>();
+        SoundController = GetComponentInChildren<SoundController>();
+
 
         loadLevelController.LoadSceneAsync(Scenes.MAIN_MENU);
 

@@ -18,7 +18,7 @@ public class ButtonSoundPlayer : MonoBehaviour, IPointerEnterHandler
     private void Awake()
     {
         button = GetComponent<Button>();
-        soundController = ControllersManager.Instance.SoundController;
+        soundController = Bootstrapper.Instance.SoundController;
 
         if (button != null)
         {

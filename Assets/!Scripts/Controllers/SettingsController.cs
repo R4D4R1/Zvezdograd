@@ -8,20 +8,33 @@ public class SettingsController : MonoBehaviour
 {
     [SerializeField] private TMP_Dropdown resolutionDropdown;
     [SerializeField] private Toggle fullscreenToggle;
-    [SerializeField] private Slider volumeSlider;
+    [SerializeField] private Slider musicVolumeSlider;
+    [SerializeField] private Slider SFXVolumeSlider;
     [SerializeField] private TMP_Dropdown graphicsDropdown;
     [SerializeField] private Button applyButton;
     [SerializeField] private Button resetButton;
+
+    [SerializeField] private AudioSource musicAudioSource;
+    private AudioSource _SFXAudioSource;
 
     private Resolution[] resolutions;
     private List<Resolution> filteredResolutions;
     private int currentResolutionIndex;
     private bool isFullscreen;
-    private float volume;
+    private float musicVolume;
+    private float soundVolume;
     private int graphicsQualityIndex;
+
+    private const string MusicVolumeKey = "MusicVolume";
+    private const string SoundVolumeKey = "SoundVolume";
+    private const string FullscreenKey = "Fullscreen";
+    private const string ResolutionKey = "Resolution";
+    private const string GraphicsQualityKey = "GraphicsQuality";
 
     private void Start()
     {
+        _SFXAudioSource = Bootstrapper.Instance.SoundController.GetComponent<AudioSource>();
+
         // Получение и фильтрация доступных разрешений экрана
         resolutions = Screen.resolutions;
         filteredResolutions = FilterResolutions(resolutions);
@@ -31,11 +44,9 @@ public class SettingsController : MonoBehaviour
         currentResolutionIndex = 0;
         for (int i = 0; i < filteredResolutions.Count; i++)
         {
-            // Форматирование разрешений в виде строки
             string option = filteredResolutions[i].width + " x " + filteredResolutions[i].height;
             options.Add(option);
 
-            // Установка текущего разрешения
             if (filteredResolutions[i].width == Screen.currentResolution.width &&
                 filteredResolutions[i].height == Screen.currentResolution.height)
             {
@@ -43,37 +54,40 @@ public class SettingsController : MonoBehaviour
             }
         }
         resolutionDropdown.AddOptions(options);
+
+        // Загрузка сохраненных настроек
+        LoadSettings();
+
         resolutionDropdown.value = currentResolutionIndex;
         resolutionDropdown.RefreshShownValue();
 
-        // Установка начальных значений для элементов UI
-        isFullscreen = Screen.fullScreen;
-        fullscreenToggle.isOn = isFullscreen;
-
-        volume = AudioListener.volume;
-        volumeSlider.value = volume;
-
+        // Настройка выпадающего меню качества графики
         graphicsDropdown.ClearOptions();
         List<string> graphicsOptions = new List<string> { "НИЗКОЕ", "ВЫСОКОЕ" };
         graphicsDropdown.AddOptions(graphicsOptions);
+
+        // Установка текущего уровня качества графики
         graphicsQualityIndex = QualitySettings.GetQualityLevel() > 0 ? 1 : 0;
+
+        fullscreenToggle.isOn = isFullscreen;
+        musicVolumeSlider.value = musicVolume;
+        SFXVolumeSlider.value = soundVolume;
         graphicsDropdown.value = graphicsQualityIndex;
         graphicsDropdown.RefreshShownValue();
 
         // Добавление слушателей для изменений настроек
         resolutionDropdown.onValueChanged.AddListener(_ => OnSettingsChanged());
         fullscreenToggle.onValueChanged.AddListener(_ => OnSettingsChanged());
-        volumeSlider.onValueChanged.AddListener(_ => OnSettingsChanged());
+        musicVolumeSlider.onValueChanged.AddListener(_ => OnMusicVolumeChanged());
+        SFXVolumeSlider.onValueChanged.AddListener(_ => OnSoundVolumeChanged());
         graphicsDropdown.onValueChanged.AddListener(_ => OnSettingsChanged());
         applyButton.onClick.AddListener(ApplySettings);
         resetButton.onClick.AddListener(ResetSettings);
 
-        // Отключение кнопок "Применить" и "Сброс" в начале
         applyButton.interactable = false;
         resetButton.interactable = false;
     }
 
-    // Фильтрация разрешений для удаления дубликатов
     private List<Resolution> FilterResolutions(Resolution[] resolutions)
     {
         return resolutions
@@ -84,14 +98,24 @@ public class SettingsController : MonoBehaviour
             .ToList();
     }
 
-    // Включение кнопок "Применить" и "Сброс" при изменении настроек
     private void OnSettingsChanged()
     {
         applyButton.interactable = true;
         resetButton.interactable = true;
     }
 
-    // Применение новых настроек
+    private void OnMusicVolumeChanged()
+    {
+        musicAudioSource.volume = musicVolumeSlider.value;
+        OnSettingsChanged();
+    }
+
+    private void OnSoundVolumeChanged()
+    {
+        _SFXAudioSource.volume = SFXVolumeSlider.value;
+        OnSettingsChanged();
+    }
+
     public void ApplySettings()
     {
         int resolutionIndex = resolutionDropdown.value;
@@ -99,33 +123,61 @@ public class SettingsController : MonoBehaviour
         Screen.SetResolution(resolution.width, resolution.height, fullscreenToggle.isOn);
 
         Screen.fullScreen = fullscreenToggle.isOn;
-        AudioListener.volume = volumeSlider.value;
-        QualitySettings.SetQualityLevel(graphicsDropdown.value == 0 ? 0 : 1);
+        musicVolume = musicVolumeSlider.value;
+        soundVolume = SFXVolumeSlider.value;
+        QualitySettings.SetQualityLevel(graphicsDropdown.value);
 
-        // Обновление текущих значений
+        SaveSettings();
+
         currentResolutionIndex = resolutionIndex;
         isFullscreen = fullscreenToggle.isOn;
-        volume = volumeSlider.value;
         graphicsQualityIndex = graphicsDropdown.value;
 
         applyButton.interactable = false;
         resetButton.interactable = false;
     }
 
-    // Сброс настроек к текущим значениям
     public void ResetSettings()
     {
         resolutionDropdown.value = currentResolutionIndex;
         fullscreenToggle.isOn = isFullscreen;
-        volumeSlider.value = volume;
+        musicVolumeSlider.value = musicVolume;
+        SFXVolumeSlider.value = soundVolume;
         graphicsDropdown.value = graphicsQualityIndex;
 
         resolutionDropdown.RefreshShownValue();
-        fullscreenToggle.isOn = isFullscreen;
-        volumeSlider.value = volume;
         graphicsDropdown.RefreshShownValue();
 
         applyButton.interactable = false;
         resetButton.interactable = false;
+    }
+
+    private void SaveSettings()
+    {
+        PlayerPrefs.SetInt(ResolutionKey, currentResolutionIndex);
+        PlayerPrefs.SetInt(FullscreenKey, isFullscreen ? 1 : 0);
+        PlayerPrefs.SetFloat(MusicVolumeKey, musicVolume);
+        PlayerPrefs.SetFloat(SoundVolumeKey, soundVolume);
+        PlayerPrefs.SetInt(GraphicsQualityKey, graphicsQualityIndex);
+        PlayerPrefs.Save();
+    }
+
+    private void LoadSettings()
+    {
+        currentResolutionIndex = PlayerPrefs.GetInt(ResolutionKey, currentResolutionIndex);
+        isFullscreen = PlayerPrefs.GetInt(FullscreenKey, 1) == 1;
+        musicVolume = PlayerPrefs.GetFloat(MusicVolumeKey, 1f);
+        soundVolume = PlayerPrefs.GetFloat(SoundVolumeKey, 1f);
+        graphicsQualityIndex = PlayerPrefs.GetInt(GraphicsQualityKey, 1);
+
+        if (musicAudioSource != null)
+        {
+            musicAudioSource.volume = musicVolume;
+        }
+
+        if (_SFXAudioSource != null)
+        {
+            _SFXAudioSource.volume = soundVolume;
+        }
     }
 }
