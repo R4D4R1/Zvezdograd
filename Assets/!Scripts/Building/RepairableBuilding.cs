@@ -39,7 +39,10 @@ public class RepairableBuilding : SelectableBuilding
     [field: SerializeField] public string DamagedDescriptionText { get; private set; }
     [field: SerializeField] public int BuildingMaterialsToRepair { get; private set; }
     [field: SerializeField] public int PeopleToRepair { get; private set; }
-    [field: SerializeField] public int TurnsToRepair { get; private set; }
+
+    [SerializeField] private int TurnsToRepairOriginal;
+    public int TurnsToRepair { get; private set; }
+
     [field: SerializeField] public int TurnsToRestFromRepair { get; private set; }
 
     [SerializeField] protected State _state;
@@ -56,9 +59,27 @@ public class RepairableBuilding : SelectableBuilding
     {
         FindBuildingModels();
         ControllersManager.Instance.timeController.OnNextTurnBtnPressed += TryTurnOnBuilding;
-        _turnsToRepair = TurnsToRepair;
+        ControllersManager.Instance.timeController.OnNextTurnBtnPressed += UpdateAmountOfTurnsNeededToRepair;
+
+        _turnsToRepair = TurnsToRepairOriginal;
 
         UpdateBuildingModel();
+    }
+
+    private void UpdateAmountOfTurnsNeededToRepair()
+    {
+        if(ControllersManager.Instance.resourceController.GetStability() > 50)
+        {
+            TurnsToRepair = TurnsToRepairOriginal;
+        }
+        if (ControllersManager.Instance.resourceController.GetStability() <= 50)
+        {
+            TurnsToRepair = TurnsToRepairOriginal + 1;
+        }
+        else if (ControllersManager.Instance.resourceController.GetStability() <= 25)
+        {
+            TurnsToRepair = TurnsToRepairOriginal + 2;
+        }
     }
 
     protected virtual void TryTurnOnBuilding()
@@ -81,9 +102,10 @@ public class RepairableBuilding : SelectableBuilding
             CurrentState = State.Intact;
 
             ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToRepair, TurnsToRepair, TurnsToRestFromRepair);
+
             ControllersManager.Instance.resourceController.AddOrRemoveReadyMaterials(-BuildingMaterialsToRepair);
 
-            _turnsToRepair = TurnsToRepair;
+            _turnsToRepair = TurnsToRepairOriginal;
             BuildingIsSelactable = false;
 
             ReplaceMaterialsWithGrey();

@@ -58,7 +58,7 @@ public class CityHallBuilding : RepairableBuilding
             if (RelationWithGoverment > 1)
             {
                 RelationWithGoverment -= 2;
-                Debug.Log("ARMY MATERIALS SENT");
+                Debug.Log("DID NOT SENT ARMY MATERIALS");
 
                 return true;
             }
