@@ -66,14 +66,9 @@ public class SettingsController : MonoBehaviour
         List<string> graphicsOptions = new List<string> { "НИЗКОЕ", "ВЫСОКОЕ" };
         graphicsDropdown.AddOptions(graphicsOptions);
 
-        // Установка текущего уровня качества графики
-        //graphicsQualityIndex = QualitySettings.GetQualityLevel();
-
         fullscreenToggle.isOn = isFullscreen;
         musicVolumeSlider.value = musicVolume;
         SFXVolumeSlider.value = soundVolume;
-
-        Debug.Log(graphicsQualityIndex);
 
         graphicsDropdown.value = graphicsQualityIndex;
         graphicsDropdown.RefreshShownValue();

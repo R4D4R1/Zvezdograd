@@ -35,7 +35,6 @@ public class TimeController : MonoBehaviour
     }
 
     private DateTime _startDate = new DateTime(1942, 8, 30);
-    private DateTime _endDate = new DateTime(1942, 9, 30);
     public DateTime CurrentDate { get; private set; }
     public PeriodOfDay CurrentPeriod { get; private set; }
     private int _daysWithoutBombing;
@@ -105,12 +104,12 @@ public class TimeController : MonoBehaviour
         }
 
 
-        blackoutImage.DOFade(1, 1.0f).OnComplete(() =>
+        blackoutImage.DOFade(1, 0.5f).OnComplete(() =>
         {
             UpdateTime();
             OnNextTurnBtnPressed.Invoke();
 
-            blackoutImage.DOFade(0, 1.0f).OnComplete(() =>
+            blackoutImage.DOFade(0, 0.5f).OnComplete(() =>
             {
                 // Activate Next Turn Btn
                 _nextTurnBtn.interactable = true;
@@ -119,7 +118,9 @@ public class TimeController : MonoBehaviour
                 {
                     script.enabled = true;
                 }
-                ControllersManager.Instance.selectionController.enabled = true;
+
+                if(!EventPopUp.Instance.IsActive)
+                    ControllersManager.Instance.selectionController.enabled = true;
             });
         });
     }

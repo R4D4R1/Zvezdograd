@@ -23,7 +23,9 @@ public class InfoPopUp : MonoBehaviour
 
     private void OnEnable()
     {
-        _bgImage.transform.localScale = Vector3.zero;
+    IsActive = false;
+
+    _bgImage.transform.localScale = Vector3.zero;
         SetAlpha(0);
     }
 
@@ -52,7 +54,7 @@ public class InfoPopUp : MonoBehaviour
         });
     }
 
-    public void HidePopUp()
+    public virtual void HidePopUp()
     {
         if (IsActive)
         {

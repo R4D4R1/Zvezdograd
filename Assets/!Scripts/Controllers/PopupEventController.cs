@@ -6,22 +6,15 @@ using Newtonsoft.Json;
 public class PopupEventController : MonoBehaviour
 {
     [SerializeField] private TextAsset _specificEventsJson;
-    [SerializeField] private TextAsset _randomEventsJson;
 
     [Range(0,100)]
     [SerializeField] private int _randomEventChance;
 
     private Dictionary<string, PopupEvent> specificEvents;
-    private List<PopupEvent> randomEvents;
-
-    private DateTime randomEventStartDate = new DateTime(1942, 9, 1);
-
-    private HashSet<DateTime> usedRandomEventDays;
 
     private void Start()
     {
         LoadEvents();
-        usedRandomEventDays = new HashSet<DateTime>();
         ControllersManager.Instance.timeController.OnNextTurnBtnPressed += OnPeriodChanged;
     }
 
@@ -34,10 +27,6 @@ public class PopupEventController : MonoBehaviour
             string eventKey = e.date + e.period;
             specificEvents[eventKey] = e;
         }
-
-        randomEvents = new List<PopupEvent>();
-        var randomEventsData = JsonConvert.DeserializeObject<PopupEventData>(_randomEventsJson.text);
-        randomEvents.AddRange(randomEventsData.events);
     }
 
     private void OnPeriodChanged()
@@ -47,40 +36,18 @@ public class PopupEventController : MonoBehaviour
 
         string eventKey = currentDate.ToString("yyyy-MM-dd") + currentPeriod;
 
-        if (specificEvents.TryGetValue(eventKey, out PopupEvent popupEvent))
+        if (ControllersManager.Instance.resourceController.IsStabilityZero)
         {
-            ShowPopup(popupEvent.title, popupEvent.mainText, popupEvent.buttonText);
-
-            // добавить задачу медецина совет еда
-
+            // SHOW GAME OVER POP UP
+            EventPopUp.Instance.ShowEventPopUp("ВАС СВЕРГЛИ", "Вы не смогли удержать наш город в стабильности и мире из-за чего и были растреляны незамедлитедьно", "КОНЕЦ");
         }
         else
         {
-            TryShowRandomEvent(currentDate, currentPeriod);
-        }
-    }
-
-    private void TryShowRandomEvent(DateTime currentDate, string currentPeriod)
-    {
-        if (currentDate >= randomEventStartDate && !usedRandomEventDays.Contains(currentDate))
-        {
-
-            if (UnityEngine.Random.Range(0, 100) < _randomEventChance)
+            if (specificEvents.TryGetValue(eventKey, out PopupEvent popupEvent))
             {
-                int randomIndex = UnityEngine.Random.Range(0, randomEvents.Count);
-                var randomEvent = randomEvents[randomIndex];
-
-                ShowPopup(randomEvent.title, randomEvent.mainText, randomEvent.buttonText);
-
-
-                usedRandomEventDays.Add(currentDate);
+                EventPopUp.Instance.ShowEventPopUp(popupEvent.title, popupEvent.mainText, popupEvent.buttonText);
             }
         }
-    }
-
-    private void ShowPopup(string title, string mainText, string buttonText)
-    {
-        EventPopUp.Instance.ShowEventPopUp(title, mainText, buttonText);
     }
 }
 

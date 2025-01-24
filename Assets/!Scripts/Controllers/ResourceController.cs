@@ -24,12 +24,6 @@ public class ResourceController : MonoBehaviour
     [Range(0f, 10f)]
     [SerializeField] private int readyMaterials = 0;
 
-    private int _maxProvision;
-    private int _maxMedicine;
-    private int _maxRawMaterials;
-    private int _maxReadyMaterials;
-    private int _maxStability;
-
     // ѕриватна€ переменна€ дл€ стабильности
     [Range(0f, 100f)]
     [SerializeField] private int stability = 100;
@@ -41,8 +35,6 @@ public class ResourceController : MonoBehaviour
     // —сылка на Image заливки слайдера стабильности
     [SerializeField] private Image stabilityFillImage;
 
-
-
     // —лайдеры дл€ ресурсов и стабильности
     public Slider provisionSlider;
     public Slider medicineSlider;
@@ -50,6 +42,13 @@ public class ResourceController : MonoBehaviour
     public Slider ReadyMaterialsSlider;
     public Slider stabilitySlider;
 
+    private int _maxProvision;
+    private int _maxMedicine;
+    private int _maxRawMaterials;
+    private int _maxReadyMaterials;
+    private int _maxStability;
+
+    public bool IsStabilityZero { get;private set; }
 
     void Start()
     {
@@ -61,6 +60,8 @@ public class ResourceController : MonoBehaviour
         _maxReadyMaterials = 10;
         _maxRawMaterials = 10;
         _maxStability = 100;
+
+        IsStabilityZero = false;
 
         UpdateMedicineSlider();
         UpdateProvisionSlider();
@@ -81,7 +82,7 @@ public class ResourceController : MonoBehaviour
         // «а каждое обычное сломманое здание стабильность батает на 2 с каждым ходом
         foreach (var building in ControllersManager.Instance.buildingController.RegularBuildings)
         {
-            if (building.CurrentState == RepairableBuilding.State.Damaged)
+            if (building.CurrentState == RepairableBuilding.State.Damaged && !IsStabilityZero)
             {
                 AddOrRemoveStability(-2);
             }
@@ -191,6 +192,13 @@ public class ResourceController : MonoBehaviour
     {
         stability = Mathf.Clamp(stability + value, 0, 100);
         UpdateStabilitySlider();
+
+        if(stability == 0)
+        {
+            IsStabilityZero = true;
+
+            // GAME OVER
+        }
     }
 
     // ћетоды обновлени€ значений слайдеров
