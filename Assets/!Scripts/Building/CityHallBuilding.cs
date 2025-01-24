@@ -10,6 +10,15 @@ public class CityHallBuilding : RepairableBuilding
     [SerializeField] private int _daysLeftToRecieveGovHelpOriginal;
     public int DaysLeftToRecieveGovHelp { get; private set; }
 
+    // «дание совета
+
+    // ƒелать поставки вооружени€ с завода - написан срок
+    // «а непоставк у в срок - минус 2 очка / за поставку плюс 2
+
+    //передать дл€ государства медикаменты
+    //передать стройматериалы
+    //передать провизию
+
 
     private void Start()
     {
@@ -21,20 +30,6 @@ public class CityHallBuilding : RepairableBuilding
     private void TimeController_OnNextDayEvent()
     {
         DayPassedForGovHelp();
-    }
-
-    protected override void TryTurnOnBuilding()
-    {
-        if (!BuildingIsSelactable)
-        {
-            _turnsToRepair--;
-            if (_turnsToRepair == 0)
-            {
-                BuildingIsSelactable = true;
-
-                RestoreOriginalMaterials();
-            }
-        }
     }
 
     public void DayPassedForGovHelp()

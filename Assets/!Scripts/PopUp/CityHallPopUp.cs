@@ -14,17 +14,6 @@ public class CityHallPopUp : InfoPopUp
 
     private CityHallBuilding _building;
 
-    // «дание совета
-
-    // ƒелать поставки вооружени€ с завода - написан срок
-    // «а непоставк у в срок - минус 2 очка / за поставку плюс 2
-
-
-    //передать дл€ государства медикаменты
-    //передать стройматериалы
-    //передать провизию
-
-
     private void Start()
     {
         _building = ControllersManager.Instance.buildingController.GetCityHallBuilding();

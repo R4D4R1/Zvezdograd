@@ -92,10 +92,14 @@ public class RepairableBuilding : SelectableBuilding
         if (!BuildingIsSelactable)
         {
             _turnsToRepair--;
+            Debug.Log(_turnsToRepair);
+
             if (_turnsToRepair == 0)
             {
                 BuildingIsSelactable = true;
                 RestoreOriginalMaterials();
+
+                CurrentState = State.Intact;
             }
         }
     }
@@ -104,13 +108,11 @@ public class RepairableBuilding : SelectableBuilding
     {
         if (_state == State.Damaged)
         {
-            CurrentState = State.Intact;
-
             ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToRepair, TurnsToRepair, TurnsToRestFromRepair);
 
             ControllersManager.Instance.resourceController.AddOrRemoveReadyMaterials(-BuildingMaterialsToRepair);
 
-            _turnsToRepair = TurnsToRepairOriginal;
+            _turnsToRepair = TurnsToRepair;
             BuildingIsSelactable = false;
 
             ReplaceMaterialsWithGrey();
@@ -121,6 +123,7 @@ public class RepairableBuilding : SelectableBuilding
     {
         if (_state == State.Intact)
         {
+            BuildingIsSelactable = true;
             CurrentState = State.Damaged;
         }
     }

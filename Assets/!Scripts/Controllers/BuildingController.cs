@@ -30,18 +30,20 @@ public class BuildingController : MonoBehaviour
 
     public void BombRegularBuilding()
     {
-        ChooseBuildingToBomb().BombBuilding();
+        ChooseBuildingToBomb()?.BombBuilding();
     }
 
     private RepairableBuilding ChooseBuildingToBomb()
     {
         RepairableBuilding buildingToReturn = null;
-        while(buildingToReturn == null)
+
+        for (int i = 0; i < SpecialBuildings.Count + RegularBuildings.Count; i++)
         {
             if (Random.Range(0, 100) <= _specialBuildingBombChance)
             {
                 int randomBuildingIndex = Random.Range(0, SpecialBuildings.Count);
-                if (SpecialBuildings[randomBuildingIndex].CurrentState == RepairableBuilding.State.Intact)
+                if (SpecialBuildings[randomBuildingIndex].CurrentState == RepairableBuilding.State.Intact
+                    && SpecialBuildings[randomBuildingIndex].BuildingIsSelactable)
                 {
                     buildingToReturn = SpecialBuildings[randomBuildingIndex];
                 }
@@ -56,7 +58,14 @@ public class BuildingController : MonoBehaviour
             }
         }
 
-        return buildingToReturn;
+        if (buildingToReturn)
+            return buildingToReturn;
+        else
+        {
+            Debug.Log("NO BUILDING");
+
+            return null;
+        }
 
     }
 

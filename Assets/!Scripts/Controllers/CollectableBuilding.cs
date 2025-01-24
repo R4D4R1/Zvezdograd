@@ -67,9 +67,9 @@ public class CollectableBuilding : SelectableBuilding
 
     public void CollectBuilding()
     {
-        ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToCollect, TurnsToCollectOriginal, TurnsToRest);
+        ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToCollect, TurnsToCollect, TurnsToRest);
 
-        _turnsToWork = TurnsToCollectOriginal;
+        _turnsToWork = TurnsToCollect;
 
         BuildingIsSelactable = false;
 

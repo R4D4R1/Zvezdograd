@@ -1,10 +1,17 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ResourceController : MonoBehaviour
 {
     // Ïğèâàòíûå ïåğåìåííûå äëÿ ğåñóğñîâ
+
+    [SerializeField] private TextMeshProUGUI ProvisionText;
+    [SerializeField] private TextMeshProUGUI MedicineText;
+    [SerializeField] private TextMeshProUGUI RawmaterialsText;
+    [SerializeField] private TextMeshProUGUI ReadyMaterialsText;
+
     [Range(0f, 10f)]
     [SerializeField] private int provision = 0;
 
@@ -54,6 +61,12 @@ public class ResourceController : MonoBehaviour
         _maxReadyMaterials = 10;
         _maxRawMaterials = 10;
         _maxStability = 100;
+
+        UpdateMedicineSlider();
+        UpdateProvisionSlider();
+        UpdateRawMaterialsSlider();
+        UpdateReadyMaterialsSlider();   
+        UpdateStabilitySlider();
 
         ControllersManager.Instance.timeController.OnNextTurnBtnPressed += NextTurnBtnPressed;
     }
@@ -185,21 +198,25 @@ public class ResourceController : MonoBehaviour
     private void UpdateProvisionSlider()
     {
         provisionSlider.value = provision;
+        ProvisionText.text = "ÏĞÎÂÈÇÈß " + provision;
     }
 
     private void UpdateMedicineSlider()
     {
         medicineSlider.value = medicine;
+        MedicineText.text = "ÌÅÄÈÊÀÌÅÍÒÛ " + medicine;
     }
 
     private void UpdateRawMaterialsSlider()
     {
         rawMaterialsSlider.value = rawMaterials;
+        RawmaterialsText.text = "ÑÛĞÜÅ " + rawMaterials;
     }
 
     private void UpdateReadyMaterialsSlider()
     {
         ReadyMaterialsSlider.value = readyMaterials;
+        ReadyMaterialsText.text = "ÑÒĞÎÉÌÀÒÅĞÈÀËÛ " + readyMaterials;
     }
 
     private void UpdateStabilitySlider()

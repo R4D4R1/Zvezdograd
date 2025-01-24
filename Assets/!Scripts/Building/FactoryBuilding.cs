@@ -25,11 +25,12 @@ public class FactoryBuilding : RepairableBuilding
             if (!_isWorking)
             {
                 _turnsToRepair--;
+                Debug.Log(_turnsToRepair);
+
                 if (_turnsToRepair == 0)
                 {
                     BuildingIsSelactable = true;
-
-                    ControllersManager.Instance.resourceController.AddOrRemoveReadyMaterials(ReadyMaterialsGet);
+                    CurrentState = State.Intact;
 
                     RestoreOriginalMaterials();
                 }
@@ -37,6 +38,7 @@ public class FactoryBuilding : RepairableBuilding
             if (_isWorking)
             {
                 _turnsToWork--;
+                Debug.Log("Factory work");
                 if (_turnsToWork == 0)
                 {
                     if (_isCreatingReadyMaterials)
