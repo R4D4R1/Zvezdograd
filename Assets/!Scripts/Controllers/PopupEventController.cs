@@ -55,19 +55,19 @@ public class PopupEventController : MonoBehaviour
                     {
                         if (popupEvent.buildingType == "Еда")
                         {
-                            ControllersManager.Instance.popUpsController.FoodTrucksPopUp.EnableQuest(popupEvent.questText, popupEvent.unitSize,
+                            ControllersManager.Instance.popUpsController.FoodTrucksPopUp.EnableQuest(QuestPopUp.QuestType.Food, popupEvent.questText, popupEvent.unitSize,
                                 popupEvent.turnsToWork, popupEvent.turnsToRest, popupEvent.materialsToGet, popupEvent.materialsToLose,
                                 popupEvent.stabilityToGet, popupEvent.stabilityToLose, popupEvent.relationshipWithGovToGet, popupEvent.relationshipWithGovToLose);
                         }
                         else if (popupEvent.buildingType == "Медицина")
                         {
-                            ControllersManager.Instance.popUpsController.HospitalPopUp.EnableQuest(popupEvent.questText, popupEvent.unitSize,
+                            ControllersManager.Instance.popUpsController.HospitalPopUp.EnableQuest(QuestPopUp.QuestType.Medicine, popupEvent.questText, popupEvent.unitSize,
                                 popupEvent.turnsToWork, popupEvent.turnsToRest, popupEvent.materialsToGet, popupEvent.materialsToLose,
                                 popupEvent.stabilityToGet, popupEvent.stabilityToLose, popupEvent.relationshipWithGovToGet, popupEvent.relationshipWithGovToLose);
                         }
                         else if (popupEvent.buildingType == "Совет")
                         {
-                            ControllersManager.Instance.popUpsController.CityHallPopUp.EnableQuest(popupEvent.questText, popupEvent.unitSize,
+                            ControllersManager.Instance.popUpsController.CityHallPopUp.EnableQuest(QuestPopUp.QuestType.CityBuilding, popupEvent.questText, popupEvent.unitSize,
                                 popupEvent.turnsToWork, popupEvent.turnsToRest, popupEvent.materialsToGet, popupEvent.materialsToLose,
                                 popupEvent.stabilityToGet, popupEvent.stabilityToLose, popupEvent.relationshipWithGovToGet, popupEvent.relationshipWithGovToLose);
                         }
