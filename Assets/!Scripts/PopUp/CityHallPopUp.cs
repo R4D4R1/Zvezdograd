@@ -2,10 +2,8 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
-public class CityHallPopUp : InfoPopUp
+public class CityHallPopUp : QuestPopUp
 {
-    [SerializeField] private TextMeshProUGUI _errorText;
-
     [SerializeField] private TextMeshProUGUI _relationWithGovermentText;
 
     [SerializeField] private TextMeshProUGUI _militaryTimerText;

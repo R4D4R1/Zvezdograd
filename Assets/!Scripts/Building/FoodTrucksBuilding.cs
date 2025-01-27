@@ -3,13 +3,27 @@ using UnityEngine;
 public class FoodTrucksBuilding : RepairableBuilding
 {
     [field: SerializeField] public int PeopleToGiveProvision { get; private set; }
-    [field: SerializeField] public int TurnsToToGiveProvision { get; private set; }
     [field: SerializeField] public int TurnsToRestFromProvisionJob { get; private set; }
     [field: SerializeField] public int FoodToGive { get; private set; }
-    [field: SerializeField] public int StabilityNegativeRemoveValue { get; private set; }
+    [field: SerializeField] public int StabilityAddValue { get; private set; }
+    [field: SerializeField] public int StabilityRemoveValue { get; private set; }
+
+    [SerializeField] private int TurnsToToGiveProvisionOriginal;
+    public int TurnsToToGiveProvision { get; private set; }
 
     public bool IsFoodGivenAwayToday { get; private set; } = false;
 
+    private void Start()
+    {
+        ControllersManager.Instance.timeController.OnNextTurnBtnPressed += UpdateAmountOfTurnsNeededToDoSMTH;
+
+        UpdateAmountOfTurnsNeededToDoSMTH();
+    }
+
+    private void UpdateAmountOfTurnsNeededToDoSMTH()
+    {
+        TurnsToToGiveProvision = UpdateAmountOfTurnsNeededToDoSMTH(TurnsToToGiveProvisionOriginal);
+    }
 
     public void SendPeopleToGiveProvision()
     {
@@ -17,6 +31,7 @@ public class FoodTrucksBuilding : RepairableBuilding
 
         ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToGiveProvision, TurnsToToGiveProvision, TurnsToRestFromProvisionJob);
         ControllersManager.Instance.resourceController.AddOrRemoveProvision(-FoodToGive);
+        ControllersManager.Instance.resourceController.AddOrRemoveStability(StabilityAddValue);
     }
 
     public bool FoodWasGivenAwayToday()
@@ -27,7 +42,7 @@ public class FoodTrucksBuilding : RepairableBuilding
         }
         else
         {
-            ControllersManager.Instance.resourceController.AddOrRemoveStability(StabilityNegativeRemoveValue);
+            ControllersManager.Instance.resourceController.AddOrRemoveStability(-StabilityRemoveValue);
             return false;
         }
     }

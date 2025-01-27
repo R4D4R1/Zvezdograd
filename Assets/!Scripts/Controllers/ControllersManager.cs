@@ -12,7 +12,8 @@ public class ControllersManager : MonoBehaviour
     public PeopleUnitsController peopleUnitsController { get; private set; }
     public BuildingController buildingController { get; private set; }
     public BlurController blurController { get; private set; }
-    public Camera MainCamera { get; private set; } // Добавлено поле для кэширования основной камеры
+    public PopUpsController popUpsController { get; private set; }
+    public Camera MainCamera { get; private set; }
 
     private void Awake()
     {
@@ -34,6 +35,7 @@ public class ControllersManager : MonoBehaviour
         resourceController = GetComponentInChildren<ResourceController>();
         buildingController = GetComponentInChildren<BuildingController>();
         blurController = GetComponentInChildren<BlurController>();
+        popUpsController = GetComponentInChildren<PopUpsController>();
 
         MainCamera = Camera.main;
     }

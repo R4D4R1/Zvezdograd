@@ -103,6 +103,6 @@ public class MainGameUIController : MonoBehaviour
 
     public void LoadMainMenu()
     {
-        Bootstrapper.Instance.loadLevelController.LoadSceneAsync(Scenes.MAIN_MENU);
+        Bootstrapper.Instance?.loadLevelController?.LoadSceneAsync(Scenes.MAIN_MENU);
     }
 }

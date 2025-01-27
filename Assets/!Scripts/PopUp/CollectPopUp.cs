@@ -3,7 +3,7 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
-public class CollectPopUp : EnoughPeoplePopUp
+public class CollectPopUp : EnoughPopUp
 {
     private CollectableBuilding _buildingToUse;
 

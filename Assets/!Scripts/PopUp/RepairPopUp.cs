@@ -3,7 +3,7 @@ using TMPro;
 using DG.Tweening;
 using Cysharp.Threading.Tasks;
 
-public class RepairPopUp : EnoughPeoplePopUp
+public class RepairPopUp : EnoughPopUp
 {
     private RepairableBuilding _buildingToUse;
 

@@ -67,24 +67,35 @@ public class RepairableBuilding : SelectableBuilding
         UpdateAmountOfTurnsNeededToDoSMTH();
     }
 
-    protected virtual void UpdateAmountOfTurnsNeededToDoSMTH()
+    private void UpdateAmountOfTurnsNeededToDoSMTH()
     {
-        if (ControllersManager.Instance.resourceController.GetStability() > 75)
+        TurnsToRepair = UpdateAmountOfTurnsNeededToDoSMTH(TurnsToRepairOriginal);
+    }
+
+    // ћетод мен€ющий количество шагов необходимое дл€ выполнени€ взависимости от стабильности
+    protected int UpdateAmountOfTurnsNeededToDoSMTH(int TurnsToDoWorkOriginal)
+    {
+        int stability = ControllersManager.Instance.resourceController.GetStability();
+        int turnToDoWork = 0;
+
+        if (stability > 75)
         {
-            TurnsToRepair = TurnsToRepairOriginal - 1;
+            turnToDoWork = TurnsToDoWorkOriginal - 1;
         }
-        else if(ControllersManager.Instance.resourceController.GetStability() <= 75)
+        if (stability <= 75)
         {
-            TurnsToRepair = TurnsToRepairOriginal;
+            turnToDoWork = TurnsToDoWorkOriginal;
         }
-        else if(ControllersManager.Instance.resourceController.GetStability() <= 50)
+        if (stability <= 50)
         {
-            TurnsToRepair = TurnsToRepairOriginal + 1;
+            turnToDoWork = TurnsToDoWorkOriginal + 1;
         }
-        else if (ControllersManager.Instance.resourceController.GetStability() <= 25)
+        if (stability <= 25)
         {
-            TurnsToRepair = TurnsToRepairOriginal + 2;
+            turnToDoWork = TurnsToDoWorkOriginal + 2;
         }
+
+        return turnToDoWork;
     }
 
     protected virtual void TryTurnOnBuilding()

@@ -4,7 +4,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 
-public class HospitalPopUp : EnoughPeoplePopUp
+public class HospitalPopUp : QuestPopUp
 {
     [SerializeField] private TextMeshProUGUI _medicineTimerText;
 

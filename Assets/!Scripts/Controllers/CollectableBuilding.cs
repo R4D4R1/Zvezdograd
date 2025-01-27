@@ -35,15 +35,15 @@ public class CollectableBuilding : SelectableBuilding
         {
             TurnsToCollect = TurnsToCollectOriginal - 1;
         }
-        else if(ControllersManager.Instance.resourceController.GetStability() <= 75)
+        if(ControllersManager.Instance.resourceController.GetStability() <= 75)
         {
             TurnsToCollect = TurnsToCollectOriginal;
         }
-        else if(ControllersManager.Instance.resourceController.GetStability() <= 50)
+        if(ControllersManager.Instance.resourceController.GetStability() <= 50)
         {
             TurnsToCollect = TurnsToCollectOriginal + 1;
         }
-        else if (ControllersManager.Instance.resourceController.GetStability() <= 25)
+        if (ControllersManager.Instance.resourceController.GetStability() <= 25)
         {
             TurnsToCollect = TurnsToCollectOriginal + 2;
         }

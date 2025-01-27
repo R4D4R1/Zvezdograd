@@ -7,7 +7,7 @@ public class PopupEventController : MonoBehaviour
 {
     [SerializeField] private TextAsset _specificEventsJson;
 
-    [Range(0,100)]
+    [Range(0, 100)]
     [SerializeField] private int _randomEventChance;
 
     private Dictionary<string, PopupEvent> specificEvents;
@@ -39,13 +39,49 @@ public class PopupEventController : MonoBehaviour
         if (ControllersManager.Instance.resourceController.IsStabilityZero)
         {
             // SHOW GAME OVER POP UP
-            EventPopUp.Instance.ShowEventPopUp("ВАС СВЕРГЛИ", "Вы не смогли удержать наш город в стабильности и мире из-за чего и были растреляны незамедлитедьно", "КОНЕЦ");
+            EventPopUp.Instance.ShowEventPopUp(
+                "ВАС СВЕРГЛИ",
+                "Вы не смогли удержать наш город в стабильности и мире, из-за чего и были расстреляны незамедлительно",
+                "КОНЕЦ");
         }
         else
         {
             if (specificEvents.TryGetValue(eventKey, out PopupEvent popupEvent))
             {
-                EventPopUp.Instance.ShowEventPopUp(popupEvent.title, popupEvent.mainText, popupEvent.buttonText);
+                if (!string.IsNullOrEmpty(popupEvent.buildingType))
+                {
+                    // Проверяем, является ли тип здания одним из допустимых
+                    if (popupEvent.buildingType == "Еда" || popupEvent.buildingType == "Медицина" || popupEvent.buildingType == "Совет")
+                    {
+                        if (popupEvent.buildingType == "Еда")
+                        {
+                            ControllersManager.Instance.popUpsController.FoodTrucksPopUp.EnableQuest(popupEvent.questText, popupEvent.unitSize,
+                                popupEvent.turnsToWork, popupEvent.turnsToRest, popupEvent.materialsToGet, popupEvent.materialsToLose,
+                                popupEvent.stabilityToGet, popupEvent.stabilityToLose, popupEvent.relationshipWithGovToGet, popupEvent.relationshipWithGovToLose);
+                        }
+                        else if (popupEvent.buildingType == "Медицина")
+                        {
+                            ControllersManager.Instance.popUpsController.HospitalPopUp.EnableQuest(popupEvent.questText, popupEvent.unitSize,
+                                popupEvent.turnsToWork, popupEvent.turnsToRest, popupEvent.materialsToGet, popupEvent.materialsToLose,
+                                popupEvent.stabilityToGet, popupEvent.stabilityToLose, popupEvent.relationshipWithGovToGet, popupEvent.relationshipWithGovToLose);
+                        }
+                        else if (popupEvent.buildingType == "Совет")
+                        {
+                            ControllersManager.Instance.popUpsController.CityHallPopUp.EnableQuest(popupEvent.questText, popupEvent.unitSize,
+                                popupEvent.turnsToWork, popupEvent.turnsToRest, popupEvent.materialsToGet, popupEvent.materialsToLose,
+                                popupEvent.stabilityToGet, popupEvent.stabilityToLose, popupEvent.relationshipWithGovToGet, popupEvent.relationshipWithGovToLose);
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Unknown Building Type: {popupEvent.buildingType}");
+                    }
+                }
+
+                EventPopUp.Instance.ShowEventPopUp(
+                    popupEvent.title,
+                    popupEvent.mainText,
+                    popupEvent.buttonText);
             }
         }
     }
@@ -59,6 +95,25 @@ public class PopupEvent
     public string title;
     public string mainText;
     public string buttonText;
+
+    // Спец задания 
+    public string buildingType;
+
+    public string questText;
+
+    public int unitSize;
+           
+    public int turnsToWork;
+    public int turnsToRest;
+           
+    public int materialsToGet;
+    public int materialsToLose;
+           
+    public int stabilityToGet;
+    public int stabilityToLose;
+           
+    public int relationshipWithGovToGet;
+    public int relationshipWithGovToLose;
 }
 
 [Serializable]

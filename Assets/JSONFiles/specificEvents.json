@@ -1,12 +1,31 @@
 {
   "events": [
-     {
+    {
       "date": "1942-08-30",
       "period": "Вечер",
       "title": "НАЧАЛО БЛОКАДЫ",
       "mainText": "С сегодняшнего вечера город полностью окружён. Запасы еды и медикаментов необходимо распределять с умом. Люди ждут от нас руководства.",
       "buttonText": "Мы справимся"
-     },
+    },
+    {
+      "date": "1942-08-30",
+      "period": "День",
+      "title": "ТЕСТ",
+      "mainText": "У нас проблемы с едой ",
+      "buttonText": "Задание",
+
+      "buildingType": "Еда",
+      "questText": "Раздать доп пайки",
+      "unitSize": 1,
+      "turnsToWork": 2,
+      "turnsToRest": 2,
+      "materialsToGet": 0,
+      "materialsToLose": 2,
+      "StabilityToGet": 5,
+      "StabilityToLose": 5,
+      "RelationshipWithGovToGet": 0,
+      "RelationshipWithGovToLose": 0
+    },
     {
       "date": "1942-08-31",
       "period": "Утро",

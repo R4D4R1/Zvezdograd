@@ -1,15 +1,12 @@
 using DG.Tweening;
-using System;
-using System.Linq;
-using TMPro;
 using UnityEngine;
 
-public class FoodTrucksPopUp : EnoughPeoplePopUp
+public class FoodTrucksPopUp : QuestPopUp
 {
+
+    [Header("UI")]
     [SerializeField] private GameObject activeBtn;
     [SerializeField] private GameObject inactiveBtn;
-
-    //private bool _foodWasGivenAwayToday = false;
 
     private void Start()
     {

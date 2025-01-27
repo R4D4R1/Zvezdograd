@@ -8,6 +8,8 @@ using System;
 
 public class InfoPopUp : MonoBehaviour
 {
+    [Header("BASE")]
+
     [SerializeField] protected Image _bgImage;
     [SerializeField] protected float scaleDuration = 0.2f;
     [SerializeField] protected float fadeDuration = 0.2f;

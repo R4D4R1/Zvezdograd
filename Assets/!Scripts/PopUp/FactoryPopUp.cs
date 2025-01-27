@@ -4,7 +4,7 @@ using System;
 using TMPro;
 using UnityEngine;
 
-public class FactoryPopUp : EnoughPeoplePopUp
+public class FactoryPopUp : EnoughPopUp
 {
     private FactoryBuilding _buildingToUse;
     [SerializeField] protected TextMeshProUGUI _createReadyMaterialButtonText;

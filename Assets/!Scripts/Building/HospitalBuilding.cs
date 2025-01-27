@@ -8,7 +8,8 @@ public class HospitalBuilding : RepairableBuilding
     [field: SerializeField] public int MedicineToGive { get; private set; }
 
 
-    [field: SerializeField] public int StabilityNegativeRemoveValue { get; private set; }
+    [field: SerializeField] public int StabilityAddValue { get; private set; }
+    [field: SerializeField] public int StabilityRemoveValue { get; private set; }
     [field: SerializeField] public int OriginalDaysToGiveMedicine { get; private set; }
     public int DaysToGiveMedicine { get; private set; }
 
@@ -26,6 +27,8 @@ public class HospitalBuilding : RepairableBuilding
 
         ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToGiveMedicine, TurnsToToGiveMedicine, TurnsToRestFromMedicineJob);
         ControllersManager.Instance.resourceController.AddOrRemoveMedicine(-MedicineToGive);
+        ControllersManager.Instance.resourceController.AddOrRemoveStability(StabilityAddValue);
+
     }
 
     public bool MedicineWasGiven()
@@ -42,7 +45,7 @@ public class HospitalBuilding : RepairableBuilding
             }
             else
             {
-                ControllersManager.Instance.resourceController.AddOrRemoveStability(StabilityNegativeRemoveValue);
+                ControllersManager.Instance.resourceController.AddOrRemoveStability(-StabilityRemoveValue);
                 return false;
             }
         }
