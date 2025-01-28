@@ -8,8 +8,10 @@ public class FoodTrucksPopUp : QuestPopUp
     [SerializeField] private GameObject activeBtn;
     [SerializeField] private GameObject inactiveBtn;
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
+
         _errorText.enabled = false;
         _isDestroyable = false;
 

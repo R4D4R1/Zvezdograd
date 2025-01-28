@@ -16,6 +16,7 @@
 
       "buildingType": "Еда",
       "questText": "Раздать доп пайки",
+      "deadlineInDays": 1,
       "unitSize": 1,
       "turnsToWork": 2,
       "turnsToRest": 2,

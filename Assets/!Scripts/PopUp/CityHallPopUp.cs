@@ -12,8 +12,10 @@ public class CityHallPopUp : QuestPopUp
 
     private CityHallBuilding _building;
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
+
         _building = ControllersManager.Instance.buildingController.GetCityHallBuilding();
 
         _errorText.enabled = false;
