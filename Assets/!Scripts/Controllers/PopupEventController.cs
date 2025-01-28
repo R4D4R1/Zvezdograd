@@ -55,7 +55,7 @@ public class PopupEventController : MonoBehaviour
                     {
                         if (popupEvent.buildingType == "≈‰‡")
                         {
-                            ControllersManager.Instance.popUpsController.FoodTrucksPopUp.EnableQuest(QuestPopUp.QuestType.Food, popupEvent.questText, popupEvent.unitSize, popupEvent.deadlineInDays,
+                            ControllersManager.Instance.popUpsController.FoodTrucksPopUp.EnableQuest(QuestPopUp.QuestType.Provision, popupEvent.questText, popupEvent.unitSize, popupEvent.deadlineInDays,
                                 popupEvent.turnsToWork, popupEvent.turnsToRest, popupEvent.materialsToGet, popupEvent.materialsToLose,
                                 popupEvent.stabilityToGet, popupEvent.stabilityToLose, popupEvent.relationshipWithGovToGet, popupEvent.relationshipWithGovToLose);
                         }

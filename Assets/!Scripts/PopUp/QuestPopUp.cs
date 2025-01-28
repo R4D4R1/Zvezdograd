@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class QuestPopUp : EnoughPopUp
@@ -13,7 +12,7 @@ public class QuestPopUp : EnoughPopUp
 
     public enum QuestType
     {
-        Food,
+        Provision,
         Medicine,
         CityBuilding
     }
@@ -48,25 +47,35 @@ public class QuestPopUp : EnoughPopUp
                     {
                         ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(unitSize, turnsToWork, turnsToRest);
 
-                        ControllersManager.Instance.resourceController.AddOrRemoveStability(stabilityToGet);
-                        ControllersManager.Instance.resourceController.AddOrRemoveStability(-stabilityToLose);
-                        ControllersManager.Instance.buildingController.GetCityHallBuilding().AddRelationWithGov(relationshipWithGovToGet);
-                        ControllersManager.Instance.buildingController.GetCityHallBuilding().AddRelationWithGov(-relationshipWithGovToLose);
+                        
 
-                        if (questType == QuestType.Food)
+
+                        
+                        if (questType == QuestType.Provision || questType == QuestType.Medicine)
+                        {
+                            ControllersManager.Instance.resourceController.AddOrRemoveStability(stabilityToGet);
+                            ControllersManager.Instance.resourceController.AddOrRemoveStability(-stabilityToLose);
+                        }
+
+                        if (questType == QuestType.Provision)
                         {
                             ControllersManager.Instance.resourceController.AddOrRemoveProvision(materialsToGet);
                             ControllersManager.Instance.resourceController.AddOrRemoveProvision(-materialsToLose);
                         }
+
                         if (questType == QuestType.Medicine)
                         {
-                            ControllersManager.Instance.resourceController.AddOrRemoveProvision(materialsToGet);
-                            ControllersManager.Instance.resourceController.AddOrRemoveProvision(-materialsToLose);
+                            ControllersManager.Instance.resourceController.AddOrRemoveMedicine(materialsToGet);
+                            ControllersManager.Instance.resourceController.AddOrRemoveMedicine(-materialsToLose);
                         }
+
                         if (questType == QuestType.CityBuilding)
                         {
                             ControllersManager.Instance.resourceController.AddOrRemoveReadyMaterials(materialsToGet);
                             ControllersManager.Instance.resourceController.AddOrRemoveReadyMaterials(-materialsToLose);
+
+                            ControllersManager.Instance.buildingController.GetCityHallBuilding().AddRelationWithGov(relationshipWithGovToGet);
+                            ControllersManager.Instance.buildingController.GetCityHallBuilding().AddRelationWithGov(-relationshipWithGovToLose);
                         }
 
                         DisableQuest(quest);

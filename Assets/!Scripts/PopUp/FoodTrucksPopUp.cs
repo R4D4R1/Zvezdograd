@@ -40,7 +40,7 @@ public class FoodTrucksPopUp : QuestPopUp
 
     }
 
-    public void GivaAwayFood()
+    public void GiveAwayProvision()
     {
         if (EnoughPeopleTo(ControllersManager.Instance.buildingController.GetFoodTruckBuilding().PeopleToGiveProvision) && EnoughProvisionToGiveAway())
         {
