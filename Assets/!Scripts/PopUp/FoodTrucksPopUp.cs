@@ -42,7 +42,7 @@ public class FoodTrucksPopUp : QuestPopUp
 
     public void GiveAwayProvision()
     {
-        if (EnoughPeopleTo(ControllersManager.Instance.buildingController.GetFoodTruckBuilding().PeopleToGiveProvision) && EnoughProvisionToGiveAway())
+        if (CheckForEnoughPeople(ControllersManager.Instance.buildingController.GetFoodTruckBuilding().PeopleToGiveProvision) && EnoughProvisionToGiveAway())
         {
             activeBtn.SetActive(false);
             inactiveBtn.SetActive(true);
@@ -54,7 +54,7 @@ public class FoodTrucksPopUp : QuestPopUp
             _errorText.text = "Õ≈“ œ–Œ¬»«»»";
             _errorText.enabled = true;
         }
-        else if (!EnoughPeopleTo(ControllersManager.Instance.buildingController.GetFoodTruckBuilding().PeopleToGiveProvision))
+        else if (!CheckForEnoughPeople(ControllersManager.Instance.buildingController.GetFoodTruckBuilding().PeopleToGiveProvision))
         {
             _errorText.text = "Õ≈ ƒŒ—“¿“Œ◊ÕŒ Àﬁƒ≈…";
             _errorText.enabled = true;

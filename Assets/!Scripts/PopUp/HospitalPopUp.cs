@@ -47,7 +47,7 @@ public class HospitalPopUp : QuestPopUp
 
     public void GiveAwayMedicine()
     {
-        if (EnoughPeopleTo(ControllersManager.Instance.buildingController.GetHospitalBuilding().PeopleToGiveMedicine)
+        if (CheckForEnoughPeople(ControllersManager.Instance.buildingController.GetHospitalBuilding().PeopleToGiveMedicine)
             && EnoughMedicineToGiveAway())
         {
             activeBtn.SetActive(false);
@@ -60,7 +60,7 @@ public class HospitalPopUp : QuestPopUp
             _errorText.text = "ме днярюрнвмн ледхжхмш";
             _errorText.enabled = true;
         }
-        else if (!EnoughPeopleTo(ControllersManager.Instance.buildingController.GetHospitalBuilding().PeopleToGiveMedicine))
+        else if (!CheckForEnoughPeople(ControllersManager.Instance.buildingController.GetHospitalBuilding().PeopleToGiveMedicine))
         {
             _errorText.text = "ме днярюрнвмн кчдеи";
             _errorText.enabled = true;

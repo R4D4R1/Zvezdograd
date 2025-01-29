@@ -35,12 +35,12 @@ public class RepairPopUp : EnoughPopUp
     public void RepairBuilding()
     {
 
-        if (EnoughPeopleTo(_buildingToUse.PeopleToRepair) && EnoughMaterialsToRepair())
+        if (CheckForEnoughPeople(_buildingToUse.PeopleToRepair) && EnoughMaterialsToRepair())
         {
             HidePopUp();
             _buildingToUse.RepairBuilding();
         }
-        else if (!EnoughPeopleTo(_buildingToUse.PeopleToRepair))
+        else if (!CheckForEnoughPeople(_buildingToUse.PeopleToRepair))
         {
             _errorText.text = "Õ≈ ƒŒ—“¿“Œ◊ÕŒ Àﬁƒ≈…";
             _errorText.enabled = true;

@@ -41,12 +41,12 @@ public class CollectPopUp : EnoughPopUp
     public void CollectBuilding()
     {
 
-        if (EnoughPeopleTo(_buildingToUse.PeopleToCollect) && EnoughRawMaterialsToStore() && EnoughRawMaterialsInBuilding())
+        if (CheckForEnoughPeople(_buildingToUse.PeopleToCollect) && EnoughRawMaterialsToStore() && EnoughRawMaterialsInBuilding())
         {
             HidePopUp();
             _buildingToUse.CollectBuilding();
         }
-        else if (!EnoughPeopleTo(_buildingToUse.PeopleToCollect))
+        else if (!CheckForEnoughPeople(_buildingToUse.PeopleToCollect))
         {
             _errorText.text = "Õ≈ ƒŒ—“¿“Œ◊ÕŒ Àﬁƒ≈…";
             _errorText.enabled = true;

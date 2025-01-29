@@ -8,7 +8,7 @@ public class QuestPopUp : EnoughPopUp
 {
     [SerializeField] private List<GameObject> questObjects;
 
-    private Dictionary<GameObject, int> questDeadlines = new Dictionary<GameObject, int>();
+    private Dictionary<GameObject, (int deadline, int stabilityToGet, int stabilityToLose, int relationshipWithGovToGet, int relationshipWithGovToLose)> questDeadlines = new Dictionary<GameObject, (int, int, int, int, int)>();
 
     public enum QuestType
     {
@@ -28,69 +28,80 @@ public class QuestPopUp : EnoughPopUp
     }
 
     public void EnableQuest(QuestType questType, string questName, int deadlineInDays, int unitSize, int turnsToWork, int turnsToRest,
-        int materialsToGet, int materialsToLose, int stabilityToGet, int stabilityToLose,
-        int relationshipWithGovToGet, int relationshipWithGovToLose)
+    int materialsToGet, int materialsToLose, int stabilityToGet, int stabilityToLose,
+    int relationshipWithGovToGet, int relationshipWithGovToLose)
     {
         foreach (var quest in questObjects)
         {
             if (!quest.activeSelf)
             {
                 quest.SetActive(true);
-
                 quest.GetComponent<TextMeshProUGUI>().text = questName + "  " + deadlineInDays + " дн.";
 
                 Button completeButton = quest.GetComponentInChildren<Button>();
                 if (completeButton != null)
                 {
-                    completeButton.onClick.RemoveAllListeners(); // Убираем старые подписки на событие
+                    completeButton.onClick.RemoveAllListeners();
                     completeButton.onClick.AddListener(() =>
                     {
-                        ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(unitSize, turnsToWork, turnsToRest);
-
-                        
-
-
-                        
-                        if (questType == QuestType.Provision || questType == QuestType.Medicine)
+                        if (!CheckForEnoughPeople(unitSize))
                         {
-                            ControllersManager.Instance.resourceController.AddOrRemoveStability(stabilityToGet);
-                            ControllersManager.Instance.resourceController.AddOrRemoveStability(-stabilityToLose);
+                            _errorText.text = "Недостаточно людей!";
+                            return;
                         }
 
-                        if (questType == QuestType.Provision)
+                        ResourceController resourceController = ControllersManager.Instance.resourceController;
+
+                        bool canComplete = false;
+                        switch (questType)
                         {
-                            ControllersManager.Instance.resourceController.AddOrRemoveProvision(materialsToGet);
-                            ControllersManager.Instance.resourceController.AddOrRemoveProvision(-materialsToLose);
+                            case QuestType.Provision:
+                                canComplete = CheckResourceAvailability(resourceController.GetProvision(), resourceController.GetMaxProvision(),
+                                    materialsToGet, materialsToLose, "еды");
+                                if (canComplete)
+                                {
+                                    resourceController.AddOrRemoveProvision(materialsToGet);
+                                    resourceController.AddOrRemoveProvision(-materialsToLose);
+                                }
+                                break;
+
+                            case QuestType.Medicine:
+                                canComplete = CheckResourceAvailability(resourceController.GetMedicine(), resourceController.GetMaxMedicine(),
+                                    materialsToGet, materialsToLose, "медикаментов");
+                                if (canComplete)
+                                {
+                                    resourceController.AddOrRemoveMedicine(materialsToGet);
+                                    resourceController.AddOrRemoveMedicine(-materialsToLose);
+                                }
+                                break;
+
+                            case QuestType.CityBuilding:
+                                canComplete = CheckResourceAvailability(resourceController.GetReadyMaterials(), resourceController.GetMaxReadyMaterials(),
+                                    materialsToGet, materialsToLose, "стройматериалов");
+                                if (canComplete)
+                                {
+                                    resourceController.AddOrRemoveReadyMaterials(materialsToGet);
+                                    resourceController.AddOrRemoveReadyMaterials(-materialsToLose);
+                                }
+                                break;
                         }
 
-                        if (questType == QuestType.Medicine)
+                        if (canComplete)
                         {
-                            ControllersManager.Instance.resourceController.AddOrRemoveMedicine(materialsToGet);
-                            ControllersManager.Instance.resourceController.AddOrRemoveMedicine(-materialsToLose);
+                            ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(unitSize, turnsToWork, turnsToRest);
+                            CompleteQuest(quest, stabilityToGet, relationshipWithGovToGet);
                         }
-
-                        if (questType == QuestType.CityBuilding)
-                        {
-                            ControllersManager.Instance.resourceController.AddOrRemoveReadyMaterials(materialsToGet);
-                            ControllersManager.Instance.resourceController.AddOrRemoveReadyMaterials(-materialsToLose);
-
-                            ControllersManager.Instance.buildingController.GetCityHallBuilding().AddRelationWithGov(relationshipWithGovToGet);
-                            ControllersManager.Instance.buildingController.GetCityHallBuilding().AddRelationWithGov(-relationshipWithGovToLose);
-                        }
-
-                        DisableQuest(quest);
                     });
                 }
 
-                // Добавляем квест в словарь с отслеживанием дней
-                questDeadlines[quest] = deadlineInDays;
+                questDeadlines[quest] = (deadlineInDays, stabilityToGet, stabilityToLose, relationshipWithGovToGet, relationshipWithGovToLose);
 
                 Debug.Log($"Задание {questName} активировано: {quest.name} с дедлайном {deadlineInDays} дней");
                 return;
             }
         }
 
-        Debug.LogWarning($"Нет доступных заданий для активации.");
+        Debug.LogWarning("Нет доступных заданий для активации.");
     }
 
     private void OnNextDay()
@@ -99,23 +110,57 @@ public class QuestPopUp : EnoughPopUp
         {
             Debug.Log("NEW DAY FOR DEADLINE");
 
-            foreach (var quest in questDeadlines.Keys.ToList()) // Создаём копию ключей
+            foreach (var quest in questDeadlines.Keys.ToList())
             {
-                questDeadlines[quest]--; // Уменьшаем дедлайн на 1 день
+                var data = questDeadlines[quest];
+                questDeadlines[quest] = (data.deadline - 1, data.stabilityToGet, data.stabilityToLose, data.relationshipWithGovToGet, data.relationshipWithGovToLose);
 
-                if (questDeadlines[quest] <= 0)
+                if (questDeadlines[quest].deadline <= 0)
                 {
                     Debug.Log($"Квест {quest.name} не выполнен в срок и завершён.");
-                    DisableQuest(quest); // Сразу отключаем квест
+                    LoseQuest(quest, data.stabilityToLose, data.relationshipWithGovToLose);
                 }
             }
         }
     }
 
-    private void DisableQuest(GameObject quest)
+    private void CompleteQuest(GameObject quest, int stabilityToGet, int relationshipWithGovToGet)
     {
+        ControllersManager.Instance.resourceController.AddOrRemoveStability(stabilityToGet);
+        ControllersManager.Instance.buildingController.GetCityHallBuilding().AddRelationWithGov(relationshipWithGovToGet);
+
         quest.SetActive(false);
         questDeadlines.Remove(quest);
         Debug.Log($"Задание {quest.name} завершено и отключено.");
+    }
+
+    private void LoseQuest(GameObject quest, int stabilityToLose, int relationshipWithGovToLose)
+    {
+        ControllersManager.Instance.resourceController.AddOrRemoveStability(-stabilityToLose);
+        ControllersManager.Instance.buildingController.GetCityHallBuilding().AddRelationWithGov(-relationshipWithGovToLose);
+
+        quest.SetActive(false);
+        questDeadlines.Remove(quest);
+        Debug.Log($"Задание {quest.name} завершено и отключено.");
+    }
+
+    /// <summary>
+    /// Проверяет, можно ли выполнить квест с текущими ресурсами.
+    /// </summary>
+    private bool CheckResourceAvailability(int currentAmount, int maxAmount, int materialsToGet, int materialsToLose, string resourceName)
+    {
+        if (currentAmount < materialsToLose)
+        {
+            _errorText.enabled = true;
+            _errorText.text = $"Недостаточно {resourceName}!";
+            return false;
+        }
+        if (currentAmount + materialsToGet > maxAmount)
+        {
+            _errorText.enabled = true;
+            _errorText.text = $"Нет места для {resourceName}!";
+            return false;
+        }
+        return true;
     }
 }

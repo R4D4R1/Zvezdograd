@@ -11,17 +11,17 @@ public class ResourceController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI readyMaterialsText;
     [SerializeField] private TextMeshProUGUI stabilityText;
 
-    [SerializeField] private int provision = 0;
-    [SerializeField] private int medicine = 0;
-    [SerializeField] private int rawMaterials = 0;
-    [SerializeField] private int readyMaterials = 0;
-    [SerializeField] private int stability = 100;
+    [SerializeField, Range(0, 10)] private int provision = 0;
+    [SerializeField, Range(0, 10)] private int medicine = 0;
+    [SerializeField, Range(0, 10)] private int rawMaterials = 0;
+    [SerializeField, Range(0, 10)] private int readyMaterials = 0;
+    [SerializeField, Range(0, 100)] private int stability = 100;
 
-    [SerializeField] private int maxProvision = 10;
-    [SerializeField] private int maxMedicine = 10;
-    [SerializeField] private int maxRawMaterials = 10;
-    [SerializeField] private int maxReadyMaterials = 10;
-    [SerializeField] private int maxStability = 100;
+    [SerializeField, Range(0, 10)] private int maxProvision = 10;
+    [SerializeField, Range(0, 10)] private int maxMedicine = 10;
+    [SerializeField, Range(0, 10)] private int maxRawMaterials = 10;
+    [SerializeField, Range(0, 10)] private int maxReadyMaterials = 10;
+    [SerializeField, Range(0, 100)] private int maxStability = 100;
 
     [SerializeField] private Color minColor = Color.red;
     [SerializeField] private Color maxColor = Color.blue;

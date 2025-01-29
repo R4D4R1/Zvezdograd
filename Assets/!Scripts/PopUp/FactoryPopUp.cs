@@ -40,7 +40,7 @@ public class FactoryPopUp : EnoughPopUp
 
     public void CreateReadyMaterials()
     {
-        if (EnoughPeopleTo(_buildingToUse.PeopleToCreateReadyMaterials) && EnoughRawMaterialsForReadyMaterials() && EnoughSpaceToStoreReadyMaterials())
+        if (CheckForEnoughPeople(_buildingToUse.PeopleToCreateReadyMaterials) && EnoughRawMaterialsForReadyMaterials() && EnoughSpaceToStoreReadyMaterials())
         {
             HidePopUp();
             _buildingToUse.CreateReadyMaterials();
@@ -55,7 +55,7 @@ public class FactoryPopUp : EnoughPopUp
             _errorText.text = "мерс леярю дкъ люрепхюкнб";
             _errorText.enabled = true;
         }
-        else if (!EnoughPeopleTo(_buildingToUse.PeopleToCreateReadyMaterials))
+        else if (!CheckForEnoughPeople(_buildingToUse.PeopleToCreateReadyMaterials))
         {
             _errorText.text = "ме днярюрнвмн кчдеи";
             _errorText.enabled = true;
@@ -64,7 +64,7 @@ public class FactoryPopUp : EnoughPopUp
 
     public void CreateArmySupplies()
     {
-        if (EnoughPeopleTo(_buildingToUse.PeopleToCreateArmyMaterials) && EnoughRawMaterialsForArmyMaterrials())
+        if (CheckForEnoughPeople(_buildingToUse.PeopleToCreateArmyMaterials) && EnoughRawMaterialsForArmyMaterrials())
         {
             HidePopUp();
             _buildingToUse.CreateArmyMaterials();
@@ -74,7 +74,7 @@ public class FactoryPopUp : EnoughPopUp
             _errorText.text = "мерс яшпэъ";
             _errorText.enabled = true;
         }
-        else if (!EnoughPeopleTo(_buildingToUse.PeopleToCreateArmyMaterials))
+        else if (!CheckForEnoughPeople(_buildingToUse.PeopleToCreateArmyMaterials))
         {
             _errorText.text = "ме днярюрнвмн кчдеи";
             _errorText.enabled = true;
