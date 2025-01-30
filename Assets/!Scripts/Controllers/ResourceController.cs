@@ -34,6 +34,9 @@ public class ResourceController : MonoBehaviour
     [SerializeField] private Slider readyMaterialsSlider;
     [SerializeField] private Slider stabilitySlider;
 
+    [SerializeField] private GameObject notificationPrefab; // Префаб уведомления
+    [SerializeField] private Transform notificationParent; // Родитель для уведомлений
+
     public bool IsStabilityZero { get; private set; }
 
     void Start()
@@ -110,18 +113,41 @@ public class ResourceController : MonoBehaviour
     public void AddOrRemoveMedicine(int value) => ModifyResource(ref medicine, value, maxMedicine, medicineSlider, medicineText, "МЕДИКАМЕНТЫ");
     public void AddOrRemoveRawMaterials(int value) => ModifyResource(ref rawMaterials, value, maxRawMaterials, rawMaterialsSlider, rawMaterialsText, "СЫРЬЕ");
     public void AddOrRemoveReadyMaterials(int value) => ModifyResource(ref readyMaterials, value, maxReadyMaterials, readyMaterialsSlider, readyMaterialsText, "СТРОЙМАТЕРИАЛЫ");
+    public void AddOrRemoveStability(int value) => ModifyResource(ref stability, value, maxStability, stabilitySlider, stabilityText, "СТАБИЛЬНОСТЬ", true);
 
-    public void AddOrRemoveStability(int value)
+    private void ModifyResource(ref int resource, int value, int maxValue, Slider slider, TextMeshProUGUI text, string label, bool isStability = false)
     {
-        stability = Mathf.Clamp(stability + value, 0, maxStability);
-        UpdateStabilityUI();
-        if (stability == 0) IsStabilityZero = true;
+        int oldValue = resource;
+        resource = Mathf.Clamp(resource + value, 0, maxValue);
+
+        if (resource != oldValue)
+        {
+            string operation = value > 0 ? "Добавлено" : "Убавлено";
+            CreateNotification($"{operation} {Mathf.Abs(value)} {label}");
+        }
+
+        if (isStability)
+        {
+            UpdateStabilityUI();
+            IsStabilityZero = (resource == 0);
+        }
+        else
+        {
+            UpdateSliderUI(slider, resource, maxValue, text, label);
+        }
     }
 
-    private void ModifyResource(ref int resource, int value, int maxValue, Slider slider, TextMeshProUGUI text, string label)
+    private void CreateNotification(string message)
     {
-        resource = Mathf.Clamp(resource + value, 0, maxValue);
-        UpdateSliderUI(slider, resource, maxValue, text, label);
+        if (notificationPrefab == null || notificationParent == null) return;
+
+        GameObject notification = Instantiate(notificationPrefab, notificationParent);
+        TextMeshProUGUI notificationText = notification.GetComponentInChildren<TextMeshProUGUI>();
+
+        if (notificationText != null)
+        {
+            notificationText.text = message;
+        }
     }
 
     public int GetProvision() => provision;

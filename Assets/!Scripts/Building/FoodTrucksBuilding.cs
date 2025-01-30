@@ -3,13 +3,15 @@ using UnityEngine;
 public class FoodTrucksBuilding : RepairableBuilding
 {
     [field: SerializeField] public int PeopleToGiveProvision { get; private set; }
+
+    [SerializeField] private int TurnsToToGiveProvisionOriginal;
+    public int TurnsToToGiveProvision { get; private set; }
     [field: SerializeField] public int TurnsToRestFromProvisionJob { get; private set; }
     [field: SerializeField] public int FoodToGive { get; private set; }
     [field: SerializeField] public int StabilityAddValue { get; private set; }
     [field: SerializeField] public int StabilityRemoveValue { get; private set; }
 
-    [SerializeField] private int TurnsToToGiveProvisionOriginal;
-    public int TurnsToToGiveProvision { get; private set; }
+
 
     public bool IsFoodGivenAwayToday { get; private set; } = false;
 

@@ -96,20 +96,18 @@ public class QuestPopUp : EnoughPopUp
 
                 questDeadlines[quest] = (deadlineInDays, stabilityToGet, stabilityToLose, relationshipWithGovToGet, relationshipWithGovToLose);
 
-                Debug.Log($"Задание {questName} активировано: {quest.name} с дедлайном {deadlineInDays} дней");
+                //Debug.Log($"Задание {questName} активировано: {quest.name} с дедлайном {deadlineInDays} дней");
                 return;
             }
         }
 
-        Debug.LogWarning("Нет доступных заданий для активации.");
+        //Debug.LogWarning("Нет доступных заданий для активации.");
     }
 
     private void OnNextDay()
     {
         if (questDeadlines.Count > 0)
         {
-            Debug.Log("NEW DAY FOR DEADLINE");
-
             foreach (var quest in questDeadlines.Keys.ToList())
             {
                 var data = questDeadlines[quest];
@@ -117,7 +115,7 @@ public class QuestPopUp : EnoughPopUp
 
                 if (questDeadlines[quest].deadline <= 0)
                 {
-                    Debug.Log($"Квест {quest.name} не выполнен в срок и завершён.");
+                    //Debug.Log($"Квест {quest.name} не выполнен в срок и завершён.");
                     LoseQuest(quest, data.stabilityToLose, data.relationshipWithGovToLose);
                 }
             }
@@ -131,7 +129,7 @@ public class QuestPopUp : EnoughPopUp
 
         quest.SetActive(false);
         questDeadlines.Remove(quest);
-        Debug.Log($"Задание {quest.name} завершено и отключено.");
+        //Debug.Log($"Задание {quest.name} завершено и отключено.");
     }
 
     private void LoseQuest(GameObject quest, int stabilityToLose, int relationshipWithGovToLose)
@@ -141,7 +139,7 @@ public class QuestPopUp : EnoughPopUp
 
         quest.SetActive(false);
         questDeadlines.Remove(quest);
-        Debug.Log($"Задание {quest.name} завершено и отключено.");
+        //Debug.Log($"Задание {quest.name} завершено и отключено.");
     }
 
     /// <summary>

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class CollectableBuilding : SelectableBuilding
+public class CollectableBuilding : BuildingDependingOnStability
 {
     [field: SerializeField] public int RawMaterialsLeft { get; private set; }
 
@@ -31,22 +31,7 @@ public class CollectableBuilding : SelectableBuilding
 
     private void UpdateAmountOfTurnsNeededToDoSMTH()
     {
-        if (ControllersManager.Instance.resourceController.GetStability() > 75)
-        {
-            TurnsToCollect = TurnsToCollectOriginal - 1;
-        }
-        if(ControllersManager.Instance.resourceController.GetStability() <= 75)
-        {
-            TurnsToCollect = TurnsToCollectOriginal;
-        }
-        if(ControllersManager.Instance.resourceController.GetStability() <= 50)
-        {
-            TurnsToCollect = TurnsToCollectOriginal + 1;
-        }
-        if (ControllersManager.Instance.resourceController.GetStability() <= 25)
-        {
-            TurnsToCollect = TurnsToCollectOriginal + 2;
-        }
+        TurnsToCollect = UpdateAmountOfTurnsNeededToDoSMTH(TurnsToCollectOriginal);
     }
 
     private void TryTurnOnBuilding()

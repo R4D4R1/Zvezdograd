@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RepairableBuilding : SelectableBuilding
+public class RepairableBuilding : BuildingDependingOnStability
 {
     public enum State
     {
         Intact,
-        Damaged
+        Damaged,
+        Repairing // Добавлено новое состояние
     }
 
     public enum BuildingType
@@ -33,7 +34,7 @@ public class RepairableBuilding : SelectableBuilding
         }
     }
 
-    public BuildingType Type => _buildingType; // Public getter for buildingType
+    public BuildingType Type => _buildingType;
 
     [field: SerializeField] public string DamagedBuildingNameText { get; private set; }
     [field: SerializeField] public string DamagedDescriptionText { get; private set; }
@@ -49,7 +50,7 @@ public class RepairableBuilding : SelectableBuilding
     [SerializeField] protected BuildingType _buildingType;
     [SerializeField] protected Material _greyMaterial;
 
-    private List<Material[]> _originalMaterials = new List<Material[]>(); // Список для хранения оригинальных материалов
+    private List<Material[]> _originalMaterials = new List<Material[]>();
 
     public event Action OnStateChanged;
 
@@ -72,35 +73,9 @@ public class RepairableBuilding : SelectableBuilding
         TurnsToRepair = UpdateAmountOfTurnsNeededToDoSMTH(TurnsToRepairOriginal);
     }
 
-    // Метод меняющий количество шагов необходимое для выполнения взависимости от стабильности
-    protected int UpdateAmountOfTurnsNeededToDoSMTH(int TurnsToDoWorkOriginal)
-    {
-        int stability = ControllersManager.Instance.resourceController.GetStability();
-        int turnToDoWork = 0;
-
-        if (stability > 75)
-        {
-            turnToDoWork = TurnsToDoWorkOriginal - 1;
-        }
-        if (stability <= 75)
-        {
-            turnToDoWork = TurnsToDoWorkOriginal;
-        }
-        if (stability <= 50)
-        {
-            turnToDoWork = TurnsToDoWorkOriginal + 1;
-        }
-        if (stability <= 25)
-        {
-            turnToDoWork = TurnsToDoWorkOriginal + 2;
-        }
-
-        return turnToDoWork;
-    }
-
     protected virtual void TryTurnOnBuilding()
     {
-        if (!BuildingIsSelactable)
+        if (CurrentState == State.Repairing)
         {
             _turnsToRepair--;
             Debug.Log(_turnsToRepair);
@@ -117,22 +92,23 @@ public class RepairableBuilding : SelectableBuilding
 
     public void RepairBuilding()
     {
-        if (_state == State.Damaged)
+        if (CurrentState == State.Damaged)
         {
             ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToRepair, TurnsToRepair, TurnsToRestFromRepair);
-
             ControllersManager.Instance.resourceController.AddOrRemoveReadyMaterials(-BuildingMaterialsToRepair);
 
             _turnsToRepair = TurnsToRepair;
             BuildingIsSelactable = false;
 
             ReplaceMaterialsWithGrey();
+
+            CurrentState = State.Repairing; // Устанавливаем состояние ремонта
         }
     }
 
     public void BombBuilding()
     {
-        if (_state == State.Intact)
+        if (CurrentState == State.Intact)
         {
             BuildingIsSelactable = true;
             CurrentState = State.Damaged;
@@ -142,14 +118,12 @@ public class RepairableBuilding : SelectableBuilding
     protected void ReplaceMaterialsWithGrey()
     {
         var renderers = GetComponentsInChildren<MeshRenderer>();
-        _originalMaterials.Clear(); // Очищаем список на случай повторного вызова
+        _originalMaterials.Clear();
 
         foreach (var renderer in renderers)
         {
-            // Сохраняем оригинальные материалы
             _originalMaterials.Add(renderer.materials);
 
-            // Заменяем материалы на серый
             var greyMaterials = new Material[renderer.materials.Length];
             for (int i = 0; i < greyMaterials.Length; i++)
             {
@@ -165,22 +139,16 @@ public class RepairableBuilding : SelectableBuilding
 
         for (int i = 0; i < renderers.Length; i++)
         {
-
             if (i < _originalMaterials.Count)
             {
                 renderers[i].materials = _originalMaterials[i];
             }
-            else
-            {
-                //Debug.LogWarning("Mismatch between renderers and original materials list.");
-            }
         }
-        _originalMaterials.Clear(); // Очищаем список после восстановления
+        _originalMaterials.Clear();
     }
 
     private void FindBuildingModels()
     {
-        // Find the intact and damaged building models based on the components
         IntactBuilding intactComponent = GetComponentInChildren<IntactBuilding>();
         DamagedBuilding damagedComponent = GetComponentInChildren<DamagedBuilding>();
 
@@ -207,8 +175,8 @@ public class RepairableBuilding : SelectableBuilding
     {
         if (_intactBuildingModel != null && _damagedBuildingModel != null)
         {
-            _intactBuildingModel.SetActive(_state == State.Intact);
-            _damagedBuildingModel.SetActive(_state == State.Damaged);
+            _intactBuildingModel.SetActive(CurrentState == State.Intact);
+            _damagedBuildingModel.SetActive(CurrentState == State.Damaged || CurrentState == State.Repairing);
         }
     }
 

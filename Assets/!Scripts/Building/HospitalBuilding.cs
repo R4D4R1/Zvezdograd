@@ -3,13 +3,14 @@ using UnityEngine;
 public class HospitalBuilding : RepairableBuilding
 {
     [field: SerializeField] public int PeopleToGiveMedicine { get; private set; }
-    [field: SerializeField] public int TurnsToToGiveMedicine { get; private set; }
+
+    [SerializeField] private int TurnsToToGiveMedicineOriginal;
+    public int TurnsToToGiveMedicine { get; private set; }
     [field: SerializeField] public int TurnsToRestFromMedicineJob { get; private set; }
     [field: SerializeField] public int MedicineToGive { get; private set; }
-
-
     [field: SerializeField] public int StabilityAddValue { get; private set; }
     [field: SerializeField] public int StabilityRemoveValue { get; private set; }
+
     [field: SerializeField] public int OriginalDaysToGiveMedicine { get; private set; }
     public int DaysToGiveMedicine { get; private set; }
 
@@ -20,6 +21,17 @@ public class HospitalBuilding : RepairableBuilding
         DaysToGiveMedicine = OriginalDaysToGiveMedicine;
     }
 
+    private void Start()
+    {
+        ControllersManager.Instance.timeController.OnNextTurnBtnPressed += UpdateAmountOfTurnsNeededToDoSMTH;
+
+        UpdateAmountOfTurnsNeededToDoSMTH();
+    }
+
+    private void UpdateAmountOfTurnsNeededToDoSMTH()
+    {
+        TurnsToToGiveMedicine = UpdateAmountOfTurnsNeededToDoSMTH(TurnsToToGiveMedicineOriginal);
+    }
 
     public void SendPeopleToGiveMedicine()
     {
