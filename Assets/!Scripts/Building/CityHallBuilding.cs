@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class CityHallBuilding : RepairableBuilding
@@ -6,9 +7,13 @@ public class CityHallBuilding : RepairableBuilding
 
     [SerializeField] private int _daysLeftToSendArmyMaterialsOriginal;
     public int DaysLeftToSendArmyMaterials { get; private set; }
+    public bool IsMaterialsSent { get; private set; }
 
     [SerializeField] private int _daysLeftToRecieveGovHelpOriginal;
     public int DaysLeftToRecieveGovHelp { get; private set; }
+
+    public event Action ArmyMaterialsWereSent;
+    public event Action UpdateArmyRequirement;
 
     // Здание совета
 
@@ -48,22 +53,25 @@ public class CityHallBuilding : RepairableBuilding
 
         if (DaysLeftToSendArmyMaterials == 0)
         {
-            DaysLeftToSendArmyMaterials = _daysLeftToSendArmyMaterialsOriginal;
-
-            if (RelationWithGoverment > 1)
+            if (!IsMaterialsSent)
             {
-                RelationWithGoverment -= 2;
-                Debug.Log("DID NOT SENT ARMY MATERIALS");
+                if (RelationWithGoverment > 1)
+                {
+                    RelationWithGoverment -= 2;
+                    Debug.Log("DID NOT SENT ARMY MATERIALS");
 
-                return true;
-            }
-            else
-            {
-                Debug.Log("GAME OVER");
+                    return true;
+                }
+                else
+                {
+                    Debug.Log("GAME OVER");
 
-                return false;
-                // GAMEOVER
+                    return false;
+                    // GAMEOVER
+                }
             }
+
+            IsMaterialsSent = false;
         }
 
         return false;
@@ -105,6 +113,6 @@ public class CityHallBuilding : RepairableBuilding
 
     public void ArmyMaterialsSent()
     {
-        DaysLeftToSendArmyMaterials = _daysLeftToSendArmyMaterialsOriginal;
+        IsMaterialsSent = true;
     }
 }

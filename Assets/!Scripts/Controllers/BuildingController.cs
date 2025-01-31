@@ -62,7 +62,7 @@ public class BuildingController : MonoBehaviour
             return buildingToReturn;
         else
         {
-            Debug.Log("NO BUILDING");
+            Debug.Log("NO BUILDING FOR BOMBING");
 
             return null;
         }

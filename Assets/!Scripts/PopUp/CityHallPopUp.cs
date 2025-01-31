@@ -63,8 +63,15 @@ public class CityHallPopUp : QuestPopUp
 
     private void UpdateMilitaryTimerText()
     {
-        _militaryTimerText.text = "Крайний срок отправки воен. помощи - " +
-            _building.DaysLeftToSendArmyMaterials.ToString() + "дн.";
+        if (ControllersManager.Instance.buildingController.GetCityHallBuilding().IsMaterialsSent)
+        {
+            _militaryTimerText.text = "Военная Помощь отправлена, ожидайте указаний";
+        }
+        else
+        {
+            _militaryTimerText.text = "Крайний срок отправки воен. помощи - " +
+                _building.DaysLeftToSendArmyMaterials.ToString() + "дн.";
+        }
     }
 
     private void UpdateHelpFromGovTimerText()

@@ -6,8 +6,10 @@ public class FactoryBuilding : RepairableBuilding
 {
     [field: SerializeField] public int PeopleToCreateReadyMaterials { get; private set; }
     [field: SerializeField] public int PeopleToCreateArmyMaterials { get; private set; }
-    [field: SerializeField] public int TurnsToCreateReadyMaterials { get; private set; }
-    [field: SerializeField] public int TurnsToCreateArmyMaterials { get; private set; }
+    [field: SerializeField] public int TurnsToCreateReadyMaterialsOriginal { get; private set; }
+     public int TurnsToCreateReadyMaterials { get; private set; }
+    [field: SerializeField] public int TurnsToCreateArmyMaterialsOriginal { get; private set; }
+     public int TurnsToCreateArmyMaterials { get; private set; }
     [field: SerializeField] public int TurnsToRestFromReadyMaterialsJob { get; private set; }
     [field: SerializeField] public int TurnsToRestFromArmyMaterialsJob { get; private set; }
     [field: SerializeField] public int RawMaterialsToCreateReadyMaterials { get; private set; }
@@ -17,6 +19,21 @@ public class FactoryBuilding : RepairableBuilding
     private bool _isWorking;
     private bool _isCreatingReadyMaterials;
     private int _turnsToWork;
+
+    public event Action OnArmyWorkComplete;
+
+    private void Start()
+    {
+        ControllersManager.Instance.timeController.OnNextTurnBtnPressed += UpdateAmountOfTurnsNeededToDoSMTH;
+
+        UpdateAmountOfTurnsNeededToDoSMTH();
+    }
+
+    private void UpdateAmountOfTurnsNeededToDoSMTH()
+    {
+        TurnsToCreateReadyMaterials = UpdateAmountOfTurnsNeededToDoSMTH(TurnsToCreateReadyMaterialsOriginal);
+        TurnsToCreateArmyMaterials = UpdateAmountOfTurnsNeededToDoSMTH(TurnsToCreateArmyMaterialsOriginal);
+    }
 
     protected override void TryTurnOnBuilding()
     {
@@ -49,6 +66,9 @@ public class FactoryBuilding : RepairableBuilding
                     {
                         ControllersManager.Instance.buildingController.GetCityHallBuilding().AddRelationWithGov(2);
                         ControllersManager.Instance.buildingController.GetCityHallBuilding().ArmyMaterialsSent();
+
+                        ControllersManager.Instance.popUpsController.FactoryPopUp.UpdateCreateArmyButtonState();
+
                         Debug.Log("Army Materials Created");
                     }
 
@@ -76,7 +96,8 @@ public class FactoryBuilding : RepairableBuilding
     public void CreateArmyMaterials()
     {
         ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToCreateArmyMaterials, TurnsToCreateArmyMaterials, TurnsToRestFromArmyMaterialsJob);
-        
+        ControllersManager.Instance.resourceController.AddOrRemoveRawMaterials(-RawMaterialsToCreateArmyMaterials);
+
         BuildingIsSelactable = false;
         _isWorking = true;
         _isCreatingReadyMaterials = false;

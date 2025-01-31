@@ -3,27 +3,30 @@ using DG.Tweening;
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class FactoryPopUp : EnoughPopUp
 {
     private FactoryBuilding _buildingToUse;
-    [SerializeField] protected TextMeshProUGUI _createReadyMaterialButtonText;
-    [SerializeField] protected TextMeshProUGUI _creatArmyMaterialButtonText;
 
-    // ÍÀ ÇÀÂÎÄÅ ÌÛ ÌÎÆÅÌ ÄÅËÀÒÜ ÌÀÒÅĞÈÀËÛ ÈÇ ÑÛĞÜß
-    // ÌÛ ÌÎÆÅÌ ÑÎÇÄÀÂÀÒÜ ÈÇ ÌÀÒÅĞÈÀËÎÂ ÇÀÊÀÇÛ ÍÀÏĞÈÌÅĞ ×ÀÑÒÈ ÂÎÎĞÓÆÅÍÈß
-    // ÊÍÎÏÊÈ ÑÎÇÄÀÒÜ ÌÀÒÅĞÈÀËÛ ÈËÈ ÂÛÏÎËÍÈÒÜ ÏĞÈÊÀÇÛ ÑÎÂÅÒÀ
+    [SerializeField] private TextMeshProUGUI _createReadyMaterialButtonText;
+    [SerializeField] private TextMeshProUGUI _creatArmyMaterialButtonText;
+    [SerializeField] private TextMeshProUGUI _readyMaterialsDemandsText;
+    [SerializeField] private TextMeshProUGUI _armyMaterialsDemandsText;
 
-    // ÑÎÇÄÀÒÜ
-    // 2 ÑÛĞÜß 1 ÌÅÒÀĞÈÀË ÇÀ 3 ÕÎÄÀ + 3 ÎÒÄÛÕ
-    // 3 ÑÛĞÜß 2 ÌÀÒÅĞÀËÀ ÇÀ 4 ÕÎÄÀ + 4 ÎÒÄÛÕÀ
-
-    // ÂÛÏÎËÍÈÒÜ ÇÀÄÀ×Ó ÑÎÇÄÀÒÜ È ÎÒÏĞÀÂÈÒÜ ÒÅÕÍÈÊÓ
+    [SerializeField] private UnityEvent OnArmyBtnEnabled;
+    [SerializeField] private UnityEvent OnArmyBtnDisabled;
 
     private void Start()
     {
         _errorText.enabled = false;
         _isDestroyable = false;
+    }
+
+    public void UpdateCreateArmyButtonState()
+    {
+        OnArmyBtnEnabled?.Invoke();
     }
 
     public void ShowFactoryPopUp(FactoryBuilding factoryBuilding)
@@ -33,6 +36,12 @@ public class FactoryPopUp : EnoughPopUp
         _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
             IsActive = true;
+
+            _readyMaterialsDemandsText.text = $"ÍÅÎÁÕÎÄÈÌÎ \n {_buildingToUse.RawMaterialsToCreateReadyMaterials} ñûğüÿ \n" +
+                                              $" {_buildingToUse.PeopleToCreateReadyMaterials} ïîäğàçäåëåíèÿ";
+
+            _armyMaterialsDemandsText.text = $"ÍÅÎÁÕÎÄÈÌÎ \n {_buildingToUse.RawMaterialsToCreateArmyMaterials} ñûğüÿ \n" +
+                                             $" {_buildingToUse.PeopleToCreateArmyMaterials} ïîäğàçäåëåíèÿ";
 
             SetAlpha(1);
         });
@@ -45,63 +54,56 @@ public class FactoryPopUp : EnoughPopUp
             HidePopUp();
             _buildingToUse.CreateReadyMaterials();
         }
-        else if (!EnoughRawMaterialsForReadyMaterials())
+        else
         {
-            _errorText.text = "ÍÅÒÓ ÑÛĞÜß";
-            _errorText.enabled = true;
-        }
-        else if (!EnoughSpaceToStoreReadyMaterials())
-        {
-            _errorText.text = "ÍÅÒÓ ÌÅÑÒÀ ÄËß ÌÀÒÅĞÈÀËÎÂ";
-            _errorText.enabled = true;
-        }
-        else if (!CheckForEnoughPeople(_buildingToUse.PeopleToCreateReadyMaterials))
-        {
-            _errorText.text = "ÍÅ ÄÎÑÒÀÒÎ×ÍÎ ËŞÄÅÉ";
-            _errorText.enabled = true;
+            ShowErrorMessage();
         }
     }
 
     public void CreateArmySupplies()
     {
-        if (CheckForEnoughPeople(_buildingToUse.PeopleToCreateArmyMaterials) && EnoughRawMaterialsForArmyMaterrials())
+        if (CheckForEnoughPeople(_buildingToUse.PeopleToCreateArmyMaterials) && EnoughRawMaterialsForArmyMaterials())
         {
+            OnArmyBtnDisabled?.Invoke();
             HidePopUp();
             _buildingToUse.CreateArmyMaterials();
         }
-        else if (!EnoughRawMaterialsForArmyMaterrials())
+        else
+        {
+            ShowErrorMessage();
+        }
+    }
+
+    private void ShowErrorMessage()
+    {
+        if (!EnoughRawMaterialsForReadyMaterials() || !EnoughRawMaterialsForArmyMaterials())
         {
             _errorText.text = "ÍÅÒÓ ÑÛĞÜß";
-            _errorText.enabled = true;
         }
-        else if (!CheckForEnoughPeople(_buildingToUse.PeopleToCreateArmyMaterials))
+        else if (!EnoughSpaceToStoreReadyMaterials())
+        {
+            _errorText.text = "ÍÅÒÓ ÌÅÑÒÀ ÄËß ÌÀÒÅĞÈÀËÎÂ";
+        }
+        else if (!CheckForEnoughPeople(_buildingToUse.PeopleToCreateReadyMaterials) || !CheckForEnoughPeople(_buildingToUse.PeopleToCreateArmyMaterials))
         {
             _errorText.text = "ÍÅ ÄÎÑÒÀÒÎ×ÍÎ ËŞÄÅÉ";
-            _errorText.enabled = true;
         }
+        _errorText.enabled = true;
     }
 
     public bool EnoughSpaceToStoreReadyMaterials()
     {
-        if (ControllersManager.Instance.resourceController.GetReadyMaterials() + _buildingToUse.ReadyMaterialsGet < ControllersManager.Instance.resourceController.GetMaxReadyMaterials())
-            return true;
-        else
-            return false;
+        return ControllersManager.Instance.resourceController.GetReadyMaterials() + _buildingToUse.ReadyMaterialsGet
+               < ControllersManager.Instance.resourceController.GetMaxReadyMaterials();
     }
 
     public bool EnoughRawMaterialsForReadyMaterials()
     {
-        if (ControllersManager.Instance.resourceController.GetRawMaterials() >= _buildingToUse.RawMaterialsToCreateReadyMaterials)
-            return true;
-        else
-            return false;
+        return ControllersManager.Instance.resourceController.GetRawMaterials() >= _buildingToUse.RawMaterialsToCreateReadyMaterials;
     }
 
-    public bool EnoughRawMaterialsForArmyMaterrials()
+    public bool EnoughRawMaterialsForArmyMaterials()
     {
-        if (ControllersManager.Instance.resourceController.GetRawMaterials() >= _buildingToUse.RawMaterialsToCreateArmyMaterials)
-            return true;
-        else
-            return false;
+        return ControllersManager.Instance.resourceController.GetRawMaterials() >= _buildingToUse.RawMaterialsToCreateArmyMaterials;
     }
 }

@@ -5,22 +5,22 @@ using UnityEngine;
 public class HospitalPopUp : QuestPopUp
 {
     [SerializeField] private TextMeshProUGUI _medicineTimerText;
-
     [SerializeField] private GameObject activeBtn;
     [SerializeField] private GameObject inactiveBtn;
 
     protected override void Start()
     {
         base.Start();
+        InitializePopUp();
+    }
 
+    private void InitializePopUp()
+    {
         _errorText.enabled = false;
         _isDestroyable = false;
-
         activeBtn.SetActive(true);
         inactiveBtn.SetActive(false);
-
         UpdateMedicineTimerText();
-
         ControllersManager.Instance.timeController.OnNextDayEvent += OnNextDayEvent;
     }
 
@@ -40,39 +40,51 @@ public class HospitalPopUp : QuestPopUp
         _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
             IsActive = true;
-
             SetAlpha(1);
         });
     }
 
     public void GiveAwayMedicine()
     {
-        if (CheckForEnoughPeople(ControllersManager.Instance.buildingController.GetHospitalBuilding().PeopleToGiveMedicine)
-            && EnoughMedicineToGiveAway())
+        if (CanGiveAwayMedicine())
         {
-            activeBtn.SetActive(false);
-            inactiveBtn.SetActive(true);
-
+            DisableActiveButton();
             ControllersManager.Instance.buildingController.GetHospitalBuilding().SendPeopleToGiveMedicine();
         }
-        else if (!EnoughMedicineToGiveAway())
+        else
+        {
+            ShowErrorMessage();
+        }
+    }
+
+    private bool CanGiveAwayMedicine()
+    {
+        return CheckForEnoughPeople(ControllersManager.Instance.buildingController.GetHospitalBuilding().PeopleToGiveMedicine) &&
+               EnoughMedicineToGiveAway();
+    }
+
+    private void DisableActiveButton()
+    {
+        activeBtn.SetActive(false);
+        inactiveBtn.SetActive(true);
+    }
+
+    private void ShowErrorMessage()
+    {
+        if (!EnoughMedicineToGiveAway())
         {
             _errorText.text = "ÍÅ ÄÎÑÒÀÒÎ×ÍÎ ÌÅÄÈÖÈÍÛ";
-            _errorText.enabled = true;
         }
         else if (!CheckForEnoughPeople(ControllersManager.Instance.buildingController.GetHospitalBuilding().PeopleToGiveMedicine))
         {
             _errorText.text = "ÍÅ ÄÎÑÒÀÒÎ×ÍÎ ËÞÄÅÉ";
-            _errorText.enabled = true;
         }
+        _errorText.enabled = true;
     }
 
     private bool EnoughMedicineToGiveAway()
     {
-        if (ControllersManager.Instance.resourceController.GetMedicine() > ControllersManager.Instance.buildingController.GetHospitalBuilding().MedicineToGive)
-            return true;
-        else
-            return false;
+        return ControllersManager.Instance.resourceController.GetMedicine() > ControllersManager.Instance.buildingController.GetHospitalBuilding().MedicineToGive;
     }
 
     private void UpdateMedicineTimerText()
