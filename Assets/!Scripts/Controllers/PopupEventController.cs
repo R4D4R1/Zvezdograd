@@ -51,7 +51,7 @@ public class PopupEventController : MonoBehaviour
                 if (!string.IsNullOrEmpty(popupEvent.buildingType))
                 {
                     // Проверяем, является ли тип здания одним из допустимых
-                    if (popupEvent.buildingType == "Еда" || popupEvent.buildingType == "Медицина" || popupEvent.buildingType == "Совет")
+                    if (popupEvent.buildingType == "Еда" || popupEvent.buildingType == "Медикаменты" || popupEvent.buildingType == "Совет")
                     {
                         if (popupEvent.buildingType == "Еда")
                         {
@@ -59,7 +59,7 @@ public class PopupEventController : MonoBehaviour
                                 popupEvent.turnsToWork, popupEvent.turnsToRest, popupEvent.materialsToGet, popupEvent.materialsToLose,
                                 popupEvent.stabilityToGet, popupEvent.stabilityToLose, popupEvent.relationshipWithGovToGet, popupEvent.relationshipWithGovToLose);
                         }
-                        else if (popupEvent.buildingType == "Медицина")
+                        else if (popupEvent.buildingType == "Медикаменты")
                         {
                             ControllersManager.Instance.popUpsController.HospitalPopUp.EnableQuest(QuestPopUp.QuestType.Medicine, popupEvent.questText, popupEvent.unitSize, popupEvent.deadlineInDays,
                                 popupEvent.turnsToWork, popupEvent.turnsToRest, popupEvent.materialsToGet, popupEvent.materialsToLose,
