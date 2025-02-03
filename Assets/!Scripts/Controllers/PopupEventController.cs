@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
+using UnityEngine.Events;
 
 public class PopupEventController : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class PopupEventController : MonoBehaviour
     [SerializeField] private int _randomEventChance;
 
     private Dictionary<string, PopupEvent> specificEvents;
+
+    [SerializeField] private UnityEvent OnSnowStarted;
 
     private void Start()
     {
@@ -48,6 +51,13 @@ public class PopupEventController : MonoBehaviour
         {
             if (specificEvents.TryGetValue(eventKey, out PopupEvent popupEvent))
             {
+                if(!string.IsNullOrEmpty(popupEvent.weatherType))
+                {
+                    if(popupEvent.weatherType == "Снег")
+                    {
+                        OnSnowStarted?.Invoke();
+                    }
+                }
                 if (!string.IsNullOrEmpty(popupEvent.buildingType))
                 {
                     // Проверяем, является ли тип здания одним из допустимых
@@ -95,6 +105,9 @@ public class PopupEvent
     public string title;
     public string mainText;
     public string buttonText;
+
+    // Смена погоды
+    public string weatherType;
 
     // Спец задания 
     public string buildingType;

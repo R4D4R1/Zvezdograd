@@ -20,7 +20,7 @@ public class FactoryBuilding : RepairableBuilding
     private bool _isCreatingReadyMaterials;
     private int _turnsToWork;
 
-    public event Action OnArmyWorkComplete;
+    // TO DO - заменить синглтон
 
     private void Start()
     {
@@ -65,9 +65,6 @@ public class FactoryBuilding : RepairableBuilding
                     {
                         ControllersManager.Instance.buildingController.GetCityHallBuilding().AddRelationWithGov(2);
                         ControllersManager.Instance.buildingController.GetCityHallBuilding().ArmyMaterialsSent();
-
-                        ControllersManager.Instance.popUpsController.FactoryPopUp.UpdateCreateArmyButtonState();
-
                     }
 
                     BuildingIsSelactable = true;

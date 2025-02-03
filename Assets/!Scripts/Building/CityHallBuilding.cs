@@ -3,17 +3,19 @@ using UnityEngine;
 
 public class CityHallBuilding : RepairableBuilding
 {
+    [Range(0f, 1f)]
     [field: SerializeField] public int RelationWithGoverment { get; private set; }
 
     [SerializeField] private int _daysLeftToSendArmyMaterialsOriginal;
-    public int DaysLeftToSendArmyMaterials { get; private set; }
-    public bool IsMaterialsSent { get; private set; }
 
     [SerializeField] private int _daysLeftToRecieveGovHelpOriginal;
     public int DaysLeftToRecieveGovHelp { get; private set; }
+    public int DaysLeftToSendArmyMaterials { get; private set; }
+    public bool IsMaterialsSent { get; private set; }
 
-    public event Action ArmyMaterialsWereSent;
-    public event Action UpdateArmyRequirement;
+
+    //public event Action ArmyMaterialsWereSent;
+    //public event Action UpdateArmyRequirement;
 
     // Здание совета
 
@@ -50,10 +52,16 @@ public class CityHallBuilding : RepairableBuilding
     public bool DayPassed()
     {
         DaysLeftToSendArmyMaterials--;
-
+        Debug.Log(DaysLeftToSendArmyMaterials);
         if (DaysLeftToSendArmyMaterials == 0)
         {
-            if (!IsMaterialsSent)
+            if(IsMaterialsSent)
+            {
+                ControllersManager.Instance.popUpsController.FactoryPopUp.UpdateCreateArmyButtonState();
+
+                IsMaterialsSent = false;
+            }
+            else 
             {
                 if (RelationWithGoverment > 1)
                 {
@@ -71,9 +79,8 @@ public class CityHallBuilding : RepairableBuilding
                 }
             }
 
-            IsMaterialsSent = false;
+            DaysLeftToSendArmyMaterials = _daysLeftToSendArmyMaterialsOriginal;
         }
-
         return false;
     }
 
