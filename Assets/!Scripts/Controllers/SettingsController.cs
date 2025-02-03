@@ -159,10 +159,6 @@ public class SettingsController : MonoBehaviour
         PlayerPrefs.SetFloat(SoundVolumeKey, soundVolume);
         PlayerPrefs.SetInt(GraphicsQualityKey, graphicsQualityIndex);
         PlayerPrefs.Save();
-
-        Debug.Log(graphicsDropdown.value);
-        Debug.Log(graphicsQualityIndex);
-
     }
 
     private void LoadSettings()

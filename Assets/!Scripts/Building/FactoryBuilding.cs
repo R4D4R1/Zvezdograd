@@ -42,7 +42,6 @@ public class FactoryBuilding : RepairableBuilding
             if (!_isWorking)
             {
                 _turnsToRepair--;
-                Debug.Log(_turnsToRepair);
 
                 if (_turnsToRepair == 0)
                 {
@@ -55,7 +54,7 @@ public class FactoryBuilding : RepairableBuilding
             if (_isWorking)
             {
                 _turnsToWork--;
-                Debug.Log("Factory work");
+
                 if (_turnsToWork == 0)
                 {
                     if (_isCreatingReadyMaterials)
@@ -69,7 +68,6 @@ public class FactoryBuilding : RepairableBuilding
 
                         ControllersManager.Instance.popUpsController.FactoryPopUp.UpdateCreateArmyButtonState();
 
-                        Debug.Log("Army Materials Created");
                     }
 
                     BuildingIsSelactable = true;
