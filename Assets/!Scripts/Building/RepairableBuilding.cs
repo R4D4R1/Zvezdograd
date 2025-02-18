@@ -8,7 +8,7 @@ public class RepairableBuilding : BuildingDependingOnStability
     {
         Intact,
         Damaged,
-        Repairing // Добавлено новое состояние
+        Repairing
     }
 
     public enum BuildingType
@@ -59,6 +59,7 @@ public class RepairableBuilding : BuildingDependingOnStability
     public void InitBuilding()
     {
         FindBuildingModels();
+        SaveOriginalMaterials();
         ControllersManager.Instance.timeController.OnNextTurnBtnPressed += TryTurnOnBuilding;
         ControllersManager.Instance.timeController.OnNextTurnBtnPressed += UpdateAmountOfTurnsNeededToDoSMTH;
 
@@ -66,6 +67,12 @@ public class RepairableBuilding : BuildingDependingOnStability
 
         UpdateBuildingModel();
         UpdateAmountOfTurnsNeededToDoSMTH();
+    }
+
+    private void OnDestroy()
+    {
+        ControllersManager.Instance.timeController.OnNextTurnBtnPressed -= TryTurnOnBuilding;
+        ControllersManager.Instance.timeController.OnNextTurnBtnPressed -= UpdateAmountOfTurnsNeededToDoSMTH;
     }
 
     private void UpdateAmountOfTurnsNeededToDoSMTH()
@@ -78,7 +85,6 @@ public class RepairableBuilding : BuildingDependingOnStability
         if (CurrentState == State.Repairing)
         {
             _turnsToRepair--;
-            Debug.Log(_turnsToRepair);
 
             if (_turnsToRepair == 0)
             {
@@ -100,9 +106,9 @@ public class RepairableBuilding : BuildingDependingOnStability
             _turnsToRepair = TurnsToRepair;
             BuildingIsSelactable = false;
 
-            ReplaceMaterialsWithGrey();
+            SetGreyMaterials();
 
-            CurrentState = State.Repairing; // Устанавливаем состояние ремонта
+            CurrentState = State.Repairing;
         }
     }
 
@@ -115,17 +121,25 @@ public class RepairableBuilding : BuildingDependingOnStability
         }
     }
 
-    protected void ReplaceMaterialsWithGrey()
+    private void SaveOriginalMaterials()
     {
-        var renderers = GetComponentsInChildren<MeshRenderer>();
         _originalMaterials.Clear();
+        var renderers = GetComponentsInChildren<MeshRenderer>();
 
         foreach (var renderer in renderers)
         {
             _originalMaterials.Add(renderer.materials);
+        }
+    }
 
+    protected void SetGreyMaterials()
+    {
+        var renderers = GetComponentsInChildren<MeshRenderer>();
+
+        foreach (var renderer in renderers)
+        {
             var greyMaterials = new Material[renderer.materials.Length];
-            for (int i = 0; i < greyMaterials.Length; i++)
+            for (int i = 0; i < renderer.materials.Length; i++)
             {
                 greyMaterials[i] = _greyMaterial;
             }
@@ -144,7 +158,6 @@ public class RepairableBuilding : BuildingDependingOnStability
                 renderers[i].materials = _originalMaterials[i];
             }
         }
-        _originalMaterials.Clear();
     }
 
     private void FindBuildingModels()
@@ -173,11 +186,14 @@ public class RepairableBuilding : BuildingDependingOnStability
 
     private void UpdateBuildingModel()
     {
-        if (_intactBuildingModel != null && _damagedBuildingModel != null)
-        {
-            _intactBuildingModel.SetActive(CurrentState == State.Intact);
-            _damagedBuildingModel.SetActive(CurrentState == State.Damaged || CurrentState == State.Repairing);
-        }
+        SetModelActive(_intactBuildingModel, CurrentState == State.Intact);
+        SetModelActive(_damagedBuildingModel, CurrentState != State.Intact);
+    }
+
+    private void SetModelActive(GameObject model, bool isActive)
+    {
+        if (model != null)
+            model.SetActive(isActive);
     }
 
     private GameObject _intactBuildingModel;

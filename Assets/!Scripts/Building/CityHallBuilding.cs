@@ -3,12 +3,12 @@ using UnityEngine;
 
 public class CityHallBuilding : RepairableBuilding
 {
-    [Range(0f, 1f)]
-    [field: SerializeField] public int RelationWithGoverment { get; private set; }
-
     [SerializeField] private int _daysLeftToSendArmyMaterialsOriginal;
-
     [SerializeField] private int _daysLeftToRecieveGovHelpOriginal;
+
+    // SAVE DATA
+    [Range(0f, 10f)]
+    [field: SerializeField] public int RelationWithGoverment { get; private set; }
     public int DaysLeftToRecieveGovHelp { get; private set; }
     public int DaysLeftToSendArmyMaterials { get; private set; }
     public bool IsMaterialsSent { get; private set; }
@@ -26,11 +26,20 @@ public class CityHallBuilding : RepairableBuilding
     //передать стройматериалы
     //передать провизию
 
-
     private void Start()
+    {
+        InitializeTimers();
+        SubscribeToEvents();
+    }
+
+    private void InitializeTimers()
     {
         DaysLeftToRecieveGovHelp = _daysLeftToRecieveGovHelpOriginal;
         DaysLeftToSendArmyMaterials = _daysLeftToSendArmyMaterialsOriginal;
+    }
+
+    private void SubscribeToEvents()
+    {
         ControllersManager.Instance.timeController.OnNextDayEvent += TimeController_OnNextDayEvent;
     }
 
@@ -55,7 +64,9 @@ public class CityHallBuilding : RepairableBuilding
         Debug.Log(DaysLeftToSendArmyMaterials);
         if (DaysLeftToSendArmyMaterials == 0)
         {
-            if(IsMaterialsSent)
+            DaysLeftToSendArmyMaterials = _daysLeftToSendArmyMaterialsOriginal;
+
+            if (IsMaterialsSent)
             {
                 ControllersManager.Instance.popUpsController.FactoryPopUp.UpdateCreateArmyButtonState();
 
@@ -78,8 +89,6 @@ public class CityHallBuilding : RepairableBuilding
                     // GAMEOVER
                 }
             }
-
-            DaysLeftToSendArmyMaterials = _daysLeftToSendArmyMaterialsOriginal;
         }
         return false;
     }

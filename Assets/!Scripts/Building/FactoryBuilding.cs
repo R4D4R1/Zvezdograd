@@ -7,15 +7,16 @@ public class FactoryBuilding : RepairableBuilding
     [field: SerializeField] public int PeopleToCreateReadyMaterials { get; private set; }
     [field: SerializeField] public int PeopleToCreateArmyMaterials { get; private set; }
     [field: SerializeField] public int TurnsToCreateReadyMaterialsOriginal { get; private set; }
-     public int TurnsToCreateReadyMaterials { get; private set; }
     [field: SerializeField] public int TurnsToCreateArmyMaterialsOriginal { get; private set; }
-     public int TurnsToCreateArmyMaterials { get; private set; }
     [field: SerializeField] public int TurnsToRestFromReadyMaterialsJob { get; private set; }
     [field: SerializeField] public int TurnsToRestFromArmyMaterialsJob { get; private set; }
     [field: SerializeField] public int RawMaterialsToCreateReadyMaterials { get; private set; }
     [field: SerializeField] public int ReadyMaterialsGet { get; private set; }
     [field: SerializeField] public int RawMaterialsToCreateArmyMaterials { get; private set; }
 
+    // SAVE DATA
+    public int TurnsToCreateArmyMaterials { get; private set; }
+    public int TurnsToCreateReadyMaterials { get; private set; }
     private bool _isWorking;
     private bool _isCreatingReadyMaterials;
     private int _turnsToWork;
@@ -85,7 +86,7 @@ public class FactoryBuilding : RepairableBuilding
         _isCreatingReadyMaterials = true;
         _turnsToWork = TurnsToCreateReadyMaterials;
 
-        ReplaceMaterialsWithGrey();
+        SetGreyMaterials();
     }
 
     public void CreateArmyMaterials()
@@ -98,6 +99,6 @@ public class FactoryBuilding : RepairableBuilding
         _isCreatingReadyMaterials = false;
         _turnsToWork = TurnsToCreateArmyMaterials;
 
-        ReplaceMaterialsWithGrey();
+        SetGreyMaterials();
     }
 }

@@ -11,8 +11,7 @@ public class FoodTrucksBuilding : RepairableBuilding
     [field: SerializeField] public int StabilityAddValue { get; private set; }
     [field: SerializeField] public int StabilityRemoveValue { get; private set; }
 
-
-
+    // SAVE DATA
     public bool IsFoodGivenAwayToday { get; private set; } = false;
 
     private void Start()

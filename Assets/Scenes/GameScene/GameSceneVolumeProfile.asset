@@ -28,6 +28,31 @@ MonoBehaviour:
   rounded:
     m_OverrideState: 0
     m_Value: 0
+--- !u!114 &-1165764398947929211
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29fa0085f50d5e54f8144f766051a691, type: 3}
+  m_Name: FilmGrain
+  m_EditorClassIdentifier: 
+  active: 1
+  type:
+    m_OverrideState: 1
+    m_Value: 2
+  intensity:
+    m_OverrideState: 1
+    m_Value: 0.1
+  response:
+    m_OverrideState: 0
+    m_Value: 0.8
+  texture:
+    m_OverrideState: 0
+    m_Value: {fileID: 0}
 --- !u!114 &-261681641658321975
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -40,7 +65,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c01700fd266d6914ababb731e09af2eb, type: 3}
   m_Name: DepthOfField
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   mode:
     m_OverrideState: 1
     m_Value: 2
@@ -120,6 +145,7 @@ MonoBehaviour:
   - {fileID: 3934982127980799796}
   - {fileID: -233230982561875110}
   - {fileID: -261681641658321975}
+  - {fileID: -1165764398947929211}
 --- !u!114 &3934982127980799796
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -135,13 +161,13 @@ MonoBehaviour:
   active: 0
   mode:
     m_OverrideState: 1
-    m_Value: 2
+    m_Value: 0
   neutralHDRRangeReductionMode:
     m_OverrideState: 0
     m_Value: 2
   acesPreset:
     m_OverrideState: 0
-    m_Value: 3
+    m_Value: 5
   hueShiftAmount:
     m_OverrideState: 0
     m_Value: 0
@@ -181,7 +207,7 @@ MonoBehaviour:
     m_Value: 0.9
   intensity:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0.5
   scatter:
     m_OverrideState: 0
     m_Value: 0.7

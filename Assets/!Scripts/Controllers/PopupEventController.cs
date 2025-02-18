@@ -51,9 +51,9 @@ public class PopupEventController : MonoBehaviour
         {
             if (specificEvents.TryGetValue(eventKey, out PopupEvent popupEvent))
             {
-                if(!string.IsNullOrEmpty(popupEvent.weatherType))
+                if (!string.IsNullOrEmpty(popupEvent.weatherType))
                 {
-                    if(popupEvent.weatherType == "бэху")
+                    if (popupEvent.weatherType == "бэху")
                     {
                         OnSnowStarted?.Invoke();
                     }
