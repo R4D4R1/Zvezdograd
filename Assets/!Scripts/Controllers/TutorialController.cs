@@ -75,6 +75,16 @@ public class TutorialController : MonoBehaviour
 
         _currentPopUp = Instantiate(_specialPopUpPrefab, _popUpParent);
 
+        // Позиционируем поп-ап над зданием
+        Vector3 buildingWorldPosition = tutorialBuilding.transform.GetChild(0).transform.localPosition;
+        Vector3 screenPosition = _mainCamera.WorldToScreenPoint(buildingWorldPosition);
+
+        Vector2 localPosition = _canvas.transform.InverseTransformPoint(screenPosition);
+        _currentPopUp.transform.localPosition = new Vector3(localPosition.x, localPosition.y, 0);
+
+        Debug.Log(buildingWorldPosition);
+        Debug.Log(screenPosition);
+
         var popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
         string description = buildingDescriptions.TryGetValue(tutorialBuilding, out var desc) ? desc : "Нет описания";
 
