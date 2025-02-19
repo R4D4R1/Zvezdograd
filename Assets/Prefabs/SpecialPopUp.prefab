@@ -34,8 +34,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -7.5400085}
-  m_SizeDelta: {x: 180, y: 110}
+  m_AnchoredPosition: {x: 0, y: -15}
+  m_SizeDelta: {x: 225, y: 110}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5935276783698388056
 CanvasRenderer:
@@ -66,10 +66,15 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "\u041F\u0420\u0418\u041C\u0415\u0420 \u0422\u0415\u041A\u0421\u0422\u0410
+    123456789 \u041F\u0420\u0418\u041C\u0415\u0420 \u0422\u0415\u041A\u0421\u0422\u0410
+    123456789 \u041F\u0420\u0418\u041C\u0415\u0420 \u0422\u0415\u041A\u0421\u0422\u0410
+    123456789 \u041F\u0420\u0418\u041C\u0415\u0420 \u0422\u0415\u041A\u0421\u0422\u0410
+    123456789 \u041F\u0420\u0418\u041C\u0415\u0420 \u0422\u0415\u041A\u0421\u0422\u0410
+    123456789 \u041F\u0420\u0418\u041C\u0415\u0420 \u0422\u0415\u041A\u0421\u0422\u0410
     123456789"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4bb083453e0cbe34d85f10e4a278a660, type: 2}
-  m_sharedMaterial: {fileID: 4434354080333963164, guid: 4bb083453e0cbe34d85f10e4a278a660, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: bce774f01a74bc94a920da99013f78e7, type: 2}
+  m_sharedMaterial: {fileID: 3004009780473815113, guid: bce774f01a74bc94a920da99013f78e7, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -93,8 +98,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 17
-  m_fontSizeBase: 17
+  m_fontSize: 13
+  m_fontSizeBase: 13
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 12
@@ -172,7 +177,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 150}
+  m_SizeDelta: {x: 250, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &9058062073088876328
 MonoBehaviour:
@@ -234,10 +239,10 @@ RectTransform:
   - {fileID: 3405067741071197033}
   m_Father: {fileID: 5343646739309575127}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -4.459999}
-  m_SizeDelta: {x: 200, y: 138.92}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &8759096022332267131
 CanvasGroup:
@@ -361,7 +366,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -10}
+  m_AnchoredPosition: {x: 0, y: -20}
   m_SizeDelta: {x: 200, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3593752492677281490
@@ -401,8 +406,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4279894271
+  m_fontColor: {r: 1, g: 0, b: 0.101960786, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -485,7 +490,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 237148408734373553, guid: 518557c92eb656d458303b3d42b8d3d3, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 237148408734373553, guid: 518557c92eb656d458303b3d42b8d3d3, type: 3}
       propertyPath: m_AnchorMin.x
@@ -493,11 +498,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 237148408734373553, guid: 518557c92eb656d458303b3d42b8d3d3, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 237148408734373553, guid: 518557c92eb656d458303b3d42b8d3d3, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 200
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 237148408734373553, guid: 518557c92eb656d458303b3d42b8d3d3, type: 3}
       propertyPath: m_SizeDelta.y
@@ -537,7 +542,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 237148408734373553, guid: 518557c92eb656d458303b3d42b8d3d3, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -44.459976
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 237148408734373553, guid: 518557c92eb656d458303b3d42b8d3d3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class TutorialController : MonoBehaviour
 {
@@ -19,6 +20,8 @@ public class TutorialController : MonoBehaviour
     [SerializeField] private string cityHallBuildingDescription;
     [SerializeField] private string hospitalBuildingDescription;
     [SerializeField] private string foodTruckBuildingDescription;
+
+    [SerializeField] private UnityEvent OnTutorialEnd;
 
     private GameObject _currentPopUp;
     private Queue<SelectableBuilding> tutorialBuildings = new();
@@ -60,6 +63,8 @@ public class TutorialController : MonoBehaviour
 
         if (tutorialBuildings.Count == 0)
         {
+            OnTutorialEnd.Invoke();
+
             Debug.Log("Туториал завершен!");
             return;
         }
@@ -76,11 +81,12 @@ public class TutorialController : MonoBehaviour
         _currentPopUp = Instantiate(_specialPopUpPrefab, _popUpParent);
 
         // Позиционируем поп-ап над зданием
-        Vector3 buildingWorldPosition = tutorialBuilding.transform.GetChild(0).transform.localPosition;
+        Vector3 buildingWorldPosition = tutorialBuilding.transform.position;
         Vector3 screenPosition = _mainCamera.WorldToScreenPoint(buildingWorldPosition);
 
         Vector2 localPosition = _canvas.transform.InverseTransformPoint(screenPosition);
-        _currentPopUp.transform.localPosition = new Vector3(localPosition.x, localPosition.y, 0);
+        RectTransform popUpRect = _currentPopUp.GetComponent<RectTransform>();
+        _currentPopUp.transform.localPosition = new Vector3(localPosition.x + popUpRect.rect.width * 0.75f, localPosition.y + popUpRect.rect.height * 0.75f, 0);
 
         Debug.Log(buildingWorldPosition);
         Debug.Log(screenPosition);
