@@ -14,6 +14,7 @@ public class SpecialPopUp : InfoPopUp
         OpenCityHallMenu,
         OpenFoodTrucksMenu,
         OpenHospitalMenu,
+        OpenNextTutorialPopUp,
     }
 
     [HideInInspector]
@@ -63,28 +64,40 @@ public class SpecialPopUp : InfoPopUp
         {
             case PopUpFuncs.OpenCollectMenu:
                 _collectPopUp.ShowCollectPopUp(CollectableBuilding);
+                ControllersManager.Instance.mainGameUIController.TurnOffUI();
+
                 break;
             case PopUpFuncs.OpenRepairMenu:
                 _repairPopUp.ShowRepairPopUp(RepairableBuilding);
+                ControllersManager.Instance.mainGameUIController.TurnOffUI();
+
                 break;
             case PopUpFuncs.OpenFactoryMenu:
                 _factoryPopUp.ShowFactoryPopUp(FactoryBuilding);
+                ControllersManager.Instance.mainGameUIController.TurnOffUI();
+
                 break;
             case PopUpFuncs.OpenCityHallMenu:
                 _cityHallPopUp.ShowCityHallPopUp();
+                ControllersManager.Instance.mainGameUIController.TurnOffUI();
+
                 break;
             case PopUpFuncs.OpenFoodTrucksMenu:
                 _foodTrucksPopUp.ShowFoodTruckPopUp();
+                ControllersManager.Instance.mainGameUIController.TurnOffUI();
+
                 break;
             case PopUpFuncs.OpenHospitalMenu:
                 _hospitalPopUp.ShowHospitalPopUp();
+                ControllersManager.Instance.mainGameUIController.TurnOffUI();
+
+                break;
+            case PopUpFuncs.OpenNextTutorialPopUp:
+                ControllersManager.Instance.tutorialController.ShowTutorial();
                 break;
             default:
                 break;
         }
-
-        //ControllersManager.Instance.mainGameUIController.DisableEscapeMenuToggle();
-        ControllersManager.Instance.mainGameUIController.TurnOffUI();
 
         HidePopUp();
     }
