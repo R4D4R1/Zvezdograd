@@ -1,12 +1,18 @@
 using UnityEngine;
 using System.Collections.Generic;
 using DG.Tweening;
+using System.IO;
 
 public class PeopleUnitsController : MonoBehaviour
 {
     [SerializeField] private List<PeopleUnit> allUnits;
     private List<PeopleUnit> readyUnits = new();
     private List<float> initialPositions = new();
+
+    public List<PeopleUnit> GetAllUnits()
+    {
+        return allUnits;
+    }
 
     private void Awake()
     {
@@ -33,7 +39,7 @@ public class PeopleUnitsController : MonoBehaviour
         return readyUnits.Count;
     }
 
-    void UpdateReadyUnits()
+    public void UpdateReadyUnits()
     {
         readyUnits.Clear();
         foreach (var unit in allUnits)

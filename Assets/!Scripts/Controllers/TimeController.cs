@@ -13,7 +13,7 @@ public class TimeController : MonoBehaviour
     [SerializeField] private TMP_Text dayText;
     [SerializeField] private TMP_Text periodText;
 
-    [SerializeField] private Image blackoutImage; // Черное изображение для затемнения экрана
+    [SerializeField] private Image blackoutImage;
 
     [Range(1f, 5f)]
     [SerializeField] private int _daysBetweenBombingRegularBuildings;
@@ -47,6 +47,13 @@ public class TimeController : MonoBehaviour
         CurrentPeriod = PeriodOfDay.Утро;
         UpdateLighting();
         UpdateText();
+    }
+    public void SetDateAndPeriod(DateTime newDate, PeriodOfDay newPeriod)
+    {
+        CurrentDate = newDate;
+        CurrentPeriod = newPeriod;
+        UpdateLighting();
+        UpdateText();  // Update the UI after setting new values
     }
 
     private void UpdateTime()

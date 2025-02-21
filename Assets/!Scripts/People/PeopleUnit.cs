@@ -22,7 +22,6 @@ public class PeopleUnit : MonoBehaviour
 
     private void Awake()
     {
-        _statusText.gameObject.SetActive(false);
         EnableUnit();
     }
 
@@ -30,8 +29,6 @@ public class PeopleUnit : MonoBehaviour
     {
         Color whiteColor = Color.white;
         _image.DOColor(whiteColor, 0.5f);
-
-        _statusText.gameObject.SetActive(false);
 
         if (currentState == UnitState.Injured || currentState == UnitState.Resting)
         {
@@ -59,6 +56,27 @@ public class PeopleUnit : MonoBehaviour
         return currentState;
     }
 
+    public void SetState(UnitState state, int busyTurns, int restingTurns)
+    {
+        currentState = state;
+        BusyTime = busyTurns;
+        RestingTime = restingTurns;
+
+        switch (currentState)
+        {
+            case UnitState.Ready:
+                EnableUnit();
+                break;
+            case UnitState.Busy:
+            case UnitState.Injured:
+            case UnitState.Resting:
+                DisableUnit();
+                break;
+        }
+
+        UpdateStatusText();
+    }
+
     public void SetBusyForTurns(int busyTurns, int restingTurns)
     {
         currentState = UnitState.Busy;
@@ -66,7 +84,6 @@ public class PeopleUnit : MonoBehaviour
         RestingTime = restingTurns;
 
         UpdateStatusText();
-        _statusText.gameObject.SetActive(true);
     }
 
     public void SetInjured()
@@ -74,7 +91,6 @@ public class PeopleUnit : MonoBehaviour
         currentState = UnitState.Injured;
 
         UpdateStatusText();
-        _statusText.gameObject.SetActive(true);
     }
 
     public void UpdateUnitState()
@@ -99,7 +115,6 @@ public class PeopleUnit : MonoBehaviour
                 currentState = UnitState.Ready;
                 RestingTime = 0;
 
-                _statusText.gameObject.SetActive(false);
                 EnableUnit();
             }
         }
