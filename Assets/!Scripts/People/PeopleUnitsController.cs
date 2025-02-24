@@ -113,7 +113,6 @@ public class PeopleUnitsController : MonoBehaviour
 
     private void AnimateUnitPositions()
     {
-        //allUnits.Sort((x, y) => x.BusyTime.CompareTo(y.BusyTime))
         allUnits.Sort((x, y) => (x.BusyTime + x.RestingTime).CompareTo(y.BusyTime + y.RestingTime));
 
         for (int i = 0; i < allUnits.Count; i++)

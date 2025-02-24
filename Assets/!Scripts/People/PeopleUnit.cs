@@ -97,26 +97,34 @@ public class PeopleUnit : MonoBehaviour
     {
         if (currentState == UnitState.Busy)
         {
-            BusyTime--;
-            UpdateStatusText();
-
-            if (BusyTime <= 0)
+            
+            if(BusyTime>1)
             {
-                UnitResting(); // Переход в состояние "отдыха"
+                BusyTime--;
+                UpdateStatusText();
+            }
+            else
+            {
+                UnitResting();
             }
         }
         else if (currentState == UnitState.Resting)
         {
-            RestingTime--;
-            UpdateStatusText();
-
-            if (RestingTime <= 0)
+            if (RestingTime > 1)
+            {
+                RestingTime--;
+                UpdateStatusText();
+            }
+            else
             {
                 currentState = UnitState.Ready;
                 RestingTime = 0;
 
+                _statusText.text = "";
+
                 EnableUnit();
             }
+            
         }
         else if (currentState == UnitState.Injured)
         {

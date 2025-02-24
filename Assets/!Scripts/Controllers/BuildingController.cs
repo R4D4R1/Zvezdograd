@@ -6,6 +6,8 @@ public class BuildingController : MonoBehaviour
 {
     public List<RepairableBuilding> RegularBuildings { get; private set; } = new();
     public List<RepairableBuilding> SpecialBuildings { get; private set; } = new();
+    public List<CollectableBuilding> CollectableBuildings { get; private set; } = new();
+    public List<FactoryBuilding> Factories { get; private set; } = new();
 
     [Range(0f, 100f)]
     [SerializeField] private int _specialBuildingBombChance;
@@ -13,6 +15,9 @@ public class BuildingController : MonoBehaviour
     private void Awake()
     {
         var allBuilding = FindObjectsByType<RepairableBuilding>(FindObjectsSortMode.None);
+        CollectableBuildings = FindObjectsByType<CollectableBuilding>(FindObjectsSortMode.None).ToList();
+        Factories = FindObjectsByType<FactoryBuilding>(FindObjectsSortMode.None).ToList();
+
 
         foreach (var building in allBuilding)
         {

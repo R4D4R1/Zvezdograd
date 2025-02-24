@@ -61,7 +61,6 @@ public class CityHallBuilding : RepairableBuilding
     public bool DayPassed()
     {
         DaysLeftToSendArmyMaterials--;
-        Debug.Log(DaysLeftToSendArmyMaterials);
         if (DaysLeftToSendArmyMaterials == 0)
         {
             DaysLeftToSendArmyMaterials = _daysLeftToSendArmyMaterialsOriginal;

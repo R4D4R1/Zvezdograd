@@ -30,6 +30,10 @@ public class RepairableBuilding : BuildingDependingOnStability
                 _state = value;
                 UpdateBuildingModel();
                 OnStateChanged?.Invoke();
+                if (_state == State.Repairing) 
+                {
+                    SetGreyMaterials();
+                }                     
             }
         }
     }
@@ -42,7 +46,9 @@ public class RepairableBuilding : BuildingDependingOnStability
     [field: SerializeField] public int PeopleToRepair { get; private set; }
 
     [SerializeField] private int TurnsToRepairOriginal;
-    public int TurnsToRepair { get; private set; }
+    public int TurnsToRepair;
+
+    //protected int _turnsToRepair = 0;
 
     [field: SerializeField] public int TurnsToRestFromRepair { get; private set; }
 
@@ -54,7 +60,6 @@ public class RepairableBuilding : BuildingDependingOnStability
 
     public event Action OnStateChanged;
 
-    protected int _turnsToRepair = 0;
 
     public void InitBuilding()
     {
@@ -63,7 +68,7 @@ public class RepairableBuilding : BuildingDependingOnStability
         ControllersManager.Instance.timeController.OnNextTurnBtnPressed += TryTurnOnBuilding;
         ControllersManager.Instance.timeController.OnNextTurnBtnPressed += UpdateAmountOfTurnsNeededToDoSMTH;
 
-        _turnsToRepair = TurnsToRepairOriginal;
+        //_turnsToRepair = TurnsToRepairOriginal;
 
         UpdateBuildingModel();
         UpdateAmountOfTurnsNeededToDoSMTH();
@@ -77,16 +82,17 @@ public class RepairableBuilding : BuildingDependingOnStability
 
     private void UpdateAmountOfTurnsNeededToDoSMTH()
     {
-        TurnsToRepair = UpdateAmountOfTurnsNeededToDoSMTH(TurnsToRepairOriginal);
+        if(CurrentState!= State.Repairing)
+            TurnsToRepair = UpdateAmountOfTurnsNeededToDoSMTH(TurnsToRepairOriginal);
     }
 
     protected virtual void TryTurnOnBuilding()
     {
         if (CurrentState == State.Repairing)
         {
-            _turnsToRepair--;
+            TurnsToRepair--;
 
-            if (_turnsToRepair == 0)
+            if (TurnsToRepair == 0)
             {
                 BuildingIsSelactable = true;
                 RestoreOriginalMaterials();
@@ -103,7 +109,6 @@ public class RepairableBuilding : BuildingDependingOnStability
             ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToRepair, TurnsToRepair, TurnsToRestFromRepair);
             ControllersManager.Instance.resourceController.AddOrRemoveReadyMaterials(-BuildingMaterialsToRepair);
 
-            _turnsToRepair = TurnsToRepair;
             BuildingIsSelactable = false;
 
             SetGreyMaterials();

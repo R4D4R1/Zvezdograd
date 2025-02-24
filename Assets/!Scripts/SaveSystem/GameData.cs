@@ -6,16 +6,15 @@ using UnityEngine;
 public class GameData
 {
     public TimeController.PeriodOfDay periodOfDay;
-    public string dateString; // строка для даты
+    public string dateString;
     public List<PeopleUnitData> allUnitsData;
+    public List<BuildingData> allBuildingsData;
 
-    // Метод для получения даты как DateTime
     public DateTime GetDate()
     {
         return DateTime.Parse(dateString);
     }
 
-    // Метод для установки даты из DateTime
     public void SetDate(DateTime date)
     {
         dateString = date.ToString("yyyy-MM-dd");
@@ -29,4 +28,12 @@ public class PeopleUnitData
     public PeopleUnit.UnitState currentState;
     public int busyTime;
     public int restingTime;
+}
+
+[System.Serializable]
+public class BuildingData
+{
+    public int BuildingId;
+    public RepairableBuilding.State currentState;
+    public int turnsToRepair;
 }

@@ -125,11 +125,11 @@ public class ResourceController : MonoBehaviour
         }
     }
 
-    public void AddOrRemoveProvision(int value) => ModifyResource(ref provision, value, maxProvision, provisionSlider, provisionText, "ÏÐÎÂÈÇÈß");
-    public void AddOrRemoveMedicine(int value) => ModifyResource(ref medicine, value, maxMedicine, medicineSlider, medicineText, "ÌÅÄÈÊÀÌÅÍÒÛ");
-    public void AddOrRemoveRawMaterials(int value) => ModifyResource(ref rawMaterials, value, maxRawMaterials, rawMaterialsSlider, rawMaterialsText, "ÑÛÐÜÅ");
-    public void AddOrRemoveReadyMaterials(int value) => ModifyResource(ref readyMaterials, value, maxReadyMaterials, readyMaterialsSlider, readyMaterialsText, "ÑÒÐÎÉÌÀÒÅÐÈÀËÛ");
-    public void AddOrRemoveStability(int value) => ModifyResource(ref stability, value, maxStability, stabilitySlider, stabilityText, "ÑÒÀÁÈËÜÍÎÑÒÜ", true);
+    public void AddOrRemoveProvision(int value) => ModifyResource(ref provision, value, maxProvision, provisionSlider, provisionText, "ïðîâèçèÿ");
+    public void AddOrRemoveMedicine(int value) => ModifyResource(ref medicine, value, maxMedicine, medicineSlider, medicineText, "ìåäèêàìåíòû");
+    public void AddOrRemoveRawMaterials(int value) => ModifyResource(ref rawMaterials, value, maxRawMaterials, rawMaterialsSlider, rawMaterialsText, "ñûðüå");
+    public void AddOrRemoveReadyMaterials(int value) => ModifyResource(ref readyMaterials, value, maxReadyMaterials, readyMaterialsSlider, readyMaterialsText, "ñòðîéìàòåðèàëû");
+    public void AddOrRemoveStability(int value) => ModifyResource(ref stability, value, maxStability, stabilitySlider, stabilityText, "ñòàáèëüíîñòü", true);
 
     private void ModifyResource(ref int resource, int value, int maxValue, Slider slider, TextMeshProUGUI text, string label, bool isStability = false)
     {
@@ -139,7 +139,7 @@ public class ResourceController : MonoBehaviour
         if (resource != oldValue)
         {
             string operation = value > 0 ? "Äîáàâëåíî" : "Óáàâëåíî";
-            CreateNotification($"{operation} {Mathf.Abs(value)} {label}");
+            CreateNotification($"{operation} {label} {Mathf.Abs(value)}", value > 0);
         }
 
         if (isStability)
@@ -153,7 +153,8 @@ public class ResourceController : MonoBehaviour
         }
     }
 
-    private void CreateNotification(string message)
+
+    private void CreateNotification(string message, bool isIncrease)
     {
         if (notificationPrefab == null || notificationParent == null) return;
 
@@ -163,8 +164,10 @@ public class ResourceController : MonoBehaviour
         if (notificationText != null)
         {
             notificationText.text = message;
+            notificationText.color = isIncrease ? Color.green : Color.red; // Óñòàíàâëèâàåì öâåò
         }
     }
+
 
     public int GetProvision() => provision;
     public int GetMedicine() => medicine;

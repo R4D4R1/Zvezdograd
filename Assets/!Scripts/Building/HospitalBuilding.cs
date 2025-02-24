@@ -15,15 +15,11 @@ public class HospitalBuilding : RepairableBuilding
     public int DaysToGiveMedicine { get; private set; }
     private bool _medicineWasGivenAwayInLastTwoDay = false;
 
-    private void Awake()
-    {
-        DaysToGiveMedicine = OriginalDaysToGiveMedicine;
-    }
 
     private void Start()
     {
         ControllersManager.Instance.timeController.OnNextTurnBtnPressed += UpdateAmountOfTurnsNeededToDoSMTH;
-
+        DaysToGiveMedicine = OriginalDaysToGiveMedicine;
         UpdateAmountOfTurnsNeededToDoSMTH();
     }
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 public class SaveLoadManager : MonoBehaviour
@@ -20,7 +21,8 @@ public class SaveLoadManager : MonoBehaviour
         GameData gameData = new GameData
         {
             periodOfDay = timeController.CurrentPeriod,
-            allUnitsData = new List<PeopleUnitData>()
+            allUnitsData = new List<PeopleUnitData>(),
+            allBuildingsData = new List<BuildingData>()
         };
 
         gameData.SetDate(timeController.CurrentDate);
@@ -35,6 +37,21 @@ public class SaveLoadManager : MonoBehaviour
                 restingTime = unit.RestingTime
             };
             gameData.allUnitsData.Add(unitData);
+        }
+
+        // Сохраняем данные зданий
+        var buildingController = ControllersManager.Instance.buildingController;
+        // Перед сохранением данных зданий
+        foreach (var building in buildingController.RegularBuildings.Concat(buildingController.SpecialBuildings))
+        {
+            Debug.Log($"Saving building: {building.name}, ID: {building.BuildingId}, State: {building.CurrentState}");
+            BuildingData buildingData = new()
+            {
+                BuildingId = building.BuildingId,
+                currentState = building.CurrentState,
+                turnsToRepair = building.TurnsToRepair,
+            };
+            gameData.allBuildingsData.Add(buildingData);
         }
 
         string json = JsonUtility.ToJson(gameData, true);
@@ -69,6 +86,30 @@ public class SaveLoadManager : MonoBehaviour
                 unit.SetState(unitData.currentState, unitData.busyTime, unitData.restingTime);
             }
 
+            // Загружаем данные зданий
+            var buildingController = ControllersManager.Instance.buildingController;
+            foreach (var buildingData in gameData.allBuildingsData)
+            {
+                // Логируем все здания, чтобы убедиться в их наличии
+                Debug.Log($"Looking for BuildingId: {buildingData.BuildingId}");
+
+                // Ищем здание по ID
+                var building = buildingController.RegularBuildings.Concat(buildingController.SpecialBuildings)
+                    .FirstOrDefault(b => b.BuildingId == buildingData.BuildingId);
+
+                if (building != null)
+                {
+                    building.CurrentState = buildingData.currentState;
+                    building.TurnsToRepair = buildingData.turnsToRepair;
+
+                    Debug.Log($"Loaded building: {building.name}, State: {building.CurrentState}");
+                }
+                else
+                {
+                    Debug.LogWarning($"Building with ID {buildingData.BuildingId} not found.");
+                }
+            }
+
             unitsController.UpdateReadyUnits();
             Debug.Log($"Game loaded from slot {slotIndex}.");
         }
@@ -77,6 +118,8 @@ public class SaveLoadManager : MonoBehaviour
             Debug.LogWarning($"Save slot {slotIndex} not found.");
         }
     }
+
+
 
 
     public void DeleteSave(int slotIndex)
