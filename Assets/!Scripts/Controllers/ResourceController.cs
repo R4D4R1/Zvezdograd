@@ -164,7 +164,7 @@ public class ResourceController : MonoBehaviour
         if (notificationText != null)
         {
             notificationText.text = message;
-            notificationText.color = isIncrease ? Color.green : Color.red; // Устанавливаем цвет
+            notificationText.color = isIncrease ? Color.green : Color.red;
         }
     }
 

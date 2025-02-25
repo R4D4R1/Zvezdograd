@@ -10,6 +10,12 @@ public class GameData
     public List<PeopleUnitData> allUnitsData;
     public List<BuildingData> allBuildingsData;
 
+    public int provision;
+    public int medicine;
+    public int rawMaterials;
+    public int readyMaterials;
+    public int stability;
+
     public DateTime GetDate()
     {
         return DateTime.Parse(dateString);

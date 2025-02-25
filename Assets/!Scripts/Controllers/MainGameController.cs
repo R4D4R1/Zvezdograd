@@ -24,6 +24,9 @@ public class MainGameController : MonoBehaviour
     [Range(0.1f, 1f)]
     [SerializeField] private float OutlineWidth;
 
+    [SerializeField] private float cameraCityShowY;
+    [SerializeField] private float cameraCityHideY;
+
     public enum AnimationType
     {
         EaseInOut,
@@ -74,12 +77,12 @@ public class MainGameController : MonoBehaviour
 
     public void ShowCity()
     {
-        AnimateCamera(100);
+        AnimateCamera(cameraCityShowY);
     }
 
     public void HideCity()
     {
-        AnimateCamera(150);
+        AnimateCamera(cameraCityHideY);
     }
 
     private void AnimateCamera(float targetYPosition)

@@ -14,11 +14,11 @@ public class PeopleUnit : MonoBehaviour
     }
 
     [SerializeField] private UnitState currentState = UnitState.Ready;
-    [SerializeField] private TextMeshProUGUI _statusText; // Текст для состояния
+    [SerializeField] private TextMeshProUGUI _statusText;
     [SerializeField] private Image _image;
 
-    public int BusyTime { get; private set; }    // Время работы
-    public int RestingTime { get; private set; } // Время отдыха
+    public int BusyTime { get; private set; }
+    public int RestingTime { get; private set; }
 
     private void Awake()
     {

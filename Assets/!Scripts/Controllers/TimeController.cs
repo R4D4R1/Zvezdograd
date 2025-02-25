@@ -38,6 +38,7 @@ public class TimeController : MonoBehaviour
     public DateTime CurrentDate { get; private set; }
     public PeriodOfDay CurrentPeriod { get; private set; }
     private int _daysWithoutBombing;
+    private bool _startedTransition = false;
 
 
     private void Start()
@@ -120,7 +121,7 @@ public class TimeController : MonoBehaviour
             {
                 // Activate Next Turn Btn
                 _nextTurnBtn.interactable = true;
-
+                _startedTransition = false;
                 foreach (var script in _btnScripts)
                 {
                     script.enabled = true;
@@ -132,5 +133,17 @@ public class TimeController : MonoBehaviour
         });
     }
 
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            if (_startedTransition == false)
+            {
+                Bootstrapper.Instance?.SoundController?.PlayButtonPressSound();
 
+                _startedTransition = true;
+                EndTurnButtonClicked();
+            }
+        }
+    }
 }

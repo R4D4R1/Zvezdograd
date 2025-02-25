@@ -15,6 +15,7 @@ public class SaveLoadManager : MonoBehaviour
     {
         var unitsController = ControllersManager.Instance.peopleUnitsController;
         var timeController = ControllersManager.Instance.timeController;
+        var resourceController = ControllersManager.Instance.resourceController; // Получаем ресурсный контроллер
 
         string filePath = GetFilePath(slotIndex);
 
@@ -22,7 +23,13 @@ public class SaveLoadManager : MonoBehaviour
         {
             periodOfDay = timeController.CurrentPeriod,
             allUnitsData = new List<PeopleUnitData>(),
-            allBuildingsData = new List<BuildingData>()
+            allBuildingsData = new List<BuildingData>(),
+
+            provision = resourceController.GetProvision(),
+            medicine = resourceController.GetMedicine(),
+            rawMaterials = resourceController.GetRawMaterials(),
+            readyMaterials = resourceController.GetReadyMaterials(),
+            stability = resourceController.GetStability()
         };
 
         gameData.SetDate(timeController.CurrentDate);
@@ -39,31 +46,28 @@ public class SaveLoadManager : MonoBehaviour
             gameData.allUnitsData.Add(unitData);
         }
 
-        // Сохраняем данные зданий
-        var buildingController = ControllersManager.Instance.buildingController;
-        // Перед сохранением данных зданий
-        foreach (var building in buildingController.RegularBuildings.Concat(buildingController.SpecialBuildings))
+        foreach (var building in ControllersManager.Instance.buildingController.RegularBuildings)
         {
-            Debug.Log($"Saving building: {building.name}, ID: {building.BuildingId}, State: {building.CurrentState}");
-            BuildingData buildingData = new()
+            BuildingData buildingData = new BuildingData
             {
                 BuildingId = building.BuildingId,
                 currentState = building.CurrentState,
-                turnsToRepair = building.TurnsToRepair,
+                turnsToRepair = building.TurnsToRepair
             };
             gameData.allBuildingsData.Add(buildingData);
         }
 
         string json = JsonUtility.ToJson(gameData, true);
         File.WriteAllText(filePath, json);
-        Debug.Log($"Game saved in slot {slotIndex}.");
     }
+
 
     public void LoadGame(int slotIndex)
     {
         string filePath = GetFilePath(slotIndex);
         var unitsController = ControllersManager.Instance.peopleUnitsController;
         var timeController = ControllersManager.Instance.timeController;
+        var resourceController = ControllersManager.Instance.resourceController;
 
         if (File.Exists(filePath))
         {
@@ -109,6 +113,12 @@ public class SaveLoadManager : MonoBehaviour
                     Debug.LogWarning($"Building with ID {buildingData.BuildingId} not found.");
                 }
             }
+
+            resourceController.AddOrRemoveProvision(gameData.provision - resourceController.GetProvision());
+            resourceController.AddOrRemoveMedicine(gameData.medicine - resourceController.GetMedicine());
+            resourceController.AddOrRemoveRawMaterials(gameData.rawMaterials - resourceController.GetRawMaterials());
+            resourceController.AddOrRemoveReadyMaterials(gameData.readyMaterials - resourceController.GetReadyMaterials());
+            resourceController.AddOrRemoveStability(gameData.stability - resourceController.GetStability());
 
             unitsController.UpdateReadyUnits();
             Debug.Log($"Game loaded from slot {slotIndex}.");
