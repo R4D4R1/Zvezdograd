@@ -19,15 +19,20 @@ public class PlaneGenerator : MonoBehaviour
         _mesh = new Mesh();
         _meshFilter = GetComponent<MeshFilter>();
         _meshFilter.mesh = _mesh;
-    }
 
-    private void Update()
-    {
         planeResolution = Mathf.Clamp(planeResolution, 1, 50);
 
         GeneratePlane(planeSize, planeResolution);
         AsignMesh();
     }
+
+    //private void Update()
+    //{
+    //    planeResolution = Mathf.Clamp(planeResolution, 1, 50);
+
+    //    GeneratePlane(planeSize, planeResolution);
+    //    AsignMesh();
+    //}
 
     private void AsignMesh()
     {

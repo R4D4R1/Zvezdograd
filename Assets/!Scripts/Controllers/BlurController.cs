@@ -9,7 +9,7 @@ public class BlurController : MonoBehaviour
 
     [SerializeField] private Volume _volumeProfile;
     [SerializeField, Range(0.25f, 5f)] private float _timeOfDepthAppearing = 0.25f;
-    [SerializeField, Range(1, 50f)] private float _blurValue = 20f;
+    [SerializeField, Range(1, 200f)] private float _blurValue = 100f;
 
 
     private void Awake()

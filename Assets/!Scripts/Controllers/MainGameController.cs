@@ -106,7 +106,7 @@ public class MainGameController : MonoBehaviour
         }
 
         // Запуск анимации
-        ControllersManager.Instance.MainCamera.transform.DOMoveY(targetYPosition, animationDuration).SetEase(easeType);
+        ControllersManager.Instance.MainCamera.transform.DOLocalMoveY(targetYPosition, animationDuration).SetEase(easeType);
     }
 
     public int GetAnimDuration()
