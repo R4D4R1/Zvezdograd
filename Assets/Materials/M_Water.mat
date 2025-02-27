@@ -129,7 +129,7 @@ Material:
     - _Surface: 0
     - _Test: 0
     - _Transparency: 0.806
-    - _Wave_Height: 1
+    - _Wave_Height: 0.75
     - _Wave_Speed: 0.05
     - _Wave_Stength: 10
     - _WorkflowMode: 1

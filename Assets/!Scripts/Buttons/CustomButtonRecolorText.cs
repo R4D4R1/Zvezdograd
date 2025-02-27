@@ -7,7 +7,6 @@ public class CustomButtonRecolorText : CustomButtonBase
 {
     [SerializeField] private Color _toColor;
     [SerializeField] private float _duration;
-    [SerializeField] private bool _turnBackToOriginalColor = true;
 
     private TMP_Text _buttonText;
     private Color _originalColor;
@@ -22,36 +21,23 @@ public class CustomButtonRecolorText : CustomButtonBase
     {
         base.OnPointerEnter(eventData);
 
-        Bootstrapper.Instance?.SoundController?.PlayHoverSound();
-
-        if (_turnBackToOriginalColor)
-        {
             _buttonText.DOColor(_toColor, _duration)
             .SetEase(Ease.InOutSine);
-        }
     }
 
     public override void OnPointerExit(PointerEventData eventData)
     {
         base.OnPointerExit(eventData);
 
-        if (_turnBackToOriginalColor)
-        {
             _buttonText.DOColor(_originalColor, _duration)
             .SetEase(Ease.InOutSine);
-        }
     }
 
     public override void OnPointerClick(PointerEventData eventData)
     {
         base.OnPointerClick(eventData);
 
-        Bootstrapper.Instance?.SoundController?.PlayButtonPressSound();
-
-        if (_turnBackToOriginalColor)
-        {
-            _buttonText.DOColor(_originalColor, _duration)
+        _buttonText.DOColor(_originalColor, _duration)
             .SetEase(Ease.InOutSine);
-        }
     }
 }

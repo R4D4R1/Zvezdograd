@@ -16,12 +16,20 @@ public class HospitalBuilding : RepairableBuilding
     private bool _medicineWasGivenAwayInLastTwoDay = false;
 
 
-    private void Start()
+    protected override void Awake()
     {
+        base.Awake();
         ControllersManager.Instance.timeController.OnNextTurnBtnPressed += UpdateAmountOfTurnsNeededToDoSMTH;
         DaysToGiveMedicine = OriginalDaysToGiveMedicine;
         UpdateAmountOfTurnsNeededToDoSMTH();
     }
+
+    //private void Start()
+    //{
+    //    ControllersManager.Instance.timeController.OnNextTurnBtnPressed += UpdateAmountOfTurnsNeededToDoSMTH;
+    //    DaysToGiveMedicine = OriginalDaysToGiveMedicine;
+    //    UpdateAmountOfTurnsNeededToDoSMTH();
+    //}
 
     private void UpdateAmountOfTurnsNeededToDoSMTH()
     {

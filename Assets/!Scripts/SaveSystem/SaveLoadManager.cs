@@ -2,22 +2,43 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 public class SaveLoadManager : MonoBehaviour
 {
+    [SerializeField] private List<TMP_Text> slotTexts; // Тексты кнопок для отображения статуса слота
+    private int? currentSlot = null;
+
+    private void Start()
+    {
+        UpdateSlotTexts(); // Обновляем текст кнопок при запуске
+    }
+
     private string GetFilePath(int slotIndex)
     {
         return Path.Combine(Application.persistentDataPath, $"saveSlot{slotIndex}.json");
     }
 
-    public void SaveGame(int slotIndex)
+    public void SelectSlot(int slotIndex)
     {
+        currentSlot = slotIndex;
+        Debug.Log($"Selected save slot: {slotIndex}");
+    }
+
+    public void SaveGame()
+    {
+        if (currentSlot == null)
+        {
+            Debug.LogWarning("No save slot selected. Cannot save the game.");
+            return;
+        }
+
+        string filePath = GetFilePath(currentSlot.Value);
+
         var unitsController = ControllersManager.Instance.peopleUnitsController;
         var timeController = ControllersManager.Instance.timeController;
-        var resourceController = ControllersManager.Instance.resourceController; // Получаем ресурсный контроллер
-
-        string filePath = GetFilePath(slotIndex);
+        var resourceController = ControllersManager.Instance.resourceController;
 
         GameData gameData = new GameData
         {
@@ -59,12 +80,41 @@ public class SaveLoadManager : MonoBehaviour
 
         string json = JsonUtility.ToJson(gameData, true);
         File.WriteAllText(filePath, json);
+
+
+        Debug.Log($"Game saved to slot {currentSlot.Value}.");
+
+        currentSlot = null;
+
+        UpdateSlotTexts(); // Обновляем текст на кнопке после сохранения
     }
 
-
-    public void LoadGame(int slotIndex)
+    public void UpdateSlotTexts()
     {
-        string filePath = GetFilePath(slotIndex);
+        for (int i = 0; i < slotTexts.Count; i++)
+        {
+            string filePath = GetFilePath(i);
+            if (File.Exists(filePath))
+            {
+                DateTime lastWriteTime = File.GetLastWriteTime(filePath);
+                slotTexts[i].text = $"СОХРАНЕНИЕ {lastWriteTime:dd.MM.yyyy HH:mm}";
+            }
+            else
+            {
+                slotTexts[i].text = "СВОБОДНО";
+            }
+        }
+    }
+
+    public void LoadGame()
+    {
+        if (currentSlot == null)
+        {
+            Debug.LogWarning("No save slot selected. Cannot load the game.");
+            return;
+        }
+
+        string filePath = GetFilePath(currentSlot.Value);
         var unitsController = ControllersManager.Instance.peopleUnitsController;
         var timeController = ControllersManager.Instance.timeController;
         var resourceController = ControllersManager.Instance.resourceController;
@@ -90,14 +140,11 @@ public class SaveLoadManager : MonoBehaviour
                 unit.SetState(unitData.currentState, unitData.busyTime, unitData.restingTime);
             }
 
-            // Загружаем данные зданий
             var buildingController = ControllersManager.Instance.buildingController;
             foreach (var buildingData in gameData.allBuildingsData)
             {
-                // Логируем все здания, чтобы убедиться в их наличии
                 Debug.Log($"Looking for BuildingId: {buildingData.BuildingId}");
 
-                // Ищем здание по ID
                 var building = buildingController.RegularBuildings.Concat(buildingController.SpecialBuildings)
                     .FirstOrDefault(b => b.BuildingId == buildingData.BuildingId);
 
@@ -105,7 +152,6 @@ public class SaveLoadManager : MonoBehaviour
                 {
                     building.CurrentState = buildingData.currentState;
                     building.TurnsToRepair = buildingData.turnsToRepair;
-
                     Debug.Log($"Loaded building: {building.name}, State: {building.CurrentState}");
                 }
                 else
@@ -121,33 +167,39 @@ public class SaveLoadManager : MonoBehaviour
             resourceController.AddOrRemoveStability(gameData.stability - resourceController.GetStability());
 
             unitsController.UpdateReadyUnits();
-            Debug.Log($"Game loaded from slot {slotIndex}.");
+            Debug.Log($"Game loaded from slot {currentSlot.Value}.");
+            currentSlot = null;
+
         }
         else
         {
-            Debug.LogWarning($"Save slot {slotIndex} not found.");
+            Debug.LogWarning($"Save slot {currentSlot.Value} not found.");
         }
     }
 
-
-
-
-    public void DeleteSave(int slotIndex)
+    public void DeleteSave()
     {
-        string filePath = GetFilePath(slotIndex);
+        if (currentSlot == null)
+        {
+            Debug.LogWarning("No save slot selected. Cannot delete save.");
+            return;
+        }
+
+        string filePath = GetFilePath(currentSlot.Value);
         if (File.Exists(filePath))
         {
             File.Delete(filePath);
-            Debug.Log($"Save slot {slotIndex} deleted.");
+            Debug.Log($"Save slot {currentSlot.Value} deleted.");
+            UpdateSlotTexts(); // Обновляем текст на кнопке после удаления
         }
         else
         {
-            Debug.LogWarning($"Save slot {slotIndex} does not exist.");
+            Debug.LogWarning($"Save slot {currentSlot.Value} does not exist.");
         }
     }
 
-    public bool SaveExists(int slotIndex)
+    public bool SaveExists()
     {
-        return File.Exists(GetFilePath(slotIndex));
+        return currentSlot != null && File.Exists(GetFilePath(currentSlot.Value));
     }
 }

@@ -6,11 +6,13 @@ public abstract class CustomButtonBase : MonoBehaviour, IPointerEnterHandler, IP
 {
     public virtual void OnPointerClick(PointerEventData eventData)
     {
+        Bootstrapper.Instance?.SoundController?.PlayButtonPressSound();
 
     }
 
     public virtual void OnPointerEnter(PointerEventData eventData)
     {
+        Bootstrapper.Instance?.SoundController?.PlayHoverSound();
 
     }
 

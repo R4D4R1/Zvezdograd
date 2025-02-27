@@ -9,7 +9,7 @@ public class SelectableBuilding : MonoBehaviour
 
     [field: SerializeField] public bool BuildingIsSelactable { get; protected set; } = true;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         BuildingId = GenerateUniqueId();
     }

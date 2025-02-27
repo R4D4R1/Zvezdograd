@@ -17,13 +17,9 @@ public class BuildingDependingOnStability : SelectableBuilding
         {
             turnToDoWork = TurnsToDoWorkOriginal;
         }
-        if (stability <= 50)
-        {
-            turnToDoWork = TurnsToDoWorkOriginal + 1;
-        }
         if (stability <= 25)
         {
-            turnToDoWork = TurnsToDoWorkOriginal + 2;
+            turnToDoWork = TurnsToDoWorkOriginal + 1;
         }
 
         return turnToDoWork;

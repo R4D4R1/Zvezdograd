@@ -120,7 +120,7 @@ public class PeopleUnit : MonoBehaviour
                 currentState = UnitState.Ready;
                 RestingTime = 0;
 
-                _statusText.text = "";
+                _statusText.text = "ябнандем";
 
                 EnableUnit();
             }
