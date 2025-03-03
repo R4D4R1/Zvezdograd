@@ -7,95 +7,124 @@ using UnityEngine.Events;
 public class PopupEventController : MonoBehaviour
 {
     [SerializeField] private TextAsset _specificEventsJson;
+    [SerializeField] private UnityEvent _onSnowStarted;
 
-    [Range(0, 100)]
-    [SerializeField] private int _randomEventChance;
+    private bool _isGameOver = false;
 
-    private Dictionary<string, PopupEvent> specificEvents;
+    private Dictionary<string, PopupEvent> _specificEvents;
 
-    [SerializeField] private UnityEvent OnSnowStarted;
+    public event Action OnGameOver;
+
+    private void OnEnable()
+    {
+        ControllersManager.Instance.buildingController.GetCityHallBuilding().OnGameWon += OnGameWonEventShow;
+        ControllersManager.Instance.resourceController.OnStabilityZero += OnGameOverEventShow;
+        ControllersManager.Instance.timeController.OnNextTurnBtnPressed += OnPeriodChanged;
+    }
+
+    private void OnDisable()
+    {
+        ControllersManager.Instance.buildingController.GetCityHallBuilding().OnGameWon -= OnGameWonEventShow;
+        ControllersManager.Instance.resourceController.OnStabilityZero -= OnGameOverEventShow;
+        ControllersManager.Instance.timeController.OnNextTurnBtnPressed -= OnPeriodChanged;
+    }
 
     private void Start()
     {
         LoadEvents();
-        ControllersManager.Instance.timeController.OnNextTurnBtnPressed += OnPeriodChanged;
     }
 
     private void LoadEvents()
     {
-        specificEvents = new Dictionary<string, PopupEvent>();
+        _specificEvents = new Dictionary<string, PopupEvent>();
         var specificEventsData = JsonConvert.DeserializeObject<PopupEventData>(_specificEventsJson.text);
         foreach (var e in specificEventsData.events)
         {
             string eventKey = e.date + e.period;
-            specificEvents[eventKey] = e;
+            _specificEvents[eventKey] = e;
         }
     }
 
     private void OnPeriodChanged()
     {
+        if (_isGameOver)
+        {
+            OnGameOver?.Invoke();
+            return;
+        }
+
         DateTime currentDate = ControllersManager.Instance.timeController.CurrentDate;
         string currentPeriod = ControllersManager.Instance.timeController.CurrentPeriod.ToString();
 
         string eventKey = currentDate.ToString("yyyy-MM-dd") + currentPeriod;
 
-        if (ControllersManager.Instance.resourceController.IsStabilityZero)
+        if (_specificEvents.TryGetValue(eventKey, out PopupEvent popupEvent))
         {
-            // SHOW GAME OVER POP UP
-            EventPopUp.Instance.ShowEventPopUp(
-                "ВАС СВЕРГЛИ",
-                "Вы не смогли удержать наш город в стабильности и мире, из-за чего и были расстреляны незамедлительно",
-                "КОНЕЦ");
-        }
-        else
-        {
-            if (specificEvents.TryGetValue(eventKey, out PopupEvent popupEvent))
+            if (!string.IsNullOrEmpty(popupEvent.weatherType))
             {
-                if (!string.IsNullOrEmpty(popupEvent.weatherType))
+                if (popupEvent.weatherType == "Снег")
                 {
-                    if (popupEvent.weatherType == "Снег")
-                    {
-                        OnSnowStarted?.Invoke();
-                    }
+                    _onSnowStarted?.Invoke();
                 }
-                if (!string.IsNullOrEmpty(popupEvent.buildingType))
-                {
-                    // Проверяем, является ли тип здания одним из допустимых
-                    if (popupEvent.buildingType == "Еда" || popupEvent.buildingType == "Медикаменты" || popupEvent.buildingType == "Совет")
-                    {
-                        if (popupEvent.buildingType == "Еда")
-                        {
-                            ControllersManager.Instance.popUpsController.FoodTrucksPopUp.EnableQuest(QuestPopUp.QuestType.Provision, popupEvent.questText, popupEvent.unitSize, popupEvent.deadlineInDays,
-                                popupEvent.turnsToWork, popupEvent.turnsToRest, popupEvent.materialsToGet, popupEvent.materialsToLose,
-                                popupEvent.stabilityToGet, popupEvent.stabilityToLose, popupEvent.relationshipWithGovToGet, popupEvent.relationshipWithGovToLose);
-                        }
-                        else if (popupEvent.buildingType == "Медикаменты")
-                        {
-                            ControllersManager.Instance.popUpsController.HospitalPopUp.EnableQuest(QuestPopUp.QuestType.Medicine, popupEvent.questText, popupEvent.unitSize, popupEvent.deadlineInDays,
-                                popupEvent.turnsToWork, popupEvent.turnsToRest, popupEvent.materialsToGet, popupEvent.materialsToLose,
-                                popupEvent.stabilityToGet, popupEvent.stabilityToLose, popupEvent.relationshipWithGovToGet, popupEvent.relationshipWithGovToLose);
-                        }
-                        else if (popupEvent.buildingType == "Совет")
-                        {
-                            ControllersManager.Instance.popUpsController.CityHallPopUp.EnableQuest(QuestPopUp.QuestType.CityBuilding, popupEvent.questText, popupEvent.unitSize, popupEvent.deadlineInDays,
-                                popupEvent.turnsToWork, popupEvent.turnsToRest, popupEvent.materialsToGet, popupEvent.materialsToLose,
-                                popupEvent.stabilityToGet, popupEvent.stabilityToLose, popupEvent.relationshipWithGovToGet, popupEvent.relationshipWithGovToLose);
-                        }
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"Unknown Building Type: {popupEvent.buildingType}");
-                    }
-                }
-
-                EventPopUp.Instance.ShowEventPopUp(
-                    popupEvent.title,
-                    popupEvent.mainText,
-                    popupEvent.buttonText);
             }
+            if (!string.IsNullOrEmpty(popupEvent.buildingType))
+            {
+                // Проверяем, является ли тип здания одним из допустимых
+                if (popupEvent.buildingType == "Еда" || popupEvent.buildingType == "Медикаменты" || popupEvent.buildingType == "Совет")
+                {
+                    if (popupEvent.buildingType == "Еда")
+                    {
+                        ControllersManager.Instance.popUpsController.FoodTrucksPopUp.EnableQuest(QuestPopUp.QuestType.Provision, popupEvent.questText, popupEvent.unitSize, popupEvent.deadlineInDays,
+                            popupEvent.turnsToWork, popupEvent.turnsToRest, popupEvent.materialsToGet, popupEvent.materialsToLose,
+                            popupEvent.stabilityToGet, popupEvent.stabilityToLose, popupEvent.relationshipWithGovToGet, popupEvent.relationshipWithGovToLose);
+                    }
+                    else if (popupEvent.buildingType == "Медикаменты")
+                    {
+                        ControllersManager.Instance.popUpsController.HospitalPopUp.EnableQuest(QuestPopUp.QuestType.Medicine, popupEvent.questText, popupEvent.unitSize, popupEvent.deadlineInDays,
+                            popupEvent.turnsToWork, popupEvent.turnsToRest, popupEvent.materialsToGet, popupEvent.materialsToLose,
+                            popupEvent.stabilityToGet, popupEvent.stabilityToLose, popupEvent.relationshipWithGovToGet, popupEvent.relationshipWithGovToLose);
+                    }
+                    else if (popupEvent.buildingType == "Совет")
+                    {
+                        ControllersManager.Instance.popUpsController.CityHallPopUp.EnableQuest(QuestPopUp.QuestType.CityBuilding, popupEvent.questText, popupEvent.unitSize, popupEvent.deadlineInDays,
+                            popupEvent.turnsToWork, popupEvent.turnsToRest, popupEvent.materialsToGet, popupEvent.materialsToLose,
+                            popupEvent.stabilityToGet, popupEvent.stabilityToLose, popupEvent.relationshipWithGovToGet, popupEvent.relationshipWithGovToLose);
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning($"Unknown Building Type: {popupEvent.buildingType}");
+                }
+            }
+
+            EventPopUp.Instance.ShowEventPopUp(
+                popupEvent.title,
+                popupEvent.mainText,
+                popupEvent.buttonText);
         }
     }
+    private void OnGameWonEventShow()
+    {
+        _isGameOver = true;
+        EventPopUp.Instance.ShowEventPopUp(
+            "ПОБЕДА",
+            "После долгих и бессонных ночей мы все же дождались прибытия помощи, но какой ценой...",
+            "МЫ СПАСЕНЫ");
+    }
+
+    private void OnGameOverEventShow()
+    {
+        _isGameOver = true;
+        EventPopUp.Instance.ShowEventPopUp(
+            "ВАС СВЕРГЛИ",
+            "Вы не смогли удержать наш город в стабильности и мире, из-за чего и были расстреляны незамедлительно",
+            "КОНЕЦ");
+
+    }
+
 }
+
+
 
 [Serializable]
 public class PopupEvent
@@ -106,10 +135,8 @@ public class PopupEvent
     public string mainText;
     public string buttonText;
 
-    // Смена погоды
     public string weatherType;
 
-    // Спец задания 
     public string buildingType;
 
     public string questText;

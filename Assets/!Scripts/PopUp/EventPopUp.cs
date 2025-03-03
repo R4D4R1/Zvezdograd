@@ -7,6 +7,7 @@ public class EventPopUp : InfoPopUp
     public static EventPopUp Instance;
     public TextMeshProUGUI ButtonText;
 
+    
     private void Awake()
     {
         if (Instance == null)
@@ -30,7 +31,6 @@ public class EventPopUp : InfoPopUp
 
         _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
-
             LabelText.text = Label;
             DescriptionText.text = Description;
             ButtonText.text = Button;
@@ -47,7 +47,7 @@ public class EventPopUp : InfoPopUp
 
         if (IsActive)
         {
-            if (ControllersManager.Instance.resourceController.IsStabilityZero)
+            if (ControllersManager.Instance.mainGameController.IsGameOver)
             {
                 ControllersManager.Instance.mainGameUIController.LoadMainMenu();
             }

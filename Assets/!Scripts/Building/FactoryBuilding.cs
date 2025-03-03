@@ -64,7 +64,6 @@ public class FactoryBuilding : RepairableBuilding
                     }
                     else
                     {
-                        ControllersManager.Instance.buildingController.GetCityHallBuilding().AddRelationWithGov(2);
                         ControllersManager.Instance.buildingController.GetCityHallBuilding().ArmyMaterialsSent();
                     }
 

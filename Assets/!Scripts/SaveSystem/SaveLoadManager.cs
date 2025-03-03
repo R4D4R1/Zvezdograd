@@ -97,7 +97,10 @@ public class SaveLoadManager : MonoBehaviour
             if (File.Exists(filePath))
             {
                 DateTime lastWriteTime = File.GetLastWriteTime(filePath);
-                slotTexts[i].text = $"—Œ’–¿Õ≈Õ»≈ {lastWriteTime:dd.MM.yyyy HH:mm}";
+                string json = File.ReadAllText(filePath);
+                GameData gameData = JsonUtility.FromJson<GameData>(json);
+
+                slotTexts[i].text = $"—Œ’–¿Õ≈Õ»≈ {lastWriteTime:dd.MM.yyyy HH:mm} {gameData.GetDate().ToString("yyyy-MM-dd")}";
             }
             else
             {

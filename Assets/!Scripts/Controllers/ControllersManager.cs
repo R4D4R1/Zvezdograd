@@ -13,6 +13,7 @@ public class ControllersManager : MonoBehaviour
     public BuildingController buildingController { get; private set; }
     public BlurController blurController { get; private set; }
     public PopUpsController popUpsController { get; private set; }
+    public PopupEventController popupEventController { get; private set; }
     public TutorialController tutorialController { get; private set; }
     public Camera MainCamera { get; private set; }
 
@@ -38,6 +39,7 @@ public class ControllersManager : MonoBehaviour
         blurController = GetComponentInChildren<BlurController>();
         popUpsController = GetComponentInChildren<PopUpsController>();
         tutorialController = GetComponentInChildren<TutorialController>();
+        popupEventController = GetComponentInChildren<PopupEventController>();
 
         MainCamera = Camera.main;
     }

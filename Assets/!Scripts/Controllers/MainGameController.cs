@@ -6,7 +6,6 @@ using Cysharp.Threading.Tasks;
 
 public class MainGameController : MonoBehaviour
 {
-    [Header("StartGame")]
     [SerializeField] private InfoPopUp _startPopUpInfo;
     [SerializeField] private GameObject _gameUI;
     [SerializeField] private Image _blackImage;
@@ -19,20 +18,30 @@ public class MainGameController : MonoBehaviour
 
     [SerializeField] private AnimationType animationType;
 
+    [SerializeField] private float cameraCityShowY;
+    [SerializeField] private float cameraCityHideY;
+
     [Header("Outline")]
     [SerializeField] private Color OutlineColor;
     [Range(0.1f, 1f)]
     [SerializeField] private float OutlineWidth;
 
-    [SerializeField] private float cameraCityShowY;
-    [SerializeField] private float cameraCityHideY;
-
+    public bool IsGameOver { get; private set; } = false;
     public enum AnimationType
     {
         EaseInOut,
         EaseIn,
         EaseOut,
         Linear
+    }
+    private void OnEnable()
+    {
+        ControllersManager.Instance.popupEventController.OnGameOver += OnGameOverFlag;
+    }
+
+    private void OnDisable()
+    {
+        ControllersManager.Instance.popupEventController.OnGameOver -= OnGameOverFlag;
     }
 
     private async void Start()
@@ -73,6 +82,11 @@ public class MainGameController : MonoBehaviour
         {
             _startPopUpInfo.ShowPopUp();
         });
+    }
+
+    public void OnGameOverFlag()
+    {
+        IsGameOver = true;
     }
 
     public void ShowCity()

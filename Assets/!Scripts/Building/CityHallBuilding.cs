@@ -6,12 +6,18 @@ public class CityHallBuilding : RepairableBuilding
     [SerializeField] private int _daysLeftToSendArmyMaterialsOriginal;
     [SerializeField] private int _daysLeftToRecieveGovHelpOriginal;
 
+    
+    [Range(5,10), SerializeField] private int _amountOfHelpNeededToSent;
+    private int _amountOfHelpSent = 0;
+
     // SAVE DATA
     [Range(0f, 10f)]
     [field: SerializeField] public int RelationWithGoverment { get; private set; }
     public int DaysLeftToRecieveGovHelp { get; private set; }
     public int DaysLeftToSendArmyMaterials { get; private set; }
     public bool IsMaterialsSent { get; private set; }
+
+    public event Action OnGameWon;
 
 
     //public event Action ArmyMaterialsWereSent;
@@ -120,14 +126,21 @@ public class CityHallBuilding : RepairableBuilding
         ControllersManager.Instance.resourceController.AddOrRemoveProvision(foodAmount);
         ControllersManager.Instance.resourceController.AddOrRemoveMedicine(medicineAmount);
     }
+    public void ArmyMaterialsSent()
+    {
+        _amountOfHelpSent++;
+        IsMaterialsSent = true;
+        AddRelationWithGov(2);
+
+        if(_amountOfHelpSent>= _amountOfHelpNeededToSent)
+        {
+            OnGameWon?.Invoke();
+        }
+    }
 
     public void AddRelationWithGov(int value)
     {
         RelationWithGoverment += Mathf.Clamp(Mathf.Abs(value), 0, 10);
     }
 
-    public void ArmyMaterialsSent()
-    {
-        IsMaterialsSent = true;
-    }
 }

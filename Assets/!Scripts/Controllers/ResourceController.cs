@@ -36,10 +36,12 @@ public class ResourceController : MonoBehaviour
     [SerializeField] private Slider readyMaterialsSlider;
     [SerializeField] private Slider stabilitySlider;
 
-    [SerializeField] private GameObject notificationPrefab; // Префаб уведомления
-    [SerializeField] private Transform notificationParent; // Родитель для уведомлений
+    [SerializeField] private GameObject notificationPrefab;
+    [SerializeField] private Transform notificationParent;
 
-    public bool IsStabilityZero { get; private set; }
+    private bool _isStabilityZero;
+
+    public event Action OnStabilityZero;
 
     void Start()
     {
@@ -57,7 +59,7 @@ public class ResourceController : MonoBehaviour
     {
         foreach (var building in ControllersManager.Instance.buildingController.RegularBuildings)
         {
-            if (building.CurrentState == RepairableBuilding.State.Damaged && !IsStabilityZero)
+            if (building.CurrentState == RepairableBuilding.State.Damaged && !_isStabilityZero)
             {
                 AddOrRemoveStability(-2);
             }
@@ -145,7 +147,8 @@ public class ResourceController : MonoBehaviour
         if (isStability)
         {
             UpdateStabilityUI();
-            IsStabilityZero = (resource == 0);
+            _isStabilityZero = (value == 0);
+            OnStabilityZero?.Invoke();
         }
         else
         {
