@@ -7,12 +7,18 @@ using UnityEngine;
 
 public class SaveLoadManager : MonoBehaviour
 {
-    [SerializeField] private List<TMP_Text> slotTexts; // Тексты кнопок для отображения статуса слота
+    [SerializeField] private List<GameObject> _saveSlots;
+    private List<TextMeshProUGUI> _slotTexts = new();
     private int? currentSlot = null;
 
     private void Start()
     {
-        UpdateSlotTexts(); // Обновляем текст кнопок при запуске
+        foreach (var slot in _saveSlots)
+        {
+            _slotTexts.Add(slot.GetComponentInChildren<TextMeshProUGUI>());
+        }
+
+        UpdateSlotTexts();
     }
 
     private string GetFilePath(int slotIndex)
@@ -23,7 +29,25 @@ public class SaveLoadManager : MonoBehaviour
     public void SelectSlot(int slotIndex)
     {
         currentSlot = slotIndex;
-        Debug.Log($"Selected save slot: {slotIndex}");
+        Debug.Log($"Selected save slot: {currentSlot}");
+        int slotNum = 0;
+
+        foreach (var slot in _saveSlots)
+        {
+            // 0 - unselected
+            // 1 - selected
+
+            slot.transform.GetChild(0).gameObject.SetActive(false);
+            slot.transform.GetChild(1).gameObject.SetActive(true);
+
+            if (currentSlot != slotNum)
+            {
+                slot.transform.GetChild(0).gameObject.SetActive(true);
+                slot.transform.GetChild(1).gameObject.SetActive(false);
+            }
+
+            slotNum++;
+        }
     }
 
     public void SaveGame()
@@ -84,15 +108,16 @@ public class SaveLoadManager : MonoBehaviour
 
         Debug.Log($"Game saved to slot {currentSlot.Value}.");
 
-        currentSlot = null;
+        ClearCurrentSaveSlot();
 
-        UpdateSlotTexts(); // Обновляем текст на кнопке после сохранения
+        UpdateSlotTexts();
     }
 
     public void UpdateSlotTexts()
     {
-        for (int i = 0; i < slotTexts.Count; i++)
+        for (int i = 0; i < _slotTexts.Count; i++)
         {
+
             string filePath = GetFilePath(i);
             if (File.Exists(filePath))
             {
@@ -100,11 +125,11 @@ public class SaveLoadManager : MonoBehaviour
                 string json = File.ReadAllText(filePath);
                 GameData gameData = JsonUtility.FromJson<GameData>(json);
 
-                slotTexts[i].text = $"СОХРАНЕНИЕ {lastWriteTime:dd.MM.yyyy HH:mm} {gameData.GetDate().ToString("yyyy-MM-dd")}";
+                _slotTexts[i].text = $"СОХРАНЕНИЕ {lastWriteTime:dd.MM.yyyy HH:mm} {gameData.GetDate().ToString("yyyy-MM-dd")}";
             }
             else
             {
-                slotTexts[i].text = "СВОБОДНО";
+                _slotTexts[i].text = "СВОБОДНО";
             }
         }
     }
@@ -171,14 +196,15 @@ public class SaveLoadManager : MonoBehaviour
 
             unitsController.UpdateReadyUnits();
             Debug.Log($"Game loaded from slot {currentSlot.Value}.");
-            currentSlot = null;
 
+            ClearCurrentSaveSlot();
         }
         else
         {
             Debug.LogWarning($"Save slot {currentSlot.Value} not found.");
         }
     }
+
 
     public void DeleteSave()
     {
@@ -193,12 +219,30 @@ public class SaveLoadManager : MonoBehaviour
         {
             File.Delete(filePath);
             Debug.Log($"Save slot {currentSlot.Value} deleted.");
-            UpdateSlotTexts(); // Обновляем текст на кнопке после удаления
+            UpdateSlotTexts();
         }
         else
         {
             Debug.LogWarning($"Save slot {currentSlot.Value} does not exist.");
         }
+
+        ClearCurrentSaveSlot();
+    }
+
+    public void ClearCurrentSaveSlot()
+    {
+        int slotNum = 0;
+        foreach (var slot in _saveSlots)
+        {
+            if (currentSlot == slotNum)
+            {
+                slot.transform.GetChild(0).gameObject.SetActive(true);
+                slot.transform.GetChild(1).gameObject.SetActive(false);
+            }
+
+            slotNum++;
+        }
+        currentSlot = null;
     }
 
     public bool SaveExists()

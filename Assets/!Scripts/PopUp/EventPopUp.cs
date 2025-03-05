@@ -45,12 +45,9 @@ public class EventPopUp : InfoPopUp
     {
         base.HidePopUp();
 
-        if (IsActive)
+        if (ControllersManager.Instance.mainGameController.GameOverState != MainGameController.GameOverStateEnum.Playing)
         {
-            if (ControllersManager.Instance.mainGameController.IsGameOver)
-            {
-                ControllersManager.Instance.mainGameUIController.LoadMainMenu();
-            }
+            ControllersManager.Instance.mainGameUIController.LoadMainMenu();
         }
     }
 }

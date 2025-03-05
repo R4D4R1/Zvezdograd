@@ -16,7 +16,8 @@ public class MainGameController : MonoBehaviour
     [Range(0.1f, 5f)]
     [SerializeField] private float animationDuration = 1f;
 
-    [SerializeField] private AnimationType animationType;
+    [SerializeField] private AnimationTypeEnum animationType;
+    public GameOverStateEnum GameOverState {  get; private set; }
 
     [SerializeField] private float cameraCityShowY;
     [SerializeField] private float cameraCityHideY;
@@ -26,22 +27,19 @@ public class MainGameController : MonoBehaviour
     [Range(0.1f, 1f)]
     [SerializeField] private float OutlineWidth;
 
-    public bool IsGameOver { get; private set; } = false;
-    public enum AnimationType
+    public enum AnimationTypeEnum
     {
         EaseInOut,
         EaseIn,
         EaseOut,
         Linear
     }
-    private void OnEnable()
-    {
-        ControllersManager.Instance.popupEventController.OnGameOver += OnGameOverFlag;
-    }
 
-    private void OnDisable()
+    public enum GameOverStateEnum
     {
-        ControllersManager.Instance.popupEventController.OnGameOver -= OnGameOverFlag;
+        Playing,
+        Win,
+        Lose
     }
 
     private async void Start()
@@ -84,9 +82,16 @@ public class MainGameController : MonoBehaviour
         });
     }
 
-    public void OnGameOverFlag()
+    public void OnGameWin()
     {
-        IsGameOver = true;
+        Debug.Log("WIN");
+        GameOverState = GameOverStateEnum.Win;
+    }
+
+    public void OnGameLost()
+    {
+        Debug.Log("LOSE");
+        GameOverState = GameOverStateEnum.Lose;
     }
 
     public void ShowCity()
@@ -105,16 +110,16 @@ public class MainGameController : MonoBehaviour
         Ease easeType = Ease.Linear;
         switch (animationType)
         {
-            case AnimationType.EaseInOut:
+            case AnimationTypeEnum.EaseInOut:
                 easeType = Ease.InOutQuad;
                 break;
-            case AnimationType.EaseIn:
+            case AnimationTypeEnum.EaseIn:
                 easeType = Ease.InQuad;
                 break;
-            case AnimationType.EaseOut:
+            case AnimationTypeEnum.EaseOut:
                 easeType = Ease.OutQuad;
                 break;
-            case AnimationType.Linear:
+            case AnimationTypeEnum.Linear:
                 easeType = Ease.Linear;
                 break;
         }

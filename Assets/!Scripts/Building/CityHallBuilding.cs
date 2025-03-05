@@ -7,7 +7,7 @@ public class CityHallBuilding : RepairableBuilding
     [SerializeField] private int _daysLeftToRecieveGovHelpOriginal;
 
     
-    [Range(5,10), SerializeField] private int _amountOfHelpNeededToSent;
+    [Range(0,10), SerializeField] private int _amountOfHelpNeededToSent;
     private int _amountOfHelpSent = 0;
 
     // SAVE DATA
@@ -16,8 +16,6 @@ public class CityHallBuilding : RepairableBuilding
     public int DaysLeftToRecieveGovHelp { get; private set; }
     public int DaysLeftToSendArmyMaterials { get; private set; }
     public bool IsMaterialsSent { get; private set; }
-
-    public event Action OnGameWon;
 
 
     //public event Action ArmyMaterialsWereSent;
@@ -132,9 +130,9 @@ public class CityHallBuilding : RepairableBuilding
         IsMaterialsSent = true;
         AddRelationWithGov(2);
 
-        if(_amountOfHelpSent>= _amountOfHelpNeededToSent)
+        if (_amountOfHelpSent >= _amountOfHelpNeededToSent)
         {
-            OnGameWon?.Invoke();
+            ControllersManager.Instance.mainGameController.OnGameWin();
         }
     }
 

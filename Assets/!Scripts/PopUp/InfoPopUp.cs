@@ -23,9 +23,9 @@ public class InfoPopUp : MonoBehaviour
 
     private void OnEnable()
     {
-    IsActive = false;
+        IsActive = false;
 
-    _bgImage.transform.localScale = Vector3.zero;
+        _bgImage.transform.localScale = Vector3.zero;
         SetAlpha(0);
     }
 

@@ -234,7 +234,10 @@ public class SelectionController : MonoBehaviour
         InfoPopUp[] allPopUps = Object.FindObjectsByType<InfoPopUp>(FindObjectsSortMode.None);
         foreach (InfoPopUp popUp in allPopUps)
         {
-            popUp.HidePopUp();
+            if (popUp.IsActive)
+            {
+                popUp.HidePopUp();
+            }
         }
 
 

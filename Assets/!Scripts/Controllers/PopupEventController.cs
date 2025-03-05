@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
 using UnityEngine.Events;
+using Cysharp.Threading.Tasks;
 
 public class PopupEventController : MonoBehaviour
 {
@@ -13,19 +14,13 @@ public class PopupEventController : MonoBehaviour
 
     private Dictionary<string, PopupEvent> _specificEvents;
 
-    public event Action OnGameOver;
-
     private void OnEnable()
     {
-        ControllersManager.Instance.buildingController.GetCityHallBuilding().OnGameWon += OnGameWonEventShow;
-        ControllersManager.Instance.resourceController.OnStabilityZero += OnGameOverEventShow;
         ControllersManager.Instance.timeController.OnNextTurnBtnPressed += OnPeriodChanged;
     }
 
     private void OnDisable()
     {
-        ControllersManager.Instance.buildingController.GetCityHallBuilding().OnGameWon -= OnGameWonEventShow;
-        ControllersManager.Instance.resourceController.OnStabilityZero -= OnGameOverEventShow;
         ControllersManager.Instance.timeController.OnNextTurnBtnPressed -= OnPeriodChanged;
     }
 
@@ -45,11 +40,25 @@ public class PopupEventController : MonoBehaviour
         }
     }
 
-    private void OnPeriodChanged()
+    private async void OnPeriodChanged()
     {
+        // Delay to ckeck WIN/LOSE condition
+        await UniTask.Delay(1);
+
+        Debug.Log("New Period");
+        var controllerManager = ControllersManager.Instance;
+
+        if(controllerManager.mainGameController.GameOverState == MainGameController.GameOverStateEnum.Win)
+        {
+            OnGameWonEventShow();
+        }
+        else if(controllerManager.mainGameController.GameOverState == MainGameController.GameOverStateEnum.Lose)
+        {
+            OnGameLoseEventShow();
+        }
+
         if (_isGameOver)
         {
-            OnGameOver?.Invoke();
             return;
         }
 
@@ -112,7 +121,7 @@ public class PopupEventController : MonoBehaviour
             "Ã€ —œ¿—≈Õ€");
     }
 
-    private void OnGameOverEventShow()
+    private void OnGameLoseEventShow()
     {
         _isGameOver = true;
         EventPopUp.Instance.ShowEventPopUp(

@@ -39,9 +39,7 @@ public class ResourceController : MonoBehaviour
     [SerializeField] private GameObject notificationPrefab;
     [SerializeField] private Transform notificationParent;
 
-    private bool _isStabilityZero;
-
-    public event Action OnStabilityZero;
+    private bool _isStabilityZero = false;
 
     void Start()
     {
@@ -133,22 +131,29 @@ public class ResourceController : MonoBehaviour
     public void AddOrRemoveReadyMaterials(int value) => ModifyResource(ref readyMaterials, value, maxReadyMaterials, readyMaterialsSlider, readyMaterialsText, "стройматериалы");
     public void AddOrRemoveStability(int value) => ModifyResource(ref stability, value, maxStability, stabilitySlider, stabilityText, "стабильность", true);
 
-    private void ModifyResource(ref int resource, int value, int maxValue, Slider slider, TextMeshProUGUI text, string label, bool isStability = false)
+    private void ModifyResource(ref int resource, int changeValue, int maxValue, Slider slider, TextMeshProUGUI text, string label, bool isStability = false)
     {
         int oldValue = resource;
-        resource = Mathf.Clamp(resource + value, 0, maxValue);
+        resource = Mathf.Clamp(resource + changeValue, 0, maxValue);
 
         if (resource != oldValue)
         {
-            string operation = value > 0 ? "Добавлено" : "Убавлено";
-            CreateNotification($"{operation} {label} {Mathf.Abs(value)}", value > 0);
+            string operation = changeValue > 0 ? "Добавлено" : "Убавлено";
+            CreateNotification($"{operation} {label} {Mathf.Abs(changeValue)}", changeValue > 0);
         }
 
         if (isStability)
         {
             UpdateStabilityUI();
-            _isStabilityZero = (value == 0);
-            OnStabilityZero?.Invoke();
+            _isStabilityZero = (resource == 0);
+
+            Debug.Log(resource);
+            Debug.Log(_isStabilityZero);
+
+            if (_isStabilityZero)
+            {
+                ControllersManager.Instance.mainGameController.OnGameLost();
+            }
         }
         else
         {

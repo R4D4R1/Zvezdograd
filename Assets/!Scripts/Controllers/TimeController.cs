@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 using DG.Tweening;
+using Cysharp.Threading.Tasks;
 
 public class TimeController : MonoBehaviour
 {
@@ -112,9 +113,10 @@ public class TimeController : MonoBehaviour
         }
 
 
-        blackoutImage.DOFade(1, 0.5f).OnComplete(() =>
+        blackoutImage.DOFade(1, 0.5f).OnComplete(async() =>
         {
             UpdateTime();
+            await UniTask.Delay(100);
             OnNextTurnBtnPressed.Invoke();
 
             blackoutImage.DOFade(0, 0.5f).OnComplete(() =>
