@@ -10,7 +10,8 @@ public class PeopleUnit : MonoBehaviour
         Ready,
         Busy,
         Injured,
-        Resting
+        Resting,
+        NotCreated,
     }
 
     [SerializeField] private UnitState currentState = UnitState.Ready;
@@ -91,6 +92,11 @@ public class PeopleUnit : MonoBehaviour
         currentState = UnitState.Injured;
 
         UpdateStatusText();
+    }
+
+    public void SetNotCreated()
+    {
+        currentState = UnitState.NotCreated;
     }
 
     public void UpdateUnitState()

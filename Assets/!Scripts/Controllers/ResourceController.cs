@@ -147,12 +147,9 @@ public class ResourceController : MonoBehaviour
             UpdateStabilityUI();
             _isStabilityZero = (resource == 0);
 
-            Debug.Log(resource);
-            Debug.Log(_isStabilityZero);
-
             if (_isStabilityZero)
             {
-                ControllersManager.Instance.mainGameController.OnGameLost();
+                ControllersManager.Instance.mainGameController.GameLost();
             }
         }
         else

@@ -6,10 +6,10 @@ public class MainGameUIController : MonoBehaviour
 {
     [SerializeField] private GameObject _settingsMenu;
     [SerializeField] private GameObject _turnOffUIParent;
-    [SerializeField] private float fadeDuration = 0.5f; // Длительность анимации
+    [SerializeField] private float fadeDuration = 0.5f;
 
     private CanvasGroup _turnOffUICanvasGroup;
-    //private bool _canToggleMenu = true; // Флаг для управления открытием меню через Escape
+    //private bool _canToggleMenu = true;
     private InfoPopUp _popUpToClose;
 
     private void Start()
@@ -19,6 +19,10 @@ public class MainGameUIController : MonoBehaviour
         {
             _turnOffUICanvasGroup = _turnOffUIParent.AddComponent<CanvasGroup>();
         }
+
+        _turnOffUICanvasGroup.alpha = 0;
+        _turnOffUICanvasGroup.interactable = false;
+        _turnOffUICanvasGroup.blocksRaycasts = false;
 
         //DisableEscapeMenuToggle();
     }
@@ -39,7 +43,7 @@ public class MainGameUIController : MonoBehaviour
 
     public void TurnOnUI()
     {
-        _turnOffUIParent.SetActive(true);
+        //_turnOffUIParent.SetActive(true);
 
         ControllersManager.Instance.blurController.UnBlurBackGroundSmoothly();
         _turnOffUICanvasGroup.DOFade(1f, fadeDuration).OnComplete(() => {
@@ -58,7 +62,7 @@ public class MainGameUIController : MonoBehaviour
         ControllersManager.Instance.selectionController.Deselect();
 
         _turnOffUICanvasGroup.DOFade(0f, fadeDuration).OnComplete(() => {
-            _turnOffUIParent.SetActive(false);
+            //_turnOffUIParent.SetActive(false);
             _turnOffUICanvasGroup.interactable = false;
             _turnOffUICanvasGroup.blocksRaycasts = false;
         });

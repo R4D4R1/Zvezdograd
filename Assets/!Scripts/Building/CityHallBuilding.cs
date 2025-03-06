@@ -132,7 +132,7 @@ public class CityHallBuilding : RepairableBuilding
 
         if (_amountOfHelpSent >= _amountOfHelpNeededToSent)
         {
-            ControllersManager.Instance.mainGameController.OnGameWin();
+            ControllersManager.Instance.mainGameController.GameWin();
         }
     }
 

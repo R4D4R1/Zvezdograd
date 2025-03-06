@@ -7,7 +7,6 @@ using Cysharp.Threading.Tasks;
 public class MainGameController : MonoBehaviour
 {
     [SerializeField] private InfoPopUp _startPopUpInfo;
-    [SerializeField] private GameObject _gameUI;
     [SerializeField] private Image _blackImage;
 
     [Range(0f, 3f)]
@@ -71,7 +70,6 @@ public class MainGameController : MonoBehaviour
         }
 
         ControllersManager.Instance.blurController.BlurBackGroundNow();
-        _gameUI.SetActive(false);
         ControllersManager.Instance.selectionController.enabled = false;
 
         _blackImage.color = Color.black;
@@ -82,13 +80,13 @@ public class MainGameController : MonoBehaviour
         });
     }
 
-    public void OnGameWin()
+    public void GameWin()
     {
         Debug.Log("WIN");
         GameOverState = GameOverStateEnum.Win;
     }
 
-    public void OnGameLost()
+    public void GameLost()
     {
         Debug.Log("LOSE");
         GameOverState = GameOverStateEnum.Lose;
