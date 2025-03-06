@@ -7,6 +7,8 @@ using UnityEngine.UI;
 public class QuestPopUp : EnoughPopUp
 {
     [SerializeField] private List<GameObject> questObjects;
+    [SerializeField] protected GameObject activeBtn;
+    [SerializeField] protected GameObject inactiveBtn;
 
     private Dictionary<GameObject, (int deadline, int stabilityToGet, int stabilityToLose, int relationshipWithGovToGet, int relationshipWithGovToLose)> questDeadlines = new Dictionary<GameObject, (int, int, int, int, int)>();
 
@@ -125,7 +127,7 @@ public class QuestPopUp : EnoughPopUp
     private void CompleteQuest(GameObject quest, int stabilityToGet, int relationshipWithGovToGet)
     {
         ControllersManager.Instance.resourceController.AddOrRemoveStability(stabilityToGet);
-        ControllersManager.Instance.buildingController.GetCityHallBuilding().AddRelationWithGov(relationshipWithGovToGet);
+        ControllersManager.Instance.buildingController.GetCityHallBuilding().ModifyRelationWithGov(relationshipWithGovToGet);
 
         quest.SetActive(false);
         questDeadlines.Remove(quest);
@@ -135,7 +137,7 @@ public class QuestPopUp : EnoughPopUp
     private void LoseQuest(GameObject quest, int stabilityToLose, int relationshipWithGovToLose)
     {
         ControllersManager.Instance.resourceController.AddOrRemoveStability(-stabilityToLose);
-        ControllersManager.Instance.buildingController.GetCityHallBuilding().AddRelationWithGov(-relationshipWithGovToLose);
+        ControllersManager.Instance.buildingController.GetCityHallBuilding().ModifyRelationWithGov(-relationshipWithGovToLose);
 
         quest.SetActive(false);
         questDeadlines.Remove(quest);
@@ -160,5 +162,11 @@ public class QuestPopUp : EnoughPopUp
             return false;
         }
         return true;
+    }
+
+    protected void SetButtonState(bool isActive)
+    {
+        activeBtn.SetActive(isActive);
+        inactiveBtn.SetActive(!isActive);
     }
 }

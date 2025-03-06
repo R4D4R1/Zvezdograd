@@ -2,14 +2,30 @@ using UnityEngine;
 
 public class HospitalBuilding : RepairableBuilding
 {
-    [field: SerializeField] public int PeopleToGiveMedicine { get; private set; }
-    [SerializeField] private int TurnsToGiveMedicineOriginal;
+    [Header("HOSPITAL SETTINGS")]
+
+    [SerializeField] private int _peopleToGiveMedicine;
+    public int PeopleToGiveMedicine => _peopleToGiveMedicine;
+
+    [SerializeField] private int _medicineToGive;
+    public int MedicineToGive => _medicineToGive;
+    [SerializeField] private int _turnsToGiveMedicineOriginal;
     public int TurnsToToGiveMedicine { get; private set; }
-    [field: SerializeField] public int TurnsToRestFromMedicineJob { get; private set; }
-    [field: SerializeField] public int MedicineToGive { get; private set; }
-    [field: SerializeField] public int StabilityAddValue { get; private set; }
-    [field: SerializeField] public int StabilityRemoveValue { get; private set; }
-    [field: SerializeField] public int OriginalDaysToGiveMedicine { get; private set; }
+
+    [SerializeField] private int _turnsToRestFromMedicineJob;
+    public int TurnsToRestFromMedicineJob => _turnsToRestFromMedicineJob;
+
+    [SerializeField] private int _originalDaysToGiveMedicine;
+    public int OriginalDaysToGiveMedicine => _originalDaysToGiveMedicine;
+
+    [SerializeField] private int _stabilityAddValue;
+    public int StabilityAddValue => _stabilityAddValue;
+
+    [SerializeField] private int _stabilityRemoveValue;
+    public int StabilityRemoveValue => _stabilityRemoveValue;
+
+
+
 
     // SAVE DATA
     public int DaysToGiveMedicine { get; private set; }
@@ -33,7 +49,7 @@ public class HospitalBuilding : RepairableBuilding
 
     private void UpdateAmountOfTurnsNeededToDoSMTH()
     {
-        TurnsToToGiveMedicine = UpdateAmountOfTurnsNeededToDoSMTH(TurnsToGiveMedicineOriginal);
+        TurnsToToGiveMedicine = UpdateAmountOfTurnsNeededToDoSMTH(_turnsToGiveMedicineOriginal);
     }
 
     public void SendPeopleToGiveMedicine()

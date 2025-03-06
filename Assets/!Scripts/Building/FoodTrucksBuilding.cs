@@ -2,14 +2,30 @@ using UnityEngine;
 
 public class FoodTrucksBuilding : RepairableBuilding
 {
-    [field: SerializeField] public int PeopleToGiveProvision { get; private set; }
+    [Header("FOOD TRUCKS SETTINGS")]
+    [SerializeField] private int _peopleToGiveProvision;
 
-    [SerializeField] private int TurnsToToGiveProvisionOriginal;
+    public int PeopleToGiveProvision => _peopleToGiveProvision;
+
+    [SerializeField] private int _turnsToToGiveProvisionOriginal;
     public int TurnsToToGiveProvision { get; private set; }
-    [field: SerializeField] public int TurnsToRestFromProvisionJob { get; private set; }
-    [field: SerializeField] public int FoodToGive { get; private set; }
-    [field: SerializeField] public int StabilityAddValue { get; private set; }
-    [field: SerializeField] public int StabilityRemoveValue { get; private set; }
+
+    [SerializeField] private int _turnsToRestFromProvisionJob;
+    public int TurnsToRestFromProvisionJob => _turnsToRestFromProvisionJob;
+
+
+    [SerializeField] private int _foodToGive;
+    public int FoodToGive => _foodToGive;
+
+
+    [SerializeField] private int _stabilityAddValue;
+    public int StabilityAddValue => _stabilityAddValue;
+
+
+    [SerializeField] private int _stabilityRemoveValue;
+    public int StabilityRemoveValue => _stabilityRemoveValue;
+
+
 
     // SAVE DATA
     public bool IsFoodGivenAwayToday { get; private set; } = false;
@@ -23,7 +39,7 @@ public class FoodTrucksBuilding : RepairableBuilding
 
     private void UpdateAmountOfTurnsNeededToDoSMTH()
     {
-        TurnsToToGiveProvision = UpdateAmountOfTurnsNeededToDoSMTH(TurnsToToGiveProvisionOriginal);
+        TurnsToToGiveProvision = UpdateAmountOfTurnsNeededToDoSMTH(_turnsToToGiveProvisionOriginal);
     }
 
     public void SendPeopleToGiveProvision()

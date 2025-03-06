@@ -4,6 +4,25 @@ using UnityEngine;
 
 public class RepairableBuilding : BuildingDependingOnStability
 {
+    [field: SerializeField] public string DamagedBuildingNameText { get; private set; }
+    [field: SerializeField] public string DamagedDescriptionText { get; private set; }
+    [field: SerializeField] public int BuildingMaterialsToRepair { get; private set; }
+    [field: SerializeField] public int PeopleToRepair { get; private set; }
+
+    [SerializeField] private int TurnsToRepairOriginal;
+    public int TurnsToRepair;
+
+    //protected int _turnsToRepair = 0;
+
+    [field: SerializeField] public int TurnsToRestFromRepair { get; private set; }
+
+    [SerializeField] protected State _state;
+    [SerializeField] protected BuildingType _buildingType;
+    [SerializeField] protected Material _greyMaterial;
+
+    private List<Material[]> _originalMaterials = new List<Material[]>();
+
+    public event Action OnStateChanged;
     public enum State
     {
         Intact,
@@ -30,36 +49,15 @@ public class RepairableBuilding : BuildingDependingOnStability
                 _state = value;
                 UpdateBuildingModel();
                 OnStateChanged?.Invoke();
-                if (_state == State.Repairing) 
+                if (_state == State.Repairing)
                 {
                     SetGreyMaterials();
-                }                     
+                }
             }
         }
     }
 
     public BuildingType Type => _buildingType;
-
-    [field: SerializeField] public string DamagedBuildingNameText { get; private set; }
-    [field: SerializeField] public string DamagedDescriptionText { get; private set; }
-    [field: SerializeField] public int BuildingMaterialsToRepair { get; private set; }
-    [field: SerializeField] public int PeopleToRepair { get; private set; }
-
-    [SerializeField] private int TurnsToRepairOriginal;
-    public int TurnsToRepair;
-
-    //protected int _turnsToRepair = 0;
-
-    [field: SerializeField] public int TurnsToRestFromRepair { get; private set; }
-
-    [SerializeField] protected State _state;
-    [SerializeField] protected BuildingType _buildingType;
-    [SerializeField] protected Material _greyMaterial;
-
-    private List<Material[]> _originalMaterials = new List<Material[]>();
-
-    public event Action OnStateChanged;
-
 
     public void InitBuilding()
     {

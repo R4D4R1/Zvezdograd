@@ -41,6 +41,14 @@ public class ResourceController : MonoBehaviour
 
     private bool _isStabilityZero = false;
 
+    public enum ResourceType
+    {
+        Provision,
+        Medicine,
+        RawMaterials,
+        ReadyMaterials,
+    }
+
     void Start()
     {
         InitializeSliders();

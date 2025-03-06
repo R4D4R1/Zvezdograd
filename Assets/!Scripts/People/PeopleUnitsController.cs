@@ -9,17 +9,17 @@ public class PeopleUnitsController : MonoBehaviour
     [Range(1f, 18f), SerializeField] private int _startPeopleUnitAmount;
     [Range(0f, 1f), SerializeField] private float _durationOfAnimationOfTransitionOfUnits;
 
-    private List<PeopleUnit> _createdUnits = new();
-    private Queue<PeopleUnit> _notCreatedUnits = new();
-    private List<PeopleUnit> _readyUnits = new();
-    private List<float> _initialPositions = new();
+    public List<PeopleUnit> ReadyUnits { get; private set; } = new();
+    public List<PeopleUnit> CreatedUnits { get; private set; } = new();
+    public Queue<PeopleUnit> NotCreatedUnits { get; private set; } = new();
+    public List<float> InitialPositions { get; private set; } = new();
 
 
     void Start()
     {
         for (int unitNum = 0; unitNum < _allUnits.Count; unitNum++)
         {
-            _initialPositions.Add(_allUnits[unitNum].transform.localPosition.x);
+            InitialPositions.Add(_allUnits[unitNum].transform.localPosition.x);
 
             if (unitNum >= _startPeopleUnitAmount)
             {
@@ -27,13 +27,13 @@ public class PeopleUnitsController : MonoBehaviour
                 _allUnits[unitNum].gameObject.SetActive(false);
                 _allUnits[unitNum].SetNotCreated();
 
-                _notCreatedUnits.Enqueue(_allUnits[unitNum]);
+                NotCreatedUnits.Enqueue(_allUnits[unitNum]);
 
             }
             else
             {
-                _createdUnits.Add(_allUnits[unitNum]);
-                _createdUnits[unitNum].SetState(PeopleUnit.UnitState.Ready,0,0);
+                CreatedUnits.Add(_allUnits[unitNum]);
+                CreatedUnits[unitNum].SetState(PeopleUnit.UnitState.Ready,0,0);
             }
 
         }
@@ -41,11 +41,14 @@ public class PeopleUnitsController : MonoBehaviour
         UpdateReadyUnits();
 
         ControllersManager.Instance.timeController.OnNextTurnBtnPressed += NextTurn;
+        ControllersManager.Instance.buildingController.GetCityHallBuilding().OnNewUnitCreated += CreateUnit;
     }
 
     private void OnDisable()
     {
         ControllersManager.Instance.timeController.OnNextTurnBtnPressed -= NextTurn;
+        ControllersManager.Instance.buildingController.GetCityHallBuilding().OnNewUnitCreated -= CreateUnit;
+
     }
 
     public void NextTurn()
@@ -62,12 +65,12 @@ public class PeopleUnitsController : MonoBehaviour
     // Ã≈“Œƒ ƒÀﬂ ƒŒ¡¿¬À≈Õ»ﬂ —¬Œ¡ŒƒÕ€’ ﬁÕ»“Œ¬ ¬ À»—“ ƒÀﬂ ¬€¡Œ–¿ ﬁÕ»“¿ ƒÀﬂ –¿¡Œ€“
     public void UpdateReadyUnits()
     {
-        _readyUnits.Clear();
+        ReadyUnits.Clear();
         foreach (var unit in _allUnits)
         {
             if (unit.GetCurrentState() == PeopleUnit.UnitState.Ready)
             {
-                _readyUnits.Add(unit);
+                ReadyUnits.Add(unit);
             }
         }
     }
@@ -79,7 +82,7 @@ public class PeopleUnitsController : MonoBehaviour
         {
             int assignedUnits = 0;
 
-            foreach (var unit in _readyUnits)
+            foreach (var unit in ReadyUnits)
             {
                 if (assignedUnits < requiredUnits)
                 {
@@ -101,11 +104,11 @@ public class PeopleUnitsController : MonoBehaviour
     // Ã≈“Œƒ ƒÀﬂ –¿Õ≈Õ»ﬂ √Œ“Œ¬€’   –¿¡Œ“≈ ﬁÕ»“Œ¬
     public void InjureRandomReadyUnit()
     {
-        if (_readyUnits.Count > 0)
+        if (ReadyUnits.Count > 0)
         {
             // ¬˚·Ë‡ÂÏ ÒÎÛ˜‡ÈÌ˚È ˛ÌËÚ ËÁ ÒÔËÒÍ‡ readyUnits
-            int randomIndex = Random.Range(0, _readyUnits.Count);
-            PeopleUnit randomUnit = _readyUnits[randomIndex];
+            int randomIndex = Random.Range(0, ReadyUnits.Count);
+            PeopleUnit randomUnit = ReadyUnits[randomIndex];
 
             // ”ÒÚ‡Ì‡‚ÎË‚‡ÂÏ ÒÓÒÚÓˇÌËÂ ˛ÌËÚ‡ Í‡Í Injured
             randomUnit.SetInjured();
@@ -126,7 +129,7 @@ public class PeopleUnitsController : MonoBehaviour
     // Ã≈“Œƒ ƒÀﬂ ¿Õ»Ã¿÷»» —Œ«ƒ¿Õ€’ ﬁÕ»“Œ¬
     private void AnimateUnitPositions()
     {
-        var indexedUnits = _createdUnits
+        var indexedUnits = CreatedUnits
         .Select((unit, index) => (unit, index))
         .ToList();
 
@@ -136,25 +139,29 @@ public class PeopleUnitsController : MonoBehaviour
             return result != 0 ? result : a.index.CompareTo(b.index);
         });
 
-        _createdUnits = indexedUnits.Select(x => x.unit).ToList();
+        CreatedUnits = indexedUnits.Select(x => x.unit).ToList();
 
 
-        for (int i = 0; i < _createdUnits.Count; i++)
+        for (int i = 0; i < CreatedUnits.Count; i++)
         {
-            _createdUnits[i].transform.DOLocalMoveX(_initialPositions[i], _durationOfAnimationOfTransitionOfUnits);
+            CreatedUnits[i].transform.DOLocalMoveX(InitialPositions[i], _durationOfAnimationOfTransitionOfUnits);
         }
     }
 
     // Ã≈“Œƒ ƒÀﬂ —Œ«ƒ¿Õ»ﬂ ﬁÕ»“¿
     public void CreateUnit()
     {
-        if (_notCreatedUnits.Count > 0)
+        Debug.Log(NotCreatedUnits.Count);
+
+        if (NotCreatedUnits.Count > 0)
         {
-            var unit = _notCreatedUnits.Dequeue();
+            var unit = NotCreatedUnits.Dequeue();
+            Debug.Log(NotCreatedUnits.Count);
+
             unit.gameObject.SetActive(true);
             unit.SetState(PeopleUnit.UnitState.Ready,0,0);
 
-            _createdUnits.Add(unit);
+            CreatedUnits.Add(unit);
 
             AnimateUnitPositions();
         }
@@ -162,12 +169,7 @@ public class PeopleUnitsController : MonoBehaviour
 
     public bool AreUnitsReady(int units)
     {
-        return units <= _readyUnits.Count;
-    }
-
-    public int GetReadyUnits()
-    {
-        return _readyUnits.Count;
+        return units <= ReadyUnits.Count;
     }
 
     public List<PeopleUnit> GetAllUnits()

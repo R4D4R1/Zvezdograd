@@ -5,21 +5,14 @@ using UnityEngine;
 public class HospitalPopUp : QuestPopUp
 {
     [SerializeField] private TextMeshProUGUI _medicineTimerText;
-    [SerializeField] private GameObject activeBtn;
-    [SerializeField] private GameObject inactiveBtn;
 
     protected override void Start()
     {
         base.Start();
-        InitializePopUp();
-    }
 
-    private void InitializePopUp()
-    {
         _errorText.enabled = false;
         _isDestroyable = false;
-        activeBtn.SetActive(true);
-        inactiveBtn.SetActive(false);
+        SetButtonState(true);
         UpdateMedicineTimerText();
         ControllersManager.Instance.timeController.OnNextDayEvent += OnNextDayEvent;
     }
@@ -48,7 +41,7 @@ public class HospitalPopUp : QuestPopUp
     {
         if (CanGiveAwayMedicine())
         {
-            DisableActiveButton();
+            SetButtonState(false);
             ControllersManager.Instance.buildingController.GetHospitalBuilding().SendPeopleToGiveMedicine();
         }
         else
@@ -61,12 +54,6 @@ public class HospitalPopUp : QuestPopUp
     {
         return CheckForEnoughPeople(ControllersManager.Instance.buildingController.GetHospitalBuilding().PeopleToGiveMedicine) &&
                EnoughMedicineToGiveAway();
-    }
-
-    private void DisableActiveButton()
-    {
-        activeBtn.SetActive(false);
-        inactiveBtn.SetActive(true);
     }
 
     private void ShowErrorMessage()
@@ -82,14 +69,16 @@ public class HospitalPopUp : QuestPopUp
         _errorText.enabled = true;
     }
 
-    private bool EnoughMedicineToGiveAway()
-    {
-        return ControllersManager.Instance.resourceController.GetMedicine() > ControllersManager.Instance.buildingController.GetHospitalBuilding().MedicineToGive;
-    }
-
     private void UpdateMedicineTimerText()
     {
         _medicineTimerText.text = "Крайний срок отправки мед. помощи - " +
             ControllersManager.Instance.buildingController.GetHospitalBuilding().DaysToGiveMedicine.ToString() + " дн.";
     }
+
+    private bool EnoughMedicineToGiveAway()
+    {
+        return ChechIfEnoughResourcesByType(ResourceController.ResourceType.Medicine, ControllersManager.Instance.buildingController.GetHospitalBuilding().MedicineToGive);
+    }
+
+    
 }

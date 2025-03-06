@@ -3,22 +3,13 @@ using UnityEngine;
 
 public class FoodTrucksPopUp : QuestPopUp
 {
-    [Header("UI")]
-    [SerializeField] private GameObject activeBtn;
-    [SerializeField] private GameObject inactiveBtn;
-
     protected override void Start()
     {
         base.Start();
-        InitializePopUp();
-    }
 
-    private void InitializePopUp()
-    {
         _errorText.enabled = false;
         _isDestroyable = false;
-        activeBtn.SetActive(true);
-        inactiveBtn.SetActive(false);
+        SetButtonState(true);
         ControllersManager.Instance.timeController.OnNextDayEvent += OnNextDayEvent;
     }
 
@@ -33,6 +24,7 @@ public class FoodTrucksPopUp : QuestPopUp
 
     private void OnNextDayEvent()
     {
+        // включаем на следующий день если раздали еду
         if (ControllersManager.Instance.buildingController.GetFoodTruckBuilding().FoodWasGivenAwayToday())
         {
             activeBtn.SetActive(true);
@@ -44,7 +36,7 @@ public class FoodTrucksPopUp : QuestPopUp
     {
         if (CanGiveAwayProvision())
         {
-            DisableActiveButton();
+            SetButtonState(false);
             ControllersManager.Instance.buildingController.GetFoodTruckBuilding().SendPeopleToGiveProvision();
         }
         else
@@ -57,12 +49,6 @@ public class FoodTrucksPopUp : QuestPopUp
     {
         return CheckForEnoughPeople(ControllersManager.Instance.buildingController.GetFoodTruckBuilding().PeopleToGiveProvision) &&
                EnoughProvisionToGiveAway();
-    }
-
-    private void DisableActiveButton()
-    {
-        activeBtn.SetActive(false);
-        inactiveBtn.SetActive(true);
     }
 
     private void ShowErrorMessage()
@@ -80,6 +66,6 @@ public class FoodTrucksPopUp : QuestPopUp
 
     public bool EnoughProvisionToGiveAway()
     {
-        return ControllersManager.Instance.resourceController.GetProvision() > ControllersManager.Instance.buildingController.GetFoodTruckBuilding().FoodToGive;
+        return ChechIfEnoughResourcesByType(ResourceController.ResourceType.Provision, ControllersManager.Instance.buildingController.GetFoodTruckBuilding().FoodToGive);
     }
 }

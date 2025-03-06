@@ -78,11 +78,11 @@ public class FactoryPopUp : EnoughPopUp
     {
         if (!EnoughRawMaterialsForReadyMaterials() || !EnoughRawMaterialsForArmyMaterials())
         {
-            _errorText.text = "ÍÅÒÓ ÑÛÐÜß";
+            _errorText.text = "ÍÅ ÄÎÑÒÀÒÎ×ÍÎ ÑÛÐÜß";
         }
         else if (!EnoughSpaceToStoreReadyMaterials())
         {
-            _errorText.text = "ÍÅÒÓ ÌÅÑÒÀ ÄËß ÌÀÒÅÐÈÀËÎÂ";
+            _errorText.text = "ÍÅ ÄÎÑÒÀÒÎ×ÍÎ ÌÅÑÒÀ ÄËß ÌÀÒÅÐÈÀËÎÂ";
         }
         else if (!CheckForEnoughPeople(_buildingToUse.PeopleToCreateReadyMaterials) || !CheckForEnoughPeople(_buildingToUse.PeopleToCreateArmyMaterials))
         {
@@ -99,11 +99,11 @@ public class FactoryPopUp : EnoughPopUp
 
     public bool EnoughRawMaterialsForReadyMaterials()
     {
-        return ControllersManager.Instance.resourceController.GetRawMaterials() >= _buildingToUse.RawMaterialsToCreateReadyMaterials;
+        return ChechIfEnoughResourcesByType(ResourceController.ResourceType.RawMaterials, _buildingToUse.RawMaterialsToCreateReadyMaterials);
     }
 
     public bool EnoughRawMaterialsForArmyMaterials()
     {
-        return ControllersManager.Instance.resourceController.GetRawMaterials() >= _buildingToUse.RawMaterialsToCreateArmyMaterials;
+        return ChechIfEnoughResourcesByType(ResourceController.ResourceType.RawMaterials, _buildingToUse.RawMaterialsToCreateArmyMaterials);
     }
 }

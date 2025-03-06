@@ -21,7 +21,7 @@ public class CollectPopUp : EnoughPopUp
 
         demandsText.text = $" - Осталось {buildingToUse.RawMaterialsLeft} сырья\n" +
                            $" - Вы получите {buildingToUse.RawMaterialsGet} сырья (у вас {ControllersManager.Instance.resourceController.GetRawMaterials()})\n" +
-                           $" - Необходимо {buildingToUse.PeopleToCollect} подразделений (у вас {ControllersManager.Instance.peopleUnitsController.GetReadyUnits()})\n" +
+                           $" - Необходимо {buildingToUse.PeopleToCollect} подразделений (у вас {ControllersManager.Instance.peopleUnitsController.ReadyUnits.Count})\n" +
                            $" - Займет {buildingToUse.TurnsToCollect} ходов\n" +
                            $" - Подразделения будут отдыхать {buildingToUse.TurnsToRest} ходов";
 

@@ -3,37 +3,56 @@ using UnityEngine;
 
 public class CityHallBuilding : RepairableBuilding
 {
+    [Header("CITY HALL SETTINGS")]
     [SerializeField] private int _daysLeftToSendArmyMaterialsOriginal;
     [SerializeField] private int _daysLeftToRecieveGovHelpOriginal;
+    [SerializeField, Range(0, 10)] private int _amountOfHelpNeededToSend;
 
-    
-    [Range(0,10), SerializeField] private int _amountOfHelpNeededToSent;
-    private int _amountOfHelpSent = 0;
+    [field: SerializeField] public int ReadyMaterialsToCreateNewPeopleUnit { get; private set; }
+    //[field: SerializeField] public int PeopleToCreateNewPeopleUnit { get; private set; }
 
-    // SAVE DATA
-    [Range(0f, 10f)]
-    [field: SerializeField] public int RelationWithGoverment { get; private set; }
+    [SerializeField] private int _turnsToCreateNewUnitOriginal;
+    private int _turnsToCreateNewUnit;
+    private bool _isWorking = false;
+
+    [field: SerializeField, Range(0, 10)] public int RelationWithGoverment { get; private set; }
     public int DaysLeftToRecieveGovHelp { get; private set; }
     public int DaysLeftToSendArmyMaterials { get; private set; }
     public bool IsMaterialsSent { get; private set; }
 
+    private TimeController _timeController;
+    private ResourceController _resourceController;
+    private int _amountOfHelpSent = 0;
 
-    //public event Action ArmyMaterialsWereSent;
-    //public event Action UpdateArmyRequirement;
-
-    // «дание совета
-
-    // ƒелать поставки вооружени€ с завода - написан срок
-    // «а непоставк у в срок - минус 2 очка / за поставку плюс 2
-
-    //передать дл€ государства медикаменты
-    //передать стройматериалы
-    //передать провизию
+    public event Action OnNewUnitCreated;
 
     private void Start()
     {
+        InitializeControllers();
         InitializeTimers();
-        SubscribeToEvents();
+        _timeController.OnNextDayEvent += OnNextDayEvent;
+
+        ControllersManager.Instance.timeController.OnNextTurnBtnPressed += CheckIfCreatedNewUnit;
+
+    }
+
+    private void CheckIfCreatedNewUnit()
+    {
+        if (_isWorking)
+        {
+            _turnsToCreateNewUnit--;
+            if( _turnsToCreateNewUnit == 0 )
+            {
+                OnNewUnitCreated?.Invoke();
+                _isWorking = false;
+            }
+        }
+    }
+
+    private void InitializeControllers()
+    {
+        _timeController = ControllersManager.Instance.timeController;
+        _resourceController = ControllersManager.Instance.resourceController;
     }
 
     private void InitializeTimers()
@@ -42,103 +61,80 @@ public class CityHallBuilding : RepairableBuilding
         DaysLeftToSendArmyMaterials = _daysLeftToSendArmyMaterialsOriginal;
     }
 
-    private void SubscribeToEvents()
+    private void OnNextDayEvent()
     {
-        ControllersManager.Instance.timeController.OnNextDayEvent += TimeController_OnNextDayEvent;
+        ProcessGovHelp();
     }
 
-    private void TimeController_OnNextDayEvent()
+    private void ProcessGovHelp()
     {
-        DayPassedForGovHelp();
-    }
-
-    public void DayPassedForGovHelp()
-    {
-        DaysLeftToRecieveGovHelp--;
-        if (DaysLeftToRecieveGovHelp == 0)
+        if (--DaysLeftToRecieveGovHelp <= 0)
         {
             DaysLeftToRecieveGovHelp = _daysLeftToRecieveGovHelpOriginal;
-            RecieveHelpFromGov();
+            ReceiveHelpFromGov();
         }
     }
 
     public bool DayPassed()
     {
-        DaysLeftToSendArmyMaterials--;
-        if (DaysLeftToSendArmyMaterials == 0)
+        if (--DaysLeftToSendArmyMaterials <= 0)
         {
             DaysLeftToSendArmyMaterials = _daysLeftToSendArmyMaterialsOriginal;
-
-            if (IsMaterialsSent)
-            {
-                ControllersManager.Instance.popUpsController.FactoryPopUp.UpdateCreateArmyButtonState();
-
-                IsMaterialsSent = false;
-            }
-            else 
-            {
-                if (RelationWithGoverment > 1)
-                {
-                    RelationWithGoverment -= 2;
-                    Debug.Log("DID NOT SENT ARMY MATERIALS");
-
-                    return true;
-                }
-                else
-                {
-                    Debug.Log("GAME OVER");
-
-                    return false;
-                    // GAMEOVER
-                }
-            }
+            return HandleArmyMaterials();
         }
         return false;
     }
 
-    private void RecieveHelpFromGov()
+    private bool HandleArmyMaterials()
     {
-        int foodAmount = 0;
-        int medicineAmount = 0;
-
-        if (RelationWithGoverment < 4)
+        if (IsMaterialsSent)
         {
-            foodAmount = 2;
-            medicineAmount = 1;
-            //Debug.Log("Supplies received: 2 food, 1 medicine (Poor relationship)");
-        }
-        else if (RelationWithGoverment < 8)
-        {
-            foodAmount = 3;
-            medicineAmount = 2;
-            //Debug.Log("Supplies received: 3 food, 2 medicine (Good relationship)");
-        }
-        else
-        {
-            foodAmount = 4;
-            medicineAmount = 2;
-            //Debug.Log("Supplies received: 4 food, 2 medicine (Excellent relationship)");
+            ControllersManager.Instance.popUpsController.FactoryPopUp.UpdateCreateArmyButtonState();
+            IsMaterialsSent = false;
+            return false;
         }
 
-        // ƒобавл€ем еду и медикаменты через контроллер ресурсов
-        ControllersManager.Instance.resourceController.AddOrRemoveProvision(foodAmount);
-        ControllersManager.Instance.resourceController.AddOrRemoveMedicine(medicineAmount);
+        if (RelationWithGoverment > 1)
+        {
+            RelationWithGoverment -= 2;
+            Debug.Log("DID NOT SEND ARMY MATERIALS");
+            return true;
+        }
+
+        Debug.Log("GAME OVER");
+        return false;
     }
+
+    private void ReceiveHelpFromGov()
+    {
+        int foodAmount = RelationWithGoverment < 4 ? 2 : RelationWithGoverment < 8 ? 3 : 4;
+        int medicineAmount = RelationWithGoverment < 4 ? 1 : 2;
+
+        _resourceController.AddOrRemoveProvision(foodAmount);
+        _resourceController.AddOrRemoveMedicine(medicineAmount);
+    }
+
     public void ArmyMaterialsSent()
     {
         _amountOfHelpSent++;
         IsMaterialsSent = true;
-        AddRelationWithGov(2);
+        ModifyRelationWithGov(2);
 
-        if (_amountOfHelpSent >= _amountOfHelpNeededToSent)
+        if (_amountOfHelpSent >= _amountOfHelpNeededToSend)
         {
             ControllersManager.Instance.mainGameController.GameWin();
         }
     }
 
-    public void AddRelationWithGov(int value)
+    public void NewUnitStartedCreating()
     {
-        RelationWithGoverment += Mathf.Clamp(Mathf.Abs(value), 0, 10);
+        _isWorking = true;
+        _turnsToCreateNewUnit = _turnsToCreateNewUnitOriginal;
+        ControllersManager.Instance.resourceController.AddOrRemoveReadyMaterials(-ReadyMaterialsToCreateNewPeopleUnit);
     }
 
+    public void ModifyRelationWithGov(int value)
+    {
+        RelationWithGoverment = Mathf.Clamp(RelationWithGoverment + Mathf.Abs(value), 0, 10);
+    }
 }

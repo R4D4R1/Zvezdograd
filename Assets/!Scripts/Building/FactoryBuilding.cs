@@ -4,15 +4,34 @@ using UnityEngine;
 
 public class FactoryBuilding : RepairableBuilding
 {
-    [field: SerializeField] public int PeopleToCreateReadyMaterials { get; private set; }
-    [field: SerializeField] public int PeopleToCreateArmyMaterials { get; private set; }
-    [field: SerializeField] public int TurnsToCreateReadyMaterialsOriginal { get; private set; }
-    [field: SerializeField] public int TurnsToCreateArmyMaterialsOriginal { get; private set; }
-    [field: SerializeField] public int TurnsToRestFromReadyMaterialsJob { get; private set; }
-    [field: SerializeField] public int TurnsToRestFromArmyMaterialsJob { get; private set; }
-    [field: SerializeField] public int RawMaterialsToCreateReadyMaterials { get; private set; }
-    [field: SerializeField] public int ReadyMaterialsGet { get; private set; }
-    [field: SerializeField] public int RawMaterialsToCreateArmyMaterials { get; private set; }
+    [Header("FACTORY SETTINGS")]
+    [SerializeField] private int _peopleToCreateReadyMaterials;
+    public int PeopleToCreateReadyMaterials => _peopleToCreateReadyMaterials;
+
+    [SerializeField] private int _peopleToCreateArmyMaterials;
+    public int PeopleToCreateArmyMaterials => _peopleToCreateArmyMaterials;
+
+    [SerializeField] private int _turnsToCreateReadyMaterialsOriginal;
+    public int TurnsToCreateReadyMaterialsOriginal => _turnsToCreateReadyMaterialsOriginal;
+
+    [SerializeField] private int _turnsToCreateArmyMaterialsOriginal;
+    public int TurnsToCreateArmyMaterialsOriginal => _turnsToCreateArmyMaterialsOriginal;
+
+    [SerializeField] private int _turnsToRestFromReadyMaterialsJob;
+    public int TurnsToRestFromReadyMaterialsJob => _turnsToRestFromReadyMaterialsJob;
+
+    [SerializeField] private int _turnsToRestFromArmyMaterialsJob;
+    public int TurnsToRestFromArmyMaterialsJob => _turnsToRestFromArmyMaterialsJob;
+
+    [SerializeField] private int _rawMaterialsToCreateReadyMaterials;
+    public int RawMaterialsToCreateReadyMaterials => _rawMaterialsToCreateReadyMaterials;
+
+    [SerializeField] private int _readyMaterialsGet;
+    public int ReadyMaterialsGet => _readyMaterialsGet;
+
+    [SerializeField] private int _rawMaterialsToCreateArmyMaterials;
+    public int RawMaterialsToCreateArmyMaterials => _rawMaterialsToCreateArmyMaterials;
+
 
     // SAVE DATA
     public int TurnsToCreateArmyMaterials { get; private set; }
