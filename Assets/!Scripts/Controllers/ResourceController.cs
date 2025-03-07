@@ -24,8 +24,7 @@ public class ResourceController : MonoBehaviour
     [SerializeField, Range(0, 100)] private int maxStability = 100;
 
     [SerializeField] private Color stabilityColor0to25 = Color.red;
-    [SerializeField] private Color stabilityColor26to50 = Color.yellow;
-    [SerializeField] private Color stabilityColor51to75 = Color.green;
+    [SerializeField] private Color stabilityColor26to75 = Color.green;
     [SerializeField] private Color stabilityColor76to100 = Color.blue;
 
     [SerializeField] private Image stabilityFillImage;
@@ -118,13 +117,9 @@ public class ResourceController : MonoBehaviour
             {
                 stabilityFillImage.color = stabilityColor0to25;
             }
-            else if (stability <= 50)
-            {
-                stabilityFillImage.color = stabilityColor26to50;
-            }
             else if (stability <= 75)
             {
-                stabilityFillImage.color = stabilityColor51to75;
+                stabilityFillImage.color = stabilityColor26to75;
             }
             else
             {

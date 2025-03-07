@@ -15,12 +15,12 @@ public class CityHallPopUp : QuestPopUp
 
     private void OnEnable()
     {
-        ControllersManager.Instance.buildingController.GetCityHallBuilding().OnNewUnitCreated += UpdateCreateUnitGO;
+        ControllersManager.Instance.peopleUnitsController.OnUnitCreatedByPeopleUnitController += UpdateCreateUnitGO;
     }
 
     private void OnDisable()
     {
-        ControllersManager.Instance.buildingController.GetCityHallBuilding().OnNewUnitCreated -= UpdateCreateUnitGO;
+        ControllersManager.Instance.peopleUnitsController.OnUnitCreatedByPeopleUnitController -= UpdateCreateUnitGO;
     }
 
     protected override void Start()
@@ -70,12 +70,6 @@ public class CityHallPopUp : QuestPopUp
             ShowErrorMessage();
         }
     }
-
-    //private bool CanCreateNewUnit()
-    //{
-    //    return CheckForEnoughPeople(ControllersManager.Instance.buildingController.GetCityHallBuilding().PeopleToCreateNewPeopleUnit) &&
-    //           EnoughReadyMaterialToCreate();
-    //}
 
     public bool EnoughReadyMaterialToCreate()
     {

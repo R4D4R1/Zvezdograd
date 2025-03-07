@@ -33,6 +33,8 @@ public class RadioController : MonoBehaviour
 
         audioSource.loop = false;
         audioSource.playOnAwake = false;
+
+        TogglePlayPause();
     }
 
     void Update()
@@ -54,11 +56,17 @@ public class RadioController : MonoBehaviour
         if (isPlaying)
         {
             audioSource.Pause();
+
+            playButton.gameObject.SetActive(true);
+            pauseButton.gameObject.SetActive(false);
         }
         else
         {
             audioSource.clip = songs[currentSongIndex];
             audioSource.Play();
+
+            playButton.gameObject.SetActive(false);
+            pauseButton.gameObject.SetActive(true);
         }
         isPlaying = !isPlaying;
     }

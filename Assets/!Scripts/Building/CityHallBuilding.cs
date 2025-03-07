@@ -24,7 +24,7 @@ public class CityHallBuilding : RepairableBuilding
     private ResourceController _resourceController;
     private int _amountOfHelpSent = 0;
 
-    public event Action OnNewUnitCreated;
+    public event Action OnCityHallUnitCreated;
 
     private void Start()
     {
@@ -43,7 +43,7 @@ public class CityHallBuilding : RepairableBuilding
             _turnsToCreateNewUnit--;
             if( _turnsToCreateNewUnit == 0 )
             {
-                OnNewUnitCreated?.Invoke();
+                OnCityHallUnitCreated?.Invoke();
                 _isWorking = false;
             }
         }

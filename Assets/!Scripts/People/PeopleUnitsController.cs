@@ -14,6 +14,7 @@ public class PeopleUnitsController : MonoBehaviour
     public Queue<PeopleUnit> NotCreatedUnits { get; private set; } = new();
     public List<float> InitialPositions { get; private set; } = new();
 
+    public event System.Action OnUnitCreatedByPeopleUnitController;
 
     void Start()
     {
@@ -41,13 +42,13 @@ public class PeopleUnitsController : MonoBehaviour
         UpdateReadyUnits();
 
         ControllersManager.Instance.timeController.OnNextTurnBtnPressed += NextTurn;
-        ControllersManager.Instance.buildingController.GetCityHallBuilding().OnNewUnitCreated += CreateUnit;
+        ControllersManager.Instance.buildingController.GetCityHallBuilding().OnCityHallUnitCreated += CreateUnit;
     }
 
     private void OnDisable()
     {
         ControllersManager.Instance.timeController.OnNextTurnBtnPressed -= NextTurn;
-        ControllersManager.Instance.buildingController.GetCityHallBuilding().OnNewUnitCreated -= CreateUnit;
+        ControllersManager.Instance.buildingController.GetCityHallBuilding().OnCityHallUnitCreated -= CreateUnit;
 
     }
 
@@ -151,18 +152,15 @@ public class PeopleUnitsController : MonoBehaviour
     // ÌÅÒÎÄ ÄËß ÑÎÇÄÀÍÈß ÞÍÈÒÀ
     public void CreateUnit()
     {
-        Debug.Log(NotCreatedUnits.Count);
-
         if (NotCreatedUnits.Count > 0)
         {
             var unit = NotCreatedUnits.Dequeue();
-            Debug.Log(NotCreatedUnits.Count);
 
             unit.gameObject.SetActive(true);
             unit.SetState(PeopleUnit.UnitState.Ready,0,0);
 
             CreatedUnits.Add(unit);
-
+            OnUnitCreatedByPeopleUnitController?.Invoke();
             AnimateUnitPositions();
         }
     }
