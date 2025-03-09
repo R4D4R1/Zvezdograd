@@ -6,6 +6,8 @@ public class PopUpsController : MonoBehaviour
     public HospitalPopUp HospitalPopUp { get; private set; }
     public CityHallPopUp CityHallPopUp { get; private set; }
     public FactoryPopUp FactoryPopUp  { get; private set; }
+    public CollectPopUp CollectPopUp  { get; private set; }
+    public RepairPopUp RepairPopUp  { get; private set; }
 
 
 
@@ -15,5 +17,7 @@ public class PopUpsController : MonoBehaviour
         HospitalPopUp = FindFirstObjectByType<HospitalPopUp>();
         CityHallPopUp = FindFirstObjectByType<CityHallPopUp>();
         FactoryPopUp = FindFirstObjectByType<FactoryPopUp>();
+        CollectPopUp = FindFirstObjectByType<CollectPopUp>();
+        RepairPopUp = FindFirstObjectByType<RepairPopUp>();
     }
 }

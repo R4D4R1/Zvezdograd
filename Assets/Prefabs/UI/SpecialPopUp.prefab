@@ -35,7 +35,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 2}
-  m_SizeDelta: {x: 2, y: 80}
+  m_SizeDelta: {x: 225, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5935276783698388056
 CanvasRenderer:
@@ -198,7 +198,7 @@ MonoBehaviour:
   LabelText: {fileID: 2365699358528326218}
   DescriptionText: {fileID: 2242772262373175910}
   _canvasGroup: {fileID: 8759096022332267131}
-  ButtonText: {fileID: 0}
+  ButtonText: {fileID: 3980255856166513082}
   RepairableBuilding: {fileID: 0}
   CollectableBuilding: {fileID: 0}
   FactoryBuilding: {fileID: 0}
@@ -682,3 +682,14 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2822023649099892377, guid: 261c1e849152a1d42b5992436b50212d, type: 3}
   m_PrefabInstance: {fileID: 1720778899694509775}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3980255856166513082 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2368289592408176501, guid: 261c1e849152a1d42b5992436b50212d, type: 3}
+  m_PrefabInstance: {fileID: 1720778899694509775}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

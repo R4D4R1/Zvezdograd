@@ -5,6 +5,18 @@ using UnityEngine.UI;
 
 public class ResourceController : MonoBehaviour
 {
+    public int GetProvision() => provision;
+    public int GetMedicine() => medicine;
+    public int GetRawMaterials() => rawMaterials;
+    public int GetReadyMaterials() => readyMaterials;
+    public int GetStability() => stability;
+
+    public int GetMaxProvision() => maxProvision;
+    public int GetMaxMedicine() => maxMedicine;
+    public int GetMaxRawMaterials() => maxRawMaterials;
+    public int GetMaxReadyMaterials() => maxReadyMaterials;
+    public int GetMaxStability() => maxStability;
+
     [SerializeField] private TextMeshProUGUI provisionText;
     [SerializeField] private TextMeshProUGUI medicineText;
     [SerializeField] private TextMeshProUGUI rawMaterialsText;
@@ -100,13 +112,13 @@ public class ResourceController : MonoBehaviour
     private void UpdateSliderUI(Slider slider, int value, int maxValue, TextMeshProUGUI text, string label)
     {
         slider.value = value;
-        text.text = $"{label} {value}/{maxValue}";
+        text.text = $"{label}  {value}/{maxValue}";
     }
 
     private void UpdateStabilityUI()
     {
         stabilitySlider.value = stability;
-        stabilityText.text = $"ÑÒÀÁÈËÜÍÎÑÒÜ {stability}/{maxStability}";
+        stabilityText.text = $"ÑÒÀÁÈËÜÍÎÑÒÜ  {stability}/{maxStability}";
         UpdateStabilityFillColor();
     }
 
@@ -200,7 +212,7 @@ public class ResourceController : MonoBehaviour
         }
         else
         {
-            UpdateSliderUI(slider, resource, maxValue, text, label);
+            UpdateSliderUI(slider, resource, maxValue, text, label.ToUpper());
         }
     }
 
@@ -218,17 +230,4 @@ public class ResourceController : MonoBehaviour
             notificationText.color = isIncrease ? Color.green : Color.red;
         }
     }
-
-
-    public int GetProvision() => provision;
-    public int GetMedicine() => medicine;
-    public int GetRawMaterials() => rawMaterials;
-    public int GetReadyMaterials() => readyMaterials;
-    public int GetStability() => stability;
-
-    public int GetMaxProvision() => maxProvision;
-    public int GetMaxMedicine() => maxMedicine;
-    public int GetMaxRawMaterials() => maxRawMaterials;
-    public int GetMaxReadyMaterials() => maxReadyMaterials;
-    public int GetMaxStability() => maxStability;
 }

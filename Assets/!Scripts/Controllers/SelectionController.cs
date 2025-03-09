@@ -12,13 +12,6 @@ public class SelectionController : MonoBehaviour
     [SerializeField] private GameObject _specialPopUpPrefab;
     [SerializeField] private Transform _popUpParent;
 
-    [field: SerializeField] public RepairPopUp RepairPopUp { get; private set; }
-    [field: SerializeField] public CollectPopUp CollectPopUp { get; private set; }
-    [field: SerializeField] public FactoryPopUp FactoryPopUp { get; private set; }
-    [field: SerializeField] public CityHallPopUp CityHallPopUp { get; private set; }
-    [field: SerializeField] public FoodTrucksPopUp FoodTrucksPopUp { get; private set; }
-    [field: SerializeField] public HospitalPopUp HospitalPopUp { get; private set; }
-
     [SerializeField] private Color _outlineColor;
     [Range(0f,1f), SerializeField] private float _outlineWidth;
 
