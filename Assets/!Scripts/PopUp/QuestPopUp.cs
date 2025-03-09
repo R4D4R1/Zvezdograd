@@ -62,8 +62,8 @@ public class QuestPopUp : EnoughPopUp
                                     materialsToGet, materialsToLose, "еды");
                                 if (canComplete)
                                 {
-                                    resourceController.AddOrRemoveProvision(materialsToGet);
-                                    resourceController.AddOrRemoveProvision(-materialsToLose);
+                                    resourceController.ModifyResource(ResourceController.ResourceType.Provision, materialsToGet);
+                                    resourceController.ModifyResource(ResourceController.ResourceType.Provision, -materialsToLose);
                                 }
                                 break;
 
@@ -72,8 +72,8 @@ public class QuestPopUp : EnoughPopUp
                                     materialsToGet, materialsToLose, "медикаментов");
                                 if (canComplete)
                                 {
-                                    resourceController.AddOrRemoveMedicine(materialsToGet);
-                                    resourceController.AddOrRemoveMedicine(-materialsToLose);
+                                    resourceController.ModifyResource(ResourceController.ResourceType.Medicine, materialsToGet);
+                                    resourceController.ModifyResource(ResourceController.ResourceType.Medicine, -materialsToLose);
                                 }
                                 break;
 
@@ -82,8 +82,8 @@ public class QuestPopUp : EnoughPopUp
                                     materialsToGet, materialsToLose, "стройматериалов");
                                 if (canComplete)
                                 {
-                                    resourceController.AddOrRemoveReadyMaterials(materialsToGet);
-                                    resourceController.AddOrRemoveReadyMaterials(-materialsToLose);
+                                    resourceController.ModifyResource(ResourceController.ResourceType.ReadyMaterials, materialsToGet);
+                                    resourceController.ModifyResource(ResourceController.ResourceType.ReadyMaterials, -materialsToLose);
                                 }
                                 break;
                         }
@@ -126,7 +126,7 @@ public class QuestPopUp : EnoughPopUp
 
     private void CompleteQuest(GameObject quest, int stabilityToGet, int relationshipWithGovToGet)
     {
-        ControllersManager.Instance.resourceController.AddOrRemoveStability(stabilityToGet);
+        ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.Stability, stabilityToGet);
         ControllersManager.Instance.buildingController.GetCityHallBuilding().ModifyRelationWithGov(relationshipWithGovToGet);
 
         quest.SetActive(false);
@@ -136,7 +136,7 @@ public class QuestPopUp : EnoughPopUp
 
     private void LoseQuest(GameObject quest, int stabilityToLose, int relationshipWithGovToLose)
     {
-        ControllersManager.Instance.resourceController.AddOrRemoveStability(-stabilityToLose);
+        ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.Stability, -stabilityToLose);
         ControllersManager.Instance.buildingController.GetCityHallBuilding().ModifyRelationWithGov(-relationshipWithGovToLose);
 
         quest.SetActive(false);

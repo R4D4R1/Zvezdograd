@@ -188,11 +188,11 @@ public class SaveLoadManager : MonoBehaviour
                 }
             }
 
-            resourceController.AddOrRemoveProvision(gameData.provision - resourceController.GetProvision());
-            resourceController.AddOrRemoveMedicine(gameData.medicine - resourceController.GetMedicine());
-            resourceController.AddOrRemoveRawMaterials(gameData.rawMaterials - resourceController.GetRawMaterials());
-            resourceController.AddOrRemoveReadyMaterials(gameData.readyMaterials - resourceController.GetReadyMaterials());
-            resourceController.AddOrRemoveStability(gameData.stability - resourceController.GetStability());
+            resourceController.ModifyResource(ResourceController.ResourceType.Provision, gameData.provision - resourceController.GetProvision());
+            resourceController.ModifyResource(ResourceController.ResourceType.Medicine, gameData.medicine - resourceController.GetMedicine());
+            resourceController.ModifyResource(ResourceController.ResourceType.RawMaterials, gameData.rawMaterials - resourceController.GetRawMaterials());
+            resourceController.ModifyResource(ResourceController.ResourceType.ReadyMaterials, gameData.readyMaterials - resourceController.GetReadyMaterials());
+            resourceController.ModifyResource(ResourceController.ResourceType.Stability, gameData.stability - resourceController.GetStability());
 
             unitsController.UpdateReadyUnits();
             Debug.Log($"Game loaded from slot {currentSlot.Value}.");

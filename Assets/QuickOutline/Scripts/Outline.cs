@@ -58,7 +58,7 @@ public class Outline : MonoBehaviour
     [SerializeField]
     private Mode outlineMode;
 
-    [SerializeField]
+    //[SerializeField]
     private Color outlineColor = Color.white;
 
     [SerializeField, Range(0f, 10f)]
@@ -120,12 +120,9 @@ public class Outline : MonoBehaviour
 
 
 
-    private async void Start()
+    private void Start()
     {
-        //enabled = true;
-
-        await UniTask.Delay(2000);
-        enabled = false;
+        enabled = true;
     }
 
     void OnValidate()

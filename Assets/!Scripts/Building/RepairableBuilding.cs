@@ -105,7 +105,7 @@ public class RepairableBuilding : BuildingDependingOnStability
         if (CurrentState == State.Damaged)
         {
             ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToRepair, TurnsToRepair, TurnsToRestFromRepair);
-            ControllersManager.Instance.resourceController.AddOrRemoveReadyMaterials(-BuildingMaterialsToRepair);
+            ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.RawMaterials, -BuildingMaterialsToRepair);
 
             BuildingIsSelactable = false;
 

@@ -47,8 +47,8 @@ public class FoodTrucksBuilding : RepairableBuilding
         IsFoodGivenAwayToday = true;
 
         ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToGiveProvision, TurnsToToGiveProvision, TurnsToRestFromProvisionJob);
-        ControllersManager.Instance.resourceController.AddOrRemoveProvision(-FoodToGive);
-        ControllersManager.Instance.resourceController.AddOrRemoveStability(StabilityAddValue);
+        ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.Provision,-FoodToGive);
+        ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.Stability, StabilityAddValue);
     }
 
     public bool FoodWasGivenAwayToday()
@@ -59,7 +59,7 @@ public class FoodTrucksBuilding : RepairableBuilding
         }
         else
         {
-            ControllersManager.Instance.resourceController.AddOrRemoveStability(-StabilityRemoveValue);
+            ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.Stability, -StabilityRemoveValue);
             return false;
         }
     }

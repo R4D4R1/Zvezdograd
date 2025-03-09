@@ -46,6 +46,7 @@ public class ResourceController : MonoBehaviour
         Medicine,
         RawMaterials,
         ReadyMaterials,
+        Stability,
     }
 
     void Start()
@@ -66,7 +67,7 @@ public class ResourceController : MonoBehaviour
         {
             if (building.CurrentState == RepairableBuilding.State.Damaged && !_isStabilityZero)
             {
-                AddOrRemoveStability(-2);
+                ModifyResource(ResourceController.ResourceType.Stability, -2);
             }
         }
     }
@@ -128,14 +129,57 @@ public class ResourceController : MonoBehaviour
         }
     }
 
-    public void AddOrRemoveProvision(int value) => ModifyResource(ref provision, value, maxProvision, provisionSlider, provisionText, "провизия");
-    public void AddOrRemoveMedicine(int value) => ModifyResource(ref medicine, value, maxMedicine, medicineSlider, medicineText, "медикаменты");
-    public void AddOrRemoveRawMaterials(int value) => ModifyResource(ref rawMaterials, value, maxRawMaterials, rawMaterialsSlider, rawMaterialsText, "сырье");
-    public void AddOrRemoveReadyMaterials(int value) => ModifyResource(ref readyMaterials, value, maxReadyMaterials, readyMaterialsSlider, readyMaterialsText, "стройматериалы");
-    public void AddOrRemoveStability(int value) => ModifyResource(ref stability, value, maxStability, stabilitySlider, stabilityText, "стабильность", true);
-
-    private void ModifyResource(ref int resource, int changeValue, int maxValue, Slider slider, TextMeshProUGUI text, string label, bool isStability = false)
+    public void ModifyResource(ResourceType type, int changeValue)
     {
+        ref int resource = ref provision;
+        int maxValue = maxProvision;
+        Slider slider = provisionSlider;
+        TextMeshProUGUI text = provisionText;
+        string label = "провизия";
+        bool isStability = false;
+
+        switch (type)
+        {
+            case ResourceType.Provision:
+                resource = ref provision;
+                maxValue = maxProvision;
+                slider = provisionSlider;
+                text = provisionText;
+                label = "провизия";
+                break;
+            case ResourceType.Medicine:
+                resource = ref medicine;
+                maxValue = maxMedicine;
+                slider = medicineSlider;
+                text = medicineText;
+                label = "медикаменты";
+                break;
+            case ResourceType.RawMaterials:
+                resource = ref rawMaterials;
+                maxValue = maxRawMaterials;
+                slider = rawMaterialsSlider;
+                text = rawMaterialsText;
+                label = "сырье";
+                break;
+            case ResourceType.ReadyMaterials:
+                resource = ref readyMaterials;
+                maxValue = maxReadyMaterials;
+                slider = readyMaterialsSlider;
+                text = readyMaterialsText;
+                label = "стройматериалы";
+                break;
+            case ResourceType.Stability:
+                resource = ref stability;
+                maxValue = maxStability;
+                slider = stabilitySlider;
+                text = stabilityText;
+                label = "стабильность";
+                isStability = true;
+                break;
+            default:
+                return;
+        }
+
         int oldValue = resource;
         resource = Mathf.Clamp(resource + changeValue, 0, maxValue);
 
@@ -149,7 +193,6 @@ public class ResourceController : MonoBehaviour
         {
             UpdateStabilityUI();
             _isStabilityZero = (resource == 0);
-
             if (_isStabilityZero)
             {
                 ControllersManager.Instance.mainGameController.GameLost();

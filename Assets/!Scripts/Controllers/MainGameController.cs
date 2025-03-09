@@ -21,11 +21,6 @@ public class MainGameController : MonoBehaviour
     [SerializeField] private float cameraCityShowY;
     [SerializeField] private float cameraCityHideY;
 
-    [Header("Outline")]
-    [SerializeField] private Color OutlineColor;
-    [Range(0.1f, 1f)]
-    [SerializeField] private float OutlineWidth;
-
     public enum AnimationTypeEnum
     {
         EaseInOut,
@@ -41,24 +36,8 @@ public class MainGameController : MonoBehaviour
         Lose
     }
 
-    private async void Start()
+    private void Start()
     {
-        Outline[] outlines = Object.FindObjectsByType<Outline>(FindObjectsSortMode.None);
-
-        foreach (Outline outline in outlines)
-        {
-            outline.enabled = true;
-        }
-
-        await UniTask.Delay(0);
-
-        foreach (Outline outline in outlines)
-        {
-            outline.OutlineColor = OutlineColor;
-            outline.OutlineWidth = OutlineWidth;
-            outline.enabled = false;
-        }
-
         foreach (RepairableBuilding building in ControllersManager.Instance.buildingController.SpecialBuildings)
         {
             building.InitBuilding();

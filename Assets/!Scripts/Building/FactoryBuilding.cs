@@ -79,7 +79,7 @@ public class FactoryBuilding : RepairableBuilding
                 {
                     if (_isCreatingReadyMaterials)
                     {
-                        ControllersManager.Instance.resourceController.AddOrRemoveReadyMaterials(ReadyMaterialsGet);
+                        ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.ReadyMaterials, ReadyMaterialsGet);
                     }
                     else
                     {
@@ -97,7 +97,7 @@ public class FactoryBuilding : RepairableBuilding
     public void CreateReadyMaterials()
     {
         ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToCreateReadyMaterials, TurnsToCreateReadyMaterials, TurnsToRestFromReadyMaterialsJob);
-        ControllersManager.Instance.resourceController.AddOrRemoveRawMaterials(-RawMaterialsToCreateReadyMaterials);
+        ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.RawMaterials, -RawMaterialsToCreateReadyMaterials);
 
         BuildingIsSelactable = false;
         _isWorking = true;
@@ -110,7 +110,7 @@ public class FactoryBuilding : RepairableBuilding
     public void CreateArmyMaterials()
     {
         ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToCreateArmyMaterials, TurnsToCreateArmyMaterials, TurnsToRestFromArmyMaterialsJob);
-        ControllersManager.Instance.resourceController.AddOrRemoveRawMaterials(-RawMaterialsToCreateArmyMaterials);
+        ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.RawMaterials, -RawMaterialsToCreateArmyMaterials);
 
         BuildingIsSelactable = false;
         _isWorking = true;

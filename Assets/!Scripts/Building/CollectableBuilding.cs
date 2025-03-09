@@ -42,7 +42,7 @@ public class CollectableBuilding : BuildingDependingOnStability
             if (_turnsToWork == 0)
             {
                 RawMaterialsLeft -= RawMaterialsGet;
-                ControllersManager.Instance.resourceController.AddOrRemoveRawMaterials(RawMaterialsGet);
+                ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.RawMaterials, RawMaterialsGet);
 
                 BuildingIsSelactable = true;
                 GetComponent<MeshRenderer>().material = originalMaterial;

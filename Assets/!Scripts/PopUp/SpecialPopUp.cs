@@ -44,12 +44,12 @@ public class SpecialPopUp : InfoPopUp
 
     private void Init()
     {
-        _collectPopUp = ControllersManager.Instance.selectionController._collectPopUp;
-        _repairPopUp = ControllersManager.Instance.selectionController._repairPopUp;
-        _factoryPopUp = ControllersManager.Instance.selectionController._factoryPopUp;
-        _cityHallPopUp = ControllersManager.Instance.selectionController._cityHallPopUp;
-        _foodTrucksPopUp = ControllersManager.Instance.selectionController._foodTrucksPopUp;
-        _hospitalPopUp = ControllersManager.Instance.selectionController._hospitalPopUp;
+        _collectPopUp = ControllersManager.Instance.selectionController.CollectPopUp;
+        _repairPopUp = ControllersManager.Instance.selectionController.RepairPopUp;
+        _factoryPopUp = ControllersManager.Instance.selectionController.FactoryPopUp;
+        _cityHallPopUp = ControllersManager.Instance.selectionController.CityHallPopUp;
+        _foodTrucksPopUp = ControllersManager.Instance.selectionController.FoodTrucksPopUp;
+        _hospitalPopUp = ControllersManager.Instance.selectionController.HospitalPopUp;
     }
 
     private void OnEnable()

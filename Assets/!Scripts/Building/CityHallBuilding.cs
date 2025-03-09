@@ -110,8 +110,8 @@ public class CityHallBuilding : RepairableBuilding
         int foodAmount = RelationWithGoverment < 4 ? 2 : RelationWithGoverment < 8 ? 3 : 4;
         int medicineAmount = RelationWithGoverment < 4 ? 1 : 2;
 
-        _resourceController.AddOrRemoveProvision(foodAmount);
-        _resourceController.AddOrRemoveMedicine(medicineAmount);
+        _resourceController.ModifyResource(ResourceController.ResourceType.Provision, foodAmount);
+        _resourceController.ModifyResource(ResourceController.ResourceType.Medicine, medicineAmount);
     }
 
     public void ArmyMaterialsSent()
@@ -130,7 +130,7 @@ public class CityHallBuilding : RepairableBuilding
     {
         _isWorking = true;
         _turnsToCreateNewUnit = _turnsToCreateNewUnitOriginal;
-        ControllersManager.Instance.resourceController.AddOrRemoveReadyMaterials(-ReadyMaterialsToCreateNewPeopleUnit);
+        ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.ReadyMaterials, -ReadyMaterialsToCreateNewPeopleUnit);
     }
 
     public void ModifyRelationWithGov(int value)

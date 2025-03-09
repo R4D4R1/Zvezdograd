@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -11,21 +12,30 @@ public class SelectionController : MonoBehaviour
     [SerializeField] private GameObject _specialPopUpPrefab;
     [SerializeField] private Transform _popUpParent;
 
-    [field: SerializeField] public RepairPopUp _repairPopUp {  get; private set; }
-    [field: SerializeField] public CollectPopUp _collectPopUp { get; private set; }
-    [field: SerializeField] public FactoryPopUp _factoryPopUp { get; private set; }
-    [field: SerializeField] public CityHallPopUp _cityHallPopUp { get; private set; }
-    [field: SerializeField] public FoodTrucksPopUp _foodTrucksPopUp { get; private set; }
-    [field: SerializeField] public HospitalPopUp _hospitalPopUp { get; private set; }
+    [field: SerializeField] public RepairPopUp RepairPopUp { get; private set; }
+    [field: SerializeField] public CollectPopUp CollectPopUp { get; private set; }
+    [field: SerializeField] public FactoryPopUp FactoryPopUp { get; private set; }
+    [field: SerializeField] public CityHallPopUp CityHallPopUp { get; private set; }
+    [field: SerializeField] public FoodTrucksPopUp FoodTrucksPopUp { get; private set; }
+    [field: SerializeField] public HospitalPopUp HospitalPopUp { get; private set; }
+
+    [SerializeField] private Color _outlineColor;
+    [Range(0f,1f), SerializeField] private float _outlineWidth;
 
     private GameObject _currentPopUp;
     private Canvas _canvas;
-
 
     void Start()
     {
         _mainCamera = Camera.main;
         _canvas = _popUpParent.GetComponentInParent<Canvas>();
+
+        InitAllOutlines();
+    }
+
+    private void InitAllOutlines()
+    {
+
     }
 
     void Update()
@@ -151,7 +161,7 @@ public class SelectionController : MonoBehaviour
                             SpecialPopUp popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
 
                             popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "Œ“ –€“‹");
-                            
+
                             if (repairableBuilding.Type == RepairableBuilding.BuildingType.CityHall)
                             {
                                 popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenCityHallMenu;

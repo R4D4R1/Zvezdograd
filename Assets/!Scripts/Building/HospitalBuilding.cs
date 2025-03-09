@@ -57,8 +57,8 @@ public class HospitalBuilding : RepairableBuilding
         _medicineWasGivenAwayInLastTwoDay = true;
 
         ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToGiveMedicine, TurnsToToGiveMedicine, TurnsToRestFromMedicineJob);
-        ControllersManager.Instance.resourceController.AddOrRemoveMedicine(-MedicineToGive);
-        ControllersManager.Instance.resourceController.AddOrRemoveStability(StabilityAddValue);
+        ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.Medicine, -MedicineToGive);
+        ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.Stability, StabilityAddValue);
 
     }
 
@@ -76,7 +76,7 @@ public class HospitalBuilding : RepairableBuilding
             }
             else
             {
-                ControllersManager.Instance.resourceController.AddOrRemoveStability(-StabilityRemoveValue);
+                ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.Stability, -StabilityRemoveValue);
                 return false;
             }
         }
