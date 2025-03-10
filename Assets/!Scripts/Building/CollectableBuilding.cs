@@ -36,7 +36,7 @@ public class CollectableBuilding : BuildingDependingOnStability
 
     private void TryTurnOnBuilding()
     {
-        if (!BuildingIsSelactable)
+        if (!BuildingIsSelectable)
         {
             _turnsToWork--;
             if (_turnsToWork == 0)
@@ -44,7 +44,7 @@ public class CollectableBuilding : BuildingDependingOnStability
                 RawMaterialsLeft -= RawMaterialsGet;
                 ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.RawMaterials, RawMaterialsGet);
 
-                BuildingIsSelactable = true;
+                BuildingIsSelectable = true;
                 GetComponent<MeshRenderer>().material = originalMaterial;
             }
         }
@@ -56,7 +56,7 @@ public class CollectableBuilding : BuildingDependingOnStability
 
         _turnsToWork = TurnsToCollect;
 
-        BuildingIsSelactable = false;
+        BuildingIsSelectable = false;
 
         GetComponent<MeshRenderer>().material = greyMaterial;
     }

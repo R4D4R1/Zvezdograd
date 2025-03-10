@@ -3,11 +3,12 @@ using UnityEngine;
 
 public class UIController : MonoBehaviour
 {
-    private Bootstrapper entryPoint = Bootstrapper.Instance;
+    private Bootstrapper _entryPoint = Bootstrapper.Instance;
 
-    public void LoadStartScene()
+    public async void StartNewGame()
     {
-        entryPoint.loadLevelController.LoadSceneAsync(Scenes.GAME_SCENE);
+        SaveLoadManager.SetStartedNewGame();
+        await _entryPoint.loadLevelController.LoadSceneAsync(Scenes.GAME_SCENE);
     }
 
     public void QuitGame()

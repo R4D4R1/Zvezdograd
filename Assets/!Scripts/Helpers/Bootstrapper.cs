@@ -9,7 +9,7 @@ public class Bootstrapper : MonoBehaviour
     public SoundController SoundController { get; private set; }
 
 
-    private void Awake()
+    private async void Awake()
     {
         if (Instance == null)
         {
@@ -27,7 +27,7 @@ public class Bootstrapper : MonoBehaviour
         SoundController = GetComponentInChildren<SoundController>();
 
 
-        loadLevelController.LoadSceneAsync(Scenes.MAIN_MENU);
+        await loadLevelController.LoadSceneAsync(Scenes.MAIN_MENU);
 
         if (Application.platform == RuntimePlatform.Android)
         {

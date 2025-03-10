@@ -10,45 +10,42 @@ public class LoadLevelController : MonoBehaviour
 
     private float _target;
 
-    // Асинхронная загрузка сцены
-    public async void LoadSceneAsync(string sceneName)
+    public async UniTask LoadSceneAsync(string sceneName)
     {
-        var bootstrapper = Bootstrapper.Instance; // Получение экземпляра Bootstrapper
+        var bootstrapper = Bootstrapper.Instance;
 
         _target = 0;
         _progressBar.value = 0;
 
-        // Ожидание перед началом загрузки
         await UniTask.Delay((int)(bootstrapper.gameController.GameStartDelay * 1000));
 
         var scene = SceneManager.LoadSceneAsync(sceneName);
-        scene.allowSceneActivation = false; // Отключение автоматической активации сцены
+        scene.allowSceneActivation = false;
 
-        _loaderCanvas.SetActive(true); // Активация UI-канваса загрузки
+        _loaderCanvas.SetActive(true);
 
-        do
+        // Загрузка сцены с прогрессом
+        while (scene.progress < 0.9f)
         {
-            await UniTask.Delay(100); // Ожидание для обновления прогресса
-
-            // Обновление целевого значения прогресса
             _target = Mathf.Clamp01(scene.progress / 0.9f);
+            _progressBar.value = _target;
+            await UniTask.Delay(100); // ожидание на следующее обновление
+        }
 
-        } while (scene.progress < 0.9f); // Ожидание загрузки до 90%
+        _target = 1;
+        _progressBar.value = _target;
 
-        _target = 1; // Установка целевого значения прогресса в 100%
-
-        // Ожидание после завершения загрузки
         await UniTask.Delay((int)(bootstrapper.gameController.GameAfterLoadDelay * 1000));
 
-        scene.allowSceneActivation = true; // Разрешение активации сцены
+        scene.allowSceneActivation = true;
 
         await UniTask.Yield();
-        _loaderCanvas.SetActive(false); // Отключение UI-канваса загрузки
+        _loaderCanvas.SetActive(false);
     }
+
 
     private void Update()
     {
-        // Плавное обновление значения прогресса на слайдере
         _progressBar.value = Mathf.MoveTowards(_progressBar.value, _target, 3 * Time.deltaTime);
     }
 }

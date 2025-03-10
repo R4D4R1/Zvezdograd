@@ -92,7 +92,7 @@ public class RepairableBuilding : BuildingDependingOnStability
 
             if (TurnsToRepair == 0)
             {
-                BuildingIsSelactable = true;
+                BuildingIsSelectable = true;
                 RestoreOriginalMaterials();
 
                 CurrentState = State.Intact;
@@ -107,7 +107,7 @@ public class RepairableBuilding : BuildingDependingOnStability
             ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToRepair, TurnsToRepair, TurnsToRestFromRepair);
             ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.RawMaterials, -BuildingMaterialsToRepair);
 
-            BuildingIsSelactable = false;
+            BuildingIsSelectable = false;
 
             SetGreyMaterials();
 
@@ -119,7 +119,7 @@ public class RepairableBuilding : BuildingDependingOnStability
     {
         if (CurrentState == State.Intact)
         {
-            BuildingIsSelactable = true;
+            BuildingIsSelectable = true;
             CurrentState = State.Damaged;
         }
     }

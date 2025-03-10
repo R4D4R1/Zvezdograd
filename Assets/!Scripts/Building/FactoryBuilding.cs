@@ -57,7 +57,7 @@ public class FactoryBuilding : RepairableBuilding
 
     protected override void TryTurnOnBuilding()
     {
-        if (!BuildingIsSelactable)
+        if (!BuildingIsSelectable)
         {
             if (!_isWorking)
             {
@@ -65,7 +65,7 @@ public class FactoryBuilding : RepairableBuilding
 
                 if (TurnsToRepair == 0)
                 {
-                    BuildingIsSelactable = true;
+                    BuildingIsSelectable = true;
                     CurrentState = State.Intact;
 
                     RestoreOriginalMaterials();
@@ -86,7 +86,7 @@ public class FactoryBuilding : RepairableBuilding
                         ControllersManager.Instance.buildingController.GetCityHallBuilding().ArmyMaterialsSent();
                     }
 
-                    BuildingIsSelactable = true;
+                    BuildingIsSelectable = true;
                     _isWorking = false;
                     RestoreOriginalMaterials();
                 }
@@ -99,7 +99,7 @@ public class FactoryBuilding : RepairableBuilding
         ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToCreateReadyMaterials, TurnsToCreateReadyMaterials, TurnsToRestFromReadyMaterialsJob);
         ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.RawMaterials, -RawMaterialsToCreateReadyMaterials);
 
-        BuildingIsSelactable = false;
+        BuildingIsSelectable = false;
         _isWorking = true;
         _isCreatingReadyMaterials = true;
         _turnsToWork = TurnsToCreateReadyMaterials;
@@ -112,7 +112,7 @@ public class FactoryBuilding : RepairableBuilding
         ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToCreateArmyMaterials, TurnsToCreateArmyMaterials, TurnsToRestFromArmyMaterialsJob);
         ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.RawMaterials, -RawMaterialsToCreateArmyMaterials);
 
-        BuildingIsSelactable = false;
+        BuildingIsSelectable = false;
         _isWorking = true;
         _isCreatingReadyMaterials = false;
         _turnsToWork = TurnsToCreateArmyMaterials;

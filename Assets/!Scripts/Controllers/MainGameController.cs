@@ -6,7 +6,8 @@ using Cysharp.Threading.Tasks;
 
 public class MainGameController : MonoBehaviour
 {
-    [SerializeField] private InfoPopUp _startPopUpInfo;
+    [SerializeField] private InfoPopUp _startPopUp;
+    [SerializeField] private InfoPopUp _tutorialPupUp;
     [SerializeField] private Image _blackImage;
 
     [Range(0f, 3f)]
@@ -38,25 +39,33 @@ public class MainGameController : MonoBehaviour
 
     private void Start()
     {
-        foreach (RepairableBuilding building in ControllersManager.Instance.buildingController.SpecialBuildings)
+        foreach (RepairableBuilding building in ControllersManager.Instance.buildingController.AllBuildings)
         {
             building.InitBuilding();
         }
 
-        foreach (RepairableBuilding building in ControllersManager.Instance.buildingController.RegularBuildings)
+        if (SaveLoadManager.IsStartedFromMainMenu)
         {
-            building.InitBuilding();
+            _startPopUp.gameObject.SetActive(false);
+            _tutorialPupUp.gameObject.SetActive(false);
+
+            ShowCity();
+            ControllersManager.Instance.mainGameUIController.TurnOnUI();
+
+            SaveLoadManager.LoadDataFromCurrentSlot();
         }
-
-        ControllersManager.Instance.blurController.BlurBackGroundNow();
-        ControllersManager.Instance.selectionController.enabled = false;
-
-        _blackImage.color = Color.black;
-
-        _blackImage.DOFade(0, _blackoutTime).OnComplete(() =>
+        else
         {
-            _startPopUpInfo.ShowPopUp();
-        });
+            ControllersManager.Instance.blurController.BlurBackGroundNow();
+            ControllersManager.Instance.selectionController.enabled = false;
+
+            _blackImage.color = Color.black;
+
+            _blackImage.DOFade(0, _blackoutTime).OnComplete(() =>
+            {
+                _startPopUp.ShowPopUp();
+            });
+        }
     }
 
     public void GameWin()

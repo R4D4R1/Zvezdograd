@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class BuildingController : MonoBehaviour
 {
+    public List<RepairableBuilding> AllBuildings { get; private set; } = new();
     public List<RepairableBuilding> RegularBuildings { get; private set; } = new();
     public List<RepairableBuilding> SpecialBuildings { get; private set; } = new();
     public List<CollectableBuilding> CollectableBuildings { get; private set; } = new();
@@ -14,12 +15,12 @@ public class BuildingController : MonoBehaviour
 
     private void Awake()
     {
-        var allBuilding = FindObjectsByType<RepairableBuilding>(FindObjectsSortMode.None);
+        AllBuildings = FindObjectsByType<RepairableBuilding>(FindObjectsSortMode.None).ToList();
         CollectableBuildings = FindObjectsByType<CollectableBuilding>(FindObjectsSortMode.None).ToList();
         Factories = FindObjectsByType<FactoryBuilding>(FindObjectsSortMode.None).ToList();
 
 
-        foreach (var building in allBuilding)
+        foreach (var building in AllBuildings)
         {
             if (building.GetComponent<SpecialBuilding>() != null)
             {
@@ -48,7 +49,7 @@ public class BuildingController : MonoBehaviour
             {
                 int randomBuildingIndex = Random.Range(0, SpecialBuildings.Count);
                 if (SpecialBuildings[randomBuildingIndex].CurrentState == RepairableBuilding.State.Intact
-                    && SpecialBuildings[randomBuildingIndex].BuildingIsSelactable)
+                    && SpecialBuildings[randomBuildingIndex].BuildingIsSelectable)
                 {
                     buildingToReturn = SpecialBuildings[randomBuildingIndex];
                 }
