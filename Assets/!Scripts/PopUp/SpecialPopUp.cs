@@ -54,7 +54,7 @@ public class SpecialPopUp : InfoPopUp
 
     private void OnEnable()
     {
-        _bgImage.transform.localScale = Vector3.zero;
+        transform.localScale = Vector3.zero;
         SetAlpha(0);
     }
 
@@ -110,7 +110,7 @@ public class SpecialPopUp : InfoPopUp
         DescriptionText.text = "";
         ButtonText.text = "";
 
-        _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
+        transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
             LabelText.text = Label;
             DescriptionText.text = Description;

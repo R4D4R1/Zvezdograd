@@ -42,7 +42,7 @@ public class CityHallPopUp : QuestPopUp
     public void ShowCityHallPopUp()
     {
         UpdateAllText();
-        _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
+        transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
             IsActive = true;
             SetAlpha(1);

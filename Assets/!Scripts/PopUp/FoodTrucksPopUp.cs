@@ -15,7 +15,7 @@ public class FoodTrucksPopUp : QuestPopUp
 
     public void ShowFoodTruckPopUp()
     {
-        _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
+        transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
             IsActive = true;
             SetAlpha(1);

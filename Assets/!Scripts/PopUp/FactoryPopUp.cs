@@ -33,7 +33,7 @@ public class FactoryPopUp : EnoughPopUp
     {
         _buildingToUse = factoryBuilding;
 
-        _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
+        transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
             IsActive = true;
 

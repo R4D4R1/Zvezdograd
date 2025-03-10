@@ -8,7 +8,6 @@ using System;
 
 public class InfoPopUp : MonoBehaviour
 {
-    [SerializeField] protected Image _bgImage;
     [SerializeField] protected float scaleDuration = 0.2f;
     [SerializeField] protected float fadeDuration = 0.2f;
     [SerializeField] protected float scaleDownDuration = 0.1f;
@@ -25,7 +24,7 @@ public class InfoPopUp : MonoBehaviour
     {
         IsActive = false;
 
-        _bgImage.transform.localScale = Vector3.zero;
+        transform.localScale = Vector3.zero;
         SetAlpha(0);
     }
 
@@ -33,7 +32,7 @@ public class InfoPopUp : MonoBehaviour
     {
         IsActive = true;
 
-        _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
+        transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
             SetAlpha(1);
         });
@@ -46,7 +45,7 @@ public class InfoPopUp : MonoBehaviour
         LabelText.text = "";
         DescriptionText.text = "";
 
-        _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
+        transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
             LabelText.text = Label;
             DescriptionText.text = Description;
@@ -61,7 +60,7 @@ public class InfoPopUp : MonoBehaviour
             if (_isDestroyable)
             {
 
-                _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration).OnComplete(async () =>
+                transform.DOScale(Vector3.zero, scaleDownDuration).OnComplete(async () =>
                 {
                     IsActive = false;
 
@@ -71,7 +70,7 @@ public class InfoPopUp : MonoBehaviour
             }
             else
             {
-                _bgImage.transform.DOScale(Vector3.zero, scaleDownDuration).OnComplete(() =>
+                transform.DOScale(Vector3.zero, scaleDownDuration).OnComplete(() =>
                 {
                     IsActive = false;
                 });

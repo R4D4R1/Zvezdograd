@@ -29,7 +29,7 @@ public class EventPopUp : InfoPopUp
         DescriptionText.text = "";
         ButtonText.text = "";
 
-        _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
+        transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
             LabelText.text = Label;
             DescriptionText.text = Description;

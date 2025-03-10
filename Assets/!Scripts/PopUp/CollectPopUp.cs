@@ -25,7 +25,7 @@ public class CollectPopUp : EnoughPopUp
                            $" - Займет {buildingToUse.TurnsToCollect} ходов\n" +
                            $" - Подразделения будут отдыхать {buildingToUse.TurnsToRest} ходов";
 
-        _bgImage.transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
+        transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
             IsActive = true;
             SetAlpha(1);
