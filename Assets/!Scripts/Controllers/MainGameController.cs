@@ -39,7 +39,7 @@ public class MainGameController : MonoBehaviour
 
     private void Start()
     {
-        foreach (RepairableBuilding building in ControllersManager.Instance.buildingController.AllBuildings)
+        foreach (RepairableBuilding building in ControllersManager.Instance.buildingController.RepairableBuildings)
         {
             building.InitBuilding();
         }

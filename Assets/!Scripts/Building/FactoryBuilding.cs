@@ -42,8 +42,9 @@ public class FactoryBuilding : RepairableBuilding
 
     // TO DO - заменить синглтон
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
         ControllersManager.Instance.timeController.OnNextTurnBtnPressed += UpdateAmountOfTurnsNeededToDoSMTH;
 
         UpdateAmountOfTurnsNeededToDoSMTH();

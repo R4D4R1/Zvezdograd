@@ -30,8 +30,9 @@ public class FoodTrucksBuilding : RepairableBuilding
     // SAVE DATA
     public bool IsFoodGivenAwayToday { get; private set; } = false;
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
         ControllersManager.Instance.timeController.OnNextTurnBtnPressed += UpdateAmountOfTurnsNeededToDoSMTH;
 
         UpdateAmountOfTurnsNeededToDoSMTH();

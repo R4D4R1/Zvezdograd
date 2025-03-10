@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class BuildingController : MonoBehaviour
 {
-    public List<RepairableBuilding> AllBuildings { get; private set; } = new();
+    public List<SelectableBuilding> AllBuildings { get; private set; } = new();
     public List<RepairableBuilding> RegularBuildings { get; private set; } = new();
     public List<RepairableBuilding> SpecialBuildings { get; private set; } = new();
-    public List<CollectableBuilding> CollectableBuildings { get; private set; } = new();
+    public List<RepairableBuilding> RepairableBuildings { get; private set; } = new();
     public List<FactoryBuilding> Factories { get; private set; } = new();
 
     [Range(0f, 100f)]
@@ -15,8 +15,7 @@ public class BuildingController : MonoBehaviour
 
     private void Awake()
     {
-        AllBuildings = FindObjectsByType<RepairableBuilding>(FindObjectsSortMode.None).ToList();
-        CollectableBuildings = FindObjectsByType<CollectableBuilding>(FindObjectsSortMode.None).ToList();
+        AllBuildings = FindObjectsByType<SelectableBuilding>(FindObjectsSortMode.None).ToList();
         Factories = FindObjectsByType<FactoryBuilding>(FindObjectsSortMode.None).ToList();
 
 
@@ -24,11 +23,15 @@ public class BuildingController : MonoBehaviour
         {
             if (building.GetComponent<SpecialBuilding>() != null)
             {
-                SpecialBuildings.Add(building);
+                SpecialBuildings.Add(building as RepairableBuilding);
             }
             else
             {
-                RegularBuildings.Add(building);
+                RegularBuildings.Add(building as RepairableBuilding);
+            }
+            if(building.GetComponent<RepairableBuilding>() != null)
+            {
+                RepairableBuildings.Add(building as RepairableBuilding);
             }
         }
     }
@@ -48,7 +51,7 @@ public class BuildingController : MonoBehaviour
             if (Random.Range(0, 100) <= _specialBuildingBombChance)
             {
                 int randomBuildingIndex = Random.Range(0, SpecialBuildings.Count);
-                if (SpecialBuildings[randomBuildingIndex].CurrentState == RepairableBuilding.State.Intact
+                if (SpecialBuildings[randomBuildingIndex]. CurrentState == RepairableBuilding.State.Intact
                     && SpecialBuildings[randomBuildingIndex].BuildingIsSelectable)
                 {
                     buildingToReturn = SpecialBuildings[randomBuildingIndex];

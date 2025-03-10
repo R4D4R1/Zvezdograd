@@ -2,13 +2,13 @@ using UnityEngine;
 
 public class SelectableBuilding : MonoBehaviour
 {
-    public int BuildingId { get; private set; }
-
     [field: SerializeField] public string BuildingNameText { get; protected set; }
     [field: SerializeField] public string DescriptionText { get; protected set; }
     [field: SerializeField] public bool BuildingIsSelectable { get; protected set; } = true;
+    public int BuildingId { get; private set; }
 
-    private void Start()
+
+    protected virtual void Start()
     {
         GenerateOrLoadBuildingId();
     }

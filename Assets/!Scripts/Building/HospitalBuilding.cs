@@ -24,9 +24,6 @@ public class HospitalBuilding : RepairableBuilding
     [SerializeField] private int _stabilityRemoveValue;
     public int StabilityRemoveValue => _stabilityRemoveValue;
 
-
-
-
     // SAVE DATA
     public int DaysToGiveMedicine { get; private set; }
     private bool _medicineWasGivenAwayInLastTwoDay = false;
@@ -38,13 +35,6 @@ public class HospitalBuilding : RepairableBuilding
         DaysToGiveMedicine = OriginalDaysToGiveMedicine;
         UpdateAmountOfTurnsNeededToDoSMTH();
     }
-
-    //private void Start()
-    //{
-    //    ControllersManager.Instance.timeController.OnNextTurnBtnPressed += UpdateAmountOfTurnsNeededToDoSMTH;
-    //    DaysToGiveMedicine = OriginalDaysToGiveMedicine;
-    //    UpdateAmountOfTurnsNeededToDoSMTH();
-    //}
 
     private void UpdateAmountOfTurnsNeededToDoSMTH()
     {

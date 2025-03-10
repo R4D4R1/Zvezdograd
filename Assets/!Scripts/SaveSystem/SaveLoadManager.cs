@@ -95,8 +95,8 @@ public class SaveLoadManager : MonoBehaviour
             BuildingData buildingData = new BuildingData
             {
                 BuildingId = building.BuildingId,
-                currentState = building.CurrentState,
-                turnsToRepair = building.TurnsToRepair
+                //currentState = building.CurrentState,
+                //turnsToRepair = building.TurnsToRepair
             };
             gameData.allBuildingsData.Add(buildingData);
         }
@@ -123,8 +123,6 @@ public class SaveLoadManager : MonoBehaviour
         {
             await Bootstrapper.Instance.loadLevelController.LoadSceneAsync(Scenes.GAME_SCENE);
         }
-
-        //LoadDataFromSlot(currentSlot);
 
         if (!IsStartedFromMainMenu)
         {
@@ -173,9 +171,10 @@ public class SaveLoadManager : MonoBehaviour
 
                 if (building != null)
                 {
-                    building.CurrentState = buildingData.currentState;
-                    building.TurnsToRepair = buildingData.turnsToRepair;
-                    Debug.Log($"Loaded building: {building.name}, State: {building.CurrentState}");
+                    Debug.Log("LOADED DATA");
+                    //building.CurrentState = buildingData.currentState;
+                    //building.TurnsToRepair = buildingData.turnsToRepair;
+                    //Debug.Log($"Loaded building: {building.name}, State: {building.CurrentState}");
                 }
                 else
                 {

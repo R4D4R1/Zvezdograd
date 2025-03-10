@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
+[Serializable]
 public class GameData
 {
     public TimeController.PeriodOfDay periodOfDay;
@@ -27,7 +27,7 @@ public class GameData
     }
 }
 
-[System.Serializable]
+[Serializable]
 public class PeopleUnitData
 {
     public Vector2 position;
@@ -36,10 +36,10 @@ public class PeopleUnitData
     public int restingTime;
 }
 
-[System.Serializable]
+[Serializable]
 public class BuildingData
 {
     public int BuildingId;
-    public RepairableBuilding.State currentState;
-    public int turnsToRepair;
+    //public RepairableBuilding.State currentState;
+    //public int turnsToRepair;
 }

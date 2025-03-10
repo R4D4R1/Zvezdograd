@@ -15,6 +15,8 @@ public class CityHallBuilding : RepairableBuilding
     private int _turnsToCreateNewUnit;
     private bool _isWorking = false;
 
+    // SAVE DATA
+
     [field: SerializeField, Range(0, 10)] public int RelationWithGoverment { get; private set; }
     public int DaysLeftToRecieveGovHelp { get; private set; }
     public int DaysLeftToSendArmyMaterials { get; private set; }
@@ -26,14 +28,14 @@ public class CityHallBuilding : RepairableBuilding
 
     public event Action OnCityHallUnitCreated;
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
         InitializeControllers();
         InitializeTimers();
         _timeController.OnNextDayEvent += OnNextDayEvent;
 
         ControllersManager.Instance.timeController.OnNextTurnBtnPressed += CheckIfCreatedNewUnit;
-
     }
 
     private void CheckIfCreatedNewUnit()

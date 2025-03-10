@@ -19,8 +19,9 @@ public class CollectableBuilding : BuildingDependingOnStability
     private int _turnsToWork = 0;
 
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
         ControllersManager.Instance.timeController.OnNextTurnBtnPressed += TryTurnOnBuilding;
         ControllersManager.Instance.timeController.OnNextTurnBtnPressed += UpdateAmountOfTurnsNeededToDoSMTH;
 
