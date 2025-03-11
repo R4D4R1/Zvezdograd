@@ -2,34 +2,40 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using DG.Tweening;
+using Zenject;
 
 public class BlurController : MonoBehaviour
 {
     private DepthOfField _depthOfField;
+    private Volume _volumeProfile;
 
-    [SerializeField] private Volume _volumeProfile;
-    [SerializeField, Range(0.25f, 5f)] private float _timeOfDepthAppearing = 0.25f;
-    [SerializeField, Range(1, 200f)] private float _blurValue = 100f;
+    protected BlurConfig _config;
 
+    [Inject]
+    public void Construct(BlurConfig config)
+    {
+        _config = config;
+    }
 
     private void Awake()
     {
+        _volumeProfile = FindFirstObjectByType<Volume>();
         _volumeProfile.profile.TryGet(out _depthOfField);
     }
 
     public void BlurBackGroundSmoothly()
     {
-        DOTween.To(() => _depthOfField.focalLength.value, x => _depthOfField.focalLength.value = x, _blurValue, _timeOfDepthAppearing);
+        DOTween.To(() => _depthOfField.focalLength.value, x => _depthOfField.focalLength.value = x, _config.BlurValue, _config.TimeOfDepthAppearing);
     }
 
     public void UnBlurBackGroundSmoothly()
     {
-        DOTween.To(() => _depthOfField.focalLength.value, x => _depthOfField.focalLength.value = x, 1, _timeOfDepthAppearing);
+        DOTween.To(() => _depthOfField.focalLength.value, x => _depthOfField.focalLength.value = x, 1, _config.TimeOfDepthAppearing);
     }
 
     public void BlurBackGroundNow()
     {
-        _depthOfField.focalLength.value = _blurValue;
+        _depthOfField.focalLength.value = _config.BlurValue;
     }
 
     public void UnBlurBackGroundNow()

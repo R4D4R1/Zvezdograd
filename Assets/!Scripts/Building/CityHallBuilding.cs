@@ -23,7 +23,6 @@ public class CityHallBuilding : RepairableBuilding
     public bool IsMaterialsSent { get; private set; }
 
     private TimeController _timeController;
-    private ResourceController _resourceController;
     private int _amountOfHelpSent = 0;
 
     public event Action OnCityHallUnitCreated;
@@ -35,7 +34,7 @@ public class CityHallBuilding : RepairableBuilding
         InitializeTimers();
         _timeController.OnNextDayEvent += OnNextDayEvent;
 
-        ControllersManager.Instance.timeController.OnNextTurnBtnPressed += CheckIfCreatedNewUnit;
+        _controllersManager.TimeController.OnNextTurnBtnPressed += CheckIfCreatedNewUnit;
     }
 
     private void CheckIfCreatedNewUnit()
@@ -53,8 +52,7 @@ public class CityHallBuilding : RepairableBuilding
 
     private void InitializeControllers()
     {
-        _timeController = ControllersManager.Instance.timeController;
-        _resourceController = ControllersManager.Instance.resourceController;
+        _timeController = _controllersManager.TimeController;
     }
 
     private void InitializeTimers()
@@ -91,7 +89,7 @@ public class CityHallBuilding : RepairableBuilding
     {
         if (IsMaterialsSent)
         {
-            ControllersManager.Instance.popUpsController.FactoryPopUp.UpdateCreateArmyButtonState();
+            _controllersManager.PopUpsController.FactoryPopUp.UpdateCreateArmyButtonState();
             IsMaterialsSent = false;
             return false;
         }
@@ -112,8 +110,8 @@ public class CityHallBuilding : RepairableBuilding
         int foodAmount = RelationWithGoverment < 4 ? 2 : RelationWithGoverment < 8 ? 3 : 4;
         int medicineAmount = RelationWithGoverment < 4 ? 1 : 2;
 
-        _resourceController.ModifyResource(ResourceController.ResourceType.Provision, foodAmount);
-        _resourceController.ModifyResource(ResourceController.ResourceType.Medicine, medicineAmount);
+        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Provision, foodAmount);
+        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Medicine, medicineAmount);
     }
 
     public void ArmyMaterialsSent()
@@ -124,7 +122,7 @@ public class CityHallBuilding : RepairableBuilding
 
         if (_amountOfHelpSent >= _amountOfHelpNeededToSend)
         {
-            ControllersManager.Instance.mainGameController.GameWin();
+            _controllersManager.MainGameController.GameWin();
         }
     }
 
@@ -132,7 +130,7 @@ public class CityHallBuilding : RepairableBuilding
     {
         _isWorking = true;
         _turnsToCreateNewUnit = _turnsToCreateNewUnitOriginal;
-        ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.ReadyMaterials, -ReadyMaterialsToCreateNewPeopleUnit);
+        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.ReadyMaterials, -ReadyMaterialsToCreateNewPeopleUnit);
     }
 
     public void ModifyRelationWithGov(int value)

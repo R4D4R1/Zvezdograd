@@ -1,6 +1,6 @@
 using UnityEngine;
 using DG.Tweening;
-using Cysharp.Threading.Tasks;
+using Zenject;
 
 public class MainGameUIController : MonoBehaviour
 {
@@ -11,6 +11,21 @@ public class MainGameUIController : MonoBehaviour
     private CanvasGroup _turnOffUICanvasGroup;
     //private bool _canToggleMenu = true;
     private InfoPopUp _popUpToClose;
+
+    private readonly ResourceView _resourceView;
+    protected ControllersManager _controllersManager;
+
+    [Inject]
+    public MainGameUIController(ResourceView resourceView)
+    {
+        _resourceView = resourceView;
+    }
+
+    [Inject]
+    public void Construct(ControllersManager controllersManager)
+    {
+        _controllersManager = controllersManager;
+    }
 
     private void Start()
     {
@@ -31,13 +46,13 @@ public class MainGameUIController : MonoBehaviour
     {
         _settingsMenu.SetActive(true);
         TurnOffUI();
-        ControllersManager.Instance.mainGameController.HideCity();
+        _controllersManager.MainGameController.HideCity();
     }
 
     public void TurnOffMenu()
     {
         _settingsMenu.SetActive(false);
-        ControllersManager.Instance.mainGameController.ShowCity();
+        _controllersManager.MainGameController.ShowCity();
         TurnOnUI();
     }
 
@@ -45,21 +60,20 @@ public class MainGameUIController : MonoBehaviour
     {
         //_turnOffUIParent.SetActive(true);
 
-        ControllersManager.Instance.blurController.UnBlurBackGroundSmoothly();
+        _controllersManager.BlurController.UnBlurBackGroundSmoothly();
         _turnOffUICanvasGroup.DOFade(1f, fadeDuration).OnComplete(() => {
             _turnOffUICanvasGroup.interactable = true;
             _turnOffUICanvasGroup.blocksRaycasts = true;
         });
 
-        ControllersManager.Instance.selectionController.enabled = true;
+        _controllersManager.SelectionController.enabled = true;
     }
 
     public void TurnOffUI()
     {
-        ControllersManager.Instance.selectionController.enabled = false;
-
-        ControllersManager.Instance.blurController.BlurBackGroundSmoothly();
-        ControllersManager.Instance.selectionController.Deselect();
+        _controllersManager.SelectionController.enabled = false;
+        _controllersManager.BlurController.BlurBackGroundSmoothly();
+        _controllersManager.SelectionController.Deselect();
 
         _turnOffUICanvasGroup.DOFade(0f, fadeDuration).OnComplete(() => {
             //_turnOffUIParent.SetActive(false);

@@ -45,7 +45,7 @@ public class FactoryBuilding : RepairableBuilding
     protected override void Start()
     {
         base.Start();
-        ControllersManager.Instance.timeController.OnNextTurnBtnPressed += UpdateAmountOfTurnsNeededToDoSMTH;
+        _controllersManager.TimeController.OnNextTurnBtnPressed += UpdateAmountOfTurnsNeededToDoSMTH;
 
         UpdateAmountOfTurnsNeededToDoSMTH();
     }
@@ -80,11 +80,11 @@ public class FactoryBuilding : RepairableBuilding
                 {
                     if (_isCreatingReadyMaterials)
                     {
-                        ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.ReadyMaterials, ReadyMaterialsGet);
+                        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.ReadyMaterials, ReadyMaterialsGet);
                     }
                     else
                     {
-                        ControllersManager.Instance.buildingController.GetCityHallBuilding().ArmyMaterialsSent();
+                        _controllersManager.BuildingController.GetCityHallBuilding().ArmyMaterialsSent();
                     }
 
                     BuildingIsSelectable = true;
@@ -97,8 +97,8 @@ public class FactoryBuilding : RepairableBuilding
 
     public void CreateReadyMaterials()
     {
-        ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToCreateReadyMaterials, TurnsToCreateReadyMaterials, TurnsToRestFromReadyMaterialsJob);
-        ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.RawMaterials, -RawMaterialsToCreateReadyMaterials);
+        _controllersManager.PeopleUnitsController.AssignUnitsToTask(PeopleToCreateReadyMaterials, TurnsToCreateReadyMaterials, TurnsToRestFromReadyMaterialsJob);
+        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.RawMaterials, -RawMaterialsToCreateReadyMaterials);
 
         BuildingIsSelectable = false;
         _isWorking = true;
@@ -110,8 +110,8 @@ public class FactoryBuilding : RepairableBuilding
 
     public void CreateArmyMaterials()
     {
-        ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToCreateArmyMaterials, TurnsToCreateArmyMaterials, TurnsToRestFromArmyMaterialsJob);
-        ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.RawMaterials, -RawMaterialsToCreateArmyMaterials);
+        _controllersManager.PeopleUnitsController.AssignUnitsToTask(PeopleToCreateArmyMaterials, TurnsToCreateArmyMaterials, TurnsToRestFromArmyMaterialsJob);
+        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.RawMaterials, -RawMaterialsToCreateArmyMaterials);
 
         BuildingIsSelectable = false;
         _isWorking = true;

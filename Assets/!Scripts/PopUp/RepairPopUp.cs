@@ -19,8 +19,8 @@ public class RepairPopUp : EnoughPopUp
     {
         _buildingToUse = buildingToRepair;
 
-        _demandsText.text = $" - {_buildingToUse.PeopleToRepair} отряда ( у вас {ControllersManager.Instance.peopleUnitsController.ReadyUnits.Count} )\n" +
-                            $" - {_buildingToUse.BuildingMaterialsToRepair} стройматериалов ( у вас {ControllersManager.Instance.resourceController.GetReadyMaterials()} )\n" +
+        _demandsText.text = $" - {_buildingToUse.PeopleToRepair} отряда ( у вас {_controllersManager.PeopleUnitsController.ReadyUnits.Count} )\n" +
+                            $" - {_buildingToUse.BuildingMaterialsToRepair} стройматериалов ( у вас {_resourceViewModel.ReadyMaterials.Value} )\n" +
                             $" - Займет {_buildingToUse.TurnsToRepair} ходов\n" +
                             $" - Подразделения будут отдыхать {_buildingToUse.TurnsToRestFromRepair} ходов";
 
@@ -59,6 +59,6 @@ public class RepairPopUp : EnoughPopUp
 
     public bool EnoughMaterialsToRepair()
     {
-        return ChechIfEnoughResourcesByType(ResourceController.ResourceType.ReadyMaterials, _buildingToUse.BuildingMaterialsToRepair);
+        return ChechIfEnoughResourcesByType(ResourceModel.ResourceType.ReadyMaterials, _buildingToUse.BuildingMaterialsToRepair);
     }
 }

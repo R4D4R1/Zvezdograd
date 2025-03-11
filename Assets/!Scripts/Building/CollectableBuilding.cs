@@ -22,8 +22,8 @@ public class CollectableBuilding : BuildingDependingOnStability
     protected override void Start()
     {
         base.Start();
-        ControllersManager.Instance.timeController.OnNextTurnBtnPressed += TryTurnOnBuilding;
-        ControllersManager.Instance.timeController.OnNextTurnBtnPressed += UpdateAmountOfTurnsNeededToDoSMTH;
+        _controllersManager.TimeController.OnNextTurnBtnPressed += TryTurnOnBuilding;
+        _controllersManager.TimeController.OnNextTurnBtnPressed += UpdateAmountOfTurnsNeededToDoSMTH;
 
         UpdateAmountOfTurnsNeededToDoSMTH();
 
@@ -43,7 +43,7 @@ public class CollectableBuilding : BuildingDependingOnStability
             if (_turnsToWork == 0)
             {
                 RawMaterialsLeft -= RawMaterialsGet;
-                ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.RawMaterials, RawMaterialsGet);
+                _resourceViewModel.ModifyResource(ResourceModel.ResourceType.RawMaterials, RawMaterialsGet);
 
                 BuildingIsSelectable = true;
                 GetComponent<MeshRenderer>().material = originalMaterial;
@@ -53,7 +53,7 @@ public class CollectableBuilding : BuildingDependingOnStability
 
     public void CollectBuilding()
     {
-        ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToCollect, TurnsToCollect, TurnsToRest);
+        _controllersManager.PeopleUnitsController.AssignUnitsToTask(PeopleToCollect, TurnsToCollect, TurnsToRest);
 
         _turnsToWork = TurnsToCollect;
 

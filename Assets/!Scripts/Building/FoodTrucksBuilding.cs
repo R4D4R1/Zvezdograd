@@ -1,4 +1,5 @@
 using UnityEngine;
+using Zenject;
 
 public class FoodTrucksBuilding : RepairableBuilding
 {
@@ -25,15 +26,13 @@ public class FoodTrucksBuilding : RepairableBuilding
     [SerializeField] private int _stabilityRemoveValue;
     public int StabilityRemoveValue => _stabilityRemoveValue;
 
-
-
     // SAVE DATA
     public bool IsFoodGivenAwayToday { get; private set; } = false;
 
     protected override void Start()
     {
         base.Start();
-        ControllersManager.Instance.timeController.OnNextTurnBtnPressed += UpdateAmountOfTurnsNeededToDoSMTH;
+        _controllersManager.TimeController.OnNextTurnBtnPressed += UpdateAmountOfTurnsNeededToDoSMTH;
 
         UpdateAmountOfTurnsNeededToDoSMTH();
     }
@@ -47,9 +46,9 @@ public class FoodTrucksBuilding : RepairableBuilding
     {
         IsFoodGivenAwayToday = true;
 
-        ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToGiveProvision, TurnsToToGiveProvision, TurnsToRestFromProvisionJob);
-        ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.Provision,-FoodToGive);
-        ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.Stability, StabilityAddValue);
+        _controllersManager.PeopleUnitsController.AssignUnitsToTask(PeopleToGiveProvision, TurnsToToGiveProvision, TurnsToRestFromProvisionJob);
+        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Provision, -FoodToGive);
+        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Stability, StabilityAddValue);
     }
 
     public bool FoodWasGivenAwayToday()
@@ -60,7 +59,8 @@ public class FoodTrucksBuilding : RepairableBuilding
         }
         else
         {
-            ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.Stability, -StabilityRemoveValue);
+            _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Stability, -StabilityRemoveValue);
+
             return false;
         }
     }

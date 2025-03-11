@@ -21,12 +21,12 @@ public class QuestPopUp : EnoughPopUp
 
     protected virtual void Start()
     {
-        ControllersManager.Instance.timeController.OnNextDayEvent += OnNextDay;
+        _controllersManager.TimeController.OnNextDayEvent += OnNextDay;
     }
 
     private void OnDisable()
     {
-        ControllersManager.Instance.timeController.OnNextDayEvent -= OnNextDay;
+        _controllersManager.TimeController.OnNextDayEvent -= OnNextDay;
     }
 
     public void EnableQuest(QuestType questType, string questName, int deadlineInDays, int unitSize, int turnsToWork, int turnsToRest,
@@ -52,45 +52,43 @@ public class QuestPopUp : EnoughPopUp
                             return;
                         }
 
-                        ResourceController resourceController = ControllersManager.Instance.resourceController;
-
                         bool canComplete = false;
                         switch (questType)
                         {
                             case QuestType.Provision:
-                                canComplete = CheckResourceAvailability(resourceController.GetProvision(), resourceController.GetMaxProvision(),
+                                canComplete = CheckResourceAvailability(_resourceViewModel.Provision.Value, _resourceViewModel.Model.MaxProvision,
                                     materialsToGet, materialsToLose, "еды");
                                 if (canComplete)
                                 {
-                                    resourceController.ModifyResource(ResourceController.ResourceType.Provision, materialsToGet);
-                                    resourceController.ModifyResource(ResourceController.ResourceType.Provision, -materialsToLose);
+                                    _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Provision, materialsToGet);
+                                    _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Provision, -materialsToLose);
                                 }
                                 break;
 
                             case QuestType.Medicine:
-                                canComplete = CheckResourceAvailability(resourceController.GetMedicine(), resourceController.GetMaxMedicine(),
+                                canComplete = CheckResourceAvailability(_resourceViewModel.Medicine.Value, _resourceViewModel.Model.MaxMedicine,
                                     materialsToGet, materialsToLose, "медикаментов");
                                 if (canComplete)
                                 {
-                                    resourceController.ModifyResource(ResourceController.ResourceType.Medicine, materialsToGet);
-                                    resourceController.ModifyResource(ResourceController.ResourceType.Medicine, -materialsToLose);
+                                    _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Medicine, materialsToGet);
+                                    _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Medicine, -materialsToLose);
                                 }
                                 break;
 
                             case QuestType.CityBuilding:
-                                canComplete = CheckResourceAvailability(resourceController.GetReadyMaterials(), resourceController.GetMaxReadyMaterials(),
+                                canComplete = CheckResourceAvailability(_resourceViewModel.ReadyMaterials.Value, _resourceViewModel.Model.MaxReadyMaterials,
                                     materialsToGet, materialsToLose, "стройматериалов");
                                 if (canComplete)
                                 {
-                                    resourceController.ModifyResource(ResourceController.ResourceType.ReadyMaterials, materialsToGet);
-                                    resourceController.ModifyResource(ResourceController.ResourceType.ReadyMaterials, -materialsToLose);
+                                    _resourceViewModel.ModifyResource(ResourceModel.ResourceType.ReadyMaterials, materialsToGet);
+                                    _resourceViewModel.ModifyResource(ResourceModel.ResourceType.ReadyMaterials, -materialsToLose);
                                 }
                                 break;
                         }
 
                         if (canComplete)
                         {
-                            ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(unitSize, turnsToWork, turnsToRest);
+                            _controllersManager.PeopleUnitsController.AssignUnitsToTask(unitSize, turnsToWork, turnsToRest);
                             CompleteQuest(quest, stabilityToGet, relationshipWithGovToGet);
                         }
                     });
@@ -126,8 +124,8 @@ public class QuestPopUp : EnoughPopUp
 
     private void CompleteQuest(GameObject quest, int stabilityToGet, int relationshipWithGovToGet)
     {
-        ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.Stability, stabilityToGet);
-        ControllersManager.Instance.buildingController.GetCityHallBuilding().ModifyRelationWithGov(relationshipWithGovToGet);
+        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Stability, stabilityToGet);
+        _controllersManager.BuildingController.GetCityHallBuilding().ModifyRelationWithGov(relationshipWithGovToGet);
 
         quest.SetActive(false);
         questDeadlines.Remove(quest);
@@ -136,8 +134,8 @@ public class QuestPopUp : EnoughPopUp
 
     private void LoseQuest(GameObject quest, int stabilityToLose, int relationshipWithGovToLose)
     {
-        ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.Stability, -stabilityToLose);
-        ControllersManager.Instance.buildingController.GetCityHallBuilding().ModifyRelationWithGov(-relationshipWithGovToLose);
+        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Stability, -stabilityToLose);
+        _controllersManager.BuildingController.GetCityHallBuilding().ModifyRelationWithGov(-relationshipWithGovToLose);
 
         quest.SetActive(false);
         questDeadlines.Remove(quest);

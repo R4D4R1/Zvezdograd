@@ -1,11 +1,12 @@
-using UnityEngine;
+Ôªøusing UnityEngine;
 using System.Collections.Generic;
 using DG.Tweening;
 using System.Linq;
+using Zenject;
 
 public class PeopleUnitsController : MonoBehaviour
 {
-    [SerializeField] private List<PeopleUnit> _allUnits;
+    private List<PeopleUnit> _allUnits;
     [Range(1f, 18f), SerializeField] private int _startPeopleUnitAmount;
     [Range(0f, 1f), SerializeField] private float _durationOfAnimationOfTransitionOfUnits;
 
@@ -16,8 +17,34 @@ public class PeopleUnitsController : MonoBehaviour
 
     public event System.Action OnUnitCreatedByPeopleUnitController;
 
+    protected ControllersManager _controllersManager;
+
+    [Inject]
+    public void Construct(ControllersManager controllersManager)
+    {
+        _controllersManager = controllersManager;
+    }
+
     void Start()
     {
+        PeopleUnit anyUnit = FindFirstObjectByType<PeopleUnit>();
+        if (anyUnit == null)
+        {
+            Debug.LogError("–ù–µ –Ω–∞–π–¥–µ–Ω –Ω–∏ –æ–¥–∏–Ω PeopleUnit!");
+            return;
+        }
+        Transform parent = anyUnit.transform.parent;
+
+        _allUnits = new List<PeopleUnit>();
+        foreach (Transform child in parent)
+        {
+            PeopleUnit unit = child.GetComponent<PeopleUnit>();
+            if (unit != null)
+            {
+                _allUnits.Add(unit);
+            }
+        }
+
         for (int unitNum = 0; unitNum < _allUnits.Count; unitNum++)
         {
             InitialPositions.Add(_allUnits[unitNum].transform.localPosition.x);
@@ -41,14 +68,14 @@ public class PeopleUnitsController : MonoBehaviour
 
         UpdateReadyUnits();
 
-        ControllersManager.Instance.timeController.OnNextTurnBtnPressed += NextTurn;
-        ControllersManager.Instance.buildingController.GetCityHallBuilding().OnCityHallUnitCreated += CreateUnit;
+        _controllersManager.TimeController.OnNextTurnBtnPressed += NextTurn;
+        _controllersManager.BuildingController.GetCityHallBuilding().OnCityHallUnitCreated += CreateUnit;
     }
 
     private void OnDisable()
     {
-        ControllersManager.Instance.timeController.OnNextTurnBtnPressed -= NextTurn;
-        ControllersManager.Instance.buildingController.GetCityHallBuilding().OnCityHallUnitCreated -= CreateUnit;
+        _controllersManager.TimeController.OnNextTurnBtnPressed -= NextTurn;
+        _controllersManager.BuildingController.GetCityHallBuilding().OnCityHallUnitCreated -= CreateUnit;
 
     }
 
@@ -63,7 +90,7 @@ public class PeopleUnitsController : MonoBehaviour
         AnimateUnitPositions();
     }
 
-    // Ã≈“Œƒ ƒÀﬂ ƒŒ¡¿¬À≈Õ»ﬂ —¬Œ¡ŒƒÕ€’ ﬁÕ»“Œ¬ ¬ À»—“ ƒÀﬂ ¬€¡Œ–¿ ﬁÕ»“¿ ƒÀﬂ –¿¡Œ€“
+    // –ú–ï–¢–û–î –î–õ–Ø –î–û–ë–ê–í–õ–ï–ù–ò–Ø –°–í–û–ë–û–î–ù–´–• –Æ–ù–ò–¢–û–í –í –õ–ò–°–¢ –î–õ–Ø –í–´–ë–û–†–ê –Æ–ù–ò–¢–ê –î–õ–Ø –†–ê–ë–û–´–¢
     public void UpdateReadyUnits()
     {
         ReadyUnits.Clear();
@@ -76,7 +103,7 @@ public class PeopleUnitsController : MonoBehaviour
         }
     }
 
-    // Ã≈“Œƒ ƒÀﬂ ”—“¿ÕŒ¬ » Õ≈Œ¡’Œƒ  ŒÀ-¬¿ ﬁÕ»“Œ¬ ¬ —Œ—“ŒﬂÕ»≈ –¿¡Œ“€ » Œ“ƒ€’¿
+    // –ú–ï–¢–û–î –î–õ–Ø –£–°–¢–ê–ù–û–í–ö–ò –ù–ï–û–ë–•–û–î –ö–û–õ-–í–ê –Æ–ù–ò–¢–û–í –í –°–û–°–¢–û–Ø–ù–ò–ï –†–ê–ë–û–¢–´ –ò –û–¢–î–´–•–ê
     public void AssignUnitsToTask(int requiredUnits, int busyTurns, int restingTurns)
     {
         if (AreUnitsReady(requiredUnits))
@@ -102,20 +129,20 @@ public class PeopleUnitsController : MonoBehaviour
         }
     }
 
-    // Ã≈“Œƒ ƒÀﬂ –¿Õ≈Õ»ﬂ √Œ“Œ¬€’   –¿¡Œ“≈ ﬁÕ»“Œ¬
+    // –ú–ï–¢–û–î –î–õ–Ø –†–ê–ù–ï–ù–ò–Ø –ì–û–¢–û–í–´–• –ö –†–ê–ë–û–¢–ï –Æ–ù–ò–¢–û–í
     public void InjureRandomReadyUnit()
     {
         if (ReadyUnits.Count > 0)
         {
-            // ¬˚·Ë‡ÂÏ ÒÎÛ˜‡ÈÌ˚È ˛ÌËÚ ËÁ ÒÔËÒÍ‡ readyUnits
+            // –í—ã–±–∏—Ä–∞–µ–º —Å–ª—É—á–∞–π–Ω—ã–π —é–Ω–∏—Ç –∏–∑ —Å–ø–∏—Å–∫–∞ readyUnits
             int randomIndex = Random.Range(0, ReadyUnits.Count);
             PeopleUnit randomUnit = ReadyUnits[randomIndex];
 
-            // ”ÒÚ‡Ì‡‚ÎË‚‡ÂÏ ÒÓÒÚÓˇÌËÂ ˛ÌËÚ‡ Í‡Í Injured
+            // –£—Å—Ç–∞–Ω–∞–≤–ª–∏–≤–∞–µ–º —Å–æ—Å—Ç–æ—è–Ω–∏–µ —é–Ω–∏—Ç–∞ –∫–∞–∫ Injured
             randomUnit.SetInjured();
             randomUnit.DisableUnit();
 
-            // Œ·ÌÓ‚ÎˇÂÏ ÒÔËÒÓÍ „ÓÚÓ‚˚ı ˛ÌËÚÓ‚
+            // –û–±–Ω–æ–≤–ª—è–µ–º —Å–ø–∏—Å–æ–∫ –≥–æ—Ç–æ–≤—ã—Ö —é–Ω–∏—Ç–æ–≤
             UpdateReadyUnits();
             AnimateUnitPositions();
 
@@ -127,7 +154,7 @@ public class PeopleUnitsController : MonoBehaviour
         }
     }
 
-    // Ã≈“Œƒ ƒÀﬂ ¿Õ»Ã¿÷»» —Œ«ƒ¿Õ€’ ﬁÕ»“Œ¬
+    // –ú–ï–¢–û–î –î–õ–Ø –ê–ù–ò–ú–ê–¶–ò–ò –°–û–ó–î–ê–ù–´–• –Æ–ù–ò–¢–û–í
     private void AnimateUnitPositions()
     {
         var indexedUnits = CreatedUnits
@@ -149,7 +176,7 @@ public class PeopleUnitsController : MonoBehaviour
         }
     }
 
-    // Ã≈“Œƒ ƒÀﬂ —Œ«ƒ¿Õ»ﬂ ﬁÕ»“¿
+    // –ú–ï–¢–û–î –î–õ–Ø –°–û–ó–î–ê–ù–ò–Ø –Æ–ù–ò–¢–ê
     public void CreateUnit()
     {
         if (NotCreatedUnits.Count > 0)

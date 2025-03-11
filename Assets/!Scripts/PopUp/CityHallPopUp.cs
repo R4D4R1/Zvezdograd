@@ -15,20 +15,20 @@ public class CityHallPopUp : QuestPopUp
 
     private void OnEnable()
     {
-        ControllersManager.Instance.peopleUnitsController.OnUnitCreatedByPeopleUnitController += UpdateCreateUnitGO;
+        _controllersManager.PeopleUnitsController.OnUnitCreatedByPeopleUnitController += UpdateCreateUnitGO;
     }
 
     private void OnDisable()
     {
-        ControllersManager.Instance.peopleUnitsController.OnUnitCreatedByPeopleUnitController -= UpdateCreateUnitGO;
+        _controllersManager.PeopleUnitsController.OnUnitCreatedByPeopleUnitController -= UpdateCreateUnitGO;
     }
 
     protected override void Start()
     {
         base.Start();
 
-        _building = ControllersManager.Instance.buildingController.GetCityHallBuilding();
-        _timeController = ControllersManager.Instance.timeController;
+        _building = _controllersManager.BuildingController.GetCityHallBuilding();
+        _timeController = _controllersManager.TimeController;
         _timeController.OnNextDayEvent += OnNextDayEvent;
 
         SetButtonState(true);
@@ -61,7 +61,7 @@ public class CityHallPopUp : QuestPopUp
     {
         if (EnoughReadyMaterialToCreate())
         {
-            ControllersManager.Instance.buildingController.GetCityHallBuilding().NewUnitStartedCreating();
+            _controllersManager.BuildingController.GetCityHallBuilding().NewUnitStartedCreating();
 
             SetButtonState(false);
         }
@@ -73,8 +73,8 @@ public class CityHallPopUp : QuestPopUp
 
     public bool EnoughReadyMaterialToCreate()
     {
-        return ChechIfEnoughResourcesByType(ResourceController.ResourceType.ReadyMaterials,
-            ControllersManager.Instance.buildingController.GetCityHallBuilding().ReadyMaterialsToCreateNewPeopleUnit);
+        return ChechIfEnoughResourcesByType(ResourceModel.ResourceType.ReadyMaterials,
+            _controllersManager.BuildingController.GetCityHallBuilding().ReadyMaterialsToCreateNewPeopleUnit);
     }
 
     private void ShowErrorMessage()
@@ -83,7 +83,7 @@ public class CityHallPopUp : QuestPopUp
         {
             _errorText.text = "ÍÅ ÄÎÑÒÀÒÎ×ÍÎ ÌÀÒÅÐÈÀËÎÂ";
         }
-        else if (!CheckForEnoughPeople(ControllersManager.Instance.buildingController.GetFoodTruckBuilding().PeopleToGiveProvision))
+        else if (!CheckForEnoughPeople(_controllersManager.BuildingController.GetFoodTruckBuilding().PeopleToGiveProvision))
         {
             _errorText.text = "ÍÅ ÄÎÑÒÀÒÎ×ÍÎ ËÞÄÅÉ";
         }
@@ -103,12 +103,12 @@ public class CityHallPopUp : QuestPopUp
     private void UpdateCreatePeopleText()
     {
         _createPeopleText.text = $"Îðãàíèçîâàòü íîâîå ïîäðàçäåëåíèå - äîñòóïíî " +
-            $"{ControllersManager.Instance.peopleUnitsController.NotCreatedUnits.Count}";
+            $"{_controllersManager.PeopleUnitsController.NotCreatedUnits.Count}";
     }
 
     public void UpdateCreateUnitGO()
     {
-        if (ControllersManager.Instance.peopleUnitsController.NotCreatedUnits.Count > 0)
+        if (_controllersManager.PeopleUnitsController.NotCreatedUnits.Count > 0)
         {
             UpdateCreatePeopleText();
             SetButtonState(true);

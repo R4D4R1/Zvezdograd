@@ -1,5 +1,3 @@
-using Cysharp.Threading.Tasks;
-using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
@@ -9,7 +7,7 @@ public class EnoughPopUp : InfoPopUp
 
     public bool CheckForEnoughPeople(int peopleToDoSmth)
     {
-        if (ControllersManager.Instance.peopleUnitsController.ReadyUnits.Count >= peopleToDoSmth)
+        if (_controllersManager.PeopleUnitsController.ReadyUnits.Count >= peopleToDoSmth)
             return true;
         else
             return false;
@@ -20,23 +18,23 @@ public class EnoughPopUp : InfoPopUp
         base.HidePopUp();
         _errorText.enabled = false;
     }
-    public bool ChechIfEnoughResourcesByType(ResourceController.ResourceType resourceType, int resourceAmountToCompare)
+    public bool ChechIfEnoughResourcesByType(ResourceModel.ResourceType resourceType, int resourceAmountToCompare)
     {
-        if (resourceType == ResourceController.ResourceType.Provision)
+        if (resourceType == ResourceModel.ResourceType.Provision)
         {
-            return ControllersManager.Instance.resourceController.GetProvision() >= resourceAmountToCompare;
+            return _resourceViewModel.Provision.Value >= resourceAmountToCompare;
         }
-        else if (resourceType == ResourceController.ResourceType.Medicine)
+        else if (resourceType == ResourceModel.ResourceType.Medicine)
         {
-            return ControllersManager.Instance.resourceController.GetMedicine() >= resourceAmountToCompare;
+            return _resourceViewModel.Medicine.Value >= resourceAmountToCompare;
         }
-        else if (resourceType == ResourceController.ResourceType.RawMaterials)
+        else if (resourceType == ResourceModel.ResourceType.RawMaterials)
         {
-            return ControllersManager.Instance.resourceController.GetRawMaterials() >= resourceAmountToCompare;
+            return _resourceViewModel.RawMaterials.Value >= resourceAmountToCompare;
         }
         else
         {
-            return ControllersManager.Instance.resourceController.GetReadyMaterials() >= resourceAmountToCompare;
+            return _resourceViewModel.ReadyMaterials.Value >= resourceAmountToCompare;
         }
     }
 }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using Zenject;
 
 public class SelectableBuilding : MonoBehaviour
 {
@@ -7,6 +8,15 @@ public class SelectableBuilding : MonoBehaviour
     [field: SerializeField] public bool BuildingIsSelectable { get; protected set; } = true;
     public int BuildingId { get; private set; }
 
+    protected ControllersManager _controllersManager;
+    protected ResourceViewModel _resourceViewModel;
+
+    [Inject]
+    public void Construct(ControllersManager controllersManager, ResourceViewModel resourceViewModel)
+    {
+        _controllersManager = controllersManager;
+        _resourceViewModel = resourceViewModel;
+    }
 
     protected virtual void Start()
     {
@@ -28,6 +38,6 @@ public class SelectableBuilding : MonoBehaviour
             PlayerPrefs.Save();
         }
 
-        Debug.Log(BuildingNameText + " " + BuildingId);
+        //Debug.Log(BuildingNameText + " " + BuildingId);
     }
 }

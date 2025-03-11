@@ -20,8 +20,8 @@ public class CollectPopUp : EnoughPopUp
         buildingToUse = collectableBuilding;
 
         demandsText.text = $" - Осталось {buildingToUse.RawMaterialsLeft} сырья\n" +
-                           $" - Вы получите {buildingToUse.RawMaterialsGet} сырья (у вас {ControllersManager.Instance.resourceController.GetRawMaterials()})\n" +
-                           $" - Необходимо {buildingToUse.PeopleToCollect} подразделений (у вас {ControllersManager.Instance.peopleUnitsController.ReadyUnits.Count})\n" +
+                           $" - Вы получите {buildingToUse.RawMaterialsGet} сырья (у вас {_resourceViewModel.RawMaterials.Value})\n" +
+                           $" - Необходимо {buildingToUse.PeopleToCollect} подразделений (у вас {_controllersManager.PeopleUnitsController.ReadyUnits.Count})\n" +
                            $" - Займет {buildingToUse.TurnsToCollect} ходов\n" +
                            $" - Подразделения будут отдыхать {buildingToUse.TurnsToRest} ходов";
 
@@ -64,7 +64,7 @@ public class CollectPopUp : EnoughPopUp
 
     public bool EnoughRawMaterialsToStore()
     {
-        return ControllersManager.Instance.resourceController.GetRawMaterials() + buildingToUse.RawMaterialsGet <= ControllersManager.Instance.resourceController.GetMaxRawMaterials();
+        return _resourceViewModel.RawMaterials.Value + buildingToUse.RawMaterialsGet <= _resourceViewModel.Model.MaxRawMaterials;
     }
 
     public bool EnoughRawMaterialsInBuilding()

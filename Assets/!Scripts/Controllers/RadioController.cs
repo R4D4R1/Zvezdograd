@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro; // Импортируем TextMeshPro
+using TMPro;
 using System.Collections.Generic;
 
 public class RadioController : MonoBehaviour

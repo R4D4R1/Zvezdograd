@@ -10,7 +10,7 @@ public class FoodTrucksPopUp : QuestPopUp
         _errorText.enabled = false;
         _isDestroyable = false;
         SetButtonState(true);
-        ControllersManager.Instance.timeController.OnNextDayEvent += OnNextDayEvent;
+        _controllersManager.TimeController.OnNextDayEvent += OnNextDayEvent;
     }
 
     public void ShowFoodTruckPopUp()
@@ -25,7 +25,7 @@ public class FoodTrucksPopUp : QuestPopUp
     private void OnNextDayEvent()
     {
         // включаем на следующий день если раздали еду
-        if (ControllersManager.Instance.buildingController.GetFoodTruckBuilding().FoodWasGivenAwayToday())
+        if (_controllersManager.BuildingController.GetFoodTruckBuilding().FoodWasGivenAwayToday())
         {
             activeBtn.SetActive(true);
             inactiveBtn.SetActive(false);
@@ -37,7 +37,7 @@ public class FoodTrucksPopUp : QuestPopUp
         if (CanGiveAwayProvision())
         {
             SetButtonState(false);
-            ControllersManager.Instance.buildingController.GetFoodTruckBuilding().SendPeopleToGiveProvision();
+            _controllersManager.BuildingController.GetFoodTruckBuilding().SendPeopleToGiveProvision();
         }
         else
         {
@@ -47,7 +47,7 @@ public class FoodTrucksPopUp : QuestPopUp
 
     private bool CanGiveAwayProvision()
     {
-        return CheckForEnoughPeople(ControllersManager.Instance.buildingController.GetFoodTruckBuilding().PeopleToGiveProvision) &&
+        return CheckForEnoughPeople(_controllersManager.BuildingController.GetFoodTruckBuilding().PeopleToGiveProvision) &&
                EnoughProvisionToGiveAway();
     }
 
@@ -57,7 +57,7 @@ public class FoodTrucksPopUp : QuestPopUp
         {
             _errorText.text = "НЕТ ПРОВИЗИИ";
         }
-        else if (!CheckForEnoughPeople(ControllersManager.Instance.buildingController.GetFoodTruckBuilding().PeopleToGiveProvision))
+        else if (!CheckForEnoughPeople(_controllersManager.BuildingController.GetFoodTruckBuilding().PeopleToGiveProvision))
         {
             _errorText.text = "НЕ ДОСТАТОЧНО ЛЮДЕЙ";
         }
@@ -66,6 +66,6 @@ public class FoodTrucksPopUp : QuestPopUp
 
     public bool EnoughProvisionToGiveAway()
     {
-        return ChechIfEnoughResourcesByType(ResourceController.ResourceType.Provision, ControllersManager.Instance.buildingController.GetFoodTruckBuilding().FoodToGive);
+        return ChechIfEnoughResourcesByType(ResourceModel.ResourceType.Provision, _controllersManager.BuildingController.GetFoodTruckBuilding().FoodToGive);
     }
 }

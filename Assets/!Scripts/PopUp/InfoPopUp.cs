@@ -1,10 +1,8 @@
 using UnityEngine;
 using TMPro;
-using UnityEngine.UI;
 using DG.Tweening;
-using System.Collections;
 using Cysharp.Threading.Tasks;
-using System;
+using Zenject;
 
 public class InfoPopUp : MonoBehaviour
 {
@@ -19,6 +17,16 @@ public class InfoPopUp : MonoBehaviour
     protected bool _isDestroyable = true;
 
     public bool IsActive { get; protected set; } = false;
+
+    protected ControllersManager _controllersManager;
+    protected ResourceViewModel _resourceViewModel;
+
+    [Inject]
+    public void Construct(ControllersManager controllersManager, ResourceViewModel resourceViewModel)
+    {
+        _controllersManager = controllersManager;
+        _resourceViewModel = resourceViewModel;
+    }
 
     private void OnEnable()
     {
@@ -75,8 +83,8 @@ public class InfoPopUp : MonoBehaviour
                     IsActive = false;
                 });
 
-                ControllersManager.Instance.mainGameUIController.EnableEscapeMenuToggle();
-                ControllersManager.Instance.mainGameUIController.TurnOnUI();
+                _controllersManager.MainGameUIController.EnableEscapeMenuToggle();
+                _controllersManager.MainGameUIController.TurnOnUI();
 
                 SetAlpha(0);
             }

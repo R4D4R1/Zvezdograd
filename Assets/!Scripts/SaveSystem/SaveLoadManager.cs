@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Zenject;
 
 public class SaveLoadManager : MonoBehaviour
 {
@@ -13,6 +13,16 @@ public class SaveLoadManager : MonoBehaviour
     private List<TextMeshProUGUI> _slotTexts = new();
     private static int? currentSlot = null;
     public static bool IsStartedFromMainMenu { get; private set; } = false;
+
+    protected static ControllersManager _controllersManager;
+    protected static ResourceViewModel _resourceViewModel;
+
+    [Inject]
+    public void Construct(ControllersManager controllersManager,ResourceViewModel resourceViewModel)
+    {
+        _controllersManager = controllersManager;
+        _resourceViewModel = resourceViewModel;
+    }
 
     private void Start()
     {
@@ -59,9 +69,8 @@ public class SaveLoadManager : MonoBehaviour
 
         string filePath = GetFilePath(currentSlot.Value);
 
-        var unitsController = ControllersManager.Instance.peopleUnitsController;
-        var timeController = ControllersManager.Instance.timeController;
-        var resourceController = ControllersManager.Instance.resourceController;
+        var unitsController = _controllersManager.PeopleUnitsController;
+        var timeController = _controllersManager.TimeController;
 
         GameData gameData = new GameData
         {
@@ -69,11 +78,11 @@ public class SaveLoadManager : MonoBehaviour
             allUnitsData = new List<PeopleUnitData>(),
             allBuildingsData = new List<BuildingData>(),
 
-            provision = resourceController.GetProvision(),
-            medicine = resourceController.GetMedicine(),
-            rawMaterials = resourceController.GetRawMaterials(),
-            readyMaterials = resourceController.GetReadyMaterials(),
-            stability = resourceController.GetStability()
+            provision = _resourceViewModel.Provision.Value,
+            medicine = _resourceViewModel.Medicine.Value,
+            rawMaterials = _resourceViewModel.RawMaterials.Value,
+            readyMaterials = _resourceViewModel.ReadyMaterials.Value,
+            stability = _resourceViewModel.Stability.Value
         };
 
         gameData.SetDate(timeController.CurrentDate);
@@ -90,7 +99,7 @@ public class SaveLoadManager : MonoBehaviour
             gameData.allUnitsData.Add(unitData);
         }
 
-        foreach (var building in ControllersManager.Instance.buildingController.AllBuildings)
+        foreach (var building in _controllersManager.BuildingController.AllBuildings)
         {
             BuildingData buildingData = new BuildingData
             {
@@ -133,9 +142,9 @@ public class SaveLoadManager : MonoBehaviour
     public static void LoadDataFromCurrentSlot()
     {
         string filePath = GetFilePath(currentSlot.Value);
-        var unitsController = ControllersManager.Instance.peopleUnitsController;
-        var timeController = ControllersManager.Instance.timeController;
-        var resourceController = ControllersManager.Instance.resourceController;
+
+        var unitsController = _controllersManager.PeopleUnitsController;
+        var timeController = _controllersManager.TimeController;
 
         if (File.Exists(filePath))
         {
@@ -158,7 +167,7 @@ public class SaveLoadManager : MonoBehaviour
                 unit.SetState(unitData.currentState, unitData.busyTime, unitData.restingTime);
             }
 
-            var buildingController = ControllersManager.Instance.buildingController;
+            var buildingController = _controllersManager.BuildingController;
 
             Debug.Log(buildingController.gameObject);
 
@@ -182,11 +191,11 @@ public class SaveLoadManager : MonoBehaviour
                 }
             }
 
-            resourceController.ModifyResource(ResourceController.ResourceType.Provision, gameData.provision - resourceController.GetProvision());
-            resourceController.ModifyResource(ResourceController.ResourceType.Medicine, gameData.medicine - resourceController.GetMedicine());
-            resourceController.ModifyResource(ResourceController.ResourceType.RawMaterials, gameData.rawMaterials - resourceController.GetRawMaterials());
-            resourceController.ModifyResource(ResourceController.ResourceType.ReadyMaterials, gameData.readyMaterials - resourceController.GetReadyMaterials());
-            resourceController.ModifyResource(ResourceController.ResourceType.Stability, gameData.stability - resourceController.GetStability());
+            _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Provision, gameData.provision - _resourceViewModel.Provision.Value);
+            _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Medicine, gameData.medicine - _resourceViewModel.Medicine.Value);
+            _resourceViewModel.ModifyResource(ResourceModel.ResourceType.RawMaterials, gameData.rawMaterials - _resourceViewModel.RawMaterials.Value);
+            _resourceViewModel.ModifyResource(ResourceModel.ResourceType.ReadyMaterials, gameData.readyMaterials - _resourceViewModel.ReadyMaterials.Value);
+            _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Stability, gameData.stability - _resourceViewModel.Stability.Value);
 
             unitsController.UpdateReadyUnits();
             Debug.Log($"Game loaded from slot {currentSlot.Value}.");

@@ -1,6 +1,8 @@
+using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using Zenject;
 
 public class TutorialController : MonoBehaviour
 {
@@ -9,7 +11,6 @@ public class TutorialController : MonoBehaviour
     [SerializeField] private RepairableBuilding damagedBuilding;
     [SerializeField] private FactoryBuilding factoryBuilding;
 
-    [SerializeField] private GameObject _specialPopUpPrefab;
     [SerializeField] private Transform _popUpParent;
 
     [Header("Текст для подсказок зданий")]
@@ -30,12 +31,24 @@ public class TutorialController : MonoBehaviour
     private Camera _mainCamera;
     private Canvas _canvas;
 
-    public void StartTutorial()
-    {
-        _mainCamera = Camera.main; // Получаем основную камеру
-        _canvas = _popUpParent.GetComponentInParent<Canvas>(); // Получаем родительский Canvas
+    protected ControllersManager _controllersManager;
+    private PopUpFactory _popUpFactory;
 
-        var buildingController = ControllersManager.Instance.buildingController;
+    [Inject]
+    public void Construct(ControllersManager controllersManager, PopUpFactory popUpFactory)
+    {
+        _controllersManager = controllersManager;
+        _popUpFactory = popUpFactory;
+    }
+
+    public async void StartTutorial()
+    {
+        await UniTask.Delay(500);
+
+        _mainCamera = Camera.main;
+        _canvas = _popUpParent.GetComponentInParent<Canvas>();
+
+        var buildingController = _controllersManager.BuildingController;
 
         AddBuildingToTutorial(buildingController.GetCityHallBuilding(), cityHallBuildingDescription);
         AddBuildingToTutorial(buildingController.GetHospitalBuilding(), hospitalBuildingDescription);
@@ -59,7 +72,7 @@ public class TutorialController : MonoBehaviour
 
     public void ShowTutorial()
     {
-        ControllersManager.Instance.selectionController.Deselect();
+        _controllersManager.SelectionController.Deselect();
 
         if (tutorialBuildings.Count == 0)
         {
@@ -78,7 +91,7 @@ public class TutorialController : MonoBehaviour
             outline.enabled = true;
         }
 
-        _currentPopUp = Instantiate(_specialPopUpPrefab, _popUpParent);
+        _currentPopUp = _popUpFactory.CreateSpecialPopUp();
 
         // Позиционируем поп-ап над зданием
         Vector3 buildingWorldPosition = tutorialBuilding.transform.position;
@@ -88,8 +101,8 @@ public class TutorialController : MonoBehaviour
         RectTransform popUpRect = _currentPopUp.GetComponent<RectTransform>();
         _currentPopUp.transform.localPosition = new Vector3(localPosition.x + popUpRect.rect.width * 0.75f, localPosition.y + popUpRect.rect.height * 0.75f, 0);
 
-        Debug.Log(buildingWorldPosition);
-        Debug.Log(screenPosition);
+        //Debug.Log(buildingWorldPosition);
+        //Debug.Log(screenPosition);
 
         var popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
         string description = buildingDescriptions.TryGetValue(tutorialBuilding, out var desc) ? desc : "Нет описания";

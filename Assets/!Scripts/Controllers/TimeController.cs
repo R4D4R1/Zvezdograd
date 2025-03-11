@@ -4,6 +4,7 @@ using TMPro;
 using System;
 using DG.Tweening;
 using Cysharp.Threading.Tasks;
+using Zenject;
 
 public class TimeController : MonoBehaviour
 {
@@ -41,7 +42,15 @@ public class TimeController : MonoBehaviour
     private int _daysWithoutBombing;
     private bool _startedTransition = false;
 
+    protected ControllersManager _controllersManager;
+    protected ResourceViewModel _resourceViewModel;
 
+    [Inject]
+    public void Construct(ControllersManager controllersManager, ResourceViewModel resourceViewModel)
+    {
+        _controllersManager = controllersManager;
+        _resourceViewModel = resourceViewModel;
+    }
     private void Start()
     {
         _daysWithoutBombing = 0;
@@ -78,7 +87,7 @@ public class TimeController : MonoBehaviour
                 _daysWithoutBombing++;
                 if (_daysWithoutBombing == _daysBetweenBombingRegularBuildings)
                 {
-                    ControllersManager.Instance.buildingController.BombRegularBuilding();
+                    _controllersManager.BuildingController.BombRegularBuilding();
                     _daysWithoutBombing = 0;
                     OnNextDayEvent.Invoke();
                 }
@@ -104,7 +113,7 @@ public class TimeController : MonoBehaviour
 
     public void EndTurnButtonClicked()
     {
-        ControllersManager.Instance.selectionController.enabled = false;
+        _controllersManager.SelectionController.enabled = false;
         _nextTurnBtn.interactable = false;
 
         foreach (var script in _btnScripts)
@@ -129,8 +138,10 @@ public class TimeController : MonoBehaviour
                     script.enabled = true;
                 }
 
+                Debug.Log(EventPopUp.Instance.IsActive);
+
                 if(!EventPopUp.Instance.IsActive)
-                    ControllersManager.Instance.selectionController.enabled = true;
+                    _controllersManager.SelectionController.enabled = true;
             });
         });
     }

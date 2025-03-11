@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using Cysharp.Threading.Tasks;
+using Zenject;
 
 
 public class MainGameController : MonoBehaviour
@@ -37,9 +38,19 @@ public class MainGameController : MonoBehaviour
         Lose
     }
 
+    protected ControllersManager _controllersManager;
+    protected ResourceViewModel _resourceViewModel;
+
+    [Inject]
+    public void Construct(ControllersManager controllersManager, ResourceViewModel resourceViewModel)
+    {
+        _controllersManager = controllersManager;
+        _resourceViewModel = resourceViewModel;
+    }
+
     private void Start()
     {
-        foreach (RepairableBuilding building in ControllersManager.Instance.buildingController.RepairableBuildings)
+        foreach (RepairableBuilding building in _controllersManager.BuildingController.RepairableBuildings)
         {
             building.InitBuilding();
         }
@@ -50,14 +61,14 @@ public class MainGameController : MonoBehaviour
             _tutorialPupUp.gameObject.SetActive(false);
 
             ShowCity();
-            ControllersManager.Instance.mainGameUIController.TurnOnUI();
+            _controllersManager.MainGameUIController.TurnOnUI();
 
             SaveLoadManager.LoadDataFromCurrentSlot();
         }
         else
         {
-            ControllersManager.Instance.blurController.BlurBackGroundNow();
-            ControllersManager.Instance.selectionController.enabled = false;
+            _controllersManager.BlurController.BlurBackGroundNow();
+            _controllersManager.SelectionController.enabled = false;
 
             _blackImage.color = Color.black;
 
@@ -111,7 +122,7 @@ public class MainGameController : MonoBehaviour
         }
 
         // Запуск анимации
-        ControllersManager.Instance.MainCamera.transform.DOLocalMoveY(targetYPosition, animationDuration).SetEase(easeType);
+        _controllersManager.MainCamera.transform.DOLocalMoveY(targetYPosition, animationDuration).SetEase(easeType);
     }
 
     public int GetAnimDuration()

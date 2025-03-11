@@ -1,6 +1,7 @@
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using Zenject;
 
 public class SpecialPopUp : InfoPopUp
 {
@@ -44,12 +45,14 @@ public class SpecialPopUp : InfoPopUp
 
     private void Init()
     {
-        _collectPopUp = ControllersManager.Instance.popUpsController.CollectPopUp;
-        _repairPopUp = ControllersManager.Instance.popUpsController.RepairPopUp;
-        _factoryPopUp = ControllersManager.Instance.popUpsController.FactoryPopUp;
-        _cityHallPopUp = ControllersManager.Instance.popUpsController.CityHallPopUp;
-        _foodTrucksPopUp = ControllersManager.Instance.popUpsController.FoodTrucksPopUp;
-        _hospitalPopUp = ControllersManager.Instance.popUpsController.HospitalPopUp;
+        Debug.Log(_controllersManager);
+
+        _collectPopUp = _controllersManager.PopUpsController.CollectPopUp;
+        _repairPopUp = _controllersManager.PopUpsController.RepairPopUp;
+        _factoryPopUp = _controllersManager.PopUpsController.FactoryPopUp;
+        _cityHallPopUp = _controllersManager.PopUpsController.CityHallPopUp;
+        _foodTrucksPopUp = _controllersManager.PopUpsController.FoodTrucksPopUp;
+        _hospitalPopUp = _controllersManager.PopUpsController.HospitalPopUp;
     }
 
     private void OnEnable()
@@ -64,36 +67,36 @@ public class SpecialPopUp : InfoPopUp
         {
             case PopUpFuncs.OpenCollectMenu:
                 _collectPopUp.ShowCollectPopUp(CollectableBuilding);
-                ControllersManager.Instance.mainGameUIController.TurnOffUI();
+                _controllersManager.MainGameUIController.TurnOffUI();
 
                 break;
             case PopUpFuncs.OpenRepairMenu:
                 _repairPopUp.ShowRepairPopUp(RepairableBuilding);
-                ControllersManager.Instance.mainGameUIController.TurnOffUI();
+                _controllersManager.MainGameUIController.TurnOffUI();
 
                 break;
             case PopUpFuncs.OpenFactoryMenu:
                 _factoryPopUp.ShowFactoryPopUp(FactoryBuilding);
-                ControllersManager.Instance.mainGameUIController.TurnOffUI();
+                _controllersManager.MainGameUIController.TurnOffUI();
 
                 break;
             case PopUpFuncs.OpenCityHallMenu:
                 _cityHallPopUp.ShowCityHallPopUp();
-                ControllersManager.Instance.mainGameUIController.TurnOffUI();
+                _controllersManager.MainGameUIController.TurnOffUI();
 
                 break;
             case PopUpFuncs.OpenFoodTrucksMenu:
                 _foodTrucksPopUp.ShowFoodTruckPopUp();
-                ControllersManager.Instance.mainGameUIController.TurnOffUI();
+                _controllersManager.MainGameUIController.TurnOffUI();
 
                 break;
             case PopUpFuncs.OpenHospitalMenu:
                 _hospitalPopUp.ShowHospitalPopUp();
-                ControllersManager.Instance.mainGameUIController.TurnOffUI();
+                _controllersManager.MainGameUIController.TurnOffUI();
 
                 break;
             case PopUpFuncs.OpenNextTutorialPopUp:
-                ControllersManager.Instance.tutorialController.ShowTutorial();
+                _controllersManager.TutorialController.ShowTutorial();
                 break;
             default:
                 break;

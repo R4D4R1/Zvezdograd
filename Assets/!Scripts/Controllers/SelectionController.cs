@@ -1,6 +1,6 @@
-using DG.Tweening;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Zenject;
 
 public class SelectionController : MonoBehaviour
 {
@@ -8,8 +8,6 @@ public class SelectionController : MonoBehaviour
     private SelectableBuilding _selectedBuilding;
     private Camera _mainCamera;
 
-    [SerializeField] private GameObject _popUpPrefab;
-    [SerializeField] private GameObject _specialPopUpPrefab;
     [SerializeField] private Transform _popUpParent;
 
     [SerializeField] private Color _outlineColor;
@@ -18,19 +16,19 @@ public class SelectionController : MonoBehaviour
     private GameObject _currentPopUp;
     private Canvas _canvas;
 
+    private PopUpFactory _popUpFactory;
+
+    [Inject]
+    public void Construct(PopUpFactory popUpFactory)
+    {
+        _popUpFactory = popUpFactory;
+    }
+
     void Start()
     {
         _mainCamera = Camera.main;
         _canvas = _popUpParent.GetComponentInParent<Canvas>();
-
-        InitAllOutlines();
     }
-
-    private void InitAllOutlines()
-    {
-
-    }
-
     void Update()
     {
         HandleHover();
@@ -143,14 +141,14 @@ public class SelectionController : MonoBehaviour
                         if (repairableBuilding.CurrentState == RepairableBuilding.State.Intact
                           && repairableBuilding.Type == RepairableBuilding.BuildingType.LivingArea)
                         {
-                            _currentPopUp = Instantiate(_popUpPrefab, _popUpParent);
+                            _currentPopUp =  _popUpFactory.CreateInfoPopUp();
                             InfoPopUp popUpObject = _currentPopUp.GetComponent<InfoPopUp>();
                             popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText);
                         }
                         else if (repairableBuilding.CurrentState == RepairableBuilding.State.Intact
                            && repairableBuilding.Type != RepairableBuilding.BuildingType.LivingArea)
                         {
-                            _currentPopUp = Instantiate(_specialPopUpPrefab, _popUpParent);
+                            _currentPopUp = _popUpFactory.CreateSpecialPopUp();
                             SpecialPopUp popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
 
                             popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "Œ“ –€“‹");
@@ -181,7 +179,7 @@ public class SelectionController : MonoBehaviour
                         }
                         else if (repairableBuilding.CurrentState == RepairableBuilding.State.Damaged)
                         {
-                            _currentPopUp = Instantiate(_specialPopUpPrefab, _popUpParent);
+                            _currentPopUp = _popUpFactory.CreateSpecialPopUp();
                             SpecialPopUp popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
 
                             popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "–≈ÃŒÕ“");
@@ -193,7 +191,7 @@ public class SelectionController : MonoBehaviour
 
                     if (_selectedBuilding is CollectableBuilding collectableBuilding)
                     {
-                        _currentPopUp = Instantiate(_specialPopUpPrefab, _popUpParent);
+                        _currentPopUp = _popUpFactory.CreateSpecialPopUp();
                         SpecialPopUp popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
 
                         popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "—Œ¡–¿“‹");
@@ -208,6 +206,8 @@ public class SelectionController : MonoBehaviour
                     Vector2 localPoint;
                     RectTransformUtility.ScreenPointToLocalPointInRectangle(_canvas.transform as RectTransform, screenPosition, _canvas.worldCamera, out localPoint);
                     _currentPopUp.transform.localPosition = localPoint + new Vector2(popUpRect.rect.width * 0.5f, popUpRect.rect.height * 0.5f);
+
+                    Debug.Log(_currentPopUp.name);
                 }
                 else
                 {

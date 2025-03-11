@@ -1,4 +1,5 @@
 using UnityEngine;
+using Zenject;
 
 public class BuildingDependingOnStability : SelectableBuilding
 {
@@ -6,7 +7,7 @@ public class BuildingDependingOnStability : SelectableBuilding
     // ћетод мен€ющий количество шагов необходимое дл€ выполнени€ взависимости от стабильности
     protected int UpdateAmountOfTurnsNeededToDoSMTH(int TurnsToDoWorkOriginal)
     {
-        int stability = ControllersManager.Instance.resourceController.GetStability();
+        int stability = _resourceViewModel.Stability.Value;
         int turnToDoWork = 0;
 
         if (stability > 75)

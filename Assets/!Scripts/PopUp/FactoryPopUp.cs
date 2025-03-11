@@ -93,17 +93,17 @@ public class FactoryPopUp : EnoughPopUp
 
     public bool EnoughSpaceToStoreReadyMaterials()
     {
-        return ControllersManager.Instance.resourceController.GetReadyMaterials() + _buildingToUse.ReadyMaterialsGet
-               < ControllersManager.Instance.resourceController.GetMaxReadyMaterials();
+        return _resourceViewModel.ReadyMaterials.Value + _buildingToUse.ReadyMaterialsGet
+               < _resourceViewModel.Model.MaxReadyMaterials;
     }
 
     public bool EnoughRawMaterialsForReadyMaterials()
     {
-        return ChechIfEnoughResourcesByType(ResourceController.ResourceType.RawMaterials, _buildingToUse.RawMaterialsToCreateReadyMaterials);
+        return ChechIfEnoughResourcesByType(ResourceModel.ResourceType.RawMaterials, _buildingToUse.RawMaterialsToCreateReadyMaterials);
     }
 
     public bool EnoughRawMaterialsForArmyMaterials()
     {
-        return ChechIfEnoughResourcesByType(ResourceController.ResourceType.RawMaterials, _buildingToUse.RawMaterialsToCreateArmyMaterials);
+        return ChechIfEnoughResourcesByType(ResourceModel.ResourceType.RawMaterials, _buildingToUse.RawMaterialsToCreateArmyMaterials);
     }
 }

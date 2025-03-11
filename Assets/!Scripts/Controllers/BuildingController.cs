@@ -21,16 +21,17 @@ public class BuildingController : MonoBehaviour
 
         foreach (var building in AllBuildings)
         {
-            if (building.GetComponent<SpecialBuilding>() != null)
+            if (building.GetComponent<RepairableBuilding>() != null)
             {
-                SpecialBuildings.Add(building as RepairableBuilding);
-            }
-            else
-            {
-                RegularBuildings.Add(building as RepairableBuilding);
-            }
-            if(building.GetComponent<RepairableBuilding>() != null)
-            {
+                if (building.GetComponent<SpecialBuilding>() != null)
+                {
+                    SpecialBuildings.Add(building as RepairableBuilding);
+                }
+                else
+                {
+                    RegularBuildings.Add(building as RepairableBuilding);
+                }
+
                 RepairableBuildings.Add(building as RepairableBuilding);
             }
         }
@@ -51,6 +52,7 @@ public class BuildingController : MonoBehaviour
             if (Random.Range(0, 100) <= _specialBuildingBombChance)
             {
                 int randomBuildingIndex = Random.Range(0, SpecialBuildings.Count);
+
                 if (SpecialBuildings[randomBuildingIndex]. CurrentState == RepairableBuilding.State.Intact
                     && SpecialBuildings[randomBuildingIndex].BuildingIsSelectable)
                 {
@@ -60,7 +62,8 @@ public class BuildingController : MonoBehaviour
             else
             {
                 int randomBuildingIndex = Random.Range(0, RegularBuildings.Count);
-                if (RegularBuildings[randomBuildingIndex].CurrentState == RepairableBuilding.State.Intact)
+
+                if (RegularBuildings[randomBuildingIndex].CurrentState == RepairableBuilding.State.Intact)  
                 {
                     buildingToReturn = RegularBuildings[randomBuildingIndex];
                 }

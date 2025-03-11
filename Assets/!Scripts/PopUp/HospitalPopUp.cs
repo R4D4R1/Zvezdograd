@@ -14,12 +14,12 @@ public class HospitalPopUp : QuestPopUp
         _isDestroyable = false;
         SetButtonState(true);
         UpdateMedicineTimerText();
-        ControllersManager.Instance.timeController.OnNextDayEvent += OnNextDayEvent;
+        _controllersManager.TimeController.OnNextDayEvent += OnNextDayEvent;
     }
 
     private void OnNextDayEvent()
     {
-        if (ControllersManager.Instance.buildingController.GetHospitalBuilding().MedicineWasGiven())
+        if (_controllersManager.BuildingController.GetHospitalBuilding().MedicineWasGiven())
         {
             activeBtn.SetActive(true);
             inactiveBtn.SetActive(false);
@@ -42,7 +42,7 @@ public class HospitalPopUp : QuestPopUp
         if (CanGiveAwayMedicine())
         {
             SetButtonState(false);
-            ControllersManager.Instance.buildingController.GetHospitalBuilding().SendPeopleToGiveMedicine();
+            _controllersManager.BuildingController.GetHospitalBuilding().SendPeopleToGiveMedicine();
         }
         else
         {
@@ -52,7 +52,7 @@ public class HospitalPopUp : QuestPopUp
 
     private bool CanGiveAwayMedicine()
     {
-        return CheckForEnoughPeople(ControllersManager.Instance.buildingController.GetHospitalBuilding().PeopleToGiveMedicine) &&
+        return CheckForEnoughPeople(_controllersManager.BuildingController.GetHospitalBuilding().PeopleToGiveMedicine) &&
                EnoughMedicineToGiveAway();
     }
 
@@ -62,7 +62,7 @@ public class HospitalPopUp : QuestPopUp
         {
             _errorText.text = "НЕ ДОСТАТОЧНО МЕДИЦИНЫ";
         }
-        else if (!CheckForEnoughPeople(ControllersManager.Instance.buildingController.GetHospitalBuilding().PeopleToGiveMedicine))
+        else if (!CheckForEnoughPeople(_controllersManager.BuildingController.GetHospitalBuilding().PeopleToGiveMedicine))
         {
             _errorText.text = "НЕ ДОСТАТОЧНО ЛЮДЕЙ";
         }
@@ -72,12 +72,12 @@ public class HospitalPopUp : QuestPopUp
     private void UpdateMedicineTimerText()
     {
         _medicineTimerText.text = "Крайний срок отправки мед. помощи - " +
-            ControllersManager.Instance.buildingController.GetHospitalBuilding().DaysToGiveMedicine.ToString() + " дн.";
+            _controllersManager.BuildingController.GetHospitalBuilding().DaysToGiveMedicine.ToString() + " дн.";
     }
 
     private bool EnoughMedicineToGiveAway()
     {
-        return ChechIfEnoughResourcesByType(ResourceController.ResourceType.Medicine, ControllersManager.Instance.buildingController.GetHospitalBuilding().MedicineToGive);
+        return ChechIfEnoughResourcesByType(ResourceModel.ResourceType.Medicine, _controllersManager.BuildingController.GetHospitalBuilding().MedicineToGive);
     }
 
     

@@ -12,8 +12,6 @@ public class RepairableBuilding : BuildingDependingOnStability
     [SerializeField] private int TurnsToRepairOriginal;
     public int TurnsToRepair;
 
-    //protected int _turnsToRepair = 0;
-
     [field: SerializeField] public int TurnsToRestFromRepair { get; private set; }
 
     [SerializeField] protected State _state;
@@ -63,10 +61,8 @@ public class RepairableBuilding : BuildingDependingOnStability
     {
         FindBuildingModels();
         SaveOriginalMaterials();
-        ControllersManager.Instance.timeController.OnNextTurnBtnPressed += TryTurnOnBuilding;
-        ControllersManager.Instance.timeController.OnNextTurnBtnPressed += UpdateAmountOfTurnsNeededToDoSMTH;
-
-        //_turnsToRepair = TurnsToRepairOriginal;
+        _controllersManager.TimeController.OnNextTurnBtnPressed += TryTurnOnBuilding;
+        _controllersManager.TimeController.OnNextTurnBtnPressed += UpdateAmountOfTurnsNeededToDoSMTH;
 
         UpdateBuildingModel();
         UpdateAmountOfTurnsNeededToDoSMTH();
@@ -74,8 +70,8 @@ public class RepairableBuilding : BuildingDependingOnStability
 
     private void OnDestroy()
     {
-        ControllersManager.Instance.timeController.OnNextTurnBtnPressed -= TryTurnOnBuilding;
-        ControllersManager.Instance.timeController.OnNextTurnBtnPressed -= UpdateAmountOfTurnsNeededToDoSMTH;
+        _controllersManager.TimeController.OnNextTurnBtnPressed -= TryTurnOnBuilding;
+        _controllersManager.TimeController.OnNextTurnBtnPressed -= UpdateAmountOfTurnsNeededToDoSMTH;
     }
 
     private void UpdateAmountOfTurnsNeededToDoSMTH()
@@ -104,8 +100,8 @@ public class RepairableBuilding : BuildingDependingOnStability
     {
         if (CurrentState == State.Damaged)
         {
-            ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToRepair, TurnsToRepair, TurnsToRestFromRepair);
-            ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.RawMaterials, -BuildingMaterialsToRepair);
+            _controllersManager.PeopleUnitsController.AssignUnitsToTask(PeopleToRepair, TurnsToRepair, TurnsToRestFromRepair);
+            _resourceViewModel.ModifyResource(ResourceModel.ResourceType.ReadyMaterials,-BuildingMaterialsToRepair);
 
             BuildingIsSelectable = false;
 

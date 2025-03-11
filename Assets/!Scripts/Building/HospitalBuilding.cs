@@ -31,7 +31,7 @@ public class HospitalBuilding : RepairableBuilding
 
     protected void Awake()
     {
-        ControllersManager.Instance.timeController.OnNextTurnBtnPressed += UpdateAmountOfTurnsNeededToDoSMTH;
+        _controllersManager.TimeController.OnNextTurnBtnPressed += UpdateAmountOfTurnsNeededToDoSMTH;
         DaysToGiveMedicine = OriginalDaysToGiveMedicine;
         UpdateAmountOfTurnsNeededToDoSMTH();
     }
@@ -45,10 +45,9 @@ public class HospitalBuilding : RepairableBuilding
     {
         _medicineWasGivenAwayInLastTwoDay = true;
 
-        ControllersManager.Instance.peopleUnitsController.AssignUnitsToTask(PeopleToGiveMedicine, TurnsToToGiveMedicine, TurnsToRestFromMedicineJob);
-        ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.Medicine, -MedicineToGive);
-        ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.Stability, StabilityAddValue);
-
+        _controllersManager.PeopleUnitsController.AssignUnitsToTask(PeopleToGiveMedicine, TurnsToToGiveMedicine, TurnsToRestFromMedicineJob);
+        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Medicine, -MedicineToGive);
+        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Stability, StabilityAddValue);
     }
 
     public bool MedicineWasGiven()
@@ -65,7 +64,7 @@ public class HospitalBuilding : RepairableBuilding
             }
             else
             {
-                ControllersManager.Instance.resourceController.ModifyResource(ResourceController.ResourceType.Stability, -StabilityRemoveValue);
+                _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Stability, -StabilityRemoveValue);
                 return false;
             }
         }
