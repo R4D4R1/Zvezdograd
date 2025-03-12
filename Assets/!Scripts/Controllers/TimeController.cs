@@ -26,6 +26,9 @@ public class TimeController : MonoBehaviour
     [SerializeField] private Button _nextTurnBtn;
     [SerializeField] private MonoBehaviour[] _btnScripts;
 
+    [Range(1.02f, 2f)]
+    [SerializeField] private float _nextTurnFadeTime;
+
     public event Action OnNextTurnBtnPressed;
     public event Action OnNextDayEvent;
 
@@ -64,7 +67,7 @@ public class TimeController : MonoBehaviour
         CurrentDate = newDate;
         CurrentPeriod = newPeriod;
         UpdateLighting();
-        UpdateText();  // Update the UI after setting new values
+        UpdateText();
     }
 
     private void UpdateTime()
@@ -122,13 +125,13 @@ public class TimeController : MonoBehaviour
         }
 
 
-        blackoutImage.DOFade(1, 0.5f).OnComplete(async() =>
+        blackoutImage.DOFade(1, _nextTurnFadeTime / 2).OnComplete(async () =>
         {
             UpdateTime();
             await UniTask.Delay(100);
             OnNextTurnBtnPressed.Invoke();
 
-            blackoutImage.DOFade(0, 0.5f).OnComplete(() =>
+            blackoutImage.DOFade(0, _nextTurnFadeTime / 2).OnComplete(() =>
             {
                 // Activate Next Turn Btn
                 _nextTurnBtn.interactable = true;
@@ -140,7 +143,7 @@ public class TimeController : MonoBehaviour
 
                 Debug.Log(EventPopUp.Instance.IsActive);
 
-                if(!EventPopUp.Instance.IsActive)
+                if (!EventPopUp.Instance.IsActive)
                     _controllersManager.SelectionController.enabled = true;
             });
         });

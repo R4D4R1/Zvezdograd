@@ -8,7 +8,6 @@ public class FoodTrucksPopUp : QuestPopUp
         base.Start();
 
         _errorText.enabled = false;
-        _isDestroyable = false;
         SetButtonState(true);
         _controllersManager.TimeController.OnNextDayEvent += OnNextDayEvent;
     }

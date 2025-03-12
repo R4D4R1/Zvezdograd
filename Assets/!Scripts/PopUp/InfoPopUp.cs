@@ -6,26 +6,27 @@ using Zenject;
 
 public class InfoPopUp : MonoBehaviour
 {
+    [Range(0f, 0.49f)]
     [SerializeField] protected float scaleDuration = 0.2f;
+    [Range(0f, 0.49f)]
     [SerializeField] protected float fadeDuration = 0.2f;
-    [SerializeField] protected float scaleDownDuration = 0.1f;
 
     public TextMeshProUGUI LabelText;
     public TextMeshProUGUI DescriptionText;
     [SerializeField] private CanvasGroup _canvasGroup;
 
-    protected bool _isDestroyable = true;
-
     public bool IsActive { get; protected set; } = false;
 
     protected ControllersManager _controllersManager;
     protected ResourceViewModel _resourceViewModel;
-
+    protected PopUpFactory _popUpFactory;
+    
     [Inject]
-    public void Construct(ControllersManager controllersManager, ResourceViewModel resourceViewModel)
+    public void Construct(ControllersManager controllersManager, ResourceViewModel resourceViewModel,PopUpFactory popUpFactory)
     {
         _controllersManager = controllersManager;
         _resourceViewModel = resourceViewModel;
+        _popUpFactory = popUpFactory;
     }
 
     private void OnEnable()
@@ -65,29 +66,15 @@ public class InfoPopUp : MonoBehaviour
     {
         if (IsActive)
         {
-            if (_isDestroyable)
+            transform.DOScale(Vector3.zero, scaleDuration).OnComplete(() =>
             {
+                IsActive = false;
+            });
 
-                transform.DOScale(Vector3.zero, scaleDownDuration).OnComplete(async () =>
-                {
-                    IsActive = false;
+            _controllersManager.MainGameUIController.EnableEscapeMenuToggle();
+            _controllersManager.MainGameUIController.TurnOnUI();
 
-                    await UniTask.Delay(1000);
-                    Destroy(gameObject);
-                });
-            }
-            else
-            {
-                transform.DOScale(Vector3.zero, scaleDownDuration).OnComplete(() =>
-                {
-                    IsActive = false;
-                });
-
-                _controllersManager.MainGameUIController.EnableEscapeMenuToggle();
-                _controllersManager.MainGameUIController.TurnOnUI();
-
-                SetAlpha(0);
-            }
+            SetAlpha(0);
         }
     }
 

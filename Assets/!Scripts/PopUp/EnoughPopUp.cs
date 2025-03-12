@@ -18,6 +18,7 @@ public class EnoughPopUp : InfoPopUp
         base.HidePopUp();
         _errorText.enabled = false;
     }
+
     public bool ChechIfEnoughResourcesByType(ResourceModel.ResourceType resourceType, int resourceAmountToCompare)
     {
         if (resourceType == ResourceModel.ResourceType.Provision)

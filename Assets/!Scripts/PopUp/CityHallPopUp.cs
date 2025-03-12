@@ -33,7 +33,6 @@ public class CityHallPopUp : QuestPopUp
 
         SetButtonState(true);
         _errorText.enabled = false;
-        _isDestroyable = false;
 
         UpdateAllText();
         UpdateCreatePeopleText();

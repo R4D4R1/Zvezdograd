@@ -21,7 +21,6 @@ public class FactoryPopUp : EnoughPopUp
     private void Start()
     {
         _errorText.enabled = false;
-        _isDestroyable = false;
     }
 
     public void UpdateCreateArmyButtonState()

@@ -12,7 +12,6 @@ public class CollectPopUp : EnoughPopUp
     private void Start()
     {
         _errorText.enabled = false;
-        _isDestroyable = false;
     }
 
     public void ShowCollectPopUp(CollectableBuilding collectableBuilding)

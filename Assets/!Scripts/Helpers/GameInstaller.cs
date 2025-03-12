@@ -26,14 +26,11 @@ public class GameInstaller : MonoInstaller
     {
         if (controllersManager == null)
         {
-            Debug.LogError("ControllersManager is not assigned in GameInstaller!");
-            return;
+            throw new System.Exception("ControllersManager is not assigned in GameInstaller!");
         }
-
         if (Camera.main == null)
         {
-            Debug.LogError("Main Camera is missing in the scene!");
-            return;
+            throw new System.Exception("Main Camera is missing in the scene!");
         }
 
         // Регистрируем все конфиги отдельно

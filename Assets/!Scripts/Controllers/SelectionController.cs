@@ -8,27 +8,23 @@ public class SelectionController : MonoBehaviour
     private SelectableBuilding _selectedBuilding;
     private Camera _mainCamera;
 
-    [SerializeField] private Transform _popUpParent;
+    [SerializeField] private Canvas _canvas;
 
     [SerializeField] private Color _outlineColor;
     [Range(0f,1f), SerializeField] private float _outlineWidth;
 
     private GameObject _currentPopUp;
-    private Canvas _canvas;
 
     private PopUpFactory _popUpFactory;
+    private Camera mainCamera;
 
     [Inject]
-    public void Construct(PopUpFactory popUpFactory)
+    public void Construct(PopUpFactory popUpFactory,Camera mainCamera)
     {
         _popUpFactory = popUpFactory;
+        _mainCamera = mainCamera;
     }
 
-    void Start()
-    {
-        _mainCamera = Camera.main;
-        _canvas = _popUpParent.GetComponentInParent<Canvas>();
-    }
     void Update()
     {
         HandleHover();
@@ -206,8 +202,6 @@ public class SelectionController : MonoBehaviour
                     Vector2 localPoint;
                     RectTransformUtility.ScreenPointToLocalPointInRectangle(_canvas.transform as RectTransform, screenPosition, _canvas.worldCamera, out localPoint);
                     _currentPopUp.transform.localPosition = localPoint + new Vector2(popUpRect.rect.width * 0.5f, popUpRect.rect.height * 0.5f);
-
-                    Debug.Log(_currentPopUp.name);
                 }
                 else
                 {

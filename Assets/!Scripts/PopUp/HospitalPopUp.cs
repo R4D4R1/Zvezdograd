@@ -11,7 +11,6 @@ public class HospitalPopUp : QuestPopUp
         base.Start();
 
         _errorText.enabled = false;
-        _isDestroyable = false;
         SetButtonState(true);
         UpdateMedicineTimerText();
         _controllersManager.TimeController.OnNextDayEvent += OnNextDayEvent;

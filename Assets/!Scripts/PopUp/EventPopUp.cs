@@ -16,11 +16,6 @@ public class EventPopUp : InfoPopUp
             Destroy(Instance.gameObject);
     }
 
-    private void Start()
-    {
-        _isDestroyable = false;
-    }
-
     public void ShowEventPopUp(string Label, string Description, string Button)
     {
         Debug.Log("Started show popup");

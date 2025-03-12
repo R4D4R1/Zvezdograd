@@ -12,7 +12,6 @@ public class RepairPopUp : EnoughPopUp
     private void Start()
     {
         _errorText.enabled = false;
-        _isDestroyable = false;
     }
 
     public void ShowRepairPopUp(RepairableBuilding buildingToRepair)

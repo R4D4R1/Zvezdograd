@@ -13,7 +13,6 @@ public class ControllersManager : MonoBehaviour
     public PopUpsController PopUpsController { get; private set; }
     public PopupEventController PopupEventController { get; private set; }
     public TutorialController TutorialController { get; private set; }
-    public Camera MainCamera { get; private set; }
 
     [Inject]
     public void Construct(
@@ -26,8 +25,8 @@ public class ControllersManager : MonoBehaviour
         BlurController blurController,
         PopUpsController popUpsController,
         PopupEventController popupEventController,
-        TutorialController tutorialController,
-        Camera mainCamera)
+        TutorialController tutorialController
+        )
     {
         SelectionController = selectionController;
         MainGameUIController = mainGameUIController;
@@ -39,6 +38,5 @@ public class ControllersManager : MonoBehaviour
         PopUpsController = popUpsController;
         PopupEventController = popupEventController;
         TutorialController = tutorialController;
-        MainCamera = mainCamera;
     }
 }

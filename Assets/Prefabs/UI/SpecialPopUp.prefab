@@ -187,10 +187,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scaleDuration: 0.2
   fadeDuration: 0.2
-  scaleDownDuration: 0.1
   LabelText: {fileID: 2365699358528326218}
   DescriptionText: {fileID: 2242772262373175910}
   _canvasGroup: {fileID: 8759096022332267131}
+  _returnToPoolTime: 1.301
   ButtonText: {fileID: 3980255856166513082}
   RepairableBuilding: {fileID: 0}
   CollectableBuilding: {fileID: 0}

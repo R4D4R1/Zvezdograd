@@ -45,7 +45,7 @@ public class ResourceView : MonoBehaviour
 
     private void SubscribeToResource(IReadOnlyReactiveProperty<int> resource, Slider slider, TextMeshProUGUI text, string name, int maxValue)
     {
-        int previousValue = resource.Value; // Запоминаем начальное значение
+        int previousValue = resource.Value;
 
         resource.Subscribe(newValue =>
         {

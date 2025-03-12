@@ -15,7 +15,7 @@ public class MainGameController : MonoBehaviour
     [SerializeField] private float _blackoutTime;
 
     [Range(0.1f, 5f)]
-    [SerializeField] private float animationDuration = 1f;
+    [SerializeField] private float _showCityDuration = 1f;
 
     [SerializeField] private AnimationTypeEnum animationType;
     public GameOverStateEnum GameOverState {  get; private set; }
@@ -40,12 +40,14 @@ public class MainGameController : MonoBehaviour
 
     protected ControllersManager _controllersManager;
     protected ResourceViewModel _resourceViewModel;
+    protected Camera _mainCamera;
 
     [Inject]
-    public void Construct(ControllersManager controllersManager, ResourceViewModel resourceViewModel)
+    public void Construct(ControllersManager controllersManager, ResourceViewModel resourceViewModel,Camera mainCamera)
     {
         _controllersManager = controllersManager;
         _resourceViewModel = resourceViewModel;
+        _mainCamera = mainCamera;
     }
 
     private void Start()
@@ -57,14 +59,18 @@ public class MainGameController : MonoBehaviour
 
         if (SaveLoadManager.IsStartedFromMainMenu)
         {
-            _startPopUp.gameObject.SetActive(false);
-            _tutorialPupUp.gameObject.SetActive(false);
+            _blackImage.DOFade(0, _blackoutTime).OnComplete(() =>
+            {
+                _startPopUp.gameObject.SetActive(false);
+                _tutorialPupUp.gameObject.SetActive(false);
 
-            ShowCity();
-            _controllersManager.MainGameUIController.TurnOnUI();
+                ShowCity();
+                _controllersManager.MainGameUIController.TurnOnUI();
 
-            SaveLoadManager.LoadDataFromCurrentSlot();
+                SaveLoadManager.LoadDataFromCurrentSlot();
+            });
         }
+
         else
         {
             _controllersManager.BlurController.BlurBackGroundNow();
@@ -122,11 +128,11 @@ public class MainGameController : MonoBehaviour
         }
 
         // Запуск анимации
-        _controllersManager.MainCamera.transform.DOLocalMoveY(targetYPosition, animationDuration).SetEase(easeType);
+        _mainCamera.transform.DOLocalMoveY(targetYPosition, _showCityDuration).SetEase(easeType);
     }
 
     public int GetAnimDuration()
     {
-        return (int)(animationDuration*1000);
+        return (int)(_showCityDuration*1000);
     }
 }

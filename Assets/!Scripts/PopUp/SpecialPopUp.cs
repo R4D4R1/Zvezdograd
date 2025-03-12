@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using Zenject;
 
-public class SpecialPopUp : InfoPopUp
+public class SpecialPopUp : ReturnToPoolPopUp
 {
     public TextMeshProUGUI ButtonText;
 
@@ -29,6 +29,7 @@ public class SpecialPopUp : InfoPopUp
     [HideInInspector]
     public HospitalBuilding HospitalBuilding;
 
+    [HideInInspector]
     public PopUpFuncs CurrentFunc;
 
     private CollectPopUp _collectPopUp;
@@ -121,5 +122,5 @@ public class SpecialPopUp : InfoPopUp
 
             SetAlpha(1);
         });
-    }
+    }   
 }

@@ -270,7 +270,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9063619309819865913}
-  - component: {fileID: 3604443793561181549}
+  - component: {fileID: -7266611314182248132}
   m_Layer: 5
   m_Name: InfoPopUp
   m_TagString: Untagged
@@ -298,7 +298,7 @@ RectTransform:
   m_AnchoredPosition: {x: 483.85553, y: -1.6803513}
   m_SizeDelta: {x: 200, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &3604443793561181549
+--- !u!114 &-7266611314182248132
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -307,15 +307,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 5009751767173041556}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea4acf107e979e447900a860e547be7d, type: 3}
+  m_Script: {fileID: 11500000, guid: dac238973db63a04a9f1b0c92b4f5b96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   scaleDuration: 0.2
   fadeDuration: 0.2
-  scaleDownDuration: 0.1
   LabelText: {fileID: 1782043389777533537}
   DescriptionText: {fileID: 8834275512949852142}
   _canvasGroup: {fileID: 3735325904161783085}
+  _returnToPoolTimeInSeconds: 1
 --- !u!1 &7085881243885194045
 GameObject:
   m_ObjectHideFlags: 0
