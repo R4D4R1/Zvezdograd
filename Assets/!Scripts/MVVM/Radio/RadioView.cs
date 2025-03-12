@@ -1,9 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UniRx;
 using System.Collections.Generic;
 
-public class RadioView : MonoBehaviour
+public class RadioController : MonoBehaviour
 {
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private TMP_Text songTitleText;
@@ -24,15 +25,16 @@ public class RadioView : MonoBehaviour
         }
 
         _viewModel = new RadioViewModel(audioSource, songList);
-        _viewModel.OnSongChanged += UpdateSongTitle;
-        _viewModel.OnPlaybackStateChanged += UpdatePlaybackButtons;
+
+        _viewModel.OnSongChanged.Subscribe(UpdateSongTitle).AddTo(this);
+
+        _viewModel.OnPlaybackStateChanged.Subscribe(UpdatePlaybackButtons).AddTo(this);
 
         playButton.onClick.AddListener(() => _viewModel.PlayPauseSong());
         pauseButton.onClick.AddListener(() => _viewModel.PlayPauseSong());
         nextButton.onClick.AddListener(() => _viewModel.NextSong());
         previousButton.onClick.AddListener(() => _viewModel.PreviousSong());
 
-        // Initial state
         UpdateSongTitle(songList[0].Name);
         UpdatePlaybackButtons(false);
     }

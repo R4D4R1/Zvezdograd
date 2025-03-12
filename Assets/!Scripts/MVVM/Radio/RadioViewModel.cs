@@ -1,16 +1,19 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UniRx;
 using System;
 
 public class RadioViewModel
 {
-    public Action<string> OnSongChanged;
-    public Action<bool> OnPlaybackStateChanged; 
+    public ReactiveProperty<string> CurrentSong { get; private set; } = new ReactiveProperty<string>();
+    public ReactiveProperty<bool> IsPlaying { get; private set; } = new ReactiveProperty<bool>(false);
 
     private AudioSource _audioSource;
     private List<RadioModel> _songs;
     private int _currentSongIndex = 0;
-    private bool _isPlaying = false;
+
+    public IObservable<string> OnSongChanged => CurrentSong;
+    public IObservable<bool> OnPlaybackStateChanged => IsPlaying;
 
     public RadioViewModel(AudioSource audioSource, List<RadioModel> songs)
     {
@@ -25,18 +28,17 @@ public class RadioViewModel
 
     public void PlayPauseSong()
     {
-        if (_isPlaying)
+        if (IsPlaying.Value)
         {
             _audioSource.Pause();
-            OnPlaybackStateChanged?.Invoke(false);
+            IsPlaying.Value = false;
         }
         else
         {
             _audioSource.clip = _songs[_currentSongIndex].Clip;
             _audioSource.Play();
-            OnPlaybackStateChanged?.Invoke(true);
+            IsPlaying.Value = true;
         }
-        _isPlaying = !_isPlaying;
     }
 
     public void NextSong()
@@ -54,10 +56,10 @@ public class RadioViewModel
     private void StartNewSong()
     {
         _audioSource.clip = _songs[_currentSongIndex].Clip;
-        if (_isPlaying)
+        if (IsPlaying.Value)
         {
             _audioSource.Play();
         }
-        OnSongChanged?.Invoke(_songs[_currentSongIndex].Name);
+        CurrentSong.Value = _songs[_currentSongIndex].Name;
     }
 }
