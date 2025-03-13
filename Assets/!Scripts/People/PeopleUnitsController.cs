@@ -71,11 +71,13 @@ public class PeopleUnitsController : MonoBehaviour
 
     private void OnEnable()
     {
+        _controllersManager.TimeController.OnNextTurnBtnPressed += NextTurn;
         _controllersManager.BuildingController.GetCityHallBuilding().OnCityHallUnitCreated += CreateUnit;
     }
 
     private void OnDisable()
     {
+        _controllersManager.TimeController.OnNextTurnBtnPressed -= NextTurn;
         _controllersManager.BuildingController.GetCityHallBuilding().OnCityHallUnitCreated -= CreateUnit;
     }
 

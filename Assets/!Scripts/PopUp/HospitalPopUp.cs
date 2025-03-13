@@ -40,6 +40,8 @@ public class HospitalPopUp : QuestPopUp
     {
         if (CanGiveAwayMedicine())
         {
+            if (!CanUseActionPoint())
+                return;
             SetButtonState(false);
             _controllersManager.BuildingController.GetHospitalBuilding().SendPeopleToGiveMedicine();
         }

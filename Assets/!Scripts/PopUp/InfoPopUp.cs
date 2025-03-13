@@ -78,6 +78,18 @@ public class InfoPopUp : MonoBehaviour
         }
     }
 
+    public void HideStartInfoPopUpPopUp()
+    {
+        if (IsActive)
+        {
+            transform.DOScale(Vector3.zero, scaleDuration).OnComplete(() =>
+            {
+                IsActive = false;
+            });
+
+            SetAlpha(0);
+        }
+    }
 
     protected void SetAlpha(float alpha)
     {

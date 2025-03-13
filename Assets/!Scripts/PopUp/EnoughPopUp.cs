@@ -39,8 +39,11 @@ public class EnoughPopUp : InfoPopUp
         }
     }
 
-    protected virtual void ActionHappend()
+    protected bool CanUseActionPoint()
     {
-        _controllersManager.TimeController.OnActionPointUsed();
+        if(_controllersManager.TimeController.OnActionPointUsed())
+            return true;
+        else 
+            return false;
     }
 }

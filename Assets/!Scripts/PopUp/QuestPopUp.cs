@@ -52,6 +52,9 @@ public class QuestPopUp : EnoughPopUp
                             return;
                         }
 
+                        if (!CanUseActionPoint())
+                            return;
+
                         bool canComplete = false;
                         switch (questType)
                         {

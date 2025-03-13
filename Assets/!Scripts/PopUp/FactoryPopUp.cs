@@ -50,6 +50,9 @@ public class FactoryPopUp : EnoughPopUp
     {
         if (CheckForEnoughPeople(_buildingToUse.PeopleToCreateReadyMaterials) && EnoughRawMaterialsForReadyMaterials() && EnoughSpaceToStoreReadyMaterials())
         {
+            if (!CanUseActionPoint())
+                return;
+
             HidePopUp();
             _buildingToUse.CreateReadyMaterials();
         }
@@ -63,6 +66,9 @@ public class FactoryPopUp : EnoughPopUp
     {
         if (CheckForEnoughPeople(_buildingToUse.PeopleToCreateArmyMaterials) && EnoughRawMaterialsForArmyMaterials())
         {
+            if (!CanUseActionPoint())
+                return;
+
             OnArmyBtnDisabled?.Invoke();
             HidePopUp();
             _buildingToUse.CreateArmyMaterials();

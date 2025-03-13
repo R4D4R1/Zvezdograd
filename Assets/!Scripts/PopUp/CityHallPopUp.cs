@@ -1,6 +1,5 @@
 using DG.Tweening;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class CityHallPopUp : QuestPopUp
@@ -58,8 +57,12 @@ public class CityHallPopUp : QuestPopUp
 
     public void CreateNewUnit()
     {
+
         if (EnoughReadyMaterialToCreate())
         {
+            if (!CanUseActionPoint())
+                return;
+
             _controllersManager.BuildingController.GetCityHallBuilding().NewUnitStartedCreating();
 
             SetButtonState(false);

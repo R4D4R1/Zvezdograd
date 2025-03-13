@@ -88,10 +88,19 @@ public class TimeController : MonoBehaviour
         _currentPeriod.Value = newPeriod;
     }
 
-    public void OnActionPointUsed()
+    public bool OnActionPointUsed()
     {
-        _actionPointsValue--;
-        UpdateActionPointsText() ;
+        if (_actionPointsValue > 0)
+        {
+            _actionPointsValue--;
+            UpdateActionPointsText();
+            return true;
+        }
+        else
+        {
+            Debug.Log("NO ACTION POINTS");
+            return false;
+        }
     }
 
     private void UpdateTime()
@@ -105,20 +114,22 @@ public class TimeController : MonoBehaviour
                 _currentPeriod.Value = PeriodOfDay.Вечер;
                 break;
             case PeriodOfDay.Вечер:
-                _currentPeriod.Value = PeriodOfDay.Утро;
+                _currentPeriod.SetValueAndForceNotify(PeriodOfDay.Утро);
                 _currentDate.Value = _currentDate.Value.AddDays(1);
-
                 _daysWithoutBombing++;
+
                 if (_daysWithoutBombing == _daysBetweenBombingRegularBuildings)
                 {
                     _controllersManager.BuildingController.BombRegularBuilding();
                     _daysWithoutBombing = 0;
-
                     OnNextDayEvent?.Invoke();
                 }
                 break;
         }
+
+        UpdateText();
     }
+
 
     private void UpdateLighting()
     {
@@ -145,9 +156,11 @@ public class TimeController : MonoBehaviour
 
         await blackoutImage.DOFade(1, _nextTurnFadeTime / 2).AsyncWaitForCompletion();
         UpdateTime();
+
         await UniTask.Delay(100);
 
-        OnNextTurnBtnPressed?.Invoke(); // Вызываем событие хода
+        OnNextTurnBtnPressed?.Invoke();
+        AddActionPoints();
 
         await blackoutImage.DOFade(0, _nextTurnFadeTime / 2).AsyncWaitForCompletion();
 
@@ -158,5 +171,13 @@ public class TimeController : MonoBehaviour
         {
             _controllersManager.SelectionController.enabled = true;
         }
+    }
+
+    private void AddActionPoints()
+    {
+        _actionPointsValue += _actionPointsAddValueInTheNextDay;
+        _actionPointsValue = Math.Clamp(_actionPointsValue, 0, _actionPointsMaxValue);
+
+        UpdateActionPointsText();
     }
 }

@@ -34,7 +34,11 @@ public class RepairPopUp : EnoughPopUp
     {
         if (CheckForEnoughPeople(_buildingToUse.PeopleToRepair) && EnoughMaterialsToRepair())
         {
+            if (!CanUseActionPoint())
+                return;
+
             HidePopUp();
+
             _buildingToUse.RepairBuilding();
         }
         else

@@ -35,6 +35,9 @@ public class CollectPopUp : EnoughPopUp
     {
         if (CheckForEnoughPeople(buildingToUse.PeopleToCollect) && EnoughRawMaterialsToStore() && EnoughRawMaterialsInBuilding())
         {
+            if (!CanUseActionPoint())
+                return;
+
             HidePopUp();
             buildingToUse.CollectBuilding();
         }
