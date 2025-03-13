@@ -1,6 +1,9 @@
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Zenject;
+using UniRx;
+using Cysharp.Threading.Tasks;
 
 public class SelectionController : MonoBehaviour
 {
@@ -15,12 +18,14 @@ public class SelectionController : MonoBehaviour
 
     private GameObject _currentPopUp;
 
+    private ControllersManager _controllersManager;
     private PopUpFactory _popUpFactory;
     private Camera mainCamera;
 
     [Inject]
-    public void Construct(PopUpFactory popUpFactory,Camera mainCamera)
+    public void Construct(PopUpFactory popUpFactory,Camera mainCamera,ControllersManager controllersManager)
     {
+        _controllersManager = controllersManager;
         _popUpFactory = popUpFactory;
         _mainCamera = mainCamera;
     }
@@ -29,6 +34,13 @@ public class SelectionController : MonoBehaviour
     {
         HandleHover();
         HandleSelection();
+    }
+
+    private void Start()
+    {
+        _controllersManager.TimeController.NextTurnButton.OnClickAsObservable()
+            .Subscribe(_ => Deselect())
+            .AddTo(this);
     }
 
     void HandleHover()
@@ -218,7 +230,7 @@ public class SelectionController : MonoBehaviour
     public void Deselect()
     {
         // Отключаем аутлайн у всех объектов с компонентом Outline
-        Outline[] allOutlines = Object.FindObjectsByType<Outline>(FindObjectsSortMode.None);
+        Outline[] allOutlines = FindObjectsByType<Outline>(FindObjectsSortMode.None);
         foreach (Outline outline in allOutlines)
         {
             outline.enabled = false;
@@ -228,7 +240,7 @@ public class SelectionController : MonoBehaviour
         _selectedBuilding = null;
 
         // Прячем все попапы на сцене
-        InfoPopUp[] allPopUps = Object.FindObjectsByType<InfoPopUp>(FindObjectsSortMode.None);
+        InfoPopUp[] allPopUps = FindObjectsByType<InfoPopUp>(FindObjectsSortMode.None);
         foreach (InfoPopUp popUp in allPopUps)
         {
             if (popUp.IsActive)
@@ -237,11 +249,11 @@ public class SelectionController : MonoBehaviour
             }
         }
 
-
         // Сбрасываем текущий попап, если он есть
         if (_currentPopUp != null)
         {
             _currentPopUp = null;
         }
     }
+
 }

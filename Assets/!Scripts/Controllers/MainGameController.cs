@@ -17,19 +17,10 @@ public class MainGameController : MonoBehaviour
     [Range(0.1f, 5f)]
     [SerializeField] private float _showCityDuration = 1f;
 
-    [SerializeField] private AnimationTypeEnum animationType;
-    public GameOverStateEnum GameOverState {  get; private set; }
-
-    [SerializeField] private float cameraCityShowY;
-    [SerializeField] private float cameraCityHideY;
-
-    public enum AnimationTypeEnum
-    {
-        EaseInOut,
-        EaseIn,
-        EaseOut,
-        Linear
-    }
+    [SerializeField] private float _cameraCityShowY;
+    [SerializeField] private float _cameraCityHideY;
+    [SerializeField] private Ease _easeType;
+    public GameOverStateEnum GameOverState { get; private set; }
 
     public enum GameOverStateEnum
     {
@@ -99,36 +90,17 @@ public class MainGameController : MonoBehaviour
 
     public void ShowCity()
     {
-        AnimateCamera(cameraCityShowY);
+        AnimateCamera(_cameraCityShowY);
     }
 
     public void HideCity()
     {
-        AnimateCamera(cameraCityHideY);
+        AnimateCamera(_cameraCityHideY);
     }
 
     private void AnimateCamera(float targetYPosition)
     {
-        // Выбор типа анимации
-        Ease easeType = Ease.Linear;
-        switch (animationType)
-        {
-            case AnimationTypeEnum.EaseInOut:
-                easeType = Ease.InOutQuad;
-                break;
-            case AnimationTypeEnum.EaseIn:
-                easeType = Ease.InQuad;
-                break;
-            case AnimationTypeEnum.EaseOut:
-                easeType = Ease.OutQuad;
-                break;
-            case AnimationTypeEnum.Linear:
-                easeType = Ease.Linear;
-                break;
-        }
-
-        // Запуск анимации
-        _mainCamera.transform.DOLocalMoveY(targetYPosition, _showCityDuration).SetEase(easeType);
+        _mainCamera.transform.DOLocalMoveY(targetYPosition, _showCityDuration).SetEase(_easeType);
     }
 
     public int GetAnimDuration()

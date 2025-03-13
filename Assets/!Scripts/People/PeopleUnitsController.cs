@@ -67,16 +67,16 @@ public class PeopleUnitsController : MonoBehaviour
         }
 
         UpdateReadyUnits();
+    }
 
-        _controllersManager.TimeController.OnNextTurnBtnPressed += NextTurn;
+    private void OnEnable()
+    {
         _controllersManager.BuildingController.GetCityHallBuilding().OnCityHallUnitCreated += CreateUnit;
     }
 
     private void OnDisable()
     {
-        _controllersManager.TimeController.OnNextTurnBtnPressed -= NextTurn;
         _controllersManager.BuildingController.GetCityHallBuilding().OnCityHallUnitCreated -= CreateUnit;
-
     }
 
     public void NextTurn()

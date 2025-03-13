@@ -7,15 +7,6 @@ public class GameInstaller : MonoInstaller
     [SerializeField] private BlurConfig blurConfig;
     [SerializeField] private ResourcesConfig resourceConfig;
 
-    //[SerializeField] private MainGameConfig mainGameConfig;
-    //[SerializeField] private SelectionConfig selectionConfig;
-    //[SerializeField] private MainGameUIConfig mainGameUIConfig;
-    //[SerializeField] private TimeConfig timeConfig;
-    //[SerializeField] private TutorialConfig tutorialConfig;
-    //[SerializeField] private RadioConfig radioConfig;
-    //[SerializeField] private BuildingConfig buildingConfig;
-    //[SerializeField] private PeopleUnitsConfig peopleUnitsConfig;
-
     [SerializeField] private Transform _parentPopUpPrefab;
     [SerializeField] private Transform _parentNotificationsPrefab;
     [SerializeField] private GameObject _infoPopUpPrefab;
@@ -35,14 +26,6 @@ public class GameInstaller : MonoInstaller
 
         // Регистрируем все конфиги отдельно
         Container.Bind<BlurConfig>().FromInstance(blurConfig).AsSingle();
-
-        //Container.Bind<MainGameConfig>().FromInstance(mainGameConfig).AsSingle();
-        //Container.Bind<SelectionConfig>().FromInstance(selectionConfig).AsSingle();
-        //Container.Bind<MainGameUIConfig>().FromInstance(mainGameUIConfig).AsSingle();
-        //Container.Bind<TimeConfig>().FromInstance(timeConfig).AsSingle();
-        //Container.Bind<PeopleUnitsConfig>().FromInstance(peopleUnitsConfig).AsSingle();
-        //Container.Bind<BuildingConfig>().FromInstance(buildingConfig).AsSingle();
-        //Container.Bind<TutorialConfig>().FromInstance(tutorialConfig).AsSingle();
 
         // Регистрируем контроллеры
         Container.Bind<MainGameController>().FromComponentInHierarchy().AsSingle();

@@ -1,10 +1,10 @@
+using System;
 using TMPro;
 using UnityEngine;
 
 public class EnoughPopUp : InfoPopUp
 {
     [SerializeField] protected TextMeshProUGUI _errorText;
-
     public bool CheckForEnoughPeople(int peopleToDoSmth)
     {
         if (_controllersManager.PeopleUnitsController.ReadyUnits.Count >= peopleToDoSmth)
@@ -37,5 +37,10 @@ public class EnoughPopUp : InfoPopUp
         {
             return _resourceViewModel.ReadyMaterials.Value >= resourceAmountToCompare;
         }
+    }
+
+    protected virtual void ActionHappend()
+    {
+        _controllersManager.TimeController.OnActionPointUsed();
     }
 }
