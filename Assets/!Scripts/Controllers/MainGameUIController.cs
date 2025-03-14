@@ -14,6 +14,7 @@ public class MainGameUIController : MonoBehaviour
 
     private readonly ResourceView _resourceView;
     protected ControllersManager _controllersManager;
+    private LoadLevelController _loadLevelController;
 
     [Inject]
     public MainGameUIController(ResourceView resourceView)
@@ -22,9 +23,10 @@ public class MainGameUIController : MonoBehaviour
     }
 
     [Inject]
-    public void Construct(ControllersManager controllersManager)
+    public void Construct(ControllersManager controllersManager, LoadLevelController loadLevelController)
     {
         _controllersManager = controllersManager;
+        _loadLevelController = loadLevelController;
     }
 
     private void Start()
@@ -121,6 +123,6 @@ public class MainGameUIController : MonoBehaviour
 
     public void LoadMainMenu()
     {
-        Bootstrapper.Instance?.loadLevelController.LoadSceneAsync(Scenes.MAIN_MENU);
+        _loadLevelController?.LoadSceneAsync(Scenes.MAIN_MENU);
     }
 }

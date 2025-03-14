@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
 using System.Linq;
+using Zenject;
 
 public class SettingsController : MonoBehaviour
 {
@@ -31,9 +32,17 @@ public class SettingsController : MonoBehaviour
     private const string ResolutionKey = "Resolution";
     private const string GraphicsQualityKey = "GraphicsQuality";
 
+    private SoundController _soundController;
+
+    [Inject]
+    public void Construct(SoundController soundController)
+    {
+        _soundController = soundController;
+    }
+
     private void Start()
     {
-        _SFXAudioSource = Bootstrapper.Instance?.SoundController?.GetComponent<AudioSource>();
+        _SFXAudioSource = _soundController?.GetComponent<AudioSource>();
 
         // Получение и фильтрация доступных разрешений экрана
         resolutions = Screen.resolutions;

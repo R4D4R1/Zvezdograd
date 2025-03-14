@@ -23,7 +23,7 @@
 
       "buildingType": "Еда",
       "questText": "Раздать доп пайки",
-      "deadlineInDays": 1,
+      "deadlineInDays": 2,
       "unitSize": 1,
       "turnsToWork": 2,
       "turnsToRest": 2,
@@ -45,12 +45,12 @@
       "date": "1942-09-03",
       "period": "День",
       "title": "ПРИБЫТИЕ ЛЮДЕЙ",
-      "mainText": "Группа уставших людей прибыла в город. Среди них обычные лишь старики и дети которые не смогут на помочь.",
-      "buttonText": "Будет необходимо построить для них места",
+      "mainText": "Группа уставших людей прибыла в город. Среди них обычные лишь старики и дети которые не смогут на помочь. Мы можем начать обустройство новых мест.",
+      "buttonText": "Необходимо больше места",
 
       "buildingType": "Совет",
       "questText": "Обустроить места для беженцев",
-      "deadlineInDays": 1,
+      "deadlineInDays": 3,
       "unitSize": 1,
       "turnsToWork": 2,
       "turnsToRest": 2,
@@ -85,8 +85,8 @@
       "date": "1942-09-05",
       "period": "Утро",
       "title": "ДИВЕРСИЯ НА ЗАВОДЕ",
-      "mainText": "Ночью неизвестные попытались устроить пожар но нанесли лишь незначительный урон.",
-      "buttonText": "Исправим этот казус",
+      "mainText": "Ночью неизвестные попытались устроить пожар но они не нанесли значительного вреда, возможно стоит отправть туда людей и почить то что там сломалось.",
+      "buttonText": "Если хватит ресурсов",
 
       "buildingType": "Совет",
       "questText": "Выдать материалы для востановления завода",
@@ -96,8 +96,8 @@
       "turnsToRest": 2,
       "materialsToGet": 0,
       "materialsToLose": 2,
-      "StabilityToGet": 1,
-      "StabilityToLose": 1,
+      "StabilityToGet": 2,
+      "StabilityToLose": 2,
       "RelationshipWithGovToGet": 2,
       "RelationshipWithGovToLose": 2
     },
@@ -117,16 +117,16 @@
 
       "buildingType": "Медикаменты",
       "questText": "Сделать все возможное чтобы они выжили",
-      "deadlineInDays": 1,
+      "deadlineInDays": 2,
       "unitSize": 1,
       "turnsToWork": 1,
       "turnsToRest": 1,
       "materialsToGet": 0,
       "materialsToLose": 1,
-      "StabilityToGet": 3,
-      "StabilityToLose": 3,
-      "RelationshipWithGovToGet": 2,
-      "RelationshipWithGovToLose": 2
+      "StabilityToGet": 5,
+      "StabilityToLose": 5,
+      "RelationshipWithGovToGet": 1,
+      "RelationshipWithGovToLose": 1
     },
     {
       "date": "1942-09-08",

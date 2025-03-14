@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Zenject;
 
 public class LoadLevelController : MonoBehaviour
 {
@@ -9,15 +10,20 @@ public class LoadLevelController : MonoBehaviour
     [SerializeField] private Slider _progressBar;
 
     private float _target;
+    private GameController _gameController;
+
+    [Inject]
+    public void Construct(GameController gameController)
+    {
+        _gameController = gameController;
+    }
 
     public async UniTask LoadSceneAsync(string sceneName)
     {
-        var bootstrapper = Bootstrapper.Instance;
-
         _target = 0;
         _progressBar.value = 0;
 
-        await UniTask.Delay((int)(bootstrapper.gameController.GameStartDelay * 1000));
+        await UniTask.Delay((int)(_gameController.GameStartDelay * 1000));
 
         var scene = SceneManager.LoadSceneAsync(sceneName);
         scene.allowSceneActivation = false;
@@ -35,14 +41,13 @@ public class LoadLevelController : MonoBehaviour
         _target = 1;
         _progressBar.value = _target;
 
-        await UniTask.Delay((int)(bootstrapper.gameController.GameAfterLoadDelay * 1000));
+        await UniTask.Delay((int)(_gameController.GameAfterLoadDelay * 1000));
 
         scene.allowSceneActivation = true;
 
         await UniTask.Yield();
         _loaderCanvas.SetActive(false);
     }
-
 
     private void Update()
     {

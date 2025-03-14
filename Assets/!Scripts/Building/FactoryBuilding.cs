@@ -62,9 +62,9 @@ public class FactoryBuilding : RepairableBuilding
         {
             if (!_isWorking)
             {
-                TurnsToRepair--;
+                _turnsToRepair--;
 
-                if (TurnsToRepair == 0)
+                if (_turnsToRepair == 0)
                 {
                     BuildingIsSelectable = true;
                     CurrentState = State.Intact;

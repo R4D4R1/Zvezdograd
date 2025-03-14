@@ -1,4 +1,5 @@
 using UnityEngine;
+using Zenject;
 
 public class GameController : MonoBehaviour
 {
@@ -7,5 +8,4 @@ public class GameController : MonoBehaviour
 
     [field: Range(0f, 1f)]
     [field: SerializeField] public float GameAfterLoadDelay { get; private set; }
-
 }

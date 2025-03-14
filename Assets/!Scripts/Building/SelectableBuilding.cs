@@ -3,9 +3,7 @@ using Zenject;
 
 public class SelectableBuilding : MonoBehaviour
 {
-    [field: SerializeField] public string BuildingNameText { get; protected set; }
-    [field: SerializeField] public string DescriptionText { get; protected set; }
-    [field: SerializeField] public bool BuildingIsSelectable { get; protected set; } = true;
+    [SerializeField] private SelectableBuildingConfig _selectableBuildingConfig;
     public int BuildingId { get; private set; }
 
     protected ControllersManager _controllersManager;
@@ -20,6 +18,14 @@ public class SelectableBuilding : MonoBehaviour
 
     protected virtual void Start()
     {
+        if (_selectableBuildingConfig != null)
+        {
+            BuildingNameText = _selectableBuildingConfig.BuildingNameText;
+            DescriptionText = _selectableBuildingConfig.DescriptionText;
+        }
+
+        BuildingIsSelectable = true;
+
         GenerateOrLoadBuildingId();
     }
 
@@ -37,7 +43,21 @@ public class SelectableBuilding : MonoBehaviour
             PlayerPrefs.SetInt(uniqueKey, BuildingId);
             PlayerPrefs.Save();
         }
-
-        //Debug.Log(BuildingNameText + " " + BuildingId);
     }
+
+    public string BuildingNameText { get; protected set; }
+    public string DescriptionText { get; protected set; }
+
+    public bool BuildingIsSelectable
+    {
+        get => _selectableBuildingConfig != null && _selectableBuildingConfig.BuildingIsSelectable;
+        set
+        {
+            if (_selectableBuildingConfig != null)
+            {
+                _selectableBuildingConfig.BuildingIsSelectable = value;
+            }
+        }
+    }
+
 }

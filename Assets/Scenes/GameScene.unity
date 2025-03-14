@@ -531,22 +531,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b3c3af1342ef574ebf496968ba715a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BuildingNameText>k__BackingField: "\u0416\u0438\u043B\u043E\u0439 \u0440\u0430\u0439\u043E\u043D"
-  <DescriptionText>k__BackingField: 
-  <BuildingIsSelectable>k__BackingField: 1
-  <DamagedBuildingNameText>k__BackingField: "\u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u044B\u0439
-    \u0440\u0430\u0439\u043E\u043D"
-  <DamagedDescriptionText>k__BackingField: "\u0421\u043B\u043E\u043C\u0430\u043D\u043D\u043E\u0435
-    \u0436\u0438\u043B\u043E\u0435 \u0437\u0434\u0430\u043D\u0438\u0435 \u043F\u043E\u043D\u0438\u0436\u0430\u0435\u0442
-    \u0441\u0442\u0430\u0431\u0438\u043B\u044C\u043D\u043E\u0441\u0442\u044C"
-  <BuildingMaterialsToRepair>k__BackingField: 1
-  <PeopleToRepair>k__BackingField: 1
-  TurnsToRepairOriginal: 2
-  TurnsToRepair: 0
-  <TurnsToRestFromRepair>k__BackingField: 3
-  _state: 0
-  _buildingType: 0
-  _greyMaterial: {fileID: 2100000, guid: f1f22581a8a67c94ca2fdecd52975a74, type: 2}
+  _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
+  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
 --- !u!1 &6038813
 GameObject:
   m_ObjectHideFlags: 0
@@ -593,22 +579,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b3c3af1342ef574ebf496968ba715a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BuildingNameText>k__BackingField: "\u0416\u0438\u043B\u043E\u0439 \u0440\u0430\u0439\u043E\u043D"
-  <DescriptionText>k__BackingField: 
-  <BuildingIsSelectable>k__BackingField: 1
-  <DamagedBuildingNameText>k__BackingField: "\u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u044B\u0439
-    \u0440\u0430\u0439\u043E\u043D"
-  <DamagedDescriptionText>k__BackingField: "\u0421\u043B\u043E\u043C\u0430\u043D\u043D\u043E\u0435
-    \u0436\u0438\u043B\u043E\u0435 \u0437\u0434\u0430\u043D\u0438\u0435 \u043F\u043E\u043D\u0438\u0436\u0430\u0435\u0442
-    \u0441\u0442\u0430\u0431\u0438\u043B\u044C\u043D\u043E\u0441\u0442\u044C"
-  <BuildingMaterialsToRepair>k__BackingField: 1
-  <PeopleToRepair>k__BackingField: 1
-  TurnsToRepairOriginal: 3
-  TurnsToRepair: 0
-  <TurnsToRestFromRepair>k__BackingField: 3
-  _state: 0
-  _buildingType: 0
-  _greyMaterial: {fileID: 2100000, guid: f1f22581a8a67c94ca2fdecd52975a74, type: 2}
+  _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
+  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
 --- !u!114 &17249022
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5571,22 +5543,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b3c3af1342ef574ebf496968ba715a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BuildingNameText>k__BackingField: "\u0416\u0438\u043B\u043E\u0439 \u0440\u0430\u0439\u043E\u043D"
-  <DescriptionText>k__BackingField: 
-  <BuildingIsSelectable>k__BackingField: 1
-  <DamagedBuildingNameText>k__BackingField: "\u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u044B\u0439
-    \u0440\u0430\u0439\u043E\u043D"
-  <DamagedDescriptionText>k__BackingField: "\u0421\u043B\u043E\u043C\u0430\u043D\u043D\u043E\u0435
-    \u0436\u0438\u043B\u043E\u0435 \u0437\u0434\u0430\u043D\u0438\u0435 \u043F\u043E\u043D\u0438\u0436\u0430\u0435\u0442
-    \u0441\u0442\u0430\u0431\u0438\u043B\u044C\u043D\u043E\u0441\u0442\u044C"
-  <BuildingMaterialsToRepair>k__BackingField: 1
-  <PeopleToRepair>k__BackingField: 1
-  TurnsToRepairOriginal: 2
-  TurnsToRepair: 0
-  <TurnsToRestFromRepair>k__BackingField: 3
-  _state: 0
-  _buildingType: 0
-  _greyMaterial: {fileID: 2100000, guid: f1f22581a8a67c94ca2fdecd52975a74, type: 2}
+  _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
+  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
 --- !u!1 &23681956
 GameObject:
   m_ObjectHideFlags: 0
@@ -5633,22 +5591,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b3c3af1342ef574ebf496968ba715a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BuildingNameText>k__BackingField: "\u0416\u0438\u043B\u043E\u0439 \u0440\u0430\u0439\u043E\u043D"
-  <DescriptionText>k__BackingField: 
-  <BuildingIsSelectable>k__BackingField: 1
-  <DamagedBuildingNameText>k__BackingField: "\u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u044B\u0439
-    \u0440\u0430\u0439\u043E\u043D"
-  <DamagedDescriptionText>k__BackingField: "\u0421\u043B\u043E\u043C\u0430\u043D\u043D\u043E\u0435
-    \u0436\u0438\u043B\u043E\u0435 \u0437\u0434\u0430\u043D\u0438\u0435 \u043F\u043E\u043D\u0438\u0436\u0430\u0435\u0442
-    \u0441\u0442\u0430\u0431\u0438\u043B\u044C\u043D\u043E\u0441\u0442\u044C"
-  <BuildingMaterialsToRepair>k__BackingField: 1
-  <PeopleToRepair>k__BackingField: 1
-  TurnsToRepairOriginal: 3
-  TurnsToRepair: 0
-  <TurnsToRestFromRepair>k__BackingField: 3
-  _state: 0
-  _buildingType: 0
-  _greyMaterial: {fileID: 2100000, guid: f1f22581a8a67c94ca2fdecd52975a74, type: 2}
+  _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
+  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
 --- !u!114 &26777691
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11793,22 +11737,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b3c3af1342ef574ebf496968ba715a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BuildingNameText>k__BackingField: "\u0416\u0438\u043B\u043E\u0439 \u0440\u0430\u0439\u043E\u043D"
-  <DescriptionText>k__BackingField: 
-  <BuildingIsSelectable>k__BackingField: 1
-  <DamagedBuildingNameText>k__BackingField: "\u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u044B\u0439
-    \u0440\u0430\u0439\u043E\u043D"
-  <DamagedDescriptionText>k__BackingField: "\u0421\u043B\u043E\u043C\u0430\u043D\u043D\u043E\u0435
-    \u0436\u0438\u043B\u043E\u0435 \u0437\u0434\u0430\u043D\u0438\u0435 \u043F\u043E\u043D\u0438\u0436\u0430\u0435\u0442
-    \u0441\u0442\u0430\u0431\u0438\u043B\u044C\u043D\u043E\u0441\u0442\u044C"
-  <BuildingMaterialsToRepair>k__BackingField: 1
-  <PeopleToRepair>k__BackingField: 2
-  TurnsToRepairOriginal: 2
-  TurnsToRepair: 0
-  <TurnsToRestFromRepair>k__BackingField: 3
-  _state: 0
-  _buildingType: 0
-  _greyMaterial: {fileID: 2100000, guid: f1f22581a8a67c94ca2fdecd52975a74, type: 2}
+  _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
+  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
 --- !u!114 &131532155
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11872,22 +11802,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b3c3af1342ef574ebf496968ba715a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BuildingNameText>k__BackingField: "\u0416\u0438\u043B\u043E\u0439 \u0440\u0430\u0439\u043E\u043D"
-  <DescriptionText>k__BackingField: 
-  <BuildingIsSelectable>k__BackingField: 1
-  <DamagedBuildingNameText>k__BackingField: "\u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u044B\u0439
-    \u0440\u0430\u0439\u043E\u043D"
-  <DamagedDescriptionText>k__BackingField: "\u0421\u043B\u043E\u043C\u0430\u043D\u043D\u043E\u0435
-    \u0436\u0438\u043B\u043E\u0435 \u0437\u0434\u0430\u043D\u0438\u0435 \u043F\u043E\u043D\u0438\u0436\u0430\u0435\u0442
-    \u0441\u0442\u0430\u0431\u0438\u043B\u044C\u043D\u043E\u0441\u0442\u044C"
-  <BuildingMaterialsToRepair>k__BackingField: 1
-  <PeopleToRepair>k__BackingField: 1
-  TurnsToRepairOriginal: 2
-  TurnsToRepair: 0
-  <TurnsToRestFromRepair>k__BackingField: 3
-  _state: 0
-  _buildingType: 0
-  _greyMaterial: {fileID: 2100000, guid: f1f22581a8a67c94ca2fdecd52975a74, type: 2}
+  _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
+  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
 --- !u!1001 &136638827
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18647,21 +18563,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac366b9a38a363a48b4694dc2d07c638, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BuildingNameText>k__BackingField: "\u041F\u0440\u043E\u0432\u0438\u0437\u0438\u044F"
-  <DescriptionText>k__BackingField: 
-  <BuildingIsSelectable>k__BackingField: 1
-  <DamagedBuildingNameText>k__BackingField: "\u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u043E"
-  <DamagedDescriptionText>k__BackingField: "\u041C\u044B \u043D\u0435 \u043C\u043E\u0436\u0435\u043C
-    \u0440\u0430\u0437\u0434\u0430\u0432\u0430\u0442\u044C \u0435\u0434\u0443, \u043F\u043E\u043A\u0430
-    \u044D\u0442\u043E \u043C\u0435\u0441\u0442\u043E \u0440\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u043E"
-  <BuildingMaterialsToRepair>k__BackingField: 1
-  <PeopleToRepair>k__BackingField: 2
-  TurnsToRepairOriginal: 2
-  TurnsToRepair: 2
-  <TurnsToRestFromRepair>k__BackingField: 2
-  _state: 0
-  _buildingType: 2
-  _greyMaterial: {fileID: 2100000, guid: f1f22581a8a67c94ca2fdecd52975a74, type: 2}
+  _selectableBuildingConfig: {fileID: 11400000, guid: 4f8e22f6bae6b2244ac13a93ee068651, type: 2}
+  buildingConfig: {fileID: 11400000, guid: abe7665c070b0ab45a0f7244d3d47abd, type: 2}
   _peopleToGiveProvision: 1
   _turnsToToGiveProvisionOriginal: 2
   _turnsToRestFromProvisionJob: 2
@@ -19228,22 +19131,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b3c3af1342ef574ebf496968ba715a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BuildingNameText>k__BackingField: "\u0416\u0438\u043B\u043E\u0439 \u0440\u0430\u0439\u043E\u043D"
-  <DescriptionText>k__BackingField: 
-  <BuildingIsSelectable>k__BackingField: 1
-  <DamagedBuildingNameText>k__BackingField: "\u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u044B\u0439
-    \u0440\u0430\u0439\u043E\u043D"
-  <DamagedDescriptionText>k__BackingField: "\u0421\u043B\u043E\u043C\u0430\u043D\u043D\u043E\u0435
-    \u0436\u0438\u043B\u043E\u0435 \u0437\u0434\u0430\u043D\u0438\u0435 \u043F\u043E\u043D\u0438\u0436\u0430\u0435\u0442
-    \u0441\u0442\u0430\u0431\u0438\u043B\u044C\u043D\u043E\u0441\u0442\u044C"
-  <BuildingMaterialsToRepair>k__BackingField: 2
-  <PeopleToRepair>k__BackingField: 3
-  TurnsToRepairOriginal: 3
-  TurnsToRepair: 0
-  <TurnsToRestFromRepair>k__BackingField: 3
-  _state: 0
-  _buildingType: 0
-  _greyMaterial: {fileID: 2100000, guid: f1f22581a8a67c94ca2fdecd52975a74, type: 2}
+  _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
+  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
 --- !u!1 &326334810
 GameObject:
   m_ObjectHideFlags: 0
@@ -22812,26 +22701,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2f41757ce5b2464594634e290a7e385, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BuildingNameText>k__BackingField: "\u0421\u043E\u0432\u0435\u0442"
-  <DescriptionText>k__BackingField: 
-  <BuildingIsSelectable>k__BackingField: 1
-  <DamagedBuildingNameText>k__BackingField: "\u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u043E"
-  <DamagedDescriptionText>k__BackingField: "\u041F\u043E\u043A\u0430 \u044D\u0442\u043E
-    \u0437\u0434\u0430\u043D\u0438\u0435 \u0440\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u043E,
-    \u043C\u044B \u043D\u0435 \u043C\u043E\u0436\u0435\u043C \u0432\u044B\u043F\u043E\u043B\u043D\u044F\u0442\u044C
-    \u043D\u0438\u043A\u0430\u043A\u0438\u0435 \u043F\u043B\u0430\u043D\u044B, \u043A\u0440\u043E\u043C\u0435
-    \u0435\u0433\u043E \u0432\u043E\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u044F"
-  <BuildingMaterialsToRepair>k__BackingField: 1
-  <PeopleToRepair>k__BackingField: 2
-  TurnsToRepairOriginal: 3
-  TurnsToRepair: 3
-  <TurnsToRestFromRepair>k__BackingField: 1
-  _state: 0
-  _buildingType: 4
-  _greyMaterial: {fileID: 2100000, guid: f1f22581a8a67c94ca2fdecd52975a74, type: 2}
-  _daysLeftToSendArmyMaterialsOriginal: 3
-  _daysLeftToRecieveGovHelpOriginal: 3
-  _amountOfHelpNeededToSend: 10
+  _selectableBuildingConfig: {fileID: 11400000, guid: 9cb6bbaedad6fad479a7a10e7bcf1d78, type: 2}
+  buildingConfig: {fileID: 11400000, guid: bdf7cdc69cd9a4c4e9f01b5f60aef44a, type: 2}
+  _daysLeftToSendArmyMaterialsOriginal: 2
+  _daysLeftToRecieveGovHelpOriginal: 2
+  _amountOfHelpNeededToSend: 1
   <ReadyMaterialsToCreateNewPeopleUnit>k__BackingField: 1
   _turnsToCreateNewUnitOriginal: 3
   <RelationWithGoverment>k__BackingField: 5
@@ -22898,22 +22772,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b3c3af1342ef574ebf496968ba715a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BuildingNameText>k__BackingField: "\u0416\u0438\u043B\u043E\u0439 \u0440\u0430\u0439\u043E\u043D"
-  <DescriptionText>k__BackingField: 
-  <BuildingIsSelectable>k__BackingField: 1
-  <DamagedBuildingNameText>k__BackingField: "\u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u044B\u0439
-    \u0440\u0430\u0439\u043E\u043D"
-  <DamagedDescriptionText>k__BackingField: "\u0421\u043B\u043E\u043C\u0430\u043D\u043D\u043E\u0435
-    \u0436\u0438\u043B\u043E\u0435 \u0437\u0434\u0430\u043D\u0438\u0435 \u043F\u043E\u043D\u0438\u0436\u0430\u0435\u0442
-    \u0441\u0442\u0430\u0431\u0438\u043B\u044C\u043D\u043E\u0441\u0442\u044C"
-  <BuildingMaterialsToRepair>k__BackingField: 1
-  <PeopleToRepair>k__BackingField: 1
-  TurnsToRepairOriginal: 2
-  TurnsToRepair: 0
-  <TurnsToRestFromRepair>k__BackingField: 3
-  _state: 0
-  _buildingType: 0
-  _greyMaterial: {fileID: 2100000, guid: f1f22581a8a67c94ca2fdecd52975a74, type: 2}
+  _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
+  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
 --- !u!1001 &636910544
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24369,23 +24229,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4306c0e9b54839048863ab4b0c05a6e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BuildingNameText>k__BackingField: "\u0413\u043E\u0441\u043F\u0438\u0442\u0430\u043B\u044C"
-  <DescriptionText>k__BackingField: 
-  <BuildingIsSelectable>k__BackingField: 1
-  <DamagedBuildingNameText>k__BackingField: "\u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u043E"
-  <DamagedDescriptionText>k__BackingField: "\u041F\u043E\u043A\u0430 \u0433\u043E\u0441\u043F\u0438\u0442\u0430\u043B\u044C
-    \u0440\u0430\u0437\u0440\u0443\u0448\u0435\u043D, \u043B\u044E\u0434\u0438 \u043D\u0435
-    \u0441\u043E\u0433\u0443\u0442 \u043F\u043E\u043B\u0443\u0447\u0430\u0442\u044C
-    \u0434\u043E\u0441\u0442\u043E\u0439\u043D\u0443\u044E \u043C\u0435\u0434\u0438\u0446\u0438\u043D\u0441\u043A\u0443\u044E
-    \u043F\u043E\u043C\u043E\u0449\u044C"
-  <BuildingMaterialsToRepair>k__BackingField: 1
-  <PeopleToRepair>k__BackingField: 2
-  TurnsToRepairOriginal: 3
-  TurnsToRepair: 3
-  <TurnsToRestFromRepair>k__BackingField: 2
-  _state: 0
-  _buildingType: 1
-  _greyMaterial: {fileID: 2100000, guid: f1f22581a8a67c94ca2fdecd52975a74, type: 2}
+  _selectableBuildingConfig: {fileID: 11400000, guid: 86f585792447ee545803f7ea3be80636, type: 2}
+  buildingConfig: {fileID: 11400000, guid: a1a766a4d5389584c83c6c60560e6c40, type: 2}
   _peopleToGiveMedicine: 1
   _medicineToGive: 1
   _turnsToGiveMedicineOriginal: 2
@@ -24728,22 +24573,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b3c3af1342ef574ebf496968ba715a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BuildingNameText>k__BackingField: "\u0416\u0438\u043B\u043E\u0439 \u0440\u0430\u0439\u043E\u043D"
-  <DescriptionText>k__BackingField: 
-  <BuildingIsSelectable>k__BackingField: 1
-  <DamagedBuildingNameText>k__BackingField: "\u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u044B\u0439
-    \u0440\u0430\u0439\u043E\u043D"
-  <DamagedDescriptionText>k__BackingField: "\u0421\u043B\u043E\u043C\u0430\u043D\u043D\u043E\u0435
-    \u0436\u0438\u043B\u043E\u0435 \u0437\u0434\u0430\u043D\u0438\u0435 \u043F\u043E\u043D\u0438\u0436\u0430\u0435\u0442
-    \u0441\u0442\u0430\u0431\u0438\u043B\u044C\u043D\u043E\u0441\u0442\u044C"
-  <BuildingMaterialsToRepair>k__BackingField: 1
-  <PeopleToRepair>k__BackingField: 1
-  TurnsToRepairOriginal: 2
-  TurnsToRepair: 0
-  <TurnsToRestFromRepair>k__BackingField: 3
-  _state: 0
-  _buildingType: 0
-  _greyMaterial: {fileID: 2100000, guid: f1f22581a8a67c94ca2fdecd52975a74, type: 2}
+  _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
+  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
 --- !u!1 &785483022
 GameObject:
   m_ObjectHideFlags: 0
@@ -24847,6 +24678,38 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!1 &787447877
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 787447878}
+  m_Layer: 0
+  m_Name: ---- Audio -----
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &787447878
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 787447877}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2054861669}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &797865277
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24910,22 +24773,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b3c3af1342ef574ebf496968ba715a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BuildingNameText>k__BackingField: "\u0416\u0438\u043B\u043E\u0439 \u0440\u0430\u0439\u043E\u043D"
-  <DescriptionText>k__BackingField: 
-  <BuildingIsSelectable>k__BackingField: 1
-  <DamagedBuildingNameText>k__BackingField: "\u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u044B\u0439
-    \u0440\u0430\u0439\u043E\u043D"
-  <DamagedDescriptionText>k__BackingField: "\u0421\u043B\u043E\u043C\u0430\u043D\u043D\u043E\u0435
-    \u0436\u0438\u043B\u043E\u0435 \u0437\u0434\u0430\u043D\u0438\u0435 \u043F\u043E\u043D\u0438\u0436\u0430\u0435\u0442
-    \u0441\u0442\u0430\u0431\u0438\u043B\u044C\u043D\u043E\u0441\u0442\u044C"
-  <BuildingMaterialsToRepair>k__BackingField: 2
-  <PeopleToRepair>k__BackingField: 3
-  TurnsToRepairOriginal: 3
-  TurnsToRepair: 0
-  <TurnsToRestFromRepair>k__BackingField: 3
-  _state: 0
-  _buildingType: 0
-  _greyMaterial: {fileID: 2100000, guid: f1f22581a8a67c94ca2fdecd52975a74, type: 2}
+  _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
+  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
 --- !u!1001 &805361579
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25683,30 +25532,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85dbf57fe3186d348a8ccf9c08992429, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BuildingNameText>k__BackingField: "\u0417\u0430\u0432\u043E\u0434"
-  <DescriptionText>k__BackingField: 
-  <BuildingIsSelectable>k__BackingField: 1
-  <DamagedBuildingNameText>k__BackingField: "\u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u043E"
-  <DamagedDescriptionText>k__BackingField: "\u0411\u0435\u0437 \u0437\u0430\u0432\u043E\u0434\u0430
-    \u043C\u044B \u043D\u0435 \u043C\u043E\u0436\u0435\u043C \u0447\u0438\u043D\u0438\u0442\u044C
-    \u043D\u0430\u0448\u0438 \u0434\u043E\u043C\u0430 \u0438 \u043E\u0442\u043F\u0440\u0430\u0432\u043B\u044F\u0442\u044C
-    \u0440\u0435\u0441\u0443\u0440\u0441\u044B \u0433\u043E\u0441\u0443\u0434\u0430\u0440\u0441\u0442\u0432\u0443"
-  <BuildingMaterialsToRepair>k__BackingField: 2
-  <PeopleToRepair>k__BackingField: 2
-  TurnsToRepairOriginal: 4
-  TurnsToRepair: 4
-  <TurnsToRestFromRepair>k__BackingField: 3
-  _state: 0
-  _buildingType: 3
-  _greyMaterial: {fileID: 2100000, guid: f1f22581a8a67c94ca2fdecd52975a74, type: 2}
+  _selectableBuildingConfig: {fileID: 11400000, guid: 7e24a1641c0a07b488ac437722a58f1f, type: 2}
+  buildingConfig: {fileID: 11400000, guid: 7bc7da1a808aa084b90857ca49794c75, type: 2}
   _peopleToCreateReadyMaterials: 2
   _peopleToCreateArmyMaterials: 2
-  _turnsToCreateReadyMaterialsOriginal: 3
-  _turnsToCreateArmyMaterialsOriginal: 4
+  _turnsToCreateReadyMaterialsOriginal: 2
+  _turnsToCreateArmyMaterialsOriginal: 3
   _turnsToRestFromReadyMaterialsJob: 2
-  _turnsToRestFromArmyMaterialsJob: 3
+  _turnsToRestFromArmyMaterialsJob: 2
   _rawMaterialsToCreateReadyMaterials: 2
-  _readyMaterialsGet: 1
+  _readyMaterialsGet: 2
   _rawMaterialsToCreateArmyMaterials: 3
 --- !u!114 &866148973
 MonoBehaviour:
@@ -25873,22 +25708,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b3c3af1342ef574ebf496968ba715a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BuildingNameText>k__BackingField: "\u0416\u0438\u043B\u043E\u0439 \u0440\u0430\u0439\u043E\u043D"
-  <DescriptionText>k__BackingField: 
-  <BuildingIsSelectable>k__BackingField: 1
-  <DamagedBuildingNameText>k__BackingField: "\u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u044B\u0439
-    \u0440\u0430\u0439\u043E\u043D"
-  <DamagedDescriptionText>k__BackingField: "\u0421\u043B\u043E\u043C\u0430\u043D\u043D\u043E\u0435
-    \u0436\u0438\u043B\u043E\u0435 \u0437\u0434\u0430\u043D\u0438\u0435 \u043F\u043E\u043D\u0438\u0436\u0430\u0435\u0442
-    \u0441\u0442\u0430\u0431\u0438\u043B\u044C\u043D\u043E\u0441\u0442\u044C"
-  <BuildingMaterialsToRepair>k__BackingField: 2
-  <PeopleToRepair>k__BackingField: 3
-  TurnsToRepairOriginal: 3
-  TurnsToRepair: 0
-  <TurnsToRestFromRepair>k__BackingField: 3
-  _state: 0
-  _buildingType: 0
-  _greyMaterial: {fileID: 2100000, guid: f1f22581a8a67c94ca2fdecd52975a74, type: 2}
+  _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
+  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
 --- !u!1001 &886056597
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -27107,22 +26928,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b3c3af1342ef574ebf496968ba715a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BuildingNameText>k__BackingField: "\u0416\u0438\u043B\u043E\u0439 \u0440\u0430\u0439\u043E\u043D"
-  <DescriptionText>k__BackingField: 
-  <BuildingIsSelectable>k__BackingField: 1
-  <DamagedBuildingNameText>k__BackingField: "\u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u044B\u0439
-    \u0440\u0430\u0439\u043E\u043D"
-  <DamagedDescriptionText>k__BackingField: "\u0421\u043B\u043E\u043C\u0430\u043D\u043D\u043E\u0435
-    \u0436\u0438\u043B\u043E\u0435 \u0437\u0434\u0430\u043D\u0438\u0435 \u043F\u043E\u043D\u0438\u0436\u0430\u0435\u0442
-    \u0441\u0442\u0430\u0431\u0438\u043B\u044C\u043D\u043E\u0441\u0442\u044C"
-  <BuildingMaterialsToRepair>k__BackingField: 1
-  <PeopleToRepair>k__BackingField: 1
-  TurnsToRepairOriginal: 3
-  TurnsToRepair: 0
-  <TurnsToRestFromRepair>k__BackingField: 2
-  _state: 0
-  _buildingType: 0
-  _greyMaterial: {fileID: 2100000, guid: f1f22581a8a67c94ca2fdecd52975a74, type: 2}
+  _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
+  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
 --- !u!114 &1052980346
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -41851,30 +41658,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85dbf57fe3186d348a8ccf9c08992429, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BuildingNameText>k__BackingField: "\u0417\u0430\u0432\u043E\u0434"
-  <DescriptionText>k__BackingField: 
-  <BuildingIsSelectable>k__BackingField: 1
-  <DamagedBuildingNameText>k__BackingField: "\u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u043E"
-  <DamagedDescriptionText>k__BackingField: "\u0411\u0435\u0437 \u0437\u0430\u0432\u043E\u0434\u0430
-    \u043C\u044B \u043D\u0435 \u043C\u043E\u0436\u0435\u043C \u0447\u0438\u043D\u0438\u0442\u044C
-    \u043D\u0430\u0448\u0438 \u0434\u043E\u043C\u0430 \u0438 \u043E\u0442\u043F\u0440\u0430\u0432\u043B\u044F\u0442\u044C
-    \u0440\u0435\u0441\u0443\u0440\u0441\u044B \u0433\u043E\u0441\u0443\u0434\u0430\u0440\u0441\u0442\u0432\u0443"
-  <BuildingMaterialsToRepair>k__BackingField: 2
-  <PeopleToRepair>k__BackingField: 2
-  TurnsToRepairOriginal: 4
-  TurnsToRepair: 4
-  <TurnsToRestFromRepair>k__BackingField: 3
-  _state: 0
-  _buildingType: 3
-  _greyMaterial: {fileID: 2100000, guid: f1f22581a8a67c94ca2fdecd52975a74, type: 2}
+  _selectableBuildingConfig: {fileID: 11400000, guid: 7e24a1641c0a07b488ac437722a58f1f, type: 2}
+  buildingConfig: {fileID: 11400000, guid: 7bc7da1a808aa084b90857ca49794c75, type: 2}
   _peopleToCreateReadyMaterials: 2
   _peopleToCreateArmyMaterials: 2
-  _turnsToCreateReadyMaterialsOriginal: 3
-  _turnsToCreateArmyMaterialsOriginal: 4
+  _turnsToCreateReadyMaterialsOriginal: 2
+  _turnsToCreateArmyMaterialsOriginal: 3
   _turnsToRestFromReadyMaterialsJob: 2
-  _turnsToRestFromArmyMaterialsJob: 3
+  _turnsToRestFromArmyMaterialsJob: 2
   _rawMaterialsToCreateReadyMaterials: 2
-  _readyMaterialsGet: 1
+  _readyMaterialsGet: 2
   _rawMaterialsToCreateArmyMaterials: 3
 --- !u!1 &1329902924
 GameObject:
@@ -41922,22 +41715,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b3c3af1342ef574ebf496968ba715a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BuildingNameText>k__BackingField: "\u0416\u0438\u043B\u043E\u0439 \u0440\u0430\u0439\u043E\u043D"
-  <DescriptionText>k__BackingField: 
-  <BuildingIsSelectable>k__BackingField: 1
-  <DamagedBuildingNameText>k__BackingField: "\u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u044B\u0439
-    \u0440\u0430\u0439\u043E\u043D"
-  <DamagedDescriptionText>k__BackingField: "\u0421\u043B\u043E\u043C\u0430\u043D\u043D\u043E\u0435
-    \u0436\u0438\u043B\u043E\u0435 \u0437\u0434\u0430\u043D\u0438\u0435 \u043F\u043E\u043D\u0438\u0436\u0430\u0435\u0442
-    \u0441\u0442\u0430\u0431\u0438\u043B\u044C\u043D\u043E\u0441\u0442\u044C"
-  <BuildingMaterialsToRepair>k__BackingField: 1
-  <PeopleToRepair>k__BackingField: 1
-  TurnsToRepairOriginal: 2
-  TurnsToRepair: 0
-  <TurnsToRestFromRepair>k__BackingField: 3
-  _state: 0
-  _buildingType: 0
-  _greyMaterial: {fileID: 2100000, guid: f1f22581a8a67c94ca2fdecd52975a74, type: 2}
+  _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
+  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
 --- !u!1 &1335371994
 GameObject:
   m_ObjectHideFlags: 0
@@ -42983,22 +42762,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b3c3af1342ef574ebf496968ba715a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BuildingNameText>k__BackingField: "\u0416\u0438\u043B\u043E\u0439 \u0440\u0430\u0439\u043E\u043D"
-  <DescriptionText>k__BackingField: 
-  <BuildingIsSelectable>k__BackingField: 1
-  <DamagedBuildingNameText>k__BackingField: "\u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u044B\u0439
-    \u0440\u0430\u0439\u043E\u043D"
-  <DamagedDescriptionText>k__BackingField: "\u0421\u043B\u043E\u043C\u0430\u043D\u043D\u043E\u0435
-    \u0436\u0438\u043B\u043E\u0435 \u0437\u0434\u0430\u043D\u0438\u0435 \u043F\u043E\u043D\u0438\u0436\u0430\u0435\u0442
-    \u0441\u0442\u0430\u0431\u0438\u043B\u044C\u043D\u043E\u0441\u0442\u044C"
-  <BuildingMaterialsToRepair>k__BackingField: 1
-  <PeopleToRepair>k__BackingField: 1
-  TurnsToRepairOriginal: 2
-  TurnsToRepair: 0
-  <TurnsToRestFromRepair>k__BackingField: 3
-  _state: 0
-  _buildingType: 0
-  _greyMaterial: {fileID: 2100000, guid: f1f22581a8a67c94ca2fdecd52975a74, type: 2}
+  _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
+  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
 --- !u!1001 &1418076236
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -43156,22 +42921,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b3c3af1342ef574ebf496968ba715a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BuildingNameText>k__BackingField: "\u0416\u0438\u043B\u043E\u0439 \u0440\u0430\u0439\u043E\u043D"
-  <DescriptionText>k__BackingField: 
-  <BuildingIsSelectable>k__BackingField: 1
-  <DamagedBuildingNameText>k__BackingField: "\u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u044B\u0439
-    \u0440\u0430\u0439\u043E\u043D"
-  <DamagedDescriptionText>k__BackingField: "\u0421\u043B\u043E\u043C\u0430\u043D\u043D\u043E\u0435
-    \u0436\u0438\u043B\u043E\u0435 \u0437\u0434\u0430\u043D\u0438\u0435 \u043F\u043E\u043D\u0438\u0436\u0430\u0435\u0442
-    \u0441\u0442\u0430\u0431\u0438\u043B\u044C\u043D\u043E\u0441\u0442\u044C"
-  <BuildingMaterialsToRepair>k__BackingField: 1
-  <PeopleToRepair>k__BackingField: 1
-  TurnsToRepairOriginal: 3
-  TurnsToRepair: 0
-  <TurnsToRestFromRepair>k__BackingField: 3
-  _state: 0
-  _buildingType: 0
-  _greyMaterial: {fileID: 2100000, guid: f1f22581a8a67c94ca2fdecd52975a74, type: 2}
+  _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
+  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
 --- !u!114 &1439971165
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -49533,22 +49284,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b3c3af1342ef574ebf496968ba715a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BuildingNameText>k__BackingField: "\u0416\u0438\u043B\u043E\u0439 \u0440\u0430\u0439\u043E\u043D"
-  <DescriptionText>k__BackingField: 
-  <BuildingIsSelectable>k__BackingField: 1
-  <DamagedBuildingNameText>k__BackingField: "\u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u044B\u0439
-    \u0440\u0430\u0439\u043E\u043D"
-  <DamagedDescriptionText>k__BackingField: "\u0421\u043B\u043E\u043C\u0430\u043D\u043D\u043E\u0435
-    \u0436\u0438\u043B\u043E\u0435 \u0437\u0434\u0430\u043D\u0438\u0435 \u043F\u043E\u043D\u0438\u0436\u0430\u0435\u0442
-    \u0441\u0442\u0430\u0431\u0438\u043B\u044C\u043D\u043E\u0441\u0442\u044C"
-  <BuildingMaterialsToRepair>k__BackingField: 1
-  <PeopleToRepair>k__BackingField: 1
-  TurnsToRepairOriginal: 2
-  TurnsToRepair: 0
-  <TurnsToRestFromRepair>k__BackingField: 3
-  _state: 0
-  _buildingType: 0
-  _greyMaterial: {fileID: 2100000, guid: f1f22581a8a67c94ca2fdecd52975a74, type: 2}
+  _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
+  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
 --- !u!1 &1538585290
 GameObject:
   m_ObjectHideFlags: 0
@@ -50328,22 +50065,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b3c3af1342ef574ebf496968ba715a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BuildingNameText>k__BackingField: "\u0416\u0438\u043B\u043E\u0439 \u0440\u0430\u0439\u043E\u043D"
-  <DescriptionText>k__BackingField: 
-  <BuildingIsSelectable>k__BackingField: 1
-  <DamagedBuildingNameText>k__BackingField: "\u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u044B\u0439
-    \u0440\u0430\u0439\u043E\u043D"
-  <DamagedDescriptionText>k__BackingField: "\u0421\u043B\u043E\u043C\u0430\u043D\u043D\u043E\u0435
-    \u0436\u0438\u043B\u043E\u0435 \u0437\u0434\u0430\u043D\u0438\u0435 \u043F\u043E\u043D\u0438\u0436\u0430\u0435\u0442
-    \u0441\u0442\u0430\u0431\u0438\u043B\u044C\u043D\u043E\u0441\u0442\u044C"
-  <BuildingMaterialsToRepair>k__BackingField: 1
-  <PeopleToRepair>k__BackingField: 1
-  TurnsToRepairOriginal: 2
-  TurnsToRepair: 0
-  <TurnsToRestFromRepair>k__BackingField: 3
-  _state: 0
-  _buildingType: 0
-  _greyMaterial: {fileID: 2100000, guid: f1f22581a8a67c94ca2fdecd52975a74, type: 2}
+  _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
+  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
 --- !u!1 &1583988138
 GameObject:
   m_ObjectHideFlags: 0
@@ -53504,22 +53227,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b3c3af1342ef574ebf496968ba715a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BuildingNameText>k__BackingField: "\u0416\u0438\u043B\u043E\u0439 \u0440\u0430\u0439\u043E\u043D"
-  <DescriptionText>k__BackingField: 
-  <BuildingIsSelectable>k__BackingField: 1
-  <DamagedBuildingNameText>k__BackingField: "\u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u044B\u0439
-    \u0440\u0430\u0439\u043E\u043D"
-  <DamagedDescriptionText>k__BackingField: "\u0421\u043B\u043E\u043C\u0430\u043D\u043D\u043E\u0435
-    \u0436\u0438\u043B\u043E\u0435 \u0437\u0434\u0430\u043D\u0438\u0435 \u043F\u043E\u043D\u0438\u0436\u0430\u0435\u0442
-    \u0441\u0442\u0430\u0431\u0438\u043B\u044C\u043D\u043E\u0441\u0442\u044C"
-  <BuildingMaterialsToRepair>k__BackingField: 1
-  <PeopleToRepair>k__BackingField: 1
-  TurnsToRepairOriginal: 2
-  TurnsToRepair: 0
-  <TurnsToRestFromRepair>k__BackingField: 3
-  _state: 0
-  _buildingType: 0
-  _greyMaterial: {fileID: 2100000, guid: f1f22581a8a67c94ca2fdecd52975a74, type: 2}
+  _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
+  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
 --- !u!1 &1817046244
 GameObject:
   m_ObjectHideFlags: 0
@@ -55282,9 +54991,9 @@ MonoBehaviour:
   periodText: {fileID: 1583988140}
   blackoutImage: {fileID: 554080737}
   _actionPointsText: {fileID: 1730634013}
-  _actionPointsValue: 6
-  _actionPointsMaxValue: 6
-  _actionPointsAddValueInTheNextDay: 2
+  _actionPointsValue: 9
+  _actionPointsMaxValue: 9
+  _actionPointsAddValueInTheNextDay: 3
   _daysBetweenBombingRegularBuildings: 1
   _daysBetweenBombingSpecialBuildings: 1
   _nextTurnFadeTime: 1.1
@@ -56320,7 +56029,7 @@ GameObject:
   - component: {fileID: 2054861669}
   - component: {fileID: 2054861668}
   m_Layer: 0
-  m_Name: Audio
+  m_Name: Music Source
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -56431,12 +56140,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2054861667}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 787447878}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2056348096
 PrefabInstance:
@@ -57934,22 +57643,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b3c3af1342ef574ebf496968ba715a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BuildingNameText>k__BackingField: "\u0416\u0438\u043B\u043E\u0439 \u0440\u0430\u0439\u043E\u043D"
-  <DescriptionText>k__BackingField: 
-  <BuildingIsSelectable>k__BackingField: 1
-  <DamagedBuildingNameText>k__BackingField: "\u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u044B\u0439
-    \u0440\u0430\u0439\u043E\u043D"
-  <DamagedDescriptionText>k__BackingField: "\u0421\u043B\u043E\u043C\u0430\u043D\u043D\u043E\u0435
-    \u0436\u0438\u043B\u043E\u0435 \u0437\u0434\u0430\u043D\u0438\u0435 \u043F\u043E\u043D\u0438\u0436\u0430\u0435\u0442
-    \u0441\u0442\u0430\u0431\u0438\u043B\u044C\u043D\u043E\u0441\u0442\u044C"
-  <BuildingMaterialsToRepair>k__BackingField: 2
-  <PeopleToRepair>k__BackingField: 3
-  TurnsToRepairOriginal: 3
-  TurnsToRepair: 0
-  <TurnsToRestFromRepair>k__BackingField: 3
-  _state: 0
-  _buildingType: 0
-  _greyMaterial: {fileID: 2100000, guid: f1f22581a8a67c94ca2fdecd52975a74, type: 2}
+  _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
+  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
 --- !u!1 &2133741445
 GameObject:
   m_ObjectHideFlags: 0
@@ -57996,22 +57691,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b3c3af1342ef574ebf496968ba715a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BuildingNameText>k__BackingField: "\u0416\u0438\u043B\u043E\u0439 \u0440\u0430\u0439\u043E\u043D"
-  <DescriptionText>k__BackingField: 
-  <BuildingIsSelectable>k__BackingField: 1
-  <DamagedBuildingNameText>k__BackingField: "\u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u044B\u0439
-    \u0440\u0430\u0439\u043E\u043D"
-  <DamagedDescriptionText>k__BackingField: "\u0421\u043B\u043E\u043C\u0430\u043D\u043D\u043E\u0435
-    \u0436\u0438\u043B\u043E\u0435 \u0437\u0434\u0430\u043D\u0438\u0435 \u043F\u043E\u043D\u0438\u0436\u0430\u0435\u0442
-    \u0441\u0442\u0430\u0431\u0438\u043B\u044C\u043D\u043E\u0441\u0442\u044C"
-  <BuildingMaterialsToRepair>k__BackingField: 1
-  <PeopleToRepair>k__BackingField: 1
-  TurnsToRepairOriginal: 2
-  TurnsToRepair: 0
-  <TurnsToRestFromRepair>k__BackingField: 3
-  _state: 0
-  _buildingType: 0
-  _greyMaterial: {fileID: 2100000, guid: f1f22581a8a67c94ca2fdecd52975a74, type: 2}
+  _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
+  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
 --- !u!1 &2140095416
 GameObject:
   m_ObjectHideFlags: 0
@@ -63285,10 +62966,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 548810df5c854b2499f3d643eb342376, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BuildingNameText>k__BackingField: "\u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u043D\u044B\u0439
-    \u0440\u0430\u0439\u043E\u043D"
-  <DescriptionText>k__BackingField: "\u0442\u043E\u043B\u044C\u043A\u043E \u0441\u043E\u0431\u0438\u0440\u0430\u0442\u044C"
-  <BuildingIsSelectable>k__BackingField: 1
+  _selectableBuildingConfig: {fileID: 11400000, guid: 425dad9a599d51541883aa941d8bbd29, type: 2}
   <RawMaterialsLeft>k__BackingField: 7
   <RawMaterialsGet>k__BackingField: 1
   <PeopleToCollect>k__BackingField: 1
@@ -63493,10 +63171,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 548810df5c854b2499f3d643eb342376, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BuildingNameText>k__BackingField: "\u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u043D\u044B\u0439
-    \u0440\u0430\u0439\u043E\u043D"
-  <DescriptionText>k__BackingField: "\u0442\u043E\u043B\u044C\u043A\u043E \u0441\u043E\u0431\u0438\u0440\u0430\u0442\u044C"
-  <BuildingIsSelectable>k__BackingField: 1
+  _selectableBuildingConfig: {fileID: 11400000, guid: 425dad9a599d51541883aa941d8bbd29, type: 2}
   <RawMaterialsLeft>k__BackingField: 10
   <RawMaterialsGet>k__BackingField: 2
   <PeopleToCollect>k__BackingField: 2
@@ -64813,10 +64488,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 548810df5c854b2499f3d643eb342376, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BuildingNameText>k__BackingField: "\u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u043D\u044B\u0439
-    \u0440\u0430\u0439\u043E\u043D"
-  <DescriptionText>k__BackingField: "\u0442\u043E\u043B\u044C\u043A\u043E \u0441\u043E\u0431\u0438\u0440\u0430\u0442\u044C"
-  <BuildingIsSelectable>k__BackingField: 1
+  _selectableBuildingConfig: {fileID: 11400000, guid: 425dad9a599d51541883aa941d8bbd29, type: 2}
   <RawMaterialsLeft>k__BackingField: 5
   <RawMaterialsGet>k__BackingField: 1
   <PeopleToCollect>k__BackingField: 1
@@ -65244,4 +64916,4 @@ SceneRoots:
   - {fileID: 1663673590}
   - {fileID: 1339968902}
   - {fileID: 1818534412}
-  - {fileID: 2054861669}
+  - {fileID: 787447878}

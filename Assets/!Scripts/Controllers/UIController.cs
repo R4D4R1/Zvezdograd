@@ -1,14 +1,17 @@
 using UnityEditor;
 using UnityEngine;
+using Zenject;
 
 public class UIController : MonoBehaviour
 {
-    private Bootstrapper _entryPoint = Bootstrapper.Instance;
+
+    [Inject] private LoadLevelController _loadLevelController;
 
     public async void StartNewGame()
     {
-        SaveLoadManager.SetStartedNewGame();
-        await _entryPoint.loadLevelController.LoadSceneAsync(Scenes.GAME_SCENE);
+        //SaveLoadManager.SetStartedNewGame();
+
+        await _loadLevelController.LoadSceneAsync(Scenes.GAME_SCENE);
     }
 
     public void QuitGame()

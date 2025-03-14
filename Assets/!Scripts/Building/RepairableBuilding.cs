@@ -10,7 +10,8 @@ public class RepairableBuilding : BuildingDependingOnStability
     [field: SerializeField] public int PeopleToRepair { get; private set; }
 
     [SerializeField] private int TurnsToRepairOriginal;
-    public int TurnsToRepair;
+    protected int _turnsToRepair;
+    public int TurnsToRepair => _turnsToRepair;
 
     [field: SerializeField] public int TurnsToRestFromRepair { get; private set; }
 
@@ -77,16 +78,16 @@ public class RepairableBuilding : BuildingDependingOnStability
     private void UpdateAmountOfTurnsNeededToDoSMTH()
     {
         if(CurrentState!= State.Repairing)
-            TurnsToRepair = UpdateAmountOfTurnsNeededToDoSMTH(TurnsToRepairOriginal);
+            _turnsToRepair = UpdateAmountOfTurnsNeededToDoSMTH(TurnsToRepairOriginal);
     }
 
     protected virtual void TryTurnOnBuilding()
     {
         if (CurrentState == State.Repairing)
         {
-            TurnsToRepair--;
+            _turnsToRepair--;
 
-            if (TurnsToRepair == 0)
+            if (_turnsToRepair == 0)
             {
                 BuildingIsSelectable = true;
                 RestoreOriginalMaterials();
@@ -100,7 +101,7 @@ public class RepairableBuilding : BuildingDependingOnStability
     {
         if (CurrentState == State.Damaged)
         {
-            _controllersManager.PeopleUnitsController.AssignUnitsToTask(PeopleToRepair, TurnsToRepair, TurnsToRestFromRepair);
+            _controllersManager.PeopleUnitsController.AssignUnitsToTask(PeopleToRepair, _turnsToRepair, TurnsToRestFromRepair);
             _resourceViewModel.ModifyResource(ResourceModel.ResourceType.ReadyMaterials,-BuildingMaterialsToRepair);
 
             BuildingIsSelectable = false;

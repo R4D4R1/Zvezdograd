@@ -1,41 +1,21 @@
 using UnityEngine;
+using Zenject;
+using System.Threading.Tasks;
 
 public class Bootstrapper : MonoBehaviour
 {
-    public static Bootstrapper Instance;
+    private LoadLevelController _loadLevelController;
 
-    public LoadLevelController loadLevelController { get; private set; }
-    public GameController gameController { get; private set; }
-    public SoundController SoundController { get; private set; }
-
+    [Inject]
+    private void Construct(LoadLevelController loadLevelController)
+    {
+        _loadLevelController = loadLevelController;
+    }
 
     private async void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-            return;
-        }
+        await _loadLevelController.LoadSceneAsync(Scenes.MAIN_MENU);
 
-        loadLevelController = GetComponentInChildren<LoadLevelController>();
-        gameController = GetComponentInChildren<GameController>();
-        SoundController = GetComponentInChildren<SoundController>();
-
-
-        await loadLevelController.LoadSceneAsync(Scenes.MAIN_MENU);
-
-        if (Application.platform == RuntimePlatform.Android)
-        {
-            Application.targetFrameRate = 60;
-        }
-        else
-        {
-            Application.targetFrameRate = -1; // -1 means no limit
-        }
+        Application.targetFrameRate = (Application.platform == RuntimePlatform.Android) ? 60 : -1;
     }
 }

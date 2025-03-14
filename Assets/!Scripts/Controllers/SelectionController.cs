@@ -18,16 +18,19 @@ public class SelectionController : MonoBehaviour
 
     private GameObject _currentPopUp;
 
+    // INJECT OBJECTS
     private ControllersManager _controllersManager;
     private PopUpFactory _popUpFactory;
     private Camera mainCamera;
+    private SoundController _soundController;
 
     [Inject]
-    public void Construct(PopUpFactory popUpFactory,Camera mainCamera,ControllersManager controllersManager)
+    public void Construct(PopUpFactory popUpFactory,Camera mainCamera,ControllersManager controllersManager, SoundController soundController)
     {
         _controllersManager = controllersManager;
         _popUpFactory = popUpFactory;
         _mainCamera = mainCamera;
+        _soundController = soundController;
     }
 
     void Update()
@@ -75,7 +78,7 @@ public class SelectionController : MonoBehaviour
                         {
                             newOutline.enabled = true;
                         }
-                        Bootstrapper.Instance?.SoundController?.PlayHoverSound();
+                        _soundController?.PlayHoverSound();
                     }
                 }
             }
@@ -142,7 +145,7 @@ public class SelectionController : MonoBehaviour
                         selectedOutline.enabled = true;
                     }
 
-                    Bootstrapper.Instance?.SoundController?.PlaySelectionSound();
+                    _soundController?.PlaySelectionSound();
 
                     if (_selectedBuilding is RepairableBuilding repairableBuilding)
                     {

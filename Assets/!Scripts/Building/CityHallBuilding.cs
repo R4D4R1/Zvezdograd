@@ -17,7 +17,7 @@ public class CityHallBuilding : RepairableBuilding
 
     // SAVE DATA
 
-    [field: SerializeField, Range(0, 10)] public int RelationWithGoverment { get; private set; }
+    [field: SerializeField, Range(1, 10)] public int RelationWithGoverment { get; private set; }
     public int DaysLeftToRecieveGovHelp { get; private set; }
     public int DaysLeftToSendArmyMaterials { get; private set; }
     public bool IsMaterialsSent { get; private set; }
@@ -26,6 +26,16 @@ public class CityHallBuilding : RepairableBuilding
     private int _amountOfHelpSent = 0;
 
     public event Action OnCityHallUnitCreated;
+
+    //public override void InitBuilding()
+    //{
+    //    base.InitBuilding();
+    //    InitializeControllers();
+    //    InitializeTimers();
+    //    _timeController.OnNextDayEvent += OnNextDayEvent;
+
+    //    _controllersManager.TimeController.OnNextTurnBtnPressed += CheckIfCreatedNewUnit;
+    //}
 
     protected override void Start()
     {

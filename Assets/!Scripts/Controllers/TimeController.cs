@@ -18,13 +18,13 @@ public class TimeController : MonoBehaviour
     [SerializeField] private Image blackoutImage;
 
     [SerializeField] private TextMeshProUGUI _actionPointsText;
-    [SerializeField] private int _actionPointsValue;
-    [SerializeField] private int _actionPointsMaxValue;
-    [SerializeField] private int _actionPointsAddValueInTheNextDay;
+    [Range(1f, 10f), SerializeField] private int _actionPointsValue;
+    [Range(1f, 10f), SerializeField] private int _actionPointsMaxValue;
+    [Range(1f, 5f), SerializeField] private int _actionPointsAddValueInTheNextDay;
 
-    [SerializeField, Range(1f, 5f)] private int _daysBetweenBombingRegularBuildings;
-    [SerializeField, Range(1f, 5f)] private int _daysBetweenBombingSpecialBuildings;
-    [SerializeField, Range(1.02f, 2f)] private float _nextTurnFadeTime;
+    [Range(1f, 5f), SerializeField] private int _daysBetweenBombingRegularBuildings;
+    [Range(1f, 5f), SerializeField] private int _daysBetweenBombingSpecialBuildings;
+    [Range(1.02f, 2f), SerializeField] private float _nextTurnFadeTime;
 
     [SerializeField] private Button _nextTurnBtn;
     [SerializeField] private MonoBehaviour[] _btnScripts;

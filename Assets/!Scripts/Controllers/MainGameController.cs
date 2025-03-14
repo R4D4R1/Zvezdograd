@@ -48,32 +48,42 @@ public class MainGameController : MonoBehaviour
             building.InitBuilding();
         }
 
-        if (SaveLoadManager.IsStartedFromMainMenu)
+        //if (SaveLoadManager.IsStartedFromMainMenu)
+        //{
+        //    _blackImage.DOFade(0, _blackoutTime).OnComplete(() =>
+        //    {
+        //        _startPopUp.gameObject.SetActive(false);
+        //        _tutorialPupUp.gameObject.SetActive(false);
+
+        //        ShowCity();
+        //        _controllersManager.MainGameUIController.TurnOnUI();
+
+        //        SaveLoadManager.LoadDataFromCurrentSlot();
+        //    });
+        //}
+
+        //else
+        //{
+        //    _controllersManager.BlurController.BlurBackGroundNow();
+        //    _controllersManager.SelectionController.enabled = false;
+
+        //    _blackImage.color = Color.black;
+
+        //    _blackImage.DOFade(0, _blackoutTime).OnComplete(() =>
+        //    {
+        //        _startPopUp.ShowPopUp();
+        //    });
+        //}
+
+        _controllersManager.BlurController.BlurBackGroundNow();
+        _controllersManager.SelectionController.enabled = false;
+
+        _blackImage.color = Color.black;
+
+        _blackImage.DOFade(0, _blackoutTime).OnComplete(() =>
         {
-            _blackImage.DOFade(0, _blackoutTime).OnComplete(() =>
-            {
-                _startPopUp.gameObject.SetActive(false);
-                _tutorialPupUp.gameObject.SetActive(false);
-
-                ShowCity();
-                _controllersManager.MainGameUIController.TurnOnUI();
-
-                SaveLoadManager.LoadDataFromCurrentSlot();
-            });
-        }
-
-        else
-        {
-            _controllersManager.BlurController.BlurBackGroundNow();
-            _controllersManager.SelectionController.enabled = false;
-
-            _blackImage.color = Color.black;
-
-            _blackImage.DOFade(0, _blackoutTime).OnComplete(() =>
-            {
-                _startPopUp.ShowPopUp();
-            });
-        }
+            _startPopUp.ShowPopUp();
+        });
     }
 
     public void GameWin()
