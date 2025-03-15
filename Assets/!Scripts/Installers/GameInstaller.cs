@@ -50,15 +50,8 @@ public class GameInstaller : MonoInstaller
         Container.Bind<PopUpsController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<Camera>().FromInstance(Camera.main).AsSingle();
 
-        var resourceModel = new ResourceModel(
-        resourceConfig.InitialProvision,
-        resourceConfig.InitialMedicine,
-        resourceConfig.InitialRawMaterials,
-        resourceConfig.InitialReadyMaterials,
-        resourceConfig.InitialStability
-        );
-
-        Container.Bind<ResourceModel>().FromInstance(resourceModel).AsSingle();
+        Container.Bind<ResourceModel>().AsSingle();
+        Container.BindInstance(resourceConfig).AsSingle();
         Container.Bind<ResourceViewModel>().AsSingle();
 
         Debug.Log("GameInstaller: Bindings completed successfully.");

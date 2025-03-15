@@ -4,6 +4,9 @@ using Zenject;
 public class SelectableBuilding : MonoBehaviour
 {
     [SerializeField] private SelectableBuildingConfig _selectableBuildingConfig;
+
+    [HideInInspector] public bool BuildingIsSelectable = true;
+
     public int BuildingId { get; private set; }
 
     protected ControllersManager _controllersManager;
@@ -48,16 +51,16 @@ public class SelectableBuilding : MonoBehaviour
     public string BuildingNameText { get; protected set; }
     public string DescriptionText { get; protected set; }
 
-    public bool BuildingIsSelectable
-    {
-        get => _selectableBuildingConfig != null && _selectableBuildingConfig.BuildingIsSelectable;
-        set
-        {
-            if (_selectableBuildingConfig != null)
-            {
-                _selectableBuildingConfig.BuildingIsSelectable = value;
-            }
-        }
-    }
+    //public bool BuildingIsSelectable
+    //{
+    //    get => _selectableBuildingConfig != null && _selectableBuildingConfig.BuildingIsSelectable;
+    //    set
+    //    {
+    //        if (_selectableBuildingConfig != null)
+    //        {
+    //            _selectableBuildingConfig.BuildingIsSelectable = value;
+    //        }
+    //    }
+    //}
 
 }

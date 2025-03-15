@@ -13,15 +13,12 @@ public class CollectableBuildingConfig : ScriptableObject
     [SerializeField] private int turnsToRest;
 
     [Header("Materials")]
-    [SerializeField] private Material originalMaterial;
     [SerializeField] private Material greyMaterial;
-
 
     public int RawMaterialsLeft => rawMaterialsLeft;
     public int RawMaterialsGet => rawMaterialsGet;
     public int PeopleToCollect => peopleToCollect;
     public int TurnsToCollectOriginal => turnsToCollectOriginal;
     public int TurnsToRest => turnsToRest;
-    public Material OriginalMaterial => originalMaterial;
     public Material GreyMaterial => greyMaterial;
 }

@@ -532,7 +532,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
-  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  BuildingIsSelectable: 1
+  _repairabelConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  CurrentState: 0
 --- !u!1 &6038813
 GameObject:
   m_ObjectHideFlags: 0
@@ -580,7 +582,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
-  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  BuildingIsSelectable: 1
+  _repairabelConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  CurrentState: 0
 --- !u!114 &17249022
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5544,7 +5548,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
-  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  BuildingIsSelectable: 1
+  _repairabelConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  CurrentState: 0
 --- !u!1 &23681956
 GameObject:
   m_ObjectHideFlags: 0
@@ -5592,7 +5598,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
-  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  BuildingIsSelectable: 1
+  _repairabelConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  CurrentState: 0
 --- !u!114 &26777691
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11738,7 +11746,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
-  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  BuildingIsSelectable: 1
+  _repairabelConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  CurrentState: 0
 --- !u!114 &131532155
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11803,7 +11813,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
-  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  BuildingIsSelectable: 1
+  _repairabelConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  CurrentState: 0
 --- !u!1001 &136638827
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18564,7 +18576,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectableBuildingConfig: {fileID: 11400000, guid: 4f8e22f6bae6b2244ac13a93ee068651, type: 2}
-  buildingConfig: {fileID: 11400000, guid: abe7665c070b0ab45a0f7244d3d47abd, type: 2}
+  BuildingIsSelectable: 1
+  _repairabelConfig: {fileID: 11400000, guid: abe7665c070b0ab45a0f7244d3d47abd, type: 2}
+  CurrentState: 0
   _peopleToGiveProvision: 1
   _turnsToToGiveProvisionOriginal: 2
   _turnsToRestFromProvisionJob: 2
@@ -19132,7 +19146,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
-  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  BuildingIsSelectable: 1
+  _repairabelConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  CurrentState: 0
 --- !u!1 &326334810
 GameObject:
   m_ObjectHideFlags: 0
@@ -22702,13 +22718,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectableBuildingConfig: {fileID: 11400000, guid: 9cb6bbaedad6fad479a7a10e7bcf1d78, type: 2}
-  buildingConfig: {fileID: 11400000, guid: bdf7cdc69cd9a4c4e9f01b5f60aef44a, type: 2}
-  _daysLeftToSendArmyMaterialsOriginal: 2
-  _daysLeftToRecieveGovHelpOriginal: 2
-  _amountOfHelpNeededToSend: 1
-  <ReadyMaterialsToCreateNewPeopleUnit>k__BackingField: 1
-  _turnsToCreateNewUnitOriginal: 3
-  <RelationWithGoverment>k__BackingField: 5
+  BuildingIsSelectable: 1
+  _repairabelConfig: {fileID: 11400000, guid: bdf7cdc69cd9a4c4e9f01b5f60aef44a, type: 2}
+  CurrentState: 0
+  config: {fileID: 11400000, guid: 9bfbfd5e479e3c547b650857a491a352, type: 2}
 --- !u!114 &620792663
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22773,7 +22786,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
-  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  BuildingIsSelectable: 1
+  _repairabelConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  CurrentState: 0
 --- !u!1001 &636910544
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24230,7 +24245,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectableBuildingConfig: {fileID: 11400000, guid: 86f585792447ee545803f7ea3be80636, type: 2}
-  buildingConfig: {fileID: 11400000, guid: a1a766a4d5389584c83c6c60560e6c40, type: 2}
+  BuildingIsSelectable: 1
+  _repairabelConfig: {fileID: 11400000, guid: a1a766a4d5389584c83c6c60560e6c40, type: 2}
+  CurrentState: 0
   _peopleToGiveMedicine: 1
   _medicineToGive: 1
   _turnsToGiveMedicineOriginal: 2
@@ -24574,7 +24591,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
-  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  BuildingIsSelectable: 1
+  _repairabelConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  CurrentState: 0
 --- !u!1 &785483022
 GameObject:
   m_ObjectHideFlags: 0
@@ -24774,7 +24793,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
-  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  BuildingIsSelectable: 1
+  _repairabelConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  CurrentState: 0
 --- !u!1001 &805361579
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25533,7 +25554,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectableBuildingConfig: {fileID: 11400000, guid: 7e24a1641c0a07b488ac437722a58f1f, type: 2}
-  buildingConfig: {fileID: 11400000, guid: 7bc7da1a808aa084b90857ca49794c75, type: 2}
+  BuildingIsSelectable: 1
+  _repairabelConfig: {fileID: 11400000, guid: 7bc7da1a808aa084b90857ca49794c75, type: 2}
+  CurrentState: 0
   _peopleToCreateReadyMaterials: 2
   _peopleToCreateArmyMaterials: 2
   _turnsToCreateReadyMaterialsOriginal: 2
@@ -25709,7 +25732,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
-  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  BuildingIsSelectable: 1
+  _repairabelConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  CurrentState: 0
 --- !u!1001 &886056597
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -26929,7 +26954,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
-  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  BuildingIsSelectable: 1
+  _repairabelConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  CurrentState: 0
 --- !u!114 &1052980346
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -41659,7 +41686,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectableBuildingConfig: {fileID: 11400000, guid: 7e24a1641c0a07b488ac437722a58f1f, type: 2}
-  buildingConfig: {fileID: 11400000, guid: 7bc7da1a808aa084b90857ca49794c75, type: 2}
+  BuildingIsSelectable: 1
+  _repairabelConfig: {fileID: 11400000, guid: 7bc7da1a808aa084b90857ca49794c75, type: 2}
+  CurrentState: 0
   _peopleToCreateReadyMaterials: 2
   _peopleToCreateArmyMaterials: 2
   _turnsToCreateReadyMaterialsOriginal: 2
@@ -41716,7 +41745,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
-  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  BuildingIsSelectable: 1
+  _repairabelConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  CurrentState: 0
 --- !u!1 &1335371994
 GameObject:
   m_ObjectHideFlags: 0
@@ -42763,7 +42794,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
-  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  BuildingIsSelectable: 1
+  _repairabelConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  CurrentState: 0
 --- !u!1001 &1418076236
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -42922,7 +42955,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
-  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  BuildingIsSelectable: 1
+  _repairabelConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  CurrentState: 0
 --- !u!114 &1439971165
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -49285,7 +49320,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
-  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  BuildingIsSelectable: 1
+  _repairabelConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  CurrentState: 0
 --- !u!1 &1538585290
 GameObject:
   m_ObjectHideFlags: 0
@@ -49439,7 +49476,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!218 &1541157963
 Terrain:
   m_ObjectHideFlags: 0
@@ -50066,7 +50103,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
-  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  BuildingIsSelectable: 1
+  _repairabelConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  CurrentState: 0
 --- !u!1 &1583988138
 GameObject:
   m_ObjectHideFlags: 0
@@ -53228,7 +53267,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
-  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  BuildingIsSelectable: 1
+  _repairabelConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  CurrentState: 0
 --- !u!1 &1817046244
 GameObject:
   m_ObjectHideFlags: 0
@@ -57644,7 +57685,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
-  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  BuildingIsSelectable: 1
+  _repairabelConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  CurrentState: 0
 --- !u!1 &2133741445
 GameObject:
   m_ObjectHideFlags: 0
@@ -57692,7 +57735,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectableBuildingConfig: {fileID: 11400000, guid: c0008ceec72e1ef428f70ad2f5094196, type: 2}
-  buildingConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  BuildingIsSelectable: 1
+  _repairabelConfig: {fileID: 11400000, guid: 4ec55922bd78e9f40898c9eb6bcb2de1, type: 2}
+  CurrentState: 0
 --- !u!1 &2140095416
 GameObject:
   m_ObjectHideFlags: 0
@@ -62967,13 +63012,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectableBuildingConfig: {fileID: 11400000, guid: 425dad9a599d51541883aa941d8bbd29, type: 2}
+  BuildingIsSelectable: 1
   <RawMaterialsLeft>k__BackingField: 7
   <RawMaterialsGet>k__BackingField: 1
   <PeopleToCollect>k__BackingField: 1
-  TurnsToCollectOriginal: 3
+  TurnsToCollectOriginal: 0
   <TurnsToRest>k__BackingField: 2
-  originalMaterial: {fileID: 2100000, guid: 8dc2d2292eb5b8940b195c8b4cbd0937, type: 2}
-  greyMaterial: {fileID: 2100000, guid: f1f22581a8a67c94ca2fdecd52975a74, type: 2}
+  originalMaterial: {fileID: 0}
+  greyMaterial: {fileID: 0}
 --- !u!4 &7960422388203582646
 Transform:
   m_ObjectHideFlags: 0
@@ -63172,13 +63218,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectableBuildingConfig: {fileID: 11400000, guid: 425dad9a599d51541883aa941d8bbd29, type: 2}
+  BuildingIsSelectable: 1
   <RawMaterialsLeft>k__BackingField: 10
   <RawMaterialsGet>k__BackingField: 2
   <PeopleToCollect>k__BackingField: 2
-  TurnsToCollectOriginal: 3
+  TurnsToCollectOriginal: 0
   <TurnsToRest>k__BackingField: 2
-  originalMaterial: {fileID: 2100000, guid: 8dc2d2292eb5b8940b195c8b4cbd0937, type: 2}
-  greyMaterial: {fileID: 2100000, guid: f1f22581a8a67c94ca2fdecd52975a74, type: 2}
+  originalMaterial: {fileID: 0}
+  greyMaterial: {fileID: 0}
 --- !u!23 &8069139750284811345
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -64489,13 +64536,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectableBuildingConfig: {fileID: 11400000, guid: 425dad9a599d51541883aa941d8bbd29, type: 2}
+  BuildingIsSelectable: 1
   <RawMaterialsLeft>k__BackingField: 5
   <RawMaterialsGet>k__BackingField: 1
   <PeopleToCollect>k__BackingField: 1
-  TurnsToCollectOriginal: 3
+  TurnsToCollectOriginal: 0
   <TurnsToRest>k__BackingField: 2
-  originalMaterial: {fileID: 2100000, guid: 8dc2d2292eb5b8940b195c8b4cbd0937, type: 2}
-  greyMaterial: {fileID: 2100000, guid: f1f22581a8a67c94ca2fdecd52975a74, type: 2}
+  originalMaterial: {fileID: 0}
+  greyMaterial: {fileID: 0}
 --- !u!4 &8780163812605518614
 Transform:
   m_ObjectHideFlags: 0

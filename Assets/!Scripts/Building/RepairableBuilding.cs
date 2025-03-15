@@ -4,24 +4,23 @@ using UnityEngine;
 
 public class RepairableBuilding : BuildingDependingOnStability
 {
-    [field: SerializeField] public string DamagedBuildingNameText { get; private set; }
-    [field: SerializeField] public string DamagedDescriptionText { get; private set; }
-    [field: SerializeField] public int BuildingMaterialsToRepair { get; private set; }
-    [field: SerializeField] public int PeopleToRepair { get; private set; }
-
-    [SerializeField] private int TurnsToRepairOriginal;
-    protected int _turnsToRepair;
-    public int TurnsToRepair => _turnsToRepair;
-
-    [field: SerializeField] public int TurnsToRestFromRepair { get; private set; }
-
-    [SerializeField] protected State _state;
-    [SerializeField] protected BuildingType _buildingType;
-    [SerializeField] protected Material _greyMaterial;
+    [SerializeField] private RepairableBuildingConfig _repairabelConfig;
 
     private List<Material[]> _originalMaterials = new List<Material[]>();
+    public int TurnsToRepair { get;protected set; }
 
-    public event Action OnStateChanged;
+    public string DamagedBuildingNameText => _repairabelConfig.DamagedBuildingNameText;
+    public string DamagedDescriptionText => _repairabelConfig.DamagedDescriptionText;
+    public int BuildingMaterialsToRepair => _repairabelConfig.BuildingMaterialsToRepair;
+    public int PeopleToRepair => _repairabelConfig.PeopleToRepair;
+    public int TurnsToRepairOriginal => _repairabelConfig.TurnsToRepairOriginal;
+    public int TurnsToRestFromRepair => _repairabelConfig.TurnsToRestFromRepair;
+    public State CurrentState;
+    public BuildingType Type => _repairabelConfig.BuildingType;
+    public Material GreyMaterial => _repairabelConfig.GreyMaterial;
+
+    //public event Action OnStateChanged;
+
     public enum State
     {
         Intact,
@@ -38,28 +37,9 @@ public class RepairableBuilding : BuildingDependingOnStability
         CityHall
     }
 
-    public State CurrentState
-    {
-        get => _state;
-        set
-        {
-            if (_state != value)
-            {
-                _state = value;
-                UpdateBuildingModel();
-                OnStateChanged?.Invoke();
-                if (_state == State.Repairing)
-                {
-                    SetGreyMaterials();
-                }
-            }
-        }
-    }
-
-    public BuildingType Type => _buildingType;
-
     public void InitBuilding()
     {
+        CurrentState = _repairabelConfig.State;
         FindBuildingModels();
         SaveOriginalMaterials();
         _controllersManager.TimeController.OnNextTurnBtnPressed += TryTurnOnBuilding;
@@ -77,22 +57,22 @@ public class RepairableBuilding : BuildingDependingOnStability
 
     private void UpdateAmountOfTurnsNeededToDoSMTH()
     {
-        if(CurrentState!= State.Repairing)
-            _turnsToRepair = UpdateAmountOfTurnsNeededToDoSMTH(TurnsToRepairOriginal);
+        if (CurrentState != State.Repairing)
+            TurnsToRepair = UpdateAmountOfTurnsNeededToDoSMTH(TurnsToRepairOriginal);
     }
 
     protected virtual void TryTurnOnBuilding()
     {
         if (CurrentState == State.Repairing)
         {
-            _turnsToRepair--;
+            TurnsToRepair--;
 
-            if (_turnsToRepair == 0)
+            if (TurnsToRepair == 0)
             {
                 BuildingIsSelectable = true;
                 RestoreOriginalMaterials();
-
                 CurrentState = State.Intact;
+                UpdateBuildingModel();
             }
         }
     }
@@ -101,13 +81,11 @@ public class RepairableBuilding : BuildingDependingOnStability
     {
         if (CurrentState == State.Damaged)
         {
-            _controllersManager.PeopleUnitsController.AssignUnitsToTask(PeopleToRepair, _turnsToRepair, TurnsToRestFromRepair);
-            _resourceViewModel.ModifyResource(ResourceModel.ResourceType.ReadyMaterials,-BuildingMaterialsToRepair);
+            _controllersManager.PeopleUnitsController.AssignUnitsToTask(PeopleToRepair, TurnsToRepair, TurnsToRestFromRepair);
+            _resourceViewModel.ModifyResource(ResourceModel.ResourceType.ReadyMaterials, -BuildingMaterialsToRepair);
 
             BuildingIsSelectable = false;
-
             SetGreyMaterials();
-
             CurrentState = State.Repairing;
         }
     }
@@ -116,8 +94,10 @@ public class RepairableBuilding : BuildingDependingOnStability
     {
         if (CurrentState == State.Intact)
         {
+            Debug.Log(gameObject.name);
             BuildingIsSelectable = true;
             CurrentState = State.Damaged;
+            UpdateBuildingModel();
         }
     }
 
@@ -141,7 +121,7 @@ public class RepairableBuilding : BuildingDependingOnStability
             var greyMaterials = new Material[renderer.materials.Length];
             for (int i = 0; i < renderer.materials.Length; i++)
             {
-                greyMaterials[i] = _greyMaterial;
+                greyMaterials[i] = GreyMaterial;
             }
             renderer.materials = greyMaterials;
         }
