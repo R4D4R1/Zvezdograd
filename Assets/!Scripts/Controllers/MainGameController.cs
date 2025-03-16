@@ -41,12 +41,24 @@ public class MainGameController : MonoBehaviour
         _mainCamera = mainCamera;
     }
 
-    private void Start()
+    public void Init()
     {
         foreach (RepairableBuilding building in _controllersManager.BuildingController.RepairableBuildings)
         {
             building.InitBuilding();
         }
+
+        _controllersManager.BlurController.BlurBackGroundNow();
+        _controllersManager.SelectionController.enabled = false;
+
+        _blackImage.color = Color.black;
+
+        _blackImage.DOFade(0, _blackoutTime).OnComplete(() =>
+        {
+            _startPopUp.ShowPopUp();
+        });
+
+        Debug.Log($"{name} - Initialized successfully");
 
         //if (SaveLoadManager.IsStartedFromMainMenu)
         //{
@@ -74,18 +86,7 @@ public class MainGameController : MonoBehaviour
         //        _startPopUp.ShowPopUp();
         //    });
         //}
-
-        _controllersManager.BlurController.BlurBackGroundNow();
-        _controllersManager.SelectionController.enabled = false;
-
-        _blackImage.color = Color.black;
-
-        _blackImage.DOFade(0, _blackoutTime).OnComplete(() =>
-        {
-            _startPopUp.ShowPopUp();
-        });
     }
-
     public void GameWin()
     {
         Debug.Log("WIN");

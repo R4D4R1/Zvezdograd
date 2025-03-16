@@ -21,7 +21,6 @@ public class ResourceModel
     [Inject]
     public ResourceModel(ControllersManager controllersManager, ResourcesConfig resourceConfig)
     {
-        Debug.Log("Test");
         _controllersManager = controllersManager;
 
         Provision = new ReactiveProperty<int>(resourceConfig.InitialProvision);

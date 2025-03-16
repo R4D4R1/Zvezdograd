@@ -17,10 +17,12 @@ public class BlurController : MonoBehaviour
         _config = config;
     }
 
-    private void Awake()
+    public void Init()
     {
         _volumeProfile = FindFirstObjectByType<Volume>();
         _volumeProfile.profile.TryGet(out _depthOfField);
+
+        Debug.Log($"{name} - Initialized successfully");
     }
 
     public void BlurBackGroundSmoothly()

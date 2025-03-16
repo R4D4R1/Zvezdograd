@@ -29,7 +29,7 @@ public class MainGameUIController : MonoBehaviour
         _loadLevelController = loadLevelController;
     }
 
-    private void Start()
+    public void Init()
     {
         _turnOffUICanvasGroup = _turnOffUIParent.GetComponent<CanvasGroup>();
         if (_turnOffUICanvasGroup == null)
@@ -40,6 +40,8 @@ public class MainGameUIController : MonoBehaviour
         _turnOffUICanvasGroup.alpha = 0;
         _turnOffUICanvasGroup.interactable = false;
         _turnOffUICanvasGroup.blocksRaycasts = false;
+
+        Debug.Log($"{name} - Initialized successfully");
 
         //DisableEscapeMenuToggle();
     }

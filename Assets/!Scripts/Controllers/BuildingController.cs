@@ -13,11 +13,10 @@ public class BuildingController : MonoBehaviour
     [Range(0f, 100f)]
     [SerializeField] private int _specialBuildingBombChance;
 
-    private void Awake()
+    public void Init()
     {
         AllBuildings = FindObjectsByType<SelectableBuilding>(FindObjectsSortMode.None).ToList();
         Factories = FindObjectsByType<FactoryBuilding>(FindObjectsSortMode.None).ToList();
-
 
         foreach (var building in AllBuildings)
         {
@@ -35,8 +34,32 @@ public class BuildingController : MonoBehaviour
                 RepairableBuildings.Add(building as RepairableBuilding);
             }
         }
+
+        Debug.Log($"{name} - Initialized successfully");
     }
 
+    //private void Awake()
+    //{
+    //    AllBuildings = FindObjectsByType<SelectableBuilding>(FindObjectsSortMode.None).ToList();
+    //    Factories = FindObjectsByType<FactoryBuilding>(FindObjectsSortMode.None).ToList();
+
+    //    foreach (var building in AllBuildings)
+    //    {
+    //        if (building.GetComponent<RepairableBuilding>() != null)
+    //        {
+    //            if (building.GetComponent<SpecialBuilding>() != null)
+    //            {
+    //                SpecialBuildings.Add(building as RepairableBuilding);
+    //            }
+    //            else
+    //            {
+    //                RegularBuildings.Add(building as RepairableBuilding);
+    //            }
+
+    //            RepairableBuildings.Add(building as RepairableBuilding);
+    //        }
+    //    }
+    //}
 
     public void BombRegularBuilding()
     {

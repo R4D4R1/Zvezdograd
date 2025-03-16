@@ -39,11 +39,13 @@ public class SelectionController : MonoBehaviour
         HandleSelection();
     }
 
-    private void Start()
+    public void Init()
     {
         _controllersManager.TimeController.NextTurnButton.OnClickAsObservable()
             .Subscribe(_ => Deselect())
             .AddTo(this);
+
+        Debug.Log($"{name} - Initialized successfully");
     }
 
     void HandleHover()
@@ -258,5 +260,4 @@ public class SelectionController : MonoBehaviour
             _currentPopUp = null;
         }
     }
-
 }

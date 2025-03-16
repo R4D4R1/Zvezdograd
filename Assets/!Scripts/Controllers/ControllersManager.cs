@@ -39,4 +39,17 @@ public class ControllersManager : MonoBehaviour
         PopupEventController = popupEventController;
         TutorialController = tutorialController;
     }
+
+    private void Awake()
+    {
+        BlurController.Init();
+        SelectionController.Init();
+        BuildingController.Init();
+        MainGameUIController.Init();
+        MainGameController.Init();
+        TimeController.Init();
+        PeopleUnitsController.Init();
+        PopUpsController.Init();
+        PopupEventController.Init();
+    }
 }

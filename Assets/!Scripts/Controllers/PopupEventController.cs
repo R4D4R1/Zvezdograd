@@ -34,9 +34,11 @@ public class PopupEventController : MonoBehaviour
         _controllersManager.TimeController.OnNextTurnBtnPressed -= OnPeriodChanged;
     }
 
-    private void Start()
+    public void Init()
     {
         LoadEvents();
+
+        Debug.Log($"{name} - Initialized successfully");
     }
 
     private void LoadEvents()

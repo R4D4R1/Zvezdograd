@@ -10,8 +10,7 @@ public class PopUpsController : MonoBehaviour
     public RepairPopUp RepairPopUp  { get; private set; }
 
 
-
-    private void Start()
+    public void Init()
     {
         FoodTrucksPopUp = FindFirstObjectByType<FoodTrucksPopUp>();
         HospitalPopUp = FindFirstObjectByType<HospitalPopUp>();
@@ -19,5 +18,7 @@ public class PopUpsController : MonoBehaviour
         FactoryPopUp = FindFirstObjectByType<FactoryPopUp>();
         CollectPopUp = FindFirstObjectByType<CollectPopUp>();
         RepairPopUp = FindFirstObjectByType<RepairPopUp>();
+
+        Debug.Log($"{name} - Initialized successfully");
     }
 }

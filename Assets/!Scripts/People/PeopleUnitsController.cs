@@ -25,9 +25,10 @@ public class PeopleUnitsController : MonoBehaviour
         _controllersManager = controllersManager;
     }
 
-    void Start()
+    public void Init()
     {
         PeopleUnit anyUnit = FindFirstObjectByType<PeopleUnit>();
+
         if (anyUnit == null)
         {
             Debug.LogError("Не найден ни один PeopleUnit!");
@@ -61,12 +62,14 @@ public class PeopleUnitsController : MonoBehaviour
             else
             {
                 CreatedUnits.Add(_allUnits[unitNum]);
-                CreatedUnits[unitNum].SetState(PeopleUnit.UnitState.Ready,0,0);
+                CreatedUnits[unitNum].SetState(PeopleUnit.UnitState.Ready, 0, 0);
             }
 
         }
 
         UpdateReadyUnits();
+
+        Debug.Log($"{name} - Initialized successfully");
     }
 
     private void OnEnable()

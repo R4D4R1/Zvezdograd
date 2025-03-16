@@ -60,7 +60,7 @@ public class TimeController : MonoBehaviour
         _resourceViewModel = resourceViewModel;
     }
 
-    private void Start()
+    public void Init()
     {
         _daysWithoutBombing = 0;
         _currentDate = new ReactiveProperty<DateTime>(_startDate);
@@ -80,6 +80,8 @@ public class TimeController : MonoBehaviour
         UpdateText();
 
         UpdateActionPointsText();
+
+        Debug.Log($"{name} - Initialized successfully");
     }
 
     public void SetDateAndPeriod(DateTime newDate, PeriodOfDay newPeriod)
