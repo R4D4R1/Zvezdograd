@@ -19,7 +19,7 @@ public class SelectableBuilding : MonoBehaviour
         _resourceViewModel = resourceViewModel;
     }
 
-    protected virtual void Start()
+    public virtual void Init()
     {
         if (_selectableBuildingConfig != null)
         {
@@ -30,6 +30,8 @@ public class SelectableBuilding : MonoBehaviour
         BuildingIsSelectable = true;
 
         GenerateOrLoadBuildingId();
+
+        Debug.Log($"{gameObject.name} + Initialized");
     }
 
     private void GenerateOrLoadBuildingId()

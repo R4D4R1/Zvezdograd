@@ -1,5 +1,6 @@
 using DG.Tweening;
 using UnityEngine;
+using UniRx;
 
 public class FoodTrucksPopUp : QuestPopUp
 {
@@ -9,7 +10,10 @@ public class FoodTrucksPopUp : QuestPopUp
 
         _errorText.enabled = false;
         SetButtonState(true);
-        _controllersManager.TimeController.OnNextDayEvent += OnNextDayEvent;
+
+        _controllersManager.TimeController.OnNextDayEvent
+            .Subscribe(_ => OnNextDayEvent())
+            .AddTo(this);
     }
 
     public void ShowFoodTruckPopUp()

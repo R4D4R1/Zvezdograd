@@ -1,4 +1,5 @@
 using UnityEngine;
+using UniRx;
 
 public class HospitalBuilding : RepairableBuilding
 {
@@ -31,7 +32,10 @@ public class HospitalBuilding : RepairableBuilding
 
     protected void Awake()
     {
-        _controllersManager.TimeController.OnNextTurnBtnPressed += UpdateAmountOfTurnsNeededToDoSMTH;
+        _controllersManager.TimeController.OnNextTurnBtnPressed
+            .Subscribe(_ => UpdateAmountOfTurnsNeededToDoSMTH())
+            .AddTo(this);
+
         DaysToGiveMedicine = OriginalDaysToGiveMedicine;
         UpdateAmountOfTurnsNeededToDoSMTH();
     }

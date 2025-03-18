@@ -1,5 +1,5 @@
 using UnityEngine;
-using Zenject;
+using UniRx;
 
 public class FoodTrucksBuilding : RepairableBuilding
 {
@@ -29,10 +29,12 @@ public class FoodTrucksBuilding : RepairableBuilding
     // SAVE DATA
     public bool IsFoodGivenAwayToday { get; private set; } = false;
 
-    protected override void Start()
+    public override void Init()
     {
-        base.Start();
-        _controllersManager.TimeController.OnNextTurnBtnPressed += UpdateAmountOfTurnsNeededToDoSMTH;
+        base.Init();
+        _controllersManager.TimeController.OnNextTurnBtnPressed
+            .Subscribe(_ => UpdateAmountOfTurnsNeededToDoSMTH())
+            .AddTo(this);
 
         UpdateAmountOfTurnsNeededToDoSMTH();
     }

@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10a6ebf07a83ba0498f1e1de1199519c, type: 3}
   m_Name: FactorySelectableConfig
   m_EditorClassIdentifier: 
-  _buildingNameText: "\u0417\u0410\u0412\u041E\u0414"
-  _descriptionText: "\u041F\u0420\u0418\u041C\u0415\u0420 \u0422\u0415\u041A\u0421\u0422\u0410"
-  BuildingIsSelectable: 1
+  _buildingNameText: "\u0417\u0430\u0432\u043E\u0434"
+  _descriptionText: "\u0421\u0435\u0440\u0434\u0446\u0435 \u043D\u0430\u0448\u0435\u0433\u043E
+    \u0433\u043E\u0440\u043E\u0434\u0430 \u0437\u0430\u0432\u043E\u0434\u044B \u0431\u043B\u0438\u0437\u043D\u0435\u0446\u044B
+    \u0441\u043B\u0443\u0436\u0430\u0442 \u043D\u0430\u043C \u0443\u0436\u0435 \u0431\u043E\u043B\u0435\u0435
+    20 \u043B\u0435\u0442"

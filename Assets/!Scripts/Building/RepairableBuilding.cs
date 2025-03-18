@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UniRx;
 
-public class RepairableBuilding : BuildingDependingOnStability
+public class RepairableBuilding : ChangeMaterialsBuiliding
 {
     [SerializeField] private RepairableBuildingConfig _repairabelConfig;
 
@@ -17,7 +18,6 @@ public class RepairableBuilding : BuildingDependingOnStability
     public int TurnsToRestFromRepair => _repairabelConfig.TurnsToRestFromRepair;
     public State CurrentState;
     public BuildingType Type => _repairabelConfig.BuildingType;
-    public Material GreyMaterial => _repairabelConfig.GreyMaterial;
 
     //public event Action OnStateChanged;
 
@@ -37,22 +37,22 @@ public class RepairableBuilding : BuildingDependingOnStability
         CityHall
     }
 
-    public void InitBuilding()
+    public override void Init()
     {
+        base.Init();
+
         CurrentState = _repairabelConfig.State;
         FindBuildingModels();
-        SaveOriginalMaterials();
-        _controllersManager.TimeController.OnNextTurnBtnPressed += TryTurnOnBuilding;
-        _controllersManager.TimeController.OnNextTurnBtnPressed += UpdateAmountOfTurnsNeededToDoSMTH;
+
+        _controllersManager.TimeController.OnNextTurnBtnPressed
+            .Subscribe(_ => TryTurnOnBuilding())
+            .AddTo(this);
+        _controllersManager.TimeController.OnNextTurnBtnPressed
+            .Subscribe(_ => UpdateAmountOfTurnsNeededToDoSMTH())
+            .AddTo(this);
 
         UpdateBuildingModel();
         UpdateAmountOfTurnsNeededToDoSMTH();
-    }
-
-    private void OnDestroy()
-    {
-        _controllersManager.TimeController.OnNextTurnBtnPressed -= TryTurnOnBuilding;
-        _controllersManager.TimeController.OnNextTurnBtnPressed -= UpdateAmountOfTurnsNeededToDoSMTH;
     }
 
     private void UpdateAmountOfTurnsNeededToDoSMTH()
@@ -98,45 +98,6 @@ public class RepairableBuilding : BuildingDependingOnStability
             BuildingIsSelectable = true;
             CurrentState = State.Damaged;
             UpdateBuildingModel();
-        }
-    }
-
-    private void SaveOriginalMaterials()
-    {
-        _originalMaterials.Clear();
-        var renderers = GetComponentsInChildren<MeshRenderer>();
-
-        foreach (var renderer in renderers)
-        {
-            _originalMaterials.Add(renderer.materials);
-        }
-    }
-
-    protected void SetGreyMaterials()
-    {
-        var renderers = GetComponentsInChildren<MeshRenderer>();
-
-        foreach (var renderer in renderers)
-        {
-            var greyMaterials = new Material[renderer.materials.Length];
-            for (int i = 0; i < renderer.materials.Length; i++)
-            {
-                greyMaterials[i] = GreyMaterial;
-            }
-            renderer.materials = greyMaterials;
-        }
-    }
-
-    protected void RestoreOriginalMaterials()
-    {
-        var renderers = GetComponentsInChildren<MeshRenderer>();
-
-        for (int i = 0; i < renderers.Length; i++)
-        {
-            if (i < _originalMaterials.Count)
-            {
-                renderers[i].materials = _originalMaterials[i];
-            }
         }
     }
 

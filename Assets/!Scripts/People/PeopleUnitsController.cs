@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using System.Linq;
 using Zenject;
+using UniRx;
 
 public class PeopleUnitsController : MonoBehaviour
 {
@@ -34,6 +35,7 @@ public class PeopleUnitsController : MonoBehaviour
             Debug.LogError("Не найден ни один PeopleUnit!");
             return;
         }
+
         Transform parent = anyUnit.transform.parent;
 
         _allUnits = new List<PeopleUnit>();
@@ -67,21 +69,17 @@ public class PeopleUnitsController : MonoBehaviour
 
         }
 
+        _controllersManager.TimeController.OnNextTurnBtnPressed
+            .Subscribe(_ => NextTurn())
+            .AddTo(this);
+
+        _controllersManager.BuildingController.GetCityHallBuilding().OnCityHallUnitCreated
+            .Subscribe(_ => CreateUnit())
+            .AddTo(this);
+
         UpdateReadyUnits();
 
         Debug.Log($"{name} - Initialized successfully");
-    }
-
-    private void OnEnable()
-    {
-        _controllersManager.TimeController.OnNextTurnBtnPressed += NextTurn;
-        _controllersManager.BuildingController.GetCityHallBuilding().OnCityHallUnitCreated += CreateUnit;
-    }
-
-    private void OnDisable()
-    {
-        _controllersManager.TimeController.OnNextTurnBtnPressed -= NextTurn;
-        _controllersManager.BuildingController.GetCityHallBuilding().OnCityHallUnitCreated -= CreateUnit;
     }
 
     public void NextTurn()

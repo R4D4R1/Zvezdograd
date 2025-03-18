@@ -1,6 +1,5 @@
-using System;
-using System.Linq;
 using UnityEngine;
+using UniRx;
 
 public class FactoryBuilding : RepairableBuilding
 {
@@ -42,10 +41,12 @@ public class FactoryBuilding : RepairableBuilding
 
     // TO DO - заменить синглтон
 
-    protected override void Start()
+    public override void Init()
     {
-        base.Start();
-        _controllersManager.TimeController.OnNextTurnBtnPressed += UpdateAmountOfTurnsNeededToDoSMTH;
+        base.Init();
+        _controllersManager.TimeController.OnNextTurnBtnPressed
+            .Subscribe(_ => UpdateAmountOfTurnsNeededToDoSMTH())
+            .AddTo(this);
 
         UpdateAmountOfTurnsNeededToDoSMTH();
     }

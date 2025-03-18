@@ -4,17 +4,7 @@ using DG.Tweening;
 
 public class EventPopUp : InfoPopUp
 {
-    public static EventPopUp Instance;
     public TextMeshProUGUI ButtonText;
-
-    
-    private void Awake()
-    {
-        if (Instance == null)
-            Instance = this;
-        else
-            Destroy(Instance.gameObject);
-    }
 
     public void ShowEventPopUp(string Label, string Description, string Button)
     {

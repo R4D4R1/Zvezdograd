@@ -1,6 +1,7 @@
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UniRx;
 
 public class CityHallPopUp : QuestPopUp
 {
@@ -28,7 +29,10 @@ public class CityHallPopUp : QuestPopUp
 
         _building = _controllersManager.BuildingController.GetCityHallBuilding();
         _timeController = _controllersManager.TimeController;
-        _timeController.OnNextDayEvent += OnNextDayEvent;
+
+        _controllersManager.TimeController.OnNextDayEvent
+            .Subscribe(_ => OnNextDayEvent())
+            .AddTo(this);
 
         SetButtonState(true);
         _errorText.enabled = false;

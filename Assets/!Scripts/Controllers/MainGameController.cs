@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
-using Cysharp.Threading.Tasks;
+using UniRx;
 using Zenject;
 
 
@@ -21,6 +21,8 @@ public class MainGameController : MonoBehaviour
     [SerializeField] private float _cameraCityHideY;
     [SerializeField] private Ease _easeType;
     public GameOverStateEnum GameOverState { get; private set; }
+
+    public readonly Subject<Unit> OnGameStarted = new();
 
     public enum GameOverStateEnum
     {
@@ -43,13 +45,17 @@ public class MainGameController : MonoBehaviour
 
     public void Init()
     {
-        foreach (RepairableBuilding building in _controllersManager.BuildingController.RepairableBuildings)
+        //foreach (RepairableBuilding building in _controllersManager.BuildingController.RepairableBuildings)
+        //{
+        //    building.Init();
+        //}
+
+        foreach (SelectableBuilding building in _controllersManager.BuildingController.AllBuildings)
         {
-            building.InitBuilding();
+            building.Init();
         }
 
-        _controllersManager.BlurController.BlurBackGroundNow();
-        _controllersManager.SelectionController.enabled = false;
+        OnGameStarted.OnNext(Unit.Default);
 
         _blackImage.color = Color.black;
 
@@ -73,20 +79,8 @@ public class MainGameController : MonoBehaviour
         //        SaveLoadManager.LoadDataFromCurrentSlot();
         //    });
         //}
-
-        //else
-        //{
-        //    _controllersManager.BlurController.BlurBackGroundNow();
-        //    _controllersManager.SelectionController.enabled = false;
-
-        //    _blackImage.color = Color.black;
-
-        //    _blackImage.DOFade(0, _blackoutTime).OnComplete(() =>
-        //    {
-        //        _startPopUp.ShowPopUp();
-        //    });
-        //}
     }
+
     public void GameWin()
     {
         Debug.Log("WIN");

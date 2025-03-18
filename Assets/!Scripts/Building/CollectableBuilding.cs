@@ -1,33 +1,42 @@
 using UnityEngine;
+using UniRx;
 
-public class CollectableBuilding : BuildingDependingOnStability
+public class CollectableBuilding : ChangeMaterialsBuiliding
 {
-    [field: SerializeField] public int RawMaterialsLeft { get; private set; }
+    [SerializeField] private CollectableBuildingConfig config;
 
-    [field: SerializeField] public int RawMaterialsGet { get; private set; }
-
-    [field: SerializeField] public int PeopleToCollect { get; private set; }
-
-    [SerializeField] private int TurnsToCollectOriginal;
+    public int RawMaterialsLeft { get; private set; }
     public int TurnsToCollect { get; private set; }
+    public int RawMaterialsGet { get; private set; }
+    public int PeopleToCollect { get; private set; }
+    public int TurnsToRest { get; private set; }
 
-    [field: SerializeField] public int TurnsToRest { get; private set; }
 
-    [SerializeField] private Material originalMaterial;
-    [SerializeField] private Material greyMaterial;
-
-    protected override void Start()
+    public override void Init()
     {
-        base.Start();
-        _controllersManager.TimeController.OnNextTurnBtnPressed += TryTurnOnBuilding;
-        _controllersManager.TimeController.OnNextTurnBtnPressed += UpdateTurnsDependingOnStability;
+        base.Init();
+
+        // Инициализация значений из конфига
+        RawMaterialsLeft = config.RawMaterialsLeft;
+        TurnsToCollect = config.TurnsToCollectOriginal;
+        RawMaterialsGet = config.RawMaterialsGet;
+        PeopleToCollect = config.PeopleToCollect;
+        TurnsToRest = config.TurnsToRest;
+
+        _controllersManager.TimeController.OnNextTurnBtnPressed
+            .Subscribe(_ => TryTurnOnBuilding())
+            .AddTo(this);
+
+        _controllersManager.TimeController.OnNextTurnBtnPressed
+            .Subscribe(_ => UpdateTurnsDependingOnStability())
+            .AddTo(this);
 
         UpdateTurnsDependingOnStability();
     }
 
     private void UpdateTurnsDependingOnStability()
     {
-        TurnsToCollect = UpdateAmountOfTurnsNeededToDoSMTH(TurnsToCollectOriginal);
+        TurnsToCollect = UpdateAmountOfTurnsNeededToDoSMTH(config.TurnsToCollectOriginal);
     }
 
     private void TryTurnOnBuilding()
@@ -37,11 +46,11 @@ public class CollectableBuilding : BuildingDependingOnStability
             TurnsToCollect--;
             if (TurnsToCollect == 0)
             {
-                RawMaterialsLeft -= RawMaterialsGet;
-                _resourceViewModel.ModifyResource(ResourceModel.ResourceType.RawMaterials, RawMaterialsGet);
+                RawMaterialsLeft -= config.RawMaterialsGet;
+                _resourceViewModel.ModifyResource(ResourceModel.ResourceType.RawMaterials, config.RawMaterialsGet);
 
                 BuildingIsSelectable = true;
-                GetComponent<MeshRenderer>().material = originalMaterial;
+                RestoreOriginalMaterials();
             }
         }
     }
@@ -50,10 +59,11 @@ public class CollectableBuilding : BuildingDependingOnStability
     {
         UpdateTurnsDependingOnStability();
 
-        _controllersManager.PeopleUnitsController.AssignUnitsToTask(PeopleToCollect, TurnsToCollect, TurnsToRest);
+        _controllersManager.PeopleUnitsController.AssignUnitsToTask(
+            config.PeopleToCollect, TurnsToCollect, config.TurnsToRest);
 
         BuildingIsSelectable = false;
 
-        GetComponent<MeshRenderer>().material = greyMaterial;
+        SetGreyMaterials();
     }
 }

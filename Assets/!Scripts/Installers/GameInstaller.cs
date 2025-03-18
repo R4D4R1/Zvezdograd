@@ -3,6 +3,7 @@ using Zenject;
 
 public class GameInstaller : MonoInstaller
 {
+    [SerializeField] private EventPopUp eventPopUp;
     [SerializeField] private ControllersManager controllersManager;
     [SerializeField] private BlurConfig blurConfig;
     [SerializeField] private ResourcesConfig resourceConfig;
@@ -37,6 +38,7 @@ public class GameInstaller : MonoInstaller
         Container.Bind<BuildingController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<BlurController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<TutorialController>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<EventPopUp>().FromInstance(eventPopUp).AsSingle();
 
         // Фабрики
         Container.Bind<PopUpFactory>()

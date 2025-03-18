@@ -8,7 +8,9 @@ using UnityEngine;
 
 public class Outline : MonoBehaviour
 {
+#pragma warning disable UDR0001 // Domain Reload Analyzer
     private static HashSet<Mesh> registeredMeshes = new HashSet<Mesh>();
+#pragma warning restore UDR0001 // Domain Reload Analyzer
 
     public enum Mode
     {

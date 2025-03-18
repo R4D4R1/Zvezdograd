@@ -1,6 +1,7 @@
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UniRx;
 
 public class HospitalPopUp : QuestPopUp
 {
@@ -13,7 +14,11 @@ public class HospitalPopUp : QuestPopUp
         _errorText.enabled = false;
         SetButtonState(true);
         UpdateMedicineTimerText();
-        _controllersManager.TimeController.OnNextDayEvent += OnNextDayEvent;
+
+        _controllersManager.TimeController.OnNextDayEvent
+            .Subscribe(_ => OnNextDayEvent())
+            .AddTo(this);
+
     }
 
     private void OnNextDayEvent()

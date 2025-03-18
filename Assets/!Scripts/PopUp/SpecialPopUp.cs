@@ -1,5 +1,6 @@
 using DG.Tweening;
 using TMPro;
+using UniRx;
 using UnityEngine;
 using Zenject;
 
@@ -39,6 +40,8 @@ public class SpecialPopUp : ReturnToPoolPopUp
     private FoodTrucksPopUp _foodTrucksPopUp;
     private HospitalPopUp _hospitalPopUp;
 
+    public readonly Subject<Unit> OnSpecialPopUpHide;
+
     private void Start()
     {
         Init();
@@ -46,8 +49,6 @@ public class SpecialPopUp : ReturnToPoolPopUp
 
     private void Init()
     {
-        Debug.Log(_controllersManager);
-
         _collectPopUp = _controllersManager.PopUpsController.CollectPopUp;
         _repairPopUp = _controllersManager.PopUpsController.RepairPopUp;
         _factoryPopUp = _controllersManager.PopUpsController.FactoryPopUp;
@@ -68,33 +69,21 @@ public class SpecialPopUp : ReturnToPoolPopUp
         {
             case PopUpFuncs.OpenCollectMenu:
                 _collectPopUp.ShowCollectPopUp(CollectableBuilding);
-                _controllersManager.MainGameUIController.TurnOffUI();
-
                 break;
             case PopUpFuncs.OpenRepairMenu:
                 _repairPopUp.ShowRepairPopUp(RepairableBuilding);
-                _controllersManager.MainGameUIController.TurnOffUI();
-
                 break;
             case PopUpFuncs.OpenFactoryMenu:
                 _factoryPopUp.ShowFactoryPopUp(FactoryBuilding);
-                _controllersManager.MainGameUIController.TurnOffUI();
-
                 break;
             case PopUpFuncs.OpenCityHallMenu:
                 _cityHallPopUp.ShowCityHallPopUp();
-                _controllersManager.MainGameUIController.TurnOffUI();
-
                 break;
             case PopUpFuncs.OpenFoodTrucksMenu:
                 _foodTrucksPopUp.ShowFoodTruckPopUp();
-                _controllersManager.MainGameUIController.TurnOffUI();
-
                 break;
             case PopUpFuncs.OpenHospitalMenu:
                 _hospitalPopUp.ShowHospitalPopUp();
-                _controllersManager.MainGameUIController.TurnOffUI();
-
                 break;
             case PopUpFuncs.OpenNextTutorialPopUp:
                 _controllersManager.TutorialController.ShowTutorial();
@@ -102,6 +91,11 @@ public class SpecialPopUp : ReturnToPoolPopUp
             default:
                 break;
         }
+
+        if(CurrentFunc != PopUpFuncs.OpenNextTutorialPopUp)
+            _controllersManager.MainGameUIController.TurnOffUI();
+
+        _controllersManager.SelectionController.SetSelectionControllerState(false);
 
         HidePopUp();
     }
@@ -122,5 +116,5 @@ public class SpecialPopUp : ReturnToPoolPopUp
 
             SetAlpha(1);
         });
-    }   
+    }
 }

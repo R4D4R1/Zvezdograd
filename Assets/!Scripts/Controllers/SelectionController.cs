@@ -7,16 +7,16 @@ using Cysharp.Threading.Tasks;
 
 public class SelectionController : MonoBehaviour
 {
-    private SelectableBuilding _currentHoveredObject;
-    private SelectableBuilding _selectedBuilding;
-    private Camera _mainCamera;
-
     [SerializeField] private Canvas _canvas;
 
     [SerializeField] private Color _outlineColor;
     [Range(0f,1f), SerializeField] private float _outlineWidth;
 
+    private SelectableBuilding _currentHoveredObject;
+    private SelectableBuilding _selectedBuilding;
+    private Camera _mainCamera;
     private GameObject _currentPopUp;
+    private bool _isActivated;
 
     // INJECT OBJECTS
     private ControllersManager _controllersManager;
@@ -33,22 +33,47 @@ public class SelectionController : MonoBehaviour
         _soundController = soundController;
     }
 
-    void Update()
-    {
-        HandleHover();
-        HandleSelection();
-    }
-
     public void Init()
     {
         _controllersManager.TimeController.NextTurnButton.OnClickAsObservable()
             .Subscribe(_ => Deselect())
             .AddTo(this);
 
+        _controllersManager.MainGameUIController.OnUITurnOff
+            .Subscribe(_ => Deselect())
+            .AddTo(this);
+
+        _controllersManager.MainGameUIController.OnUITurnOn
+            .Subscribe(_ => SetSelectionControllerState(true))
+            .AddTo(this);
+
+        _controllersManager.MainGameController.OnGameStarted
+            .Subscribe(_ => SetSelectionControllerState(false))
+            .AddTo(this);
+
         Debug.Log($"{name} - Initialized successfully");
     }
 
-    void HandleHover()
+    private void Update()
+    {
+        if (_isActivated)
+        {
+            HandleHover();
+            HandleSelection();
+        }
+    }
+
+    public void SetSelectionControllerState(bool isActive)
+    {
+        _isActivated = isActive;
+
+        //if (_isActivated)
+        //    Debug.Log("SELECTION ACTIVATED");
+        //else
+        //    Debug.Log("SELECTION DEACTIVATED");
+    }
+
+    private void HandleHover()
     {
         if (EventSystem.current.IsPointerOverGameObject())
         {
@@ -105,7 +130,7 @@ public class SelectionController : MonoBehaviour
         }
     }
 
-    void HandleSelection()
+    private void HandleSelection()
     {
         if (EventSystem.current.IsPointerOverGameObject())
         {
@@ -259,5 +284,11 @@ public class SelectionController : MonoBehaviour
         {
             _currentPopUp = null;
         }
+    }
+
+    private void TurnOfUI()
+    {
+        Deselect();
+        SetSelectionControllerState(false);
     }
 }

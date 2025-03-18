@@ -3,6 +3,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UniRx;
 
 public class QuestPopUp : EnoughPopUp
 {
@@ -21,12 +22,9 @@ public class QuestPopUp : EnoughPopUp
 
     protected virtual void Start()
     {
-        _controllersManager.TimeController.OnNextDayEvent += OnNextDay;
-    }
-
-    private void OnDisable()
-    {
-        _controllersManager.TimeController.OnNextDayEvent -= OnNextDay;
+        _controllersManager.TimeController.OnNextDayEvent
+            .Subscribe(_ => OnNextDay())
+            .AddTo(this);
     }
 
     public void EnableQuest(QuestType questType, string questName, int deadlineInDays, int unitSize, int turnsToWork, int turnsToRest,

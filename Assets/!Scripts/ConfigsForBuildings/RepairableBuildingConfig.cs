@@ -16,9 +16,6 @@ public class RepairableBuildingConfig : ScriptableObject
 
     [SerializeField, Range(1f, 5f)] private int _turnsToRestFromRepair;
 
-    [Header("Building Models")]
-    [SerializeField] private Material _greyMaterial;
-
     [Header("Building Type")]
     [SerializeField] private RepairableBuilding.BuildingType _buildingType;
     [SerializeField] private RepairableBuilding.State _state;
@@ -30,7 +27,6 @@ public class RepairableBuildingConfig : ScriptableObject
     public int PeopleToRepair => _peopleToRepair;
     public int TurnsToRepairOriginal => _turnsToRepairOriginal;
     public int TurnsToRestFromRepair => _turnsToRestFromRepair;
-    public Material GreyMaterial => _greyMaterial;
     public RepairableBuilding.BuildingType BuildingType => _buildingType;
     public RepairableBuilding.State State => _state;
 }

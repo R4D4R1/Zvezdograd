@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff319c86eaf36e54e83de5e21af39f93, type: 3}
   m_Name: CollectableBuildingConfig
   m_EditorClassIdentifier: 
-  rawMaterialsLeft: 0
-  rawMaterialsGet: 0
-  peopleToCollect: 0
-  turnsToCollectOriginal: 0
-  turnsToRest: 0
-  originalMaterial: {fileID: 0}
-  greyMaterial: {fileID: 0}
+  rawMaterialsLeft: 10
+  rawMaterialsGet: 1
+  peopleToCollect: 1
+  turnsToCollectOriginal: 2
+  turnsToRest: 2
+  greyMaterial: {fileID: 2100000, guid: f1f22581a8a67c94ca2fdecd52975a74, type: 2}

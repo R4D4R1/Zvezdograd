@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UniRx;
 
 public class CityHallBuilding : RepairableBuilding
 {
@@ -16,16 +17,23 @@ public class CityHallBuilding : RepairableBuilding
     private int _turnsToCreateNewUnit;
     private bool _isWorking = false;
 
-    public event Action OnCityHallUnitCreated;
+    public readonly Subject<Unit> OnCityHallUnitCreated = new();
 
-    protected override void Start()
+    public override void Init()
     {
-        base.Start();
+        base.Init();
+
         InitializeConfigValues();
         InitializeControllers();
         InitializeTimers();
-        _timeController.OnNextDayEvent += OnNextDayEvent;
-        _controllersManager.TimeController.OnNextTurnBtnPressed += CheckIfCreatedNewUnit;
+
+        _controllersManager.TimeController.OnNextDayEvent
+            .Subscribe(_ => OnNextDayEvent())
+            .AddTo(this);
+
+        _controllersManager.TimeController.OnNextTurnBtnPressed
+            .Subscribe(_ => CheckIfCreatedNewUnit())
+            .AddTo(this);
     }
 
     private void InitializeConfigValues()
@@ -52,7 +60,7 @@ public class CityHallBuilding : RepairableBuilding
             _turnsToCreateNewUnit--;
             if (_turnsToCreateNewUnit == 0)
             {
-                OnCityHallUnitCreated?.Invoke();
+                OnCityHallUnitCreated.OnNext(Unit.Default);
                 _isWorking = false;
             }
         }

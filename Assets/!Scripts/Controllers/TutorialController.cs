@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
 using UnityEngine.Events;
 using Zenject;
@@ -28,24 +29,28 @@ public class TutorialController : MonoBehaviour
     private Queue<SelectableBuilding> tutorialBuildings = new();
     private Dictionary<SelectableBuilding, string> buildingDescriptions = new();
 
-    private Camera _mainCamera;
     private Canvas _canvas;
 
     protected ControllersManager _controllersManager;
     private PopUpFactory _popUpFactory;
+    private Camera _mainCamera;
+
+    public readonly Subject<Unit> OnTutorialStarted = new();
 
     [Inject]
-    public void Construct(ControllersManager controllersManager, PopUpFactory popUpFactory)
+    public void Construct(ControllersManager controllersManager, PopUpFactory popUpFactory,Camera camera)
     {
         _controllersManager = controllersManager;
         _popUpFactory = popUpFactory;
+        _mainCamera = camera;
     }
 
     public async void StartTutorial()
     {
         await UniTask.Delay(500);
 
-        _mainCamera = Camera.main;
+        OnTutorialStarted.OnNext(Unit.Default);
+
         _canvas = _popUpParent.GetComponentInParent<Canvas>();
 
         var buildingController = _controllersManager.BuildingController;
@@ -100,9 +105,6 @@ public class TutorialController : MonoBehaviour
         Vector2 localPosition = _canvas.transform.InverseTransformPoint(screenPosition);
         RectTransform popUpRect = _currentPopUp.GetComponent<RectTransform>();
         _currentPopUp.transform.localPosition = new Vector3(localPosition.x + popUpRect.rect.width * 0.75f, localPosition.y + popUpRect.rect.height * 0.75f, 0);
-
-        //Debug.Log(buildingWorldPosition);
-        //Debug.Log(screenPosition);
 
         var popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
         string description = buildingDescriptions.TryGetValue(tutorialBuilding, out var desc) ? desc : "Нет описания";

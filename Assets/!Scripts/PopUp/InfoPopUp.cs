@@ -3,6 +3,7 @@ using TMPro;
 using DG.Tweening;
 using Cysharp.Threading.Tasks;
 using Zenject;
+using UniRx;
 
 public class InfoPopUp : MonoBehaviour
 {
@@ -71,7 +72,6 @@ public class InfoPopUp : MonoBehaviour
                 IsActive = false;
             });
 
-            _controllersManager.MainGameUIController.EnableEscapeMenuToggle();
             _controllersManager.MainGameUIController.TurnOnUI();
 
             SetAlpha(0);

@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Cysharp.Threading.Tasks;
 using Zenject;
 using System.IO;
+using UniRx;
 
 public class PopupEventController : MonoBehaviour
 {
@@ -14,29 +15,25 @@ public class PopupEventController : MonoBehaviour
 
     protected ControllersManager _controllersManager;
     protected ResourceViewModel _resourceViewModel;
+    protected EventPopUp _eventPopUp;
 
     public event Action OnSnowStartedEvent;
 
     [Inject]
-    public void Construct(ControllersManager controllersManager, ResourceViewModel resourceViewModel)
+    public void Construct(ControllersManager controllersManager, ResourceViewModel resourceViewModel,EventPopUp eventPopUp)
     {
         _controllersManager = controllersManager;
         _resourceViewModel = resourceViewModel;
-    }
-
-    private void OnEnable()
-    {
-        _controllersManager.TimeController.OnNextTurnBtnPressed += OnPeriodChanged;
-    }
-
-    private void OnDisable()
-    {
-        _controllersManager.TimeController.OnNextTurnBtnPressed -= OnPeriodChanged;
+        _eventPopUp = eventPopUp;
     }
 
     public void Init()
     {
         LoadEvents();
+
+        _controllersManager.TimeController.OnNextTurnBtnPressed
+            .Subscribe(_ => OnPeriodChanged())
+            .AddTo(this);
 
         Debug.Log($"{name} - Initialized successfully");
     }
@@ -67,8 +64,6 @@ public class PopupEventController : MonoBehaviour
     {
         // Delay to check WIN/LOSE condition
         await UniTask.Delay(1);
-
-        Debug.Log("New Period");
 
         if (_controllersManager.MainGameController.GameOverState == MainGameController.GameOverStateEnum.Win)
         {
@@ -107,7 +102,7 @@ public class PopupEventController : MonoBehaviour
             }
 
             // Show the popup
-            EventPopUp.Instance.ShowEventPopUp(
+            _eventPopUp.ShowEventPopUp(
                 popupEvent.title,
                 popupEvent.mainText,
                 popupEvent.buttonText);
@@ -143,7 +138,7 @@ public class PopupEventController : MonoBehaviour
     private void OnGameWonEventShow()
     {
         _isGameOver = true;
-        EventPopUp.Instance.ShowEventPopUp(
+        _eventPopUp.ShowEventPopUp(
             "ПОБЕДА",
             "После долгих и бессонных ночей мы все же дождались прибытия помощи, но какой ценой...",
             "МЫ СПАСЕНЫ");
@@ -152,7 +147,7 @@ public class PopupEventController : MonoBehaviour
     private void OnGameLoseEventShow()
     {
         _isGameOver = true;
-        EventPopUp.Instance.ShowEventPopUp(
+        _eventPopUp.ShowEventPopUp(
             "ВАС СВЕРГЛИ",
             "Вы не смогли удержать наш город в стабильности и мире, из-за чего и были расстреляны незамедлительно",
             "КОНЕЦ");

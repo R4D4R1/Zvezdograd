@@ -42,10 +42,10 @@ public class TimeController : MonoBehaviour
 
     private ControllersManager _controllersManager;
     private ResourceViewModel _resourceViewModel;
+    private EventPopUp _eventPopUp;
 
-    public event Action OnNextTurnBtnPressed;
-    public event Action OnNextDayEvent;
-
+    public readonly Subject<Unit> OnNextTurnBtnPressed = new();
+    public readonly Subject<Unit> OnNextDayEvent = new();
     public enum PeriodOfDay
     {
         Утро,
@@ -54,10 +54,11 @@ public class TimeController : MonoBehaviour
     }
 
     [Inject]
-    public void Construct(ControllersManager controllersManager, ResourceViewModel resourceViewModel)
+    public void Construct(ControllersManager controllersManager, ResourceViewModel resourceViewModel,EventPopUp eventPopUp)
     {
         _controllersManager = controllersManager;
         _resourceViewModel = resourceViewModel;
+        _eventPopUp = eventPopUp;
     }
 
     public void Init()
@@ -124,7 +125,7 @@ public class TimeController : MonoBehaviour
                 {
                     _controllersManager.BuildingController.BombRegularBuilding();
                     _daysWithoutBombing = 0;
-                    OnNextDayEvent?.Invoke();
+                    OnNextDayEvent.OnNext(Unit.Default);
                 }
                 break;
         }
@@ -161,7 +162,7 @@ public class TimeController : MonoBehaviour
 
         await UniTask.Delay(100);
 
-        OnNextTurnBtnPressed?.Invoke();
+        OnNextTurnBtnPressed.OnNext(Unit.Default);
         AddActionPoints();
 
         await blackoutImage.DOFade(0, _nextTurnFadeTime / 2).AsyncWaitForCompletion();
@@ -169,7 +170,7 @@ public class TimeController : MonoBehaviour
         _nextTurnBtn.interactable = true;
         foreach (var script in _btnScripts) script.enabled = true;
 
-        if (!EventPopUp.Instance.IsActive)
+        if (!_eventPopUp.IsActive)
         {
             _controllersManager.SelectionController.enabled = true;
         }

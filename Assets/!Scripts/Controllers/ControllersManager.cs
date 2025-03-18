@@ -28,8 +28,8 @@ public class ControllersManager : MonoBehaviour
         TutorialController tutorialController
         )
     {
-        SelectionController = selectionController;
         MainGameUIController = mainGameUIController;
+        SelectionController = selectionController;
         MainGameController = mainGameController;
         TimeController = timeController;
         PeopleUnitsController = peopleUnitsController;
@@ -43,9 +43,9 @@ public class ControllersManager : MonoBehaviour
     private void Awake()
     {
         BlurController.Init();
+        MainGameUIController.Init();
         SelectionController.Init();
         BuildingController.Init();
-        MainGameUIController.Init();
         MainGameController.Init();
         TimeController.Init();
         PeopleUnitsController.Init();
