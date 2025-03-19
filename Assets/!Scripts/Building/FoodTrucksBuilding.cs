@@ -4,27 +4,11 @@ using UniRx;
 public class FoodTrucksBuilding : RepairableBuilding
 {
     [Header("FOOD TRUCKS SETTINGS")]
-    [SerializeField] private int _peopleToGiveProvision;
+    [SerializeField] private FoodTrucksBuildingConfig _foodTrucksConfig;
 
-    public int PeopleToGiveProvision => _peopleToGiveProvision;
-
-    [SerializeField] private int _turnsToToGiveProvisionOriginal;
     public int TurnsToToGiveProvision { get; private set; }
-
-    [SerializeField] private int _turnsToRestFromProvisionJob;
-    public int TurnsToRestFromProvisionJob => _turnsToRestFromProvisionJob;
-
-
-    [SerializeField] private int _foodToGive;
-    public int FoodToGive => _foodToGive;
-
-
-    [SerializeField] private int _stabilityAddValue;
-    public int StabilityAddValue => _stabilityAddValue;
-
-
-    [SerializeField] private int _stabilityRemoveValue;
-    public int StabilityRemoveValue => _stabilityRemoveValue;
+    public int PeopleToGiveProvision { get; private set; }
+    public int FoodToGive { get; private set; }
 
     // SAVE DATA
     public bool IsFoodGivenAwayToday { get; private set; } = false;
@@ -32,25 +16,28 @@ public class FoodTrucksBuilding : RepairableBuilding
     public override void Init()
     {
         base.Init();
-        _controllersManager.TimeController.OnNextTurnBtnPressed
+        _controllersManager.TimeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => UpdateAmountOfTurnsNeededToDoSMTH())
             .AddTo(this);
 
         UpdateAmountOfTurnsNeededToDoSMTH();
+
+        PeopleToGiveProvision = _foodTrucksConfig.PeopleToGiveProvision;
+        FoodToGive = _foodTrucksConfig.FoodToGive;
+
     }
 
     private void UpdateAmountOfTurnsNeededToDoSMTH()
     {
-        TurnsToToGiveProvision = UpdateAmountOfTurnsNeededToDoSMTH(_turnsToToGiveProvisionOriginal);
+        TurnsToToGiveProvision = UpdateAmountOfTurnsNeededToDoSMTH(_foodTrucksConfig.TurnsToGiveProvisionOriginal);
     }
 
     public void SendPeopleToGiveProvision()
     {
         IsFoodGivenAwayToday = true;
-
-        _controllersManager.PeopleUnitsController.AssignUnitsToTask(PeopleToGiveProvision, TurnsToToGiveProvision, TurnsToRestFromProvisionJob);
-        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Provision, -FoodToGive);
-        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Stability, StabilityAddValue);
+        _controllersManager.PeopleUnitsController.AssignUnitsToTask(_foodTrucksConfig.PeopleToGiveProvision, TurnsToToGiveProvision, _foodTrucksConfig.TurnsToRestFromProvisionJob);
+        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Provision, -_foodTrucksConfig.FoodToGive);
+        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Stability, _foodTrucksConfig.StabilityAddValue);
     }
 
     public bool FoodWasGivenAwayToday()
@@ -61,8 +48,7 @@ public class FoodTrucksBuilding : RepairableBuilding
         }
         else
         {
-            _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Stability, -StabilityRemoveValue);
-
+            _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Stability, -_foodTrucksConfig.StabilityRemoveValue);
             return false;
         }
     }

@@ -1,29 +1,16 @@
-using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
 public class CollectPopUp : EnoughPopUp
 {
-    private CollectableBuilding buildingToUse;
-
-    [SerializeField] private TextMeshProUGUI demandsText;
-
-    private void Start()
-    {
-        _errorText.enabled = false;
-    }
+    private CollectableBuilding _buildingToUse;
+    [SerializeField] private TextMeshProUGUI _demandsText;
 
     public void ShowCollectPopUp(CollectableBuilding collectableBuilding)
     {
-        buildingToUse = collectableBuilding;
-
-        demandsText.text = $" - Осталось {buildingToUse.RawMaterialsLeft} сырья\n" +
-                           $" - Вы получите {buildingToUse.RawMaterialsGet} сырья (у вас {_resourceViewModel.RawMaterials.Value})\n" +
-                           $" - Необходимо {buildingToUse.PeopleToCollect} подразделений (у вас {_controllersManager.PeopleUnitsController.ReadyUnits.Count})\n" +
-                           $" - Займет {buildingToUse.TurnsToCollect} ходов\n" +
-                           $" - Подразделения будут отдыхать {buildingToUse.TurnsToRest} ходов";
-
+        _buildingToUse = collectableBuilding;
+        UpdateDemandsText();
         transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
             IsActive = true;
@@ -31,46 +18,48 @@ public class CollectPopUp : EnoughPopUp
         });
     }
 
+    private void UpdateDemandsText()
+    {
+        _demandsText.text = $" - Осталось {_buildingToUse.RawMaterialsLeft} сырья\n" +
+                            $" - Вы получите {_buildingToUse.RawMaterialsGet} сырья (у вас {_resourceViewModel.RawMaterials.Value})\n" +
+                            $" - Необходимо {_buildingToUse.PeopleToCollect} подразделений (у вас {_controllersManager.PeopleUnitsController.ReadyUnits.Count})\n" +
+                            $" - Займет {_buildingToUse.TurnsToCollect} ходов\n" +
+                            $" - Подразделения будут отдыхать {_buildingToUse.TurnsToRest} ходов";
+    }
+
     public void CollectBuilding()
     {
-        if (CheckForEnoughPeople(buildingToUse.PeopleToCollect) && EnoughRawMaterialsToStore() && EnoughRawMaterialsInBuilding())
+        if (CanCollectBuilding())
         {
-            if (!CanUseActionPoint())
-                return;
-
             HidePopUp();
-            buildingToUse.CollectBuilding();
-        }
-        else
-        {
-            ShowErrorMessage();
+            _buildingToUse.CollectBuilding();
         }
     }
 
-    private void ShowErrorMessage()
+    private bool CanCollectBuilding()
     {
-        if (!CheckForEnoughPeople(buildingToUse.PeopleToCollect))
-        {
-            _errorText.text = "НЕ ДОСТАТОЧНО ЛЮДЕЙ";
-        }
-        else if (!EnoughRawMaterialsToStore())
-        {
-            _errorText.text = "НЕ ДОСТАТОЧНО МЕСТА ДЛЯ РЕСУРСОВ";
-        }
-        else
-        {
-            _errorText.text = "РЕСУРСЫ ЗАКОНЧИЛИСЬ";
-        }
-        _errorText.enabled = true;
+        return HasEnoughPeople(_buildingToUse.PeopleToCollect) &&
+               HasEnoughSpaceForRawMaterials() &&
+               HasRawMaterialsInBuilding() &&
+               CanUseActionPoint();
     }
 
-    public bool EnoughRawMaterialsToStore()
+    private bool HasEnoughSpaceForRawMaterials()
     {
-        return _resourceViewModel.RawMaterials.Value + buildingToUse.RawMaterialsGet <= _resourceViewModel.Model.MaxRawMaterials;
+        if (_resourceViewModel.RawMaterials.Value + _buildingToUse.RawMaterialsGet <= _resourceViewModel.Model.MaxRawMaterials)
+            return true;
+
+        ShowError("НЕ ДОСТАТОЧНО МЕСТА ДЛЯ РЕСУРСОВ");
+        return false;
     }
 
-    public bool EnoughRawMaterialsInBuilding()
+    private bool HasRawMaterialsInBuilding()
     {
-        return buildingToUse.RawMaterialsLeft > 0;
+        if (_buildingToUse.RawMaterialsLeft > 0)
+            return true;
+
+        ShowError("РЕСУРСЫ ЗАКОНЧИЛИСЬ");
+        return false;
     }
 }
+

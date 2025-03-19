@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: BlurConfig
   m_EditorClassIdentifier: 
   _timeOfDepthAppearing: 0.25
-  _blurValue: 100
+  _blurValue: 120

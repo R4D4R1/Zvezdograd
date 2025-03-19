@@ -1,33 +1,39 @@
 using UnityEngine;
 using DG.Tweening;
 using Zenject;
+using Cysharp.Threading.Tasks;
 
 public class Notification : MonoBehaviour
 {
-    [SerializeField] private float fadeDuration = 1f;
-    [SerializeField] private float delayBeforeFade = 3f;
+    [Range(0.1f, 3.0f), SerializeField] private float fadeDuration = 1f;
+    [Range(0.1f, 5.0f), SerializeField] private float delayBeforeFade = 3f;
 
-    private CanvasGroup canvasGroup;
     protected PopUpFactory _popUpFactory;
+    private CanvasGroup _canvasGroup;
 
     [Inject]
     public void Construct(PopUpFactory popUpFactory)
     {
         _popUpFactory = popUpFactory;
     }
-    private void Start()
-    {
-        canvasGroup = GetComponent<CanvasGroup>();
 
-        if (canvasGroup == null)
+    private async void OnEnable()
+    {
+        _canvasGroup = GetComponent<CanvasGroup>();
+
+        if (_canvasGroup == null)
         {
-            Debug.LogError("CanvasGroup не найден! Добавьте CanvasGroup на объект.");
+            Debug.LogError("NO CANVAS GROUP!");
             return;
         }
 
-        DOVirtual.DelayedCall(delayBeforeFade, () =>
-        {
-            canvasGroup.DOFade(0f, fadeDuration).OnComplete(() => _popUpFactory.ReturnNotificationToPool(this));
-        });
+        //Delay before destroy
+        await UniTask.Delay((int)(delayBeforeFade * 1000));
+
+        _canvasGroup.DOFade(0f, fadeDuration).OnComplete(() =>
+            {
+                _popUpFactory.ReturnNotificationToPool(this);
+                _canvasGroup.alpha = 1f;
+            });
     }
 }

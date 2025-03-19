@@ -15,6 +15,18 @@ public class ResourceViewModel
         Model = model;
     }
 
+    public int GetResourceValue(ResourceModel.ResourceType resourceType)
+    {
+        return resourceType switch
+        {
+            ResourceModel.ResourceType.Provision => Provision.Value,
+            ResourceModel.ResourceType.Medicine => Medicine.Value,
+            ResourceModel.ResourceType.RawMaterials => RawMaterials.Value,
+            ResourceModel.ResourceType.ReadyMaterials => ReadyMaterials.Value,
+            _ => 0
+        };
+    }
+
     public void ModifyResource(ResourceModel.ResourceType type, int value)
     {
         Model.ModifyResource(type, value);

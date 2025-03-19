@@ -20,7 +20,6 @@ public class RepairableBuildingConfig : ScriptableObject
     [SerializeField] private RepairableBuilding.BuildingType _buildingType;
     [SerializeField] private RepairableBuilding.State _state;
 
-    // Геттеры
     public string DamagedBuildingNameText => _damagedBuildingNameText;
     public string DamagedDescriptionText => _damagedDescriptionText;
     public int BuildingMaterialsToRepair => _buildingMaterialsToRepair;

@@ -16,9 +16,10 @@ public class PeopleUnitsController : MonoBehaviour
     public Queue<PeopleUnit> NotCreatedUnits { get; private set; } = new();
     public List<float> InitialPositions { get; private set; } = new();
 
-    public event System.Action OnUnitCreatedByPeopleUnitController;
-
     protected ControllersManager _controllersManager;
+
+    public readonly Subject<Unit> OnUnitCreatedByPeopleUnitController = new();
+
 
     [Inject]
     public void Construct(ControllersManager controllersManager)
@@ -28,6 +29,14 @@ public class PeopleUnitsController : MonoBehaviour
 
     public void Init()
     {
+        _controllersManager.TimeController.OnNextTurnBtnClickBetween
+            .Subscribe(_ => NextTurn())
+            .AddTo(this);
+
+        _controllersManager.BuildingController.GetCityHallBuilding().OnCityHallUnitCreated
+            .Subscribe(_ => CreateUnit())
+            .AddTo(this);
+
         PeopleUnit anyUnit = FindFirstObjectByType<PeopleUnit>();
 
         if (anyUnit == null)
@@ -69,17 +78,7 @@ public class PeopleUnitsController : MonoBehaviour
 
         }
 
-        _controllersManager.TimeController.OnNextTurnBtnPressed
-            .Subscribe(_ => NextTurn())
-            .AddTo(this);
-
-        _controllersManager.BuildingController.GetCityHallBuilding().OnCityHallUnitCreated
-            .Subscribe(_ => CreateUnit())
-            .AddTo(this);
-
         UpdateReadyUnits();
-
-        Debug.Log($"{name} - Initialized successfully");
     }
 
     public void NextTurn()
@@ -190,7 +189,7 @@ public class PeopleUnitsController : MonoBehaviour
             unit.SetState(PeopleUnit.UnitState.Ready,0,0);
 
             CreatedUnits.Add(unit);
-            OnUnitCreatedByPeopleUnitController?.Invoke();
+            OnUnitCreatedByPeopleUnitController.OnNext(Unit.Default);
             AnimateUnitPositions();
         }
     }

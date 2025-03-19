@@ -20,7 +20,7 @@ public class QuestPopUp : EnoughPopUp
         CityBuilding
     }
 
-    protected virtual void Start()
+    public override void Init()
     {
         _controllersManager.TimeController.OnNextDayEvent
             .Subscribe(_ => OnNextDay())
@@ -44,7 +44,7 @@ public class QuestPopUp : EnoughPopUp
                     completeButton.onClick.RemoveAllListeners();
                     completeButton.onClick.AddListener(() =>
                     {
-                        if (!CheckForEnoughPeople(unitSize))
+                        if (!HasEnoughPeople(unitSize))
                         {
                             _errorText.text = "Недостаточно людей!";
                             return;

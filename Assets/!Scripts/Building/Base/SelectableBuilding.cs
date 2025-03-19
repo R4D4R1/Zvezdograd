@@ -3,6 +3,7 @@ using Zenject;
 
 public class SelectableBuilding : MonoBehaviour
 {
+    [Header("DEFAULT SETTINGS")]
     [SerializeField] private SelectableBuildingConfig _selectableBuildingConfig;
 
     [HideInInspector] public bool BuildingIsSelectable = true;
@@ -31,7 +32,7 @@ public class SelectableBuilding : MonoBehaviour
 
         GenerateOrLoadBuildingId();
 
-        Debug.Log($"{gameObject.name} + Initialized");
+        //Debug.Log($"{gameObject.name} - Initialized successfully");
     }
 
     private void GenerateOrLoadBuildingId()

@@ -92,10 +92,10 @@ public class SpecialPopUp : ReturnToPoolPopUp
                 break;
         }
 
-        if(CurrentFunc != PopUpFuncs.OpenNextTutorialPopUp)
+        if (CurrentFunc != PopUpFuncs.OpenNextTutorialPopUp)
+        {
             _controllersManager.MainGameUIController.TurnOffUI();
-
-        _controllersManager.SelectionController.SetSelectionControllerState(false);
+        }
 
         HidePopUp();
     }

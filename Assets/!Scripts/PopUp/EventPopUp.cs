@@ -8,7 +8,6 @@ public class EventPopUp : InfoPopUp
 
     public void ShowEventPopUp(string Label, string Description, string Button)
     {
-        Debug.Log("Started show popup");
         _controllersManager.MainGameUIController.TurnOffUI();
 
         LabelText.text = "";

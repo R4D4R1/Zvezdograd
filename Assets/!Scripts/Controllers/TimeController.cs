@@ -44,8 +44,10 @@ public class TimeController : MonoBehaviour
     private ResourceViewModel _resourceViewModel;
     private EventPopUp _eventPopUp;
 
-    public readonly Subject<Unit> OnNextTurnBtnPressed = new();
     public readonly Subject<Unit> OnNextDayEvent = new();
+    public readonly Subject<Unit> OnNextTurnBtnClickBetween = new();
+    public readonly Subject<Unit> OnNextTurnBtnClickEnded = new();
+
     public enum PeriodOfDay
     {
         Утро,
@@ -67,11 +69,9 @@ public class TimeController : MonoBehaviour
         _currentDate = new ReactiveProperty<DateTime>(_startDate);
         _currentPeriod = new ReactiveProperty<PeriodOfDay>(PeriodOfDay.Утро);
 
-        // Подписки на обновления
         _currentDate.Subscribe(_ => UpdateText()).AddTo(this);
         _currentPeriod.Subscribe(_ => UpdateLighting()).AddTo(this);
 
-        // Подписка на клик кнопки
         _nextTurnBtn.OnClickAsObservable()
             .ThrottleFirst(TimeSpan.FromSeconds(0.5)) // Антиспам
             .Subscribe(_ => EndTurnButtonClicked().Forget())
@@ -81,8 +81,6 @@ public class TimeController : MonoBehaviour
         UpdateText();
 
         UpdateActionPointsText();
-
-        Debug.Log($"{name} - Initialized successfully");
     }
 
     public void SetDateAndPeriod(DateTime newDate, PeriodOfDay newPeriod)
@@ -160,9 +158,10 @@ public class TimeController : MonoBehaviour
         await blackoutImage.DOFade(1, _nextTurnFadeTime / 2).AsyncWaitForCompletion();
         UpdateTime();
 
-        await UniTask.Delay(100);
+        //await UniTask.Delay(100);
 
-        OnNextTurnBtnPressed.OnNext(Unit.Default);
+        OnNextTurnBtnClickBetween.OnNext(Unit.Default);
+
         AddActionPoints();
 
         await blackoutImage.DOFade(0, _nextTurnFadeTime / 2).AsyncWaitForCompletion();
@@ -172,7 +171,7 @@ public class TimeController : MonoBehaviour
 
         if (!_eventPopUp.IsActive)
         {
-            _controllersManager.SelectionController.enabled = true;
+            OnNextTurnBtnClickEnded.OnNext(Unit.Default);
         }
     }
 

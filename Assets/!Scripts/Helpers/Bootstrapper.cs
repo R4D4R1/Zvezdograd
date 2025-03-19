@@ -1,6 +1,5 @@
 using UnityEngine;
 using Zenject;
-using System.Threading.Tasks;
 
 public class Bootstrapper : MonoBehaviour
 {
@@ -12,10 +11,17 @@ public class Bootstrapper : MonoBehaviour
         _loadLevelController = loadLevelController;
     }
 
-    private async void Awake()
+    private async void Start()
     {
-        await _loadLevelController.LoadSceneAsync(Scenes.MAIN_MENU);
+        if(Application.platform == RuntimePlatform.Android)
+        {
+            Application.targetFrameRate = 60;
+        }
+        else
+        {
+            Application.targetFrameRate = -1;
+        }
 
-        Application.targetFrameRate = (Application.platform == RuntimePlatform.Android) ? 60 : -1;
+        await _loadLevelController.LoadSceneAsync(Scenes.MAIN_MENU);
     }
 }

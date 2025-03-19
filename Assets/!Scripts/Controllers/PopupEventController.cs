@@ -29,13 +29,11 @@ public class PopupEventController : MonoBehaviour
 
     public void Init()
     {
-        LoadEvents();
-
-        _controllersManager.TimeController.OnNextTurnBtnPressed
+        _controllersManager.TimeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => OnPeriodChanged())
             .AddTo(this);
 
-        Debug.Log($"{name} - Initialized successfully");
+        LoadEvents();
     }
 
     private void LoadEvents()

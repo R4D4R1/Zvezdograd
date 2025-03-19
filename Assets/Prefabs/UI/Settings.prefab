@@ -3760,14 +3760,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c21c8a68a508d348836cd6aaebfee8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resolutionDropdown: {fileID: 8983057320856326342}
-  fullscreenToggle: {fileID: 7287544716568850782}
-  musicVolumeSlider: {fileID: 1988702484564946164}
-  SFXVolumeSlider: {fileID: 8380653035445573779}
-  graphicsDropdown: {fileID: 1703750121213474805}
-  applyButton: {fileID: 1992142660427718989}
-  resetButton: {fileID: 1986310996996355998}
-  musicAudioSource: {fileID: 0}
+  _resolutionDropdown: {fileID: 8983057320856326342}
+  _graphicsDropdown: {fileID: 1703750121213474805}
+  _fullscreenToggle: {fileID: 7287544716568850782}
+  _musicVolumeSlider: {fileID: 1988702484564946164}
+  _SFXVolumeSlider: {fileID: 8380653035445573779}
+  _applyButton: {fileID: 1992142660427718989}
+  _resetButton: {fileID: 1986310996996355998}
+  _musicAudioSource: {fileID: 0}
 --- !u!1 &7890110799402531032
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,49 +1,57 @@
-using System;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
 public class EnoughPopUp : InfoPopUp
 {
     [SerializeField] protected TextMeshProUGUI _errorText;
-    public bool CheckForEnoughPeople(int peopleToDoSmth)
+
+    public virtual void Init()
     {
-        if (_controllersManager.PeopleUnitsController.ReadyUnits.Count >= peopleToDoSmth)
+        HideError();
+    }
+
+    public bool HasEnoughPeople(int requiredPeople)
+    {
+        if (_controllersManager.PeopleUnitsController.ReadyUnits.Count >= requiredPeople)
             return true;
-        else
-            return false;
+
+        ShowError("ÍÅ ÄÎÑÒÀÒÎ×ÍÎ ËÞÄÅÉ");
+        return false;
+    }
+
+    public bool HasEnoughResources(ResourceModel.ResourceType resourceType, int requiredAmount)
+    {
+        if (_resourceViewModel.GetResourceValue(resourceType) >= requiredAmount)
+            return true;
+
+        ShowError("ÍÅÄÎÑÒÀÒÎ×ÍÎ ÐÅÑÓÐÑÎÂ");
+        return false;
+    }
+
+    protected bool CanUseActionPoint()
+    {
+        if (_controllersManager.TimeController.OnActionPointUsed())
+            return true;
+
+        ShowError("ÍÅ ÄÎÑÒÀÒÎ×ÍÎ Î×ÊÎÂ ÄÅÉÑÒÂÈß");
+        return false;
+    }
+
+    public void ShowError(string message)
+    {
+        _errorText.text = message;
+        _errorText.enabled = true;
+    }
+
+    public void HideError()
+    {
+        _errorText.enabled = false;
     }
 
     public override void HidePopUp()
     {
         base.HidePopUp();
-        _errorText.enabled = false;
-    }
-
-    public bool ChechIfEnoughResourcesByType(ResourceModel.ResourceType resourceType, int resourceAmountToCompare)
-    {
-        if (resourceType == ResourceModel.ResourceType.Provision)
-        {
-            return _resourceViewModel.Provision.Value >= resourceAmountToCompare;
-        }
-        else if (resourceType == ResourceModel.ResourceType.Medicine)
-        {
-            return _resourceViewModel.Medicine.Value >= resourceAmountToCompare;
-        }
-        else if (resourceType == ResourceModel.ResourceType.RawMaterials)
-        {
-            return _resourceViewModel.RawMaterials.Value >= resourceAmountToCompare;
-        }
-        else
-        {
-            return _resourceViewModel.ReadyMaterials.Value >= resourceAmountToCompare;
-        }
-    }
-
-    protected bool CanUseActionPoint()
-    {
-        if(_controllersManager.TimeController.OnActionPointUsed())
-            return true;
-        else 
-            return false;
+        HideError();
     }
 }

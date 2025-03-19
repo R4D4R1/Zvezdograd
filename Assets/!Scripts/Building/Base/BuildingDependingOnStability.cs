@@ -1,9 +1,5 @@
-using UnityEngine;
-using Zenject;
-
 public class BuildingDependingOnStability : SelectableBuilding
 {
-
     // ћетод мен€ющий количество шагов необходимое дл€ выполнени€ взависимости от стабильности
     protected int UpdateAmountOfTurnsNeededToDoSMTH(int TurnsToDoWorkOriginal)
     {

@@ -3,7 +3,8 @@ using UniRx;
 
 public class CollectableBuilding : ChangeMaterialsBuiliding
 {
-    [SerializeField] private CollectableBuildingConfig config;
+    [Header("COLLECTABLE CONFIG")]
+    [SerializeField] private CollectableBuildingConfig _config;
 
     public int RawMaterialsLeft { get; private set; }
     public int TurnsToCollect { get; private set; }
@@ -11,43 +12,45 @@ public class CollectableBuilding : ChangeMaterialsBuiliding
     public int PeopleToCollect { get; private set; }
     public int TurnsToRest { get; private set; }
 
+    private int _turnsToWork;
+
 
     public override void Init()
     {
         base.Init();
 
-        // Инициализация значений из конфига
-        RawMaterialsLeft = config.RawMaterialsLeft;
-        TurnsToCollect = config.TurnsToCollectOriginal;
-        RawMaterialsGet = config.RawMaterialsGet;
-        PeopleToCollect = config.PeopleToCollect;
-        TurnsToRest = config.TurnsToRest;
-
-        _controllersManager.TimeController.OnNextTurnBtnPressed
+        _controllersManager.TimeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => TryTurnOnBuilding())
             .AddTo(this);
 
-        _controllersManager.TimeController.OnNextTurnBtnPressed
+        _controllersManager.TimeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => UpdateTurnsDependingOnStability())
             .AddTo(this);
 
         UpdateTurnsDependingOnStability();
+
+        RawMaterialsLeft = _config.RawMaterialsLeft;
+        TurnsToCollect = _config.TurnsToCollectOriginal;
+        RawMaterialsGet = _config.RawMaterialsGet;
+        PeopleToCollect = _config.PeopleToCollect;
+        TurnsToRest = _config.TurnsToRest;
     }
 
     private void UpdateTurnsDependingOnStability()
     {
-        TurnsToCollect = UpdateAmountOfTurnsNeededToDoSMTH(config.TurnsToCollectOriginal);
+        TurnsToCollect = UpdateAmountOfTurnsNeededToDoSMTH(_config.TurnsToCollectOriginal);
     }
 
     private void TryTurnOnBuilding()
     {
         if (!BuildingIsSelectable)
         {
-            TurnsToCollect--;
-            if (TurnsToCollect == 0)
+            _turnsToWork--;
+
+            if (_turnsToWork == 0)
             {
-                RawMaterialsLeft -= config.RawMaterialsGet;
-                _resourceViewModel.ModifyResource(ResourceModel.ResourceType.RawMaterials, config.RawMaterialsGet);
+                RawMaterialsLeft -= _config.RawMaterialsGet;
+                _resourceViewModel.ModifyResource(ResourceModel.ResourceType.RawMaterials, _config.RawMaterialsGet);
 
                 BuildingIsSelectable = true;
                 RestoreOriginalMaterials();
@@ -60,7 +63,9 @@ public class CollectableBuilding : ChangeMaterialsBuiliding
         UpdateTurnsDependingOnStability();
 
         _controllersManager.PeopleUnitsController.AssignUnitsToTask(
-            config.PeopleToCollect, TurnsToCollect, config.TurnsToRest);
+            _config.PeopleToCollect, TurnsToCollect, _config.TurnsToRest);
+
+        _turnsToWork = TurnsToCollect;
 
         BuildingIsSelectable = false;
 

@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b285411ec427a1f4b985a9013e3e918b, type: 3}
   m_Name: ResourcesConfig
   m_EditorClassIdentifier: 
-  InitialProvision: 5
-  InitialMedicine: 5
-  InitialRawMaterials: 5
-  InitialReadyMaterials: 5
-  InitialStability: 1
+  _provision: 3
+  _medicine: 3
+  _rawMaterials: 3
+  _readyMaterials: 3
+  _stability: 45

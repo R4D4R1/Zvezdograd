@@ -5,21 +5,19 @@ using UniRx;
 
 public class RepairableBuilding : ChangeMaterialsBuiliding
 {
-    [SerializeField] private RepairableBuildingConfig _repairabelConfig;
+    [Header("REPAIRABLE SETTINGS")]
+    [SerializeField] private RepairableBuildingConfig _repairableConfig;
+
+    public int PeopleToRepair { get; private set; }
+    public int BuildingMaterialsToRepair { get; private set; }
+    public int TurnsToRestFromRepair { get; private set; }
+
 
     private List<Material[]> _originalMaterials = new List<Material[]>();
     public int TurnsToRepair { get;protected set; }
 
-    public string DamagedBuildingNameText => _repairabelConfig.DamagedBuildingNameText;
-    public string DamagedDescriptionText => _repairabelConfig.DamagedDescriptionText;
-    public int BuildingMaterialsToRepair => _repairabelConfig.BuildingMaterialsToRepair;
-    public int PeopleToRepair => _repairabelConfig.PeopleToRepair;
-    public int TurnsToRepairOriginal => _repairabelConfig.TurnsToRepairOriginal;
-    public int TurnsToRestFromRepair => _repairabelConfig.TurnsToRestFromRepair;
     public State CurrentState;
-    public BuildingType Type => _repairabelConfig.BuildingType;
-
-    //public event Action OnStateChanged;
+    public BuildingType Type => _repairableConfig.BuildingType;
 
     public enum State
     {
@@ -41,24 +39,28 @@ public class RepairableBuilding : ChangeMaterialsBuiliding
     {
         base.Init();
 
-        CurrentState = _repairabelConfig.State;
+        CurrentState = _repairableConfig.State;
         FindBuildingModels();
 
-        _controllersManager.TimeController.OnNextTurnBtnPressed
+        _controllersManager.TimeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => TryTurnOnBuilding())
             .AddTo(this);
-        _controllersManager.TimeController.OnNextTurnBtnPressed
+        _controllersManager.TimeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => UpdateAmountOfTurnsNeededToDoSMTH())
             .AddTo(this);
 
         UpdateBuildingModel();
         UpdateAmountOfTurnsNeededToDoSMTH();
+
+        PeopleToRepair = _repairableConfig.PeopleToRepair;
+        BuildingMaterialsToRepair = _repairableConfig.BuildingMaterialsToRepair;
+        TurnsToRestFromRepair = _repairableConfig.TurnsToRestFromRepair;
     }
 
     private void UpdateAmountOfTurnsNeededToDoSMTH()
     {
         if (CurrentState != State.Repairing)
-            TurnsToRepair = UpdateAmountOfTurnsNeededToDoSMTH(TurnsToRepairOriginal);
+            TurnsToRepair = UpdateAmountOfTurnsNeededToDoSMTH(_repairableConfig.TurnsToRepairOriginal);
     }
 
     protected virtual void TryTurnOnBuilding()
@@ -81,8 +83,8 @@ public class RepairableBuilding : ChangeMaterialsBuiliding
     {
         if (CurrentState == State.Damaged)
         {
-            _controllersManager.PeopleUnitsController.AssignUnitsToTask(PeopleToRepair, TurnsToRepair, TurnsToRestFromRepair);
-            _resourceViewModel.ModifyResource(ResourceModel.ResourceType.ReadyMaterials, -BuildingMaterialsToRepair);
+            _controllersManager.PeopleUnitsController.AssignUnitsToTask(_repairableConfig.PeopleToRepair, TurnsToRepair, _repairableConfig.TurnsToRestFromRepair);
+            _resourceViewModel.ModifyResource(ResourceModel.ResourceType.ReadyMaterials, -_repairableConfig.BuildingMaterialsToRepair);
 
             BuildingIsSelectable = false;
             SetGreyMaterials();
@@ -94,7 +96,6 @@ public class RepairableBuilding : ChangeMaterialsBuiliding
     {
         if (CurrentState == State.Intact)
         {
-            Debug.Log(gameObject.name);
             BuildingIsSelectable = true;
             CurrentState = State.Damaged;
             UpdateBuildingModel();

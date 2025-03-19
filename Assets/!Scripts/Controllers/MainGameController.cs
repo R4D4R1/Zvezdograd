@@ -45,10 +45,6 @@ public class MainGameController : MonoBehaviour
 
     public void Init()
     {
-        //foreach (RepairableBuilding building in _controllersManager.BuildingController.RepairableBuildings)
-        //{
-        //    building.Init();
-        //}
 
         foreach (SelectableBuilding building in _controllersManager.BuildingController.AllBuildings)
         {
@@ -63,22 +59,6 @@ public class MainGameController : MonoBehaviour
         {
             _startPopUp.ShowPopUp();
         });
-
-        Debug.Log($"{name} - Initialized successfully");
-
-        //if (SaveLoadManager.IsStartedFromMainMenu)
-        //{
-        //    _blackImage.DOFade(0, _blackoutTime).OnComplete(() =>
-        //    {
-        //        _startPopUp.gameObject.SetActive(false);
-        //        _tutorialPupUp.gameObject.SetActive(false);
-
-        //        ShowCity();
-        //        _controllersManager.MainGameUIController.TurnOnUI();
-
-        //        SaveLoadManager.LoadDataFromCurrentSlot();
-        //    });
-        //}
     }
 
     public void GameWin()

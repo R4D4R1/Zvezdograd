@@ -7,18 +7,16 @@ public class HospitalPopUp : QuestPopUp
 {
     [SerializeField] private TextMeshProUGUI _medicineTimerText;
 
-    protected override void Start()
+    public override void Init()
     {
-        base.Start();
+        base.Init();
 
-        _errorText.enabled = false;
         SetButtonState(true);
         UpdateMedicineTimerText();
 
         _controllersManager.TimeController.OnNextDayEvent
             .Subscribe(_ => OnNextDayEvent())
             .AddTo(this);
-
     }
 
     private void OnNextDayEvent()
@@ -45,34 +43,16 @@ public class HospitalPopUp : QuestPopUp
     {
         if (CanGiveAwayMedicine())
         {
-            if (!CanUseActionPoint())
-                return;
             SetButtonState(false);
             _controllersManager.BuildingController.GetHospitalBuilding().SendPeopleToGiveMedicine();
-        }
-        else
-        {
-            ShowErrorMessage();
         }
     }
 
     private bool CanGiveAwayMedicine()
     {
-        return CheckForEnoughPeople(_controllersManager.BuildingController.GetHospitalBuilding().PeopleToGiveMedicine) &&
-               EnoughMedicineToGiveAway();
-    }
-
-    private void ShowErrorMessage()
-    {
-        if (!EnoughMedicineToGiveAway())
-        {
-            _errorText.text = "Õ≈ ƒŒ—“¿“Œ◊ÕŒ Ã≈ƒ»÷»Õ€";
-        }
-        else if (!CheckForEnoughPeople(_controllersManager.BuildingController.GetHospitalBuilding().PeopleToGiveMedicine))
-        {
-            _errorText.text = "Õ≈ ƒŒ—“¿“Œ◊ÕŒ Àﬁƒ≈…";
-        }
-        _errorText.enabled = true;
+        return HasEnoughPeople(_controllersManager.BuildingController.GetHospitalBuilding().PeopleToGiveMedicine) &&
+               EnoughMedicineToGiveAway() &&
+               CanUseActionPoint();
     }
 
     private void UpdateMedicineTimerText()
@@ -83,8 +63,7 @@ public class HospitalPopUp : QuestPopUp
 
     private bool EnoughMedicineToGiveAway()
     {
-        return ChechIfEnoughResourcesByType(ResourceModel.ResourceType.Medicine, _controllersManager.BuildingController.GetHospitalBuilding().MedicineToGive);
+        return HasEnoughResources(ResourceModel.ResourceType.Medicine,
+            _controllersManager.BuildingController.GetHospitalBuilding().MedicineToGive);
     }
-
-    
 }

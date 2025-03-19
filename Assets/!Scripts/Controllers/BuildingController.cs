@@ -34,8 +34,6 @@ public class BuildingController : MonoBehaviour
                 RepairableBuildings.Add(building as RepairableBuilding);
             }
         }
-
-        Debug.Log($"{name} - Initialized successfully");
     }
 
     //private void Awake()

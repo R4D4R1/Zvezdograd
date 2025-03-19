@@ -3,13 +3,19 @@ using Zenject;
 
 public class GameInstaller : MonoInstaller
 {
+    [Header("DEPENDENICES")]
     [SerializeField] private EventPopUp eventPopUp;
     [SerializeField] private ControllersManager controllersManager;
+
+    [Header("CONFIGS")]
     [SerializeField] private BlurConfig blurConfig;
     [SerializeField] private ResourcesConfig resourceConfig;
 
+    [Header("PARENTS PREFABS")]
     [SerializeField] private Transform _parentPopUpPrefab;
     [SerializeField] private Transform _parentNotificationsPrefab;
+
+    [Header("POP UPS PREFABS")]
     [SerializeField] private GameObject _infoPopUpPrefab;
     [SerializeField] private GameObject _specialPopUpPrefab;
     [SerializeField] private GameObject _notificationPrefab;
@@ -38,15 +44,15 @@ public class GameInstaller : MonoInstaller
         Container.Bind<BuildingController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<BlurController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<TutorialController>().FromComponentInHierarchy().AsSingle();
-        Container.Bind<EventPopUp>().FromInstance(eventPopUp).AsSingle();
 
         // Фабрики
         Container.Bind<PopUpFactory>()
             .AsSingle()
             .WithArguments(Container, _parentPopUpPrefab, _parentNotificationsPrefab, _infoPopUpPrefab, _specialPopUpPrefab, _notificationPrefab);
 
-        // Менеджер контроллеров
+        // Putting dependencies inside container
         Container.Bind<ControllersManager>().FromInstance(controllersManager).AsSingle();
+        Container.Bind<EventPopUp>().FromInstance(eventPopUp).AsSingle();
 
         // Оставшиеся зависимости
         Container.Bind<PopUpsController>().FromComponentInHierarchy().AsSingle();
@@ -55,8 +61,6 @@ public class GameInstaller : MonoInstaller
         Container.Bind<ResourceModel>().AsSingle();
         Container.BindInstance(resourceConfig).AsSingle();
         Container.Bind<ResourceViewModel>().AsSingle();
-
-        Debug.Log("GameInstaller: Bindings completed successfully.");
     }
 
 }

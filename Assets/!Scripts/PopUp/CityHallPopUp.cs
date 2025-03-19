@@ -13,29 +13,18 @@ public class CityHallPopUp : QuestPopUp
     private CityHallBuilding _building;
     private TimeController _timeController;
 
-    private void OnEnable()
+    public override void Init()
     {
-        _controllersManager.PeopleUnitsController.OnUnitCreatedByPeopleUnitController += UpdateCreateUnitGO;
-    }
-
-    private void OnDisable()
-    {
-        _controllersManager.PeopleUnitsController.OnUnitCreatedByPeopleUnitController -= UpdateCreateUnitGO;
-    }
-
-    protected override void Start()
-    {
-        base.Start();
+        base.Init();
 
         _building = _controllersManager.BuildingController.GetCityHallBuilding();
         _timeController = _controllersManager.TimeController;
 
-        _controllersManager.TimeController.OnNextDayEvent
-            .Subscribe(_ => OnNextDayEvent())
+        _controllersManager.PeopleUnitsController.OnUnitCreatedByPeopleUnitController
+            .Subscribe(_ => UpdateCreateUnitGO())
             .AddTo(this);
 
         SetButtonState(true);
-        _errorText.enabled = false;
 
         UpdateAllText();
         UpdateCreatePeopleText();
@@ -61,39 +50,19 @@ public class CityHallPopUp : QuestPopUp
 
     public void CreateNewUnit()
     {
-
-        if (EnoughReadyMaterialToCreate())
+        if (CanCreateNewUnit())
         {
-            if (!CanUseActionPoint())
-                return;
-
-            _controllersManager.BuildingController.GetCityHallBuilding().NewUnitStartedCreating();
-
+            _building.NewUnitStartedCreating();
             SetButtonState(false);
         }
-        else
-        {
-            ShowErrorMessage();
-        }
     }
 
-    public bool EnoughReadyMaterialToCreate()
+    private bool CanCreateNewUnit()
     {
-        return ChechIfEnoughResourcesByType(ResourceModel.ResourceType.ReadyMaterials,
-            _controllersManager.BuildingController.GetCityHallBuilding().ReadyMaterialsToCreateNewPeopleUnit);
-    }
-
-    private void ShowErrorMessage()
-    {
-        if (!EnoughReadyMaterialToCreate())
-        {
-            _errorText.text = "НЕ ДОСТАТОЧНО МАТЕРИАЛОВ";
-        }
-        else if (!CheckForEnoughPeople(_controllersManager.BuildingController.GetFoodTruckBuilding().PeopleToGiveProvision))
-        {
-            _errorText.text = "НЕ ДОСТАТОЧНО ЛЮДЕЙ";
-        }
-        _errorText.enabled = true;
+        return HasEnoughResources(ResourceModel.ResourceType.ReadyMaterials,
+               _building.ReadyMaterialsToCreateNewPeopleUnit) &&
+               HasEnoughPeople(_controllersManager.BuildingController.GetFoodTruckBuilding().PeopleToGiveProvision) &&
+               CanUseActionPoint();
     }
 
     private void UpdateAllText()
@@ -109,7 +78,7 @@ public class CityHallPopUp : QuestPopUp
     private void UpdateCreatePeopleText()
     {
         _createPeopleText.text = $"Организовать новое подразделение - доступно " +
-            $"{_controllersManager.PeopleUnitsController.NotCreatedUnits.Count}";
+                                 $"{_controllersManager.PeopleUnitsController.NotCreatedUnits.Count}";
     }
 
     public void UpdateCreateUnitGO()
@@ -123,6 +92,5 @@ public class CityHallPopUp : QuestPopUp
         {
             Destroy(_createPeopleText.gameObject);
         }
-
     }
 }

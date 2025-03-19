@@ -4,7 +4,8 @@ using UniRx;
 
 public class CityHallBuilding : RepairableBuilding
 {
-    [SerializeField] private CityHallBuildingConfig config;
+    [Header("CITY HALL SETTINGS")]
+    [SerializeField] private CityHallBuildingConfig _cityHallConfig;
 
     public int ReadyMaterialsToCreateNewPeopleUnit { get; private set; }
     public int RelationWithGoverment { get; private set; }
@@ -23,7 +24,6 @@ public class CityHallBuilding : RepairableBuilding
     {
         base.Init();
 
-        InitializeConfigValues();
         InitializeControllers();
         InitializeTimers();
 
@@ -31,15 +31,12 @@ public class CityHallBuilding : RepairableBuilding
             .Subscribe(_ => OnNextDayEvent())
             .AddTo(this);
 
-        _controllersManager.TimeController.OnNextTurnBtnPressed
+        _controllersManager.TimeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => CheckIfCreatedNewUnit())
             .AddTo(this);
-    }
 
-    private void InitializeConfigValues()
-    {
-        ReadyMaterialsToCreateNewPeopleUnit = config.ReadyMaterialsToCreateNewPeopleUnit;
-        RelationWithGoverment = config.RelationWithGoverment;
+        ReadyMaterialsToCreateNewPeopleUnit = _cityHallConfig.ReadyMaterialsToCreateNewPeopleUnit;
+        RelationWithGoverment = _cityHallConfig.RelationWithGoverment;
     }
 
     private void InitializeControllers()
@@ -49,8 +46,8 @@ public class CityHallBuilding : RepairableBuilding
 
     private void InitializeTimers()
     {
-        DaysLeftToRecieveGovHelp = config.DaysLeftToRecieveGovHelpOriginal;
-        DaysLeftToSendArmyMaterials = config.DaysLeftToSendArmyMaterialsOriginal;
+        DaysLeftToRecieveGovHelp = _cityHallConfig.DaysLeftToRecieveGovHelpOriginal;
+        DaysLeftToSendArmyMaterials = _cityHallConfig.DaysLeftToSendArmyMaterialsOriginal;
     }
 
     private void CheckIfCreatedNewUnit()
@@ -75,7 +72,7 @@ public class CityHallBuilding : RepairableBuilding
     {
         if (--DaysLeftToRecieveGovHelp <= 0)
         {
-            DaysLeftToRecieveGovHelp = config.DaysLeftToRecieveGovHelpOriginal;
+            DaysLeftToRecieveGovHelp = _cityHallConfig.DaysLeftToRecieveGovHelpOriginal;
             ReceiveHelpFromGov();
         }
     }
@@ -84,7 +81,7 @@ public class CityHallBuilding : RepairableBuilding
     {
         if (--DaysLeftToSendArmyMaterials <= 0)
         {
-            DaysLeftToSendArmyMaterials = config.DaysLeftToSendArmyMaterialsOriginal;
+            DaysLeftToSendArmyMaterials = _cityHallConfig.DaysLeftToSendArmyMaterialsOriginal;
             return HandleArmyMaterials();
         }
         return false;
@@ -125,7 +122,7 @@ public class CityHallBuilding : RepairableBuilding
         IsMaterialsSent = true;
         ModifyRelationWithGov(2);
 
-        if (_amountOfHelpSent >= config.AmountOfHelpNeededToSend)
+        if (_amountOfHelpSent >= _cityHallConfig.AmountOfHelpNeededToSend)
         {
             _controllersManager.MainGameController.GameWin();
         }
@@ -134,7 +131,7 @@ public class CityHallBuilding : RepairableBuilding
     public void NewUnitStartedCreating()
     {
         _isWorking = true;
-        _turnsToCreateNewUnit = config.TurnsToCreateNewUnitOriginal;
+        _turnsToCreateNewUnit = _cityHallConfig.TurnsToCreateNewUnitOriginal;
         _resourceViewModel.ModifyResource(ResourceModel.ResourceType.ReadyMaterials, -ReadyMaterialsToCreateNewPeopleUnit);
     }
 

@@ -41,8 +41,6 @@ public class BlurController : MonoBehaviour
         _controllersManager.TutorialController.OnTutorialStarted
             .Subscribe(_ => UnBlurBackGroundSmoothly())
             .AddTo(this);
-
-        Debug.Log($"{name} - Initialized successfully");
     }
 
     private void BlurBackGroundSmoothly()

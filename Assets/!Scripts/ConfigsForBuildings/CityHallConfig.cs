@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "CityHallBuildingConfig", menuName = "Configs/CityHallBuildingConfig")]
+[CreateAssetMenu(fileName = "CityHallBuildingConfig", menuName = "BuildingConfigs/CityHallBuildingConfig")]
 public class CityHallBuildingConfig : ScriptableObject
 {
     [Header("CITY HALL SETTINGS")]

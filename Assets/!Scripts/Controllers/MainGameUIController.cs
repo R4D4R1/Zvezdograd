@@ -28,6 +28,10 @@ public class MainGameUIController : MonoBehaviour
 
     public void Init()
     {
+        _controllersManager.TutorialController.OnTutorialStarted
+           .Subscribe(_ => TurnOnUIForTutorial())
+           .AddTo(this);
+
         _turnOffUICanvasGroup = _turnOffUIParent.GetComponent<CanvasGroup>();
 
         if (_turnOffUICanvasGroup == null)
@@ -35,15 +39,9 @@ public class MainGameUIController : MonoBehaviour
             _turnOffUICanvasGroup = _turnOffUIParent.AddComponent<CanvasGroup>();
         }
 
-        _controllersManager.TutorialController.OnTutorialStarted
-            .Subscribe(_ => TurnOnUIForTutorial())
-            .AddTo(this);
-
         _turnOffUICanvasGroup.alpha = 0;
         _turnOffUICanvasGroup.interactable = false;
         _turnOffUICanvasGroup.blocksRaycasts = false;
-
-        Debug.Log($"{name} - Initialized successfully");
     }
 
     public void TurnOnMenu()

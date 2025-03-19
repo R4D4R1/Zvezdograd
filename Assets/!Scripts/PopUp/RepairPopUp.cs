@@ -9,11 +9,6 @@ public class RepairPopUp : EnoughPopUp
 
     [SerializeField] protected TextMeshProUGUI _demandsText;
 
-    private void Start()
-    {
-        _errorText.enabled = false;
-    }
-
     public void ShowRepairPopUp(RepairableBuilding buildingToRepair)
     {
         _buildingToUse = buildingToRepair;
@@ -32,36 +27,23 @@ public class RepairPopUp : EnoughPopUp
 
     public void RepairBuilding()
     {
-        if (CheckForEnoughPeople(_buildingToUse.PeopleToRepair) && EnoughMaterialsToRepair())
+        if (CanRepairBuilding())
         {
-            if (!CanUseActionPoint())
-                return;
-
             HidePopUp();
 
             _buildingToUse.RepairBuilding();
         }
-        else
-        {
-            ShowErrorMessage();
-        }
     }
 
-    private void ShowErrorMessage()
+    private bool CanRepairBuilding()
     {
-        if (!CheckForEnoughPeople(_buildingToUse.PeopleToRepair))
-        {
-            _errorText.text = "ме днярюрнвмн кчдеи";
-        }
-        else if (!EnoughMaterialsToRepair())
-        {
-            _errorText.text = "ме днярюрнвмн пеяспянб";
-        }
-        _errorText.enabled = true;
+        return HasEnoughPeople(_buildingToUse.PeopleToRepair) &&
+               EnoughMaterialsToRepair() &&
+               CanUseActionPoint();
     }
 
     public bool EnoughMaterialsToRepair()
     {
-        return ChechIfEnoughResourcesByType(ResourceModel.ResourceType.ReadyMaterials, _buildingToUse.BuildingMaterialsToRepair);
+        return HasEnoughResources(ResourceModel.ResourceType.ReadyMaterials, _buildingToUse.BuildingMaterialsToRepair);
     }
 }

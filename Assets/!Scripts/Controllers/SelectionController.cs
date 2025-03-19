@@ -39,8 +39,16 @@ public class SelectionController : MonoBehaviour
             .Subscribe(_ => Deselect())
             .AddTo(this);
 
+        _controllersManager.TimeController.OnNextTurnBtnClickEnded
+            .Subscribe(_ => SetSelectionControllerState(true))
+            .AddTo(this);
+
         _controllersManager.MainGameUIController.OnUITurnOff
             .Subscribe(_ => Deselect())
+            .AddTo(this);
+
+        _controllersManager.MainGameUIController.OnUITurnOff
+            .Subscribe(_ => SetSelectionControllerState(false))
             .AddTo(this);
 
         _controllersManager.MainGameUIController.OnUITurnOn
@@ -50,8 +58,6 @@ public class SelectionController : MonoBehaviour
         _controllersManager.MainGameController.OnGameStarted
             .Subscribe(_ => SetSelectionControllerState(false))
             .AddTo(this);
-
-        Debug.Log($"{name} - Initialized successfully");
     }
 
     private void Update()
@@ -66,11 +72,6 @@ public class SelectionController : MonoBehaviour
     public void SetSelectionControllerState(bool isActive)
     {
         _isActivated = isActive;
-
-        //if (_isActivated)
-        //    Debug.Log("SELECTION ACTIVATED");
-        //else
-        //    Debug.Log("SELECTION DEACTIVATED");
     }
 
     private void HandleHover()

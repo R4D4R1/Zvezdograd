@@ -1,10 +1,19 @@
 # ninja log v5
 44	1790	7588317338876600	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	80619f3789264831
 19	1841	7588317339215236	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	8bb3b0ad97dc3508
-13	1842	7588317339452565	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	ee65c973e80c363e
-55	1843	7588317339452565	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	58f1e3ae871f074f
+2476	2656	7588317347804933	D:/UnityProjects/Zvezdograd/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/o2udg1z6/obj/arm64-v8a/libgame.so	b76b8fa510a0a095
 63	1958	7588317340675232	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	55e439448cb4c2c5
+13	1842	7588317339452565	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	ee65c973e80c363e
 8	2050	7588317341586200	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	15346aaa4a7d8231
+55	1843	7588317339452565	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	58f1e3ae871f074f
 33	2288	7588317344013496	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	f624c31a24b0a4e1
 1	2476	7588317345929720	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	9dd74cde9d21e090
-2476	2656	7588317347804933	D:/UnityProjects/Zvezdograd/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/o2udg1z6/obj/arm64-v8a/libgame.so	b76b8fa510a0a095
+30	1443	7640726302338807	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	80619f3789264831
+11	1463	7640726302566547	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	ee65c973e80c363e
+25	1486	7640726302804803	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	58f1e3ae871f074f
+42	1552	7640726303453922	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	55e439448cb4c2c5
+6	1558	7640726303523338	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	8bb3b0ad97dc3508
+20	1628	7640726304283670	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	15346aaa4a7d8231
+36	1798	7640726305981696	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	f624c31a24b0a4e1
+15	1905	7640726307058552	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	9dd74cde9d21e090
+1905	2257	7640726310585331	D:/UnityProjects/Zvezdograd/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/o2udg1z6/obj/arm64-v8a/libgame.so	b76b8fa510a0a095

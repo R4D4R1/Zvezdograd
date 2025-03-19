@@ -1,78 +1,71 @@
-using UnityEngine;
 using UniRx;
+using UnityEngine;
 
 public class HospitalBuilding : RepairableBuilding
 {
-    [Header("HOSPITAL SETTINGS")]
+    [Header("Hospital Config")]
+    [SerializeField] private HospitalBuildingConfig _hospitalConfig;
 
-    [SerializeField] private int _peopleToGiveMedicine;
-    public int PeopleToGiveMedicine => _peopleToGiveMedicine;
+    public int TurnsToGiveMedicine { get; private set; }
 
-    [SerializeField] private int _medicineToGive;
-    public int MedicineToGive => _medicineToGive;
-    [SerializeField] private int _turnsToGiveMedicineOriginal;
-    public int TurnsToToGiveMedicine { get; private set; }
-
-    [SerializeField] private int _turnsToRestFromMedicineJob;
-    public int TurnsToRestFromMedicineJob => _turnsToRestFromMedicineJob;
-
-    [SerializeField] private int _originalDaysToGiveMedicine;
-    public int OriginalDaysToGiveMedicine => _originalDaysToGiveMedicine;
-
-    [SerializeField] private int _stabilityAddValue;
-    public int StabilityAddValue => _stabilityAddValue;
-
-    [SerializeField] private int _stabilityRemoveValue;
-    public int StabilityRemoveValue => _stabilityRemoveValue;
-
-    // SAVE DATA
     public int DaysToGiveMedicine { get; private set; }
-    private bool _medicineWasGivenAwayInLastTwoDay = false;
+    public int PeopleToGiveMedicine { get; private set; }
+    public int MedicineToGive { get; private set; }
 
 
-    protected void Awake()
+    private bool _medicineWasGivenAwayInLastTwoDays = false;
+
+    public override void Init()
     {
-        _controllersManager.TimeController.OnNextTurnBtnPressed
+        base.Init();
+
+        _controllersManager.TimeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => UpdateAmountOfTurnsNeededToDoSMTH())
             .AddTo(this);
 
-        DaysToGiveMedicine = OriginalDaysToGiveMedicine;
         UpdateAmountOfTurnsNeededToDoSMTH();
+
+        DaysToGiveMedicine = _hospitalConfig.OriginalDaysToGiveMedicine;
+        PeopleToGiveMedicine = _hospitalConfig.PeopleToGiveMedicine;
+        MedicineToGive = _hospitalConfig.MedicineToGive;
     }
 
     private void UpdateAmountOfTurnsNeededToDoSMTH()
     {
-        TurnsToToGiveMedicine = UpdateAmountOfTurnsNeededToDoSMTH(_turnsToGiveMedicineOriginal);
+        TurnsToGiveMedicine = UpdateAmountOfTurnsNeededToDoSMTH(_hospitalConfig.TurnsToGiveMedicineOriginal);
     }
 
     public void SendPeopleToGiveMedicine()
     {
-        _medicineWasGivenAwayInLastTwoDay = true;
+        _medicineWasGivenAwayInLastTwoDays = true;
 
-        _controllersManager.PeopleUnitsController.AssignUnitsToTask(PeopleToGiveMedicine, TurnsToToGiveMedicine, TurnsToRestFromMedicineJob);
-        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Medicine, -MedicineToGive);
-        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Stability, StabilityAddValue);
+        _controllersManager.PeopleUnitsController.AssignUnitsToTask(_hospitalConfig.PeopleToGiveMedicine, TurnsToGiveMedicine, _hospitalConfig.TurnsToRestFromMedicineJob);
+        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Medicine, -_hospitalConfig.MedicineToGive);
+        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Stability, _hospitalConfig.StabilityAddValue);
     }
 
     public bool MedicineWasGiven()
     {
         DaysToGiveMedicine--;
 
+        Debug.Log($"Days Left To give meds - {DaysToGiveMedicine}");
         if (DaysToGiveMedicine == 0)
         {
-            DaysToGiveMedicine = OriginalDaysToGiveMedicine;
+            DaysToGiveMedicine = _hospitalConfig.OriginalDaysToGiveMedicine;
 
-            if (_medicineWasGivenAwayInLastTwoDay)
+            if (_medicineWasGivenAwayInLastTwoDays)
             {
                 return true;
             }
             else
             {
-                _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Stability, -StabilityRemoveValue);
+                _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Stability, -_hospitalConfig.StabilityRemoveValue);
+                Debug.Log($"REMOVED STABILITY - {_hospitalConfig.StabilityRemoveValue}");
+
                 return false;
             }
         }
-        else
-            return false;
+
+        return false;
     }
 }

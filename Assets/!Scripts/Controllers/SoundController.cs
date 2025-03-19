@@ -2,22 +2,22 @@ using UnityEngine;
 
 public class SoundController : MonoBehaviour
 {
-    [SerializeField] private AudioClip hoverSound; // Звук наведения
-    [SerializeField] private AudioClip selectionSound; // Звук выбора
-    [SerializeField] private AudioClip buttonPressSound; // Звук выбора
+    [SerializeField] private AudioClip hoverSound;
+    [SerializeField] private AudioClip selectionSound;
+    [SerializeField] private AudioClip buttonPressSound;
 
-    private AudioSource audioSource; // Аудио источник
+    public AudioSource SFXAudioSource;
 
     private void Awake()
     {
-        audioSource = GetComponent<AudioSource>();
+        SFXAudioSource = GetComponent<AudioSource>();
     }
 
     public void PlayHoverSound()
     {
-        if (hoverSound != null)
+        if (hoverSound != null && Application.platform != RuntimePlatform.Android)
         {
-            audioSource.PlayOneShot(hoverSound);
+            SFXAudioSource.PlayOneShot(hoverSound);
         }
     }
 
@@ -25,7 +25,7 @@ public class SoundController : MonoBehaviour
     {
         if (selectionSound != null)
         {
-            audioSource.PlayOneShot(selectionSound);
+            SFXAudioSource.PlayOneShot(selectionSound);
         }
     }
 
@@ -33,7 +33,7 @@ public class SoundController : MonoBehaviour
     {
         if (buttonPressSound != null)
         {
-            audioSource.PlayOneShot(buttonPressSound);
+            SFXAudioSource.PlayOneShot(buttonPressSound);
         }
     }
 }

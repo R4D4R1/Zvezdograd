@@ -1,10 +1,8 @@
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.UI;
 
 public class FactoryPopUp : EnoughPopUp
 {
@@ -17,11 +15,6 @@ public class FactoryPopUp : EnoughPopUp
 
     [SerializeField] private UnityEvent OnArmyBtnEnabled;
     [SerializeField] private UnityEvent OnArmyBtnDisabled;
-
-    private void Start()
-    {
-        _errorText.enabled = false;
-    }
 
     public void UpdateCreateArmyButtonState()
     {
@@ -36,11 +29,13 @@ public class FactoryPopUp : EnoughPopUp
         {
             IsActive = true;
 
-            _readyMaterialsDemandsText.text = $"ÍÅÎÁÕÎÄÈÌÎ \n {_buildingToUse.RawMaterialsToCreateReadyMaterials} ñûðüÿ \n" +
-                                              $" {_buildingToUse.PeopleToCreateReadyMaterials} ïîäðàçäåëåíèÿ";
+            _readyMaterialsDemandsText.text = FormatResourceDemand(
+                _buildingToUse.RawMaterialsToCreateReadyMaterials,
+                _buildingToUse.PeopleToCreateReadyMaterials);
 
-            _armyMaterialsDemandsText.text = $"ÍÅÎÁÕÎÄÈÌÎ \n {_buildingToUse.RawMaterialsToCreateArmyMaterials} ñûðüÿ \n" +
-                                             $" {_buildingToUse.PeopleToCreateArmyMaterials} ïîäðàçäåëåíèÿ";
+            _armyMaterialsDemandsText.text = FormatResourceDemand(
+                _buildingToUse.RawMaterialsToCreateArmyMaterials,
+                _buildingToUse.PeopleToCreateArmyMaterials);
 
             SetAlpha(1);
         });
@@ -48,67 +43,49 @@ public class FactoryPopUp : EnoughPopUp
 
     public void CreateReadyMaterials()
     {
-        if (CheckForEnoughPeople(_buildingToUse.PeopleToCreateReadyMaterials) && EnoughRawMaterialsForReadyMaterials() && EnoughSpaceToStoreReadyMaterials())
+        if (CanCreateMaterials(_buildingToUse.PeopleToCreateReadyMaterials,
+                               _buildingToUse.RawMaterialsToCreateReadyMaterials,
+                               EnoughSpaceToStoreReadyMaterials()))
         {
-            if (!CanUseActionPoint())
-                return;
-
             HidePopUp();
             _buildingToUse.CreateReadyMaterials();
-        }
-        else
-        {
-            ShowErrorMessage();
         }
     }
 
     public void CreateArmySupplies()
     {
-        if (CheckForEnoughPeople(_buildingToUse.PeopleToCreateArmyMaterials) && EnoughRawMaterialsForArmyMaterials())
+        if (CanCreateMaterials(_buildingToUse.PeopleToCreateArmyMaterials,
+                               _buildingToUse.RawMaterialsToCreateArmyMaterials,
+                               true))
         {
-            if (!CanUseActionPoint())
-                return;
-
             OnArmyBtnDisabled?.Invoke();
             HidePopUp();
             _buildingToUse.CreateArmyMaterials();
         }
+    }
+
+    private bool CanCreateMaterials(int requiredPeople, int requiredRawMaterials, bool extraCondition)
+    {
+        return HasEnoughPeople(requiredPeople) &&
+               HasEnoughResources(ResourceModel.ResourceType.RawMaterials, requiredRawMaterials) &&
+               extraCondition &&
+               CanUseActionPoint();
+    }
+
+    private bool EnoughSpaceToStoreReadyMaterials()
+    {
+        if (_resourceViewModel.ReadyMaterials.Value + _buildingToUse.ReadyMaterialsGet
+               < _resourceViewModel.Model.MaxReadyMaterials)
+            return true;
         else
         {
-            ShowErrorMessage();
+            ShowError("ÍÅ ÄÎÑÒÀÒÎ×ÍÎ ÌÅÑÒÀ ÄËß ÌÀÒÅÐÈÀËÎÂ");
+            return false;
         }
     }
 
-    private void ShowErrorMessage()
+    private string FormatResourceDemand(int rawMaterials, int people)
     {
-        if (!EnoughRawMaterialsForReadyMaterials() || !EnoughRawMaterialsForArmyMaterials())
-        {
-            _errorText.text = "ÍÅ ÄÎÑÒÀÒÎ×ÍÎ ÑÛÐÜß";
-        }
-        else if (!EnoughSpaceToStoreReadyMaterials())
-        {
-            _errorText.text = "ÍÅ ÄÎÑÒÀÒÎ×ÍÎ ÌÅÑÒÀ ÄËß ÌÀÒÅÐÈÀËÎÂ";
-        }
-        else if (!CheckForEnoughPeople(_buildingToUse.PeopleToCreateReadyMaterials) || !CheckForEnoughPeople(_buildingToUse.PeopleToCreateArmyMaterials))
-        {
-            _errorText.text = "ÍÅ ÄÎÑÒÀÒÎ×ÍÎ ËÞÄÅÉ";
-        }
-        _errorText.enabled = true;
-    }
-
-    public bool EnoughSpaceToStoreReadyMaterials()
-    {
-        return _resourceViewModel.ReadyMaterials.Value + _buildingToUse.ReadyMaterialsGet
-               < _resourceViewModel.Model.MaxReadyMaterials;
-    }
-
-    public bool EnoughRawMaterialsForReadyMaterials()
-    {
-        return ChechIfEnoughResourcesByType(ResourceModel.ResourceType.RawMaterials, _buildingToUse.RawMaterialsToCreateReadyMaterials);
-    }
-
-    public bool EnoughRawMaterialsForArmyMaterials()
-    {
-        return ChechIfEnoughResourcesByType(ResourceModel.ResourceType.RawMaterials, _buildingToUse.RawMaterialsToCreateArmyMaterials);
+        return $"ÍÅÎÁÕÎÄÈÌÎ \n {rawMaterials} ñûðüÿ \n {people} ïîäðàçäåëåíèÿ";
     }
 }

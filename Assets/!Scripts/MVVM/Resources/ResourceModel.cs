@@ -23,11 +23,11 @@ public class ResourceModel
     {
         _controllersManager = controllersManager;
 
-        Provision = new ReactiveProperty<int>(resourceConfig.InitialProvision);
-        Medicine = new ReactiveProperty<int>(resourceConfig.InitialMedicine);
-        RawMaterials = new ReactiveProperty<int>(resourceConfig.InitialRawMaterials);
-        ReadyMaterials = new ReactiveProperty<int>(resourceConfig.InitialReadyMaterials);
-        Stability = new ReactiveProperty<int>(resourceConfig.InitialStability);
+        Provision = new ReactiveProperty<int>(resourceConfig.Provision);
+        Medicine = new ReactiveProperty<int>(resourceConfig.Medicine);
+        RawMaterials = new ReactiveProperty<int>(resourceConfig.RawMaterials);
+        ReadyMaterials = new ReactiveProperty<int>(resourceConfig.ReadyMaterials);
+        Stability = new ReactiveProperty<int>(resourceConfig.Stability);
     }
 
     public void ModifyResource(ResourceType type, int value)

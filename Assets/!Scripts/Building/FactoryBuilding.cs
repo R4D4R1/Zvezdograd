@@ -3,58 +3,41 @@ using UniRx;
 
 public class FactoryBuilding : RepairableBuilding
 {
-    [Header("FACTORY SETTINGS")]
-    [SerializeField] private int _peopleToCreateReadyMaterials;
-    public int PeopleToCreateReadyMaterials => _peopleToCreateReadyMaterials;
+    [Header("FACTORY CONFIG")]
+    [SerializeField] private FactoryBuildingConfig _factoryConfig;
 
-    [SerializeField] private int _peopleToCreateArmyMaterials;
-    public int PeopleToCreateArmyMaterials => _peopleToCreateArmyMaterials;
-
-    [SerializeField] private int _turnsToCreateReadyMaterialsOriginal;
-    public int TurnsToCreateReadyMaterialsOriginal => _turnsToCreateReadyMaterialsOriginal;
-
-    [SerializeField] private int _turnsToCreateArmyMaterialsOriginal;
-    public int TurnsToCreateArmyMaterialsOriginal => _turnsToCreateArmyMaterialsOriginal;
-
-    [SerializeField] private int _turnsToRestFromReadyMaterialsJob;
-    public int TurnsToRestFromReadyMaterialsJob => _turnsToRestFromReadyMaterialsJob;
-
-    [SerializeField] private int _turnsToRestFromArmyMaterialsJob;
-    public int TurnsToRestFromArmyMaterialsJob => _turnsToRestFromArmyMaterialsJob;
-
-    [SerializeField] private int _rawMaterialsToCreateReadyMaterials;
-    public int RawMaterialsToCreateReadyMaterials => _rawMaterialsToCreateReadyMaterials;
-
-    [SerializeField] private int _readyMaterialsGet;
-    public int ReadyMaterialsGet => _readyMaterialsGet;
-
-    [SerializeField] private int _rawMaterialsToCreateArmyMaterials;
-    public int RawMaterialsToCreateArmyMaterials => _rawMaterialsToCreateArmyMaterials;
-
-
-    // SAVE DATA
     public int TurnsToCreateArmyMaterials { get; private set; }
     public int TurnsToCreateReadyMaterials { get; private set; }
+    public int RawMaterialsToCreateReadyMaterials { get; private set; }
+    public int PeopleToCreateReadyMaterials { get; private set; }
+    public int RawMaterialsToCreateArmyMaterials { get; private set; }
+    public int PeopleToCreateArmyMaterials { get; private set; }
+    public int ReadyMaterialsGet { get; private set; }
+
     private bool _isWorking;
     private bool _isCreatingReadyMaterials;
     private int _turnsToWork;
 
-    // TO DO - заменить синглтон
-
     public override void Init()
     {
         base.Init();
-        _controllersManager.TimeController.OnNextTurnBtnPressed
+        _controllersManager.TimeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => UpdateAmountOfTurnsNeededToDoSMTH())
             .AddTo(this);
 
         UpdateAmountOfTurnsNeededToDoSMTH();
+
+        RawMaterialsToCreateReadyMaterials = _factoryConfig.RawMaterialsToCreateReadyMaterials;
+        RawMaterialsToCreateArmyMaterials = _factoryConfig.RawMaterialsToCreateArmyMaterials;
+        PeopleToCreateReadyMaterials = _factoryConfig.PeopleToCreateReadyMaterials;
+        PeopleToCreateArmyMaterials = _factoryConfig.PeopleToCreateArmyMaterials;
+        ReadyMaterialsGet = _factoryConfig.ReadyMaterialsGet;
     }
 
     private void UpdateAmountOfTurnsNeededToDoSMTH()
     {
-        TurnsToCreateReadyMaterials = UpdateAmountOfTurnsNeededToDoSMTH(TurnsToCreateReadyMaterialsOriginal);
-        TurnsToCreateArmyMaterials = UpdateAmountOfTurnsNeededToDoSMTH(TurnsToCreateArmyMaterialsOriginal);
+        TurnsToCreateReadyMaterials = UpdateAmountOfTurnsNeededToDoSMTH(_factoryConfig.TurnsToCreateReadyMaterialsOriginal);
+        TurnsToCreateArmyMaterials = UpdateAmountOfTurnsNeededToDoSMTH(_factoryConfig.TurnsToCreateArmyMaterialsOriginal);
     }
 
     protected override void TryTurnOnBuilding()
@@ -69,7 +52,6 @@ public class FactoryBuilding : RepairableBuilding
                 {
                     BuildingIsSelectable = true;
                     CurrentState = State.Intact;
-
                     RestoreOriginalMaterials();
                 }
             }
@@ -81,7 +63,7 @@ public class FactoryBuilding : RepairableBuilding
                 {
                     if (_isCreatingReadyMaterials)
                     {
-                        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.ReadyMaterials, ReadyMaterialsGet);
+                        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.ReadyMaterials, _factoryConfig.ReadyMaterialsGet);
                     }
                     else
                     {
@@ -98,8 +80,12 @@ public class FactoryBuilding : RepairableBuilding
 
     public void CreateReadyMaterials()
     {
-        _controllersManager.PeopleUnitsController.AssignUnitsToTask(PeopleToCreateReadyMaterials, TurnsToCreateReadyMaterials, TurnsToRestFromReadyMaterialsJob);
-        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.RawMaterials, -RawMaterialsToCreateReadyMaterials);
+        _controllersManager.PeopleUnitsController.AssignUnitsToTask(
+            _factoryConfig.PeopleToCreateReadyMaterials,
+            TurnsToCreateReadyMaterials,
+            _factoryConfig.TurnsToRestFromReadyMaterials
+        );
+        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.RawMaterials, -_factoryConfig.RawMaterialsToCreateReadyMaterials);
 
         BuildingIsSelectable = false;
         _isWorking = true;
@@ -111,8 +97,12 @@ public class FactoryBuilding : RepairableBuilding
 
     public void CreateArmyMaterials()
     {
-        _controllersManager.PeopleUnitsController.AssignUnitsToTask(PeopleToCreateArmyMaterials, TurnsToCreateArmyMaterials, TurnsToRestFromArmyMaterialsJob);
-        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.RawMaterials, -RawMaterialsToCreateArmyMaterials);
+        _controllersManager.PeopleUnitsController.AssignUnitsToTask(
+            _factoryConfig.PeopleToCreateArmyMaterials,
+            TurnsToCreateArmyMaterials,
+            _factoryConfig.TurnsToRestFromArmyMaterials
+        );
+        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.RawMaterials, -_factoryConfig.RawMaterialsToCreateArmyMaterials);
 
         BuildingIsSelectable = false;
         _isWorking = true;

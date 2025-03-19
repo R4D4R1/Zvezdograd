@@ -4,11 +4,10 @@ using UniRx;
 
 public class FoodTrucksPopUp : QuestPopUp
 {
-    protected override void Start()
+    public override void Init()
     {
-        base.Start();
+        base.Init();
 
-        _errorText.enabled = false;
         SetButtonState(true);
 
         _controllersManager.TimeController.OnNextDayEvent
@@ -39,39 +38,17 @@ public class FoodTrucksPopUp : QuestPopUp
     {
         if (CanGiveAwayProvision())
         {
-            if (!CanUseActionPoint())
-                return;
 
             SetButtonState(false);
             _controllersManager.BuildingController.GetFoodTruckBuilding().SendPeopleToGiveProvision();
-        }
-        else
-        {
-            ShowErrorMessage();
         }
     }
 
     private bool CanGiveAwayProvision()
     {
-        return CheckForEnoughPeople(_controllersManager.BuildingController.GetFoodTruckBuilding().PeopleToGiveProvision) &&
-               EnoughProvisionToGiveAway();
-    }
-
-    private void ShowErrorMessage()
-    {
-        if (!EnoughProvisionToGiveAway())
-        {
-            _errorText.text = "Õ≈“ œ–Œ¬»«»»";
-        }
-        else if (!CheckForEnoughPeople(_controllersManager.BuildingController.GetFoodTruckBuilding().PeopleToGiveProvision))
-        {
-            _errorText.text = "Õ≈ ƒŒ—“¿“Œ◊ÕŒ Àﬁƒ≈…";
-        }
-        _errorText.enabled = true;
-    }
-
-    public bool EnoughProvisionToGiveAway()
-    {
-        return ChechIfEnoughResourcesByType(ResourceModel.ResourceType.Provision, _controllersManager.BuildingController.GetFoodTruckBuilding().FoodToGive);
+        return HasEnoughPeople(_controllersManager.BuildingController.GetFoodTruckBuilding().PeopleToGiveProvision) &&
+               HasEnoughResources(ResourceModel.ResourceType.Provision,
+               _controllersManager.BuildingController.GetFoodTruckBuilding().FoodToGive)
+               && CanUseActionPoint();
     }
 }

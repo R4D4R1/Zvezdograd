@@ -3,8 +3,10 @@ using UnityEngine;
 
 public class ChangeMaterialsBuiliding : BuildingDependingOnStability
 {
-    private List<Material[]> _originalMaterials = new List<Material[]>();
+    [Header("MATERIAL FOR INACTIVE BUILDING")]
     [SerializeField] private Material _M_Grey;
+
+    private List<Material[]> _originalMaterials = new List<Material[]>();
 
     public override void Init()
     {

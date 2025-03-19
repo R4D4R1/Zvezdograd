@@ -7,30 +7,28 @@ using Zenject;
 
 public class SettingsController : MonoBehaviour
 {
-    [SerializeField] private TMP_Dropdown resolutionDropdown;
-    [SerializeField] private Toggle fullscreenToggle;
-    [SerializeField] private Slider musicVolumeSlider;
-    [SerializeField] private Slider SFXVolumeSlider;
-    [SerializeField] private TMP_Dropdown graphicsDropdown;
-    [SerializeField] private Button applyButton;
-    [SerializeField] private Button resetButton;
+    [SerializeField] private TMP_Dropdown _resolutionDropdown;
+    [SerializeField] private TMP_Dropdown _graphicsDropdown;
+    [SerializeField] private Toggle _fullscreenToggle;
+    [SerializeField] private Slider _musicVolumeSlider;
+    [SerializeField] private Slider _SFXVolumeSlider;
+    [SerializeField] private Button _applyButton;
+    [SerializeField] private Button _resetButton;
+    [SerializeField] private AudioSource _musicAudioSource;
 
-    [SerializeField] private AudioSource musicAudioSource;
-    private AudioSource _SFXAudioSource;
+    private Resolution[] _resolutions;
+    private List<Resolution> _filteredResolutions;
+    private int _currentResolutionIndex;
+    private bool _isFullscreen;
+    private float _musicVolume;
+    private float _soundVolume;
+    private int _graphicsQualityIndex;
 
-    private Resolution[] resolutions;
-    private List<Resolution> filteredResolutions;
-    private int currentResolutionIndex;
-    private bool isFullscreen;
-    private float musicVolume;
-    private float soundVolume;
-    private int graphicsQualityIndex;
-
-    private const string MusicVolumeKey = "MusicVolume";
-    private const string SoundVolumeKey = "SoundVolume";
-    private const string FullscreenKey = "Fullscreen";
-    private const string ResolutionKey = "Resolution";
-    private const string GraphicsQualityKey = "GraphicsQuality";
+    private const string _MusicVolumeKey = "MusicVolume";
+    private const string _SoundVolumeKey = "SoundVolume";
+    private const string _FullscreenKey = "Fullscreen";
+    private const string _ResolutionKey = "Resolution";
+    private const string _GraphicsQualityKey = "GraphicsQuality";
 
     private SoundController _soundController;
 
@@ -42,57 +40,55 @@ public class SettingsController : MonoBehaviour
 
     private void Start()
     {
-        _SFXAudioSource = _soundController?.GetComponent<AudioSource>();
-
         // Получение и фильтрация доступных разрешений экрана
-        resolutions = Screen.resolutions;
-        filteredResolutions = FilterResolutions(resolutions);
-        resolutionDropdown.ClearOptions();
+        _resolutions = Screen.resolutions;
+        _filteredResolutions = FilterResolutions(_resolutions);
+        _resolutionDropdown.ClearOptions();
 
         List<string> options = new List<string>();
-        currentResolutionIndex = 0;
-        for (int i = 0; i < filteredResolutions.Count; i++)
+        _currentResolutionIndex = 0;
+        for (int i = 0; i < _filteredResolutions.Count; i++)
         {
-            string option = filteredResolutions[i].width + " x " + filteredResolutions[i].height;
+            string option = _filteredResolutions[i].width + " x " + _filteredResolutions[i].height;
             options.Add(option);
 
-            if (filteredResolutions[i].width == Screen.currentResolution.width &&
-                filteredResolutions[i].height == Screen.currentResolution.height)
+            if (_filteredResolutions[i].width == Screen.currentResolution.width &&
+                _filteredResolutions[i].height == Screen.currentResolution.height)
             {
-                currentResolutionIndex = i;
+                _currentResolutionIndex = i;
             }
         }
-        resolutionDropdown.AddOptions(options);
+        _resolutionDropdown.AddOptions(options);
 
         // Загрузка сохраненных настроек
         LoadSettings();
 
-        resolutionDropdown.value = currentResolutionIndex;
-        resolutionDropdown.RefreshShownValue();
+        _resolutionDropdown.value = _currentResolutionIndex;
+        _resolutionDropdown.RefreshShownValue();
 
         // Настройка выпадающего меню качества графики
-        graphicsDropdown.ClearOptions();
+        _graphicsDropdown.ClearOptions();
         List<string> graphicsOptions = new List<string> { "НИЗКОЕ", "ВЫСОКОЕ" };
-        graphicsDropdown.AddOptions(graphicsOptions);
+        _graphicsDropdown.AddOptions(graphicsOptions);
 
-        fullscreenToggle.isOn = isFullscreen;
-        musicVolumeSlider.value = musicVolume;
-        SFXVolumeSlider.value = soundVolume;
+        _fullscreenToggle.isOn = _isFullscreen;
+        _musicVolumeSlider.value = _musicVolume;
+        _SFXVolumeSlider.value = _soundVolume;
 
-        graphicsDropdown.value = graphicsQualityIndex;
-        graphicsDropdown.RefreshShownValue();
+        _graphicsDropdown.value = _graphicsQualityIndex;
+        _graphicsDropdown.RefreshShownValue();
 
         // Добавление слушателей для изменений настроек
-        resolutionDropdown.onValueChanged.AddListener(_ => OnSettingsChanged());
-        fullscreenToggle.onValueChanged.AddListener(_ => OnSettingsChanged());
-        musicVolumeSlider.onValueChanged.AddListener(_ => OnMusicVolumeChanged());
-        SFXVolumeSlider.onValueChanged.AddListener(_ => OnSoundVolumeChanged());
-        graphicsDropdown.onValueChanged.AddListener(_ => OnSettingsChanged());
-        applyButton.onClick.AddListener(ApplySettings);
-        resetButton.onClick.AddListener(ResetSettings);
+        _resolutionDropdown.onValueChanged.AddListener(_ => OnSettingsChanged());
+        _fullscreenToggle.onValueChanged.AddListener(_ => OnSettingsChanged());
+        _musicVolumeSlider.onValueChanged.AddListener(_ => OnMusicVolumeChanged());
+        _SFXVolumeSlider.onValueChanged.AddListener(_ => OnSoundVolumeChanged());
+        _graphicsDropdown.onValueChanged.AddListener(_ => OnSettingsChanged());
+        _applyButton.onClick.AddListener(ApplySettings);
+        _resetButton.onClick.AddListener(ResetSettings);
 
-        applyButton.interactable = false;
-        resetButton.interactable = false;
+        _applyButton.interactable = false;
+        _resetButton.interactable = false;
     }
 
     private List<Resolution> FilterResolutions(Resolution[] resolutions)
@@ -107,85 +103,85 @@ public class SettingsController : MonoBehaviour
 
     private void OnSettingsChanged()
     {
-        applyButton.interactable = true;
-        resetButton.interactable = true;
+        _applyButton.interactable = true;
+        _resetButton.interactable = true;
     }
 
     private void OnMusicVolumeChanged()
     {
-        musicAudioSource.volume = musicVolumeSlider.value;
+        _musicAudioSource.volume = _musicVolumeSlider.value;
         OnSettingsChanged();
     }
 
     private void OnSoundVolumeChanged()
     {
-        _SFXAudioSource.volume = SFXVolumeSlider.value;
+        _soundController.SFXAudioSource.volume = _SFXVolumeSlider.value;
         OnSettingsChanged();
     }
 
     public void ApplySettings()
     {
-        int resolutionIndex = resolutionDropdown.value;
-        Resolution resolution = filteredResolutions[resolutionIndex];
-        Screen.SetResolution(resolution.width, resolution.height, fullscreenToggle.isOn);
+        int resolutionIndex = _resolutionDropdown.value;
+        Resolution resolution = _filteredResolutions[resolutionIndex];
+        Screen.SetResolution(resolution.width, resolution.height, _fullscreenToggle.isOn);
 
-        Screen.fullScreen = fullscreenToggle.isOn;
-        musicVolume = musicVolumeSlider.value;
-        soundVolume = SFXVolumeSlider.value;
-        QualitySettings.SetQualityLevel(graphicsDropdown.value);
+        Screen.fullScreen = _fullscreenToggle.isOn;
+        _musicVolume = _musicVolumeSlider.value;
+        _soundVolume = _SFXVolumeSlider.value;
+        QualitySettings.SetQualityLevel(_graphicsDropdown.value);
 
 
-        currentResolutionIndex = resolutionIndex;
-        isFullscreen = fullscreenToggle.isOn;
-        graphicsQualityIndex = graphicsDropdown.value;
+        _currentResolutionIndex = resolutionIndex;
+        _isFullscreen = _fullscreenToggle.isOn;
+        _graphicsQualityIndex = _graphicsDropdown.value;
 
-        applyButton.interactable = false;
-        resetButton.interactable = false;
+        _applyButton.interactable = false;
+        _resetButton.interactable = false;
 
         SaveSettings();
     }
 
     public void ResetSettings()
     {
-        resolutionDropdown.value = currentResolutionIndex;
-        fullscreenToggle.isOn = isFullscreen;
-        musicVolumeSlider.value = musicVolume;
-        SFXVolumeSlider.value = soundVolume;
-        graphicsDropdown.value = graphicsQualityIndex;
+        _resolutionDropdown.value = _currentResolutionIndex;
+        _fullscreenToggle.isOn = _isFullscreen;
+        _musicVolumeSlider.value = _musicVolume;
+        _SFXVolumeSlider.value = _soundVolume;
+        _graphicsDropdown.value = _graphicsQualityIndex;
 
-        resolutionDropdown.RefreshShownValue();
-        graphicsDropdown.RefreshShownValue();
+        _resolutionDropdown.RefreshShownValue();
+        _graphicsDropdown.RefreshShownValue();
 
-        applyButton.interactable = false;
-        resetButton.interactable = false;
+        _applyButton.interactable = false;
+        _resetButton.interactable = false;
     }
 
     private void SaveSettings()
     {
-        PlayerPrefs.SetInt(ResolutionKey, currentResolutionIndex);
-        PlayerPrefs.SetInt(FullscreenKey, isFullscreen ? 1 : 0);
-        PlayerPrefs.SetFloat(MusicVolumeKey, musicVolume);
-        PlayerPrefs.SetFloat(SoundVolumeKey, soundVolume);
-        PlayerPrefs.SetInt(GraphicsQualityKey, graphicsQualityIndex);
+        PlayerPrefs.SetInt(_ResolutionKey, _currentResolutionIndex);
+        PlayerPrefs.SetInt(_FullscreenKey, _isFullscreen ? 1 : 0);
+        PlayerPrefs.SetFloat(_MusicVolumeKey, _musicVolume);
+        PlayerPrefs.SetFloat(_SoundVolumeKey, _soundVolume);
+        PlayerPrefs.SetInt(_GraphicsQualityKey, _graphicsQualityIndex);
         PlayerPrefs.Save();
     }
 
     private void LoadSettings()
     {
-        currentResolutionIndex = PlayerPrefs.GetInt(ResolutionKey, currentResolutionIndex);
-        isFullscreen = PlayerPrefs.GetInt(FullscreenKey, 1) == 1;
-        musicVolume = PlayerPrefs.GetFloat(MusicVolumeKey, 1f);
-        soundVolume = PlayerPrefs.GetFloat(SoundVolumeKey, 1f);
-        graphicsQualityIndex = PlayerPrefs.GetInt(GraphicsQualityKey, 1);
+        _currentResolutionIndex = PlayerPrefs.GetInt(_ResolutionKey, _currentResolutionIndex);
+        _isFullscreen = PlayerPrefs.GetInt(_FullscreenKey, 1) == 1;
+        _musicVolume = PlayerPrefs.GetFloat(_MusicVolumeKey, 1f);
+        _soundVolume = PlayerPrefs.GetFloat(_SoundVolumeKey, 1f);
+        _graphicsQualityIndex = PlayerPrefs.GetInt(_GraphicsQualityKey, 1);
 
-        if (musicAudioSource != null)
+        if (_musicAudioSource != null)
         {
-            musicAudioSource.volume = musicVolume;
+            _musicAudioSource.volume = _musicVolume;
         }
 
-        if (_SFXAudioSource != null)
+        if (_soundController.SFXAudioSource != null)
         {
-            _SFXAudioSource.volume = soundVolume;
+            _soundController.SFXAudioSource.volume = _soundVolume;
         }
     }
 }

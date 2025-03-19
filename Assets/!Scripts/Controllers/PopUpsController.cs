@@ -19,6 +19,11 @@ public class PopUpsController : MonoBehaviour
         CollectPopUp = FindFirstObjectByType<CollectPopUp>();
         RepairPopUp = FindFirstObjectByType<RepairPopUp>();
 
-        Debug.Log($"{name} - Initialized successfully");
+        FoodTrucksPopUp.Init();
+        HospitalPopUp.Init();
+        CityHallPopUp.Init();
+        FactoryPopUp.Init();
+        CollectPopUp.Init();
+        RepairPopUp.Init();
     }
 }
