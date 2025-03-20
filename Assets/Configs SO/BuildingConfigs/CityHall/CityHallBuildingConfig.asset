@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 780878ca9d8f7ac4ca718dfe7139146e, type: 3}
   m_Name: CityHallBuildingConfig
   m_EditorClassIdentifier: 
-  _daysLeftToSendArmyMaterialsOriginal: 2
-  _daysLeftToRecieveGovHelpOriginal: 2
-  _amountOfHelpNeededToSend: 8
+  _daysLeftToSendArmyMaterialsOriginal: 3
+  _daysLeftToRecieveGovHelpOriginal: 3
+  _amountOfHelpNeededToSend: 7
   _readyMaterialsToCreateNewPeopleUnit: 1
   _relationWithGoverment: 5
   _turnsToCreateNewUnitOriginal: 3

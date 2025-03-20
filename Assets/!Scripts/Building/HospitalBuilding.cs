@@ -7,11 +7,9 @@ public class HospitalBuilding : RepairableBuilding
     [SerializeField] private HospitalBuildingConfig _hospitalConfig;
 
     public int TurnsToGiveMedicine { get; private set; }
-
     public int DaysToGiveMedicine { get; private set; }
     public int PeopleToGiveMedicine { get; private set; }
     public int MedicineToGive { get; private set; }
-
 
     private bool _medicineWasGivenAwayInLastTwoDays = false;
 
@@ -40,15 +38,14 @@ public class HospitalBuilding : RepairableBuilding
         _medicineWasGivenAwayInLastTwoDays = true;
 
         _controllersManager.PeopleUnitsController.AssignUnitsToTask(_hospitalConfig.PeopleToGiveMedicine, TurnsToGiveMedicine, _hospitalConfig.TurnsToRestFromMedicineJob);
-        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Medicine, -_hospitalConfig.MedicineToGive);
-        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Stability, _hospitalConfig.StabilityAddValue);
+        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Medicine, -_hospitalConfig.MedicineToGive));
+        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, _hospitalConfig.StabilityAddValue));
     }
 
     public bool MedicineWasGiven()
     {
         DaysToGiveMedicine--;
 
-        Debug.Log($"Days Left To give meds - {DaysToGiveMedicine}");
         if (DaysToGiveMedicine == 0)
         {
             DaysToGiveMedicine = _hospitalConfig.OriginalDaysToGiveMedicine;
@@ -59,8 +56,7 @@ public class HospitalBuilding : RepairableBuilding
             }
             else
             {
-                _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Stability, -_hospitalConfig.StabilityRemoveValue);
-                Debug.Log($"REMOVED STABILITY - {_hospitalConfig.StabilityRemoveValue}");
+                _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, -_hospitalConfig.StabilityRemoveValue));
 
                 return false;
             }

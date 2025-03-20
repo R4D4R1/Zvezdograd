@@ -12,8 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b285411ec427a1f4b985a9013e3e918b, type: 3}
   m_Name: ResourcesConfig
   m_EditorClassIdentifier: 
-  _provision: 3
-  _medicine: 3
-  _rawMaterials: 3
-  _readyMaterials: 3
-  _stability: 45
+  _provision: 4
+  _medicine: 4
+  _rawMaterials: 4
+  _readyMaterials: 4
+  _stability: 55
+  _maxProvision: 10
+  _maxMedicine: 10
+  _maxRawMaterials: 10
+  _maxReadyMaterials: 10
+  _maxStability: 100
+  _lowStabilityColor: {r: 1, g: 0.14471844, b: 0, a: 1}
+  _mediumStabilityColor: {r: 0.015686274, g: 0.6040621, b: 1, a: 1}
+  _highStabilityColor: {r: 0, g: 1, b: 0, a: 1}

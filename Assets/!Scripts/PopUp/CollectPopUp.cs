@@ -11,11 +11,8 @@ public class CollectPopUp : EnoughPopUp
     {
         _buildingToUse = collectableBuilding;
         UpdateDemandsText();
-        transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
-        {
-            IsActive = true;
-            SetAlpha(1);
-        });
+
+        ShowPopUp();
     }
 
     private void UpdateDemandsText()

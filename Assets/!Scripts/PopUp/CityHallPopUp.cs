@@ -24,28 +24,18 @@ public class CityHallPopUp : QuestPopUp
             .Subscribe(_ => UpdateCreateUnitGO())
             .AddTo(this);
 
+        _controllersManager.TimeController.OnNextDayEvent
+            .Subscribe(_ => UpdateCreateUnitGO())
+            .AddTo(this);
+
         SetButtonState(true);
 
-        UpdateAllText();
-        UpdateCreatePeopleText();
     }
 
     public void ShowCityHallPopUp()
     {
         UpdateAllText();
-        transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
-        {
-            IsActive = true;
-            SetAlpha(1);
-        });
-    }
-
-    private void OnNextDayEvent()
-    {
-        if (_building.DayPassed())
-        {
-            UpdateAllText();
-        }
+        ShowPopUp();
     }
 
     public void CreateNewUnit()
@@ -73,10 +63,7 @@ public class CityHallPopUp : QuestPopUp
             : $"Крайний срок отправки воен. помощи {_building.DaysLeftToSendArmyMaterials} дн.";
 
         _helpFromGovTimerText.text = $"Помощь прибудет через {_building.DaysLeftToRecieveGovHelp} дн.";
-    }
 
-    private void UpdateCreatePeopleText()
-    {
         _createPeopleText.text = $"Организовать новое подразделение - доступно " +
                                  $"{_controllersManager.PeopleUnitsController.NotCreatedUnits.Count}";
     }
@@ -85,7 +72,6 @@ public class CityHallPopUp : QuestPopUp
     {
         if (_controllersManager.PeopleUnitsController.NotCreatedUnits.Count > 0)
         {
-            UpdateCreatePeopleText();
             SetButtonState(true);
         }
         else

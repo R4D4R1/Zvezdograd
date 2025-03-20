@@ -18,11 +18,7 @@ public class RepairPopUp : EnoughPopUp
                             $" - Займет {_buildingToUse.TurnsToRepair} ходов\n" +
                             $" - Подразделения будут отдыхать {_buildingToUse.TurnsToRestFromRepair} ходов";
 
-        transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
-        {
-            IsActive = true;
-            SetAlpha(1.0f);
-        });
+        ShowPopUp();
     }
 
     public void RepairBuilding()

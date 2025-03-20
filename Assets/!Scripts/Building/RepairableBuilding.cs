@@ -40,6 +40,7 @@ public class RepairableBuilding : ChangeMaterialsBuiliding
         base.Init();
 
         CurrentState = _repairableConfig.State;
+
         FindBuildingModels();
 
         _controllersManager.TimeController.OnNextTurnBtnClickBetween
@@ -84,7 +85,7 @@ public class RepairableBuilding : ChangeMaterialsBuiliding
         if (CurrentState == State.Damaged)
         {
             _controllersManager.PeopleUnitsController.AssignUnitsToTask(_repairableConfig.PeopleToRepair, TurnsToRepair, _repairableConfig.TurnsToRestFromRepair);
-            _resourceViewModel.ModifyResource(ResourceModel.ResourceType.ReadyMaterials, -_repairableConfig.BuildingMaterialsToRepair);
+            _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.ReadyMaterials, -_repairableConfig.BuildingMaterialsToRepair));
 
             BuildingIsSelectable = false;
             SetGreyMaterials();

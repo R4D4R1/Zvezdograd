@@ -126,7 +126,7 @@ public class PeopleUnit : MonoBehaviour
                 currentState = UnitState.Ready;
                 RestingTime = 0;
 
-                _statusText.text = "—¬Œ¡Œƒ≈Õ";
+                _statusText.text = "–ì–û–¢–û–í";
 
                 EnableUnit();
             }
@@ -153,15 +153,15 @@ public class PeopleUnit : MonoBehaviour
     {
         if (currentState == UnitState.Busy)
         {
-            _statusText.text = $"«¿Õﬂ“ " + BusyTime;
+            _statusText.text = $"–ó–ê–ù–Ø–¢ {BusyTime}";
         }
         else if (currentState == UnitState.Resting)
         {
-            _statusText.text = $"Œ“ƒ€’ " + RestingTime;
+            _statusText.text = $"–û–¢–î–´–• {RestingTime}";
         }
         else if (currentState == UnitState.Injured)
         {
-            _statusText.text = $"–¿Õ≈Õ ";
+            _statusText.text = $"–ì–û–¢–û–í ";
         }
     }
 }
