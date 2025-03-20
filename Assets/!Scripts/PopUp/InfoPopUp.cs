@@ -40,10 +40,11 @@ public class InfoPopUp : MonoBehaviour
 
     public virtual void ShowPopUp()
     {
-        IsActive = true;
 
         transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
         {
+            IsActive = true;
+
             SetAlpha(1);
         });
     }

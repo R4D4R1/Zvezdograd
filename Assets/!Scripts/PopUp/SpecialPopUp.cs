@@ -80,10 +80,10 @@ public class SpecialPopUp : ReturnToPoolPopUp
                 _cityHallPopUp.ShowCityHallPopUp();
                 break;
             case PopUpFuncs.OpenFoodTrucksMenu:
-                _foodTrucksPopUp.ShowFoodTruckPopUp();
+                _foodTrucksPopUp.ShowPopUp();
                 break;
             case PopUpFuncs.OpenHospitalMenu:
-                _hospitalPopUp.ShowHospitalPopUp();
+                _hospitalPopUp.ShowPopUp();
                 break;
             case PopUpFuncs.OpenNextTutorialPopUp:
                 _controllersManager.TutorialController.ShowTutorial();

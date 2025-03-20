@@ -44,25 +44,25 @@ public class QuestPopUp : EnoughPopUp
                     completeButton.onClick.RemoveAllListeners();
                     completeButton.onClick.AddListener(() =>
                     {
-                        if (!HasEnoughPeople(unitSize))
-                        {
-                            _errorText.text = "Недостаточно людей!";
-                            return;
-                        }
+                    if (!HasEnoughPeople(unitSize))
+                    {
+                        _errorText.text = "Недостаточно людей!";
+                        return;
+                    }
 
-                        if (!CanUseActionPoint())
-                            return;
+                    if (!CanUseActionPoint())
+                        return;
 
-                        bool canComplete = false;
-                        switch (questType)
-                        {
-                            case QuestType.Provision:
-                                canComplete = CheckResourceAvailability(_resourceViewModel.Provision.Value, _resourceViewModel.Model.MaxProvision,
-                                    materialsToGet, materialsToLose, "еды");
-                                if (canComplete)
-                                {
-                                    _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Provision, materialsToGet);
-                                    _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Provision, -materialsToLose);
+                    bool canComplete = false;
+                    switch (questType)
+                    {
+                        case QuestType.Provision:
+                            canComplete = CheckResourceAvailability(_resourceViewModel.Provision.Value, _resourceViewModel.Model.MaxProvision,
+                                materialsToGet, materialsToLose, "еды");
+                            if (canComplete)
+                            {
+                                _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Provision, materialsToGet));
+                                _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Provision, -materialsToLose));
                                 }
                                 break;
 
@@ -71,8 +71,8 @@ public class QuestPopUp : EnoughPopUp
                                     materialsToGet, materialsToLose, "медикаментов");
                                 if (canComplete)
                                 {
-                                    _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Medicine, materialsToGet);
-                                    _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Medicine, -materialsToLose);
+                                    _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Medicine, materialsToGet));
+                                    _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Medicine, -materialsToLose));
                                 }
                                 break;
 
@@ -81,8 +81,8 @@ public class QuestPopUp : EnoughPopUp
                                     materialsToGet, materialsToLose, "стройматериалов");
                                 if (canComplete)
                                 {
-                                    _resourceViewModel.ModifyResource(ResourceModel.ResourceType.ReadyMaterials, materialsToGet);
-                                    _resourceViewModel.ModifyResource(ResourceModel.ResourceType.ReadyMaterials, -materialsToLose);
+                                    _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.ReadyMaterials, materialsToGet));
+                                    _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.ReadyMaterials, -materialsToLose));
                                 }
                                 break;
                         }
@@ -125,7 +125,8 @@ public class QuestPopUp : EnoughPopUp
 
     private void CompleteQuest(GameObject quest, int stabilityToGet, int relationshipWithGovToGet)
     {
-        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Stability, stabilityToGet);
+        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, stabilityToGet));
+        
         _controllersManager.BuildingController.GetCityHallBuilding().ModifyRelationWithGov(relationshipWithGovToGet);
 
         quest.SetActive(false);
@@ -135,7 +136,7 @@ public class QuestPopUp : EnoughPopUp
 
     private void LoseQuest(GameObject quest, int stabilityToLose, int relationshipWithGovToLose)
     {
-        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Stability, -stabilityToLose);
+        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, -stabilityToLose));
         _controllersManager.BuildingController.GetCityHallBuilding().ModifyRelationWithGov(-relationshipWithGovToLose);
 
         quest.SetActive(false);
