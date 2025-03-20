@@ -63,10 +63,12 @@ public class PeopleUnitsController : MonoBehaviour
 
             if (unitNum >= _startPeopleUnitAmount)
             {
+
                 _allUnits[unitNum].gameObject.SetActive(false);
                 _allUnits[unitNum].SetNotCreated();
 
                 NotCreatedUnits.Enqueue(_allUnits[unitNum]);
+
             }
             else
             {

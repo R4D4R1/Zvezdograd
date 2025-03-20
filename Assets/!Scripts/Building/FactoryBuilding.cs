@@ -63,7 +63,7 @@ public class FactoryBuilding : RepairableBuilding
                 {
                     if (_isCreatingReadyMaterials)
                     {
-                        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.ReadyMaterials, _factoryConfig.ReadyMaterialsGet));
+                        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.ReadyMaterials, _factoryConfig.ReadyMaterialsGet);
                     }
                     else
                     {
@@ -85,7 +85,7 @@ public class FactoryBuilding : RepairableBuilding
             TurnsToCreateReadyMaterials,
             _factoryConfig.TurnsToRestFromReadyMaterials
         );
-        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.RawMaterials, -_factoryConfig.RawMaterialsToCreateReadyMaterials));
+        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.RawMaterials, -_factoryConfig.RawMaterialsToCreateReadyMaterials);
 
         BuildingIsSelectable = false;
         _isWorking = true;
@@ -102,7 +102,7 @@ public class FactoryBuilding : RepairableBuilding
             TurnsToCreateArmyMaterials,
             _factoryConfig.TurnsToRestFromArmyMaterials
         );
-        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.RawMaterials, -_factoryConfig.RawMaterialsToCreateArmyMaterials));
+        _resourceViewModel.ModifyResource(ResourceModel.ResourceType.RawMaterials, -_factoryConfig.RawMaterialsToCreateArmyMaterials);
 
         BuildingIsSelectable = false;
         _isWorking = true;

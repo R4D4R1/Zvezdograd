@@ -25,15 +25,20 @@ public class FactoryPopUp : EnoughPopUp
     {
         _buildingToUse = factoryBuilding;
 
-        _readyMaterialsDemandsText.text = FormatResourceDemand(
+        transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
+        {
+            IsActive = true;
+
+            _readyMaterialsDemandsText.text = FormatResourceDemand(
                 _buildingToUse.RawMaterialsToCreateReadyMaterials,
                 _buildingToUse.PeopleToCreateReadyMaterials);
 
-        _armyMaterialsDemandsText.text = FormatResourceDemand(
-            _buildingToUse.RawMaterialsToCreateArmyMaterials,
-            _buildingToUse.PeopleToCreateArmyMaterials);
+            _armyMaterialsDemandsText.text = FormatResourceDemand(
+                _buildingToUse.RawMaterialsToCreateArmyMaterials,
+                _buildingToUse.PeopleToCreateArmyMaterials);
 
-        ShowPopUp();
+            SetAlpha(1);
+        });
     }
 
     public void CreateReadyMaterials()

@@ -10,13 +10,13 @@ public class ResourceModel
     public ReactiveProperty<int> ReadyMaterials { get; }
     public ReactiveProperty<int> Stability { get; }
 
-    private readonly ControllersManager _controllersManager;
+    public readonly int MaxProvision = 10;
+    public readonly int MaxMedicine = 10;
+    public readonly int MaxRawMaterials = 10;
+    public readonly int MaxReadyMaterials = 10;
+    public readonly int MaxStability = 100;
 
-    public readonly int MaxProvision;
-    public readonly int MaxMedicine;
-    public readonly int MaxRawMaterials;
-    public readonly int MaxReadyMaterials;
-    public readonly int MaxStability;
+    private readonly ControllersManager _controllersManager;
 
     [Inject]
     public ResourceModel(ControllersManager controllersManager, ResourcesConfig resourceConfig)
@@ -28,13 +28,6 @@ public class ResourceModel
         RawMaterials = new ReactiveProperty<int>(resourceConfig.RawMaterials);
         ReadyMaterials = new ReactiveProperty<int>(resourceConfig.ReadyMaterials);
         Stability = new ReactiveProperty<int>(resourceConfig.Stability);
-
-        // Use config for max values
-        MaxProvision = resourceConfig.MaxProvision;
-        MaxMedicine = resourceConfig.MaxMedicine;
-        MaxRawMaterials = resourceConfig.MaxRawMaterials;
-        MaxReadyMaterials = resourceConfig.MaxReadyMaterials;
-        MaxStability = resourceConfig.MaxStability;
     }
 
     public void ModifyResource(ResourceType type, int value)

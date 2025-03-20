@@ -50,7 +50,7 @@ public class CollectableBuilding : ChangeMaterialsBuiliding
             if (_turnsToWork == 0)
             {
                 RawMaterialsLeft -= _config.RawMaterialsGet;
-                _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.RawMaterials, _config.RawMaterialsGet));
+                _resourceViewModel.ModifyResource(ResourceModel.ResourceType.RawMaterials, _config.RawMaterialsGet);
 
                 BuildingIsSelectable = true;
                 RestoreOriginalMaterials();

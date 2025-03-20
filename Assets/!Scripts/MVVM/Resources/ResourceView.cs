@@ -19,14 +19,12 @@ public class ResourceView : MonoBehaviour
 
     private ResourceViewModel _viewModel;
     private PopUpFactory _popUpFactory;
-    private ResourcesConfig _resourcesConfig;
 
     [Inject]
-    public void Construct(ResourceViewModel viewModel, PopUpFactory popUpFactory, ResourcesConfig resourcesConfig)
+    public void Construct(ResourceViewModel viewModel,PopUpFactory popUpFactory)
     {
         _viewModel = viewModel;
         _popUpFactory = popUpFactory;
-        _resourcesConfig = resourcesConfig;
         BindUI();
     }
 
@@ -47,26 +45,30 @@ public class ResourceView : MonoBehaviour
 
     private void SubscribeToResource(IReadOnlyReactiveProperty<int> resource, Slider slider, TextMeshProUGUI text, string name, int maxValue)
     {
+        int previousValue = resource.Value;
+
         resource.Subscribe(newValue =>
         {
-            int previousValue = (int)slider.value;
-
             slider.value = newValue;
             text.text = $"{name} {newValue}/{maxValue}";
 
-            int difference = newValue - previousValue;
-            if (difference != 0)
+            if (previousValue != newValue)
             {
-                if (slider == stabilitySlider)
-                {
-                    Color newColor = _resourcesConfig.GetStabilityColor(newValue);
-                    stabilitySlider.fillRect.GetComponent<Image>().color = newColor;
-                }
-
+                int difference = newValue - previousValue;
                 string action = difference > 0 ? "Добавлено" : "Убавлено";
                 string message = $"{action} {name.ToLower()} {Mathf.Abs(difference)}";
+
                 _popUpFactory.CreateNotification(message, difference > 0);
+
+                previousValue = newValue; // Обновляем предыдущее значение
             }
         }).AddTo(this);
     }
+
+
+    public void ModifyResource(ResourceModel.ResourceType type, int value)
+    {
+        _viewModel.ModifyResource(type, value);
+    }
 }
+

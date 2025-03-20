@@ -15,6 +15,15 @@ public class FoodTrucksPopUp : QuestPopUp
             .AddTo(this);
     }
 
+    public void ShowFoodTruckPopUp()
+    {
+        transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
+        {
+            IsActive = true;
+            SetAlpha(1);
+        });
+    }
+
     private void OnNextDayEvent()
     {
         // включаем на следующий день если раздали еду

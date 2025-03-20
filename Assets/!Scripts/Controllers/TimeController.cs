@@ -50,9 +50,9 @@ public class TimeController : MonoBehaviour
 
     public enum PeriodOfDay
     {
-        Ð£Ñ‚Ñ€Ð¾,
-        Ð”ÐµÐ½ÑŒ,
-        Ð’ÐµÑ‡ÐµÑ€,
+        Óòðî,
+        Äåíü,
+        Âå÷åð
     }
 
     [Inject]
@@ -67,13 +67,13 @@ public class TimeController : MonoBehaviour
     {
         _daysWithoutBombing = 0;
         _currentDate = new ReactiveProperty<DateTime>(_startDate);
-        _currentPeriod = new ReactiveProperty<PeriodOfDay>(PeriodOfDay.Ð£Ñ‚Ñ€Ð¾);
+        _currentPeriod = new ReactiveProperty<PeriodOfDay>(PeriodOfDay.Óòðî);
 
         _currentDate.Subscribe(_ => UpdateText()).AddTo(this);
         _currentPeriod.Subscribe(_ => UpdateLighting()).AddTo(this);
 
         _nextTurnBtn.OnClickAsObservable()
-            .ThrottleFirst(TimeSpan.FromSeconds(0.5)) // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            .ThrottleFirst(TimeSpan.FromSeconds(0.5)) // Àíòèñïàì
             .Subscribe(_ => EndTurnButtonClicked().Forget())
             .AddTo(this);
 
@@ -108,14 +108,14 @@ public class TimeController : MonoBehaviour
     {
         switch (_currentPeriod.Value)
         {
-            case PeriodOfDay.Ð£Ñ‚Ñ€Ð¾:
-                _currentPeriod.Value = PeriodOfDay.Ð”ÐµÐ½ÑŒ;
+            case PeriodOfDay.Óòðî:
+                _currentPeriod.Value = PeriodOfDay.Äåíü;
                 break;
-            case PeriodOfDay.Ð”ÐµÐ½ÑŒ:
-                _currentPeriod.Value = PeriodOfDay.Ð’ÐµÑ‡ÐµÑ€;
+            case PeriodOfDay.Äåíü:
+                _currentPeriod.Value = PeriodOfDay.Âå÷åð;
                 break;
-            case PeriodOfDay.Ð’ÐµÑ‡ÐµÑ€:
-                _currentPeriod.SetValueAndForceNotify(PeriodOfDay.Ð£Ñ‚Ñ€Ð¾);
+            case PeriodOfDay.Âå÷åð:
+                _currentPeriod.SetValueAndForceNotify(PeriodOfDay.Óòðî);
                 _currentDate.Value = _currentDate.Value.AddDays(1);
                 _daysWithoutBombing++;
 
@@ -134,9 +134,9 @@ public class TimeController : MonoBehaviour
 
     private void UpdateLighting()
     {
-        morningLight.enabled = _currentPeriod.Value == PeriodOfDay.Ð£Ñ‚Ñ€Ð¾;
-        dayLight.enabled = _currentPeriod.Value == PeriodOfDay.Ð”ÐµÐ½ÑŒ;
-        eveningLight.enabled = _currentPeriod.Value == PeriodOfDay.Ð’ÐµÑ‡ÐµÑ€;
+        morningLight.enabled = _currentPeriod.Value == PeriodOfDay.Óòðî;
+        dayLight.enabled = _currentPeriod.Value == PeriodOfDay.Äåíü;
+        eveningLight.enabled = _currentPeriod.Value == PeriodOfDay.Âå÷åð;
     }
 
     private void UpdateText()
@@ -147,7 +147,7 @@ public class TimeController : MonoBehaviour
 
     private void UpdateActionPointsText()
     {
-        _actionPointsText.text = $"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  {_actionPointsValue.ToString()}/{_actionPointsMaxValue.ToString()} ";
+        _actionPointsText.text = $"Î×ÊÈ ÄÅÉÑÒÂÈß  {_actionPointsValue.ToString()}/{_actionPointsMaxValue.ToString()} ";
     }
 
     private async UniTaskVoid EndTurnButtonClicked()
