@@ -1,27 +1,32 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [CreateAssetMenu(fileName = "HospitalBuildingConfig", menuName = "BuildingConfigs/HospitalBuildingConfig")]
 public class HospitalBuildingConfig : ScriptableObject
 {
     [Header("Hospital Settings")]
-    [SerializeField] private int peopleToGiveMedicine;
-    [SerializeField] private int medicineToGive;
+    [SerializeField, Range(1f, 10f)] private int peopleToGiveMedicine;
+    [SerializeField, Range(1f, 10f)] private int medicineToGive;
+    [SerializeField, Range(1f, 10f)] private int medicineToHealInjuredUnit;
 
     [Header("Turns Settings")]
-    [SerializeField] private int turnsToGiveMedicineOriginal;
-    [SerializeField] private int turnsToRestFromMedicineJob;
+    [SerializeField, Range(1f, 10f)] private int turnsToGiveMedicineOriginal;
+    [SerializeField, Range(1f, 10f)] private int turnsToRestFromMedicine;
+    [SerializeField, Range(1f, 10f)] private int turnsToHealInjuredUnit;
 
     [Header("Days Settings")]
-    [SerializeField] private int originalDaysToGiveMedicine;
+    [SerializeField, Range(1f, 10f)] private int originalDaysToGiveMedicine;
 
     [Header("Stability Modifiers")]
-    [SerializeField] private int stabilityAddValue;
-    [SerializeField] private int stabilityRemoveValue;
+    [SerializeField, Range(1f, 10f)] private int stabilityAddValue;
+    [SerializeField, Range(1f, 10f)] private int stabilityRemoveValue;
 
     public int PeopleToGiveMedicine => peopleToGiveMedicine;
     public int MedicineToGive => medicineToGive;
+    public int MedicineToHealInjuredUnit => medicineToHealInjuredUnit;
     public int TurnsToGiveMedicineOriginal => turnsToGiveMedicineOriginal;
-    public int TurnsToRestFromMedicineJob => turnsToRestFromMedicineJob;
+    public int TurnsToRestFromMedicine => turnsToRestFromMedicine;
+    public int TurnsToHealInjuredUnit => turnsToHealInjuredUnit;
     public int OriginalDaysToGiveMedicine => originalDaysToGiveMedicine;
     public int StabilityAddValue => stabilityAddValue;
     public int StabilityRemoveValue => stabilityRemoveValue;

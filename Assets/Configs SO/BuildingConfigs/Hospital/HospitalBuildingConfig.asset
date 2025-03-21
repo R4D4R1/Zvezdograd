@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   peopleToGiveMedicine: 1
   medicineToGive: 1
+  medicineToHealInjuredUnit: 1
   turnsToGiveMedicineOriginal: 2
-  turnsToRestFromMedicineJob: 2
+  turnsToRestFromMedicine: 2
+  turnsToHealInjuredUnit: 1
   originalDaysToGiveMedicine: 2
   stabilityAddValue: 10
   stabilityRemoveValue: 10

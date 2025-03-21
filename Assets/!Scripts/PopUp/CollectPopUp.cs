@@ -17,11 +17,9 @@ public class CollectPopUp : EnoughPopUp
 
     private void UpdateDemandsText()
     {
-        _demandsText.text = $" - Осталось {_buildingToUse.RawMaterialsLeft} сырья\n" +
-                            $" - Вы получите {_buildingToUse.RawMaterialsGet} сырья (у вас {_resourceViewModel.RawMaterials.Value})\n" +
-                            $" - Необходимо {_buildingToUse.PeopleToCollect} подразделений (у вас {_controllersManager.PeopleUnitsController.ReadyUnits.Count})\n" +
-                            $" - Займет {_buildingToUse.TurnsToCollect} ходов\n" +
-                            $" - Подразделения будут отдыхать {_buildingToUse.TurnsToRest} ходов";
+        _demandsText.text = $" - РћСЃС‚Р°Р»РѕСЃСЊ {_buildingToUse.RawMaterialsLeft} СЃС‹СЂСЊСЏ\n" +
+                            $" - Р‘СѓРґРµС‚ СЃРѕР±СЂР°РЅРѕ {_buildingToUse.RawMaterialsGet} \n" +
+                            $" - РќРµРѕР±С…РѕРґРёРјРѕ {_buildingToUse.PeopleToCollect} РїРѕРґСЂР°Р·РґРµР»РµРЅРёР№ \n";
     }
 
     public void CollectBuilding()
@@ -46,7 +44,7 @@ public class CollectPopUp : EnoughPopUp
         if (_resourceViewModel.RawMaterials.Value + _buildingToUse.RawMaterialsGet <= _resourceViewModel.Model.MaxRawMaterials)
             return true;
 
-        ShowError("НЕ ДОСТАТОЧНО МЕСТА ДЛЯ РЕСУРСОВ");
+        ShowError("пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ");
         return false;
     }
 
@@ -55,8 +53,7 @@ public class CollectPopUp : EnoughPopUp
         if (_buildingToUse.RawMaterialsLeft > 0)
             return true;
 
-        ShowError("РЕСУРСЫ ЗАКОНЧИЛИСЬ");
+        ShowError("пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ");
         return false;
     }
 }
-

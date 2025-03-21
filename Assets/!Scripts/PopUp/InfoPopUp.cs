@@ -1,16 +1,12 @@
 using UnityEngine;
 using TMPro;
 using DG.Tweening;
-using Cysharp.Threading.Tasks;
 using Zenject;
-using UniRx;
 
 public class InfoPopUp : MonoBehaviour
 {
-    [Range(0f, 0.49f)]
-    [SerializeField] protected float scaleDuration = 0.2f;
-    [Range(0f, 0.49f)]
-    [SerializeField] protected float fadeDuration = 0.2f;
+    protected const float SCALE_DURATION = 0.25f;
+    private const float FADE_DURATION = 0.25f;
 
     public TextMeshProUGUI LabelText;
     public TextMeshProUGUI DescriptionText;
@@ -41,7 +37,7 @@ public class InfoPopUp : MonoBehaviour
     public virtual void ShowPopUp()
     {
 
-        transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
+        transform.DOScale(Vector3.one, SCALE_DURATION).OnComplete(() =>
         {
             IsActive = true;
 
@@ -56,7 +52,7 @@ public class InfoPopUp : MonoBehaviour
         LabelText.text = "";
         DescriptionText.text = "";
 
-        transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
+        transform.DOScale(Vector3.one, SCALE_DURATION).OnComplete(() =>
         {
             LabelText.text = Label;
             DescriptionText.text = Description;
@@ -68,7 +64,7 @@ public class InfoPopUp : MonoBehaviour
     {
         if (IsActive)
         {
-            transform.DOScale(Vector3.zero, scaleDuration).OnComplete(() =>
+            transform.DOScale(Vector3.zero, SCALE_DURATION).OnComplete(() =>
             {
                 IsActive = false;
             });
@@ -83,7 +79,7 @@ public class InfoPopUp : MonoBehaviour
     {
         if (IsActive)
         {
-            transform.DOScale(Vector3.zero, scaleDuration).OnComplete(() =>
+            transform.DOScale(Vector3.zero, SCALE_DURATION).OnComplete(() =>
             {
                 IsActive = false;
             });
@@ -94,6 +90,6 @@ public class InfoPopUp : MonoBehaviour
 
     protected void SetAlpha(float alpha)
     {
-        _canvasGroup.DOFade(alpha, fadeDuration);
+        _canvasGroup.DOFade(alpha, FADE_DURATION);
     }
 }

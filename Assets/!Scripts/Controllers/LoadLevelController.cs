@@ -1,3 +1,4 @@
+using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -8,6 +9,7 @@ public class LoadLevelController : MonoBehaviour
 {
     [SerializeField] private GameObject _loaderCanvas;
     [SerializeField] private Slider _progressBar;
+    [SerializeField] private bool Test;
 
     private float _target;
     private GameController _gameController;
@@ -16,6 +18,14 @@ public class LoadLevelController : MonoBehaviour
     public void Construct(GameController gameController)
     {
         _gameController = gameController;
+    }
+
+    private void Start()
+    {
+        if (Test)
+        {
+            Destroy(gameObject);
+        }
     }
 
     public async UniTask LoadSceneAsync(string sceneName)
@@ -30,12 +40,12 @@ public class LoadLevelController : MonoBehaviour
 
         _loaderCanvas.SetActive(true);
 
-        // Загрузка сцены с прогрессом
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         while (scene.progress < 0.9f)
         {
             _target = Mathf.Clamp01(scene.progress / 0.9f);
             _progressBar.value = _target;
-            await UniTask.Delay(100); // ожидание на следующее обновление
+            await UniTask.Delay(100); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         }
 
         _target = 1;

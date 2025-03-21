@@ -8,7 +8,7 @@ public class Notification : MonoBehaviour
     [Range(0.1f, 3.0f), SerializeField] private float fadeDuration = 1f;
     [Range(0.1f, 5.0f), SerializeField] private float delayBeforeFade = 3f;
 
-    protected PopUpFactory _popUpFactory;
+    private PopUpFactory _popUpFactory;
     private CanvasGroup _canvasGroup;
 
     [Inject]

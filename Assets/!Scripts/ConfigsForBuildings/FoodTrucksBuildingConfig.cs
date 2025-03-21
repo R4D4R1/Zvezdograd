@@ -4,12 +4,12 @@ using UnityEngine;
 public class FoodTrucksBuildingConfig : ScriptableObject
 {
     [Header("Food Trucks Settings")]
-    [SerializeField] private int _peopleToGiveProvision;
-    [SerializeField] private int _turnsToGiveProvisionOriginal;
-    [SerializeField] private int _turnsToRestFromProvisionJob;
-    [SerializeField] private int _foodToGive;
-    [SerializeField] private int _stabilityAddValue;
-    [SerializeField] private int _stabilityRemoveValue;
+    [Range(1, 10), SerializeField] private int _peopleToGiveProvision;
+    [Range(1, 10), SerializeField] private int _turnsToGiveProvisionOriginal;
+    [Range(1, 10), SerializeField] private int _turnsToRestFromProvisionJob;
+    [Range(1, 10), SerializeField] private int _foodToGive;
+    [Range(1, 10), SerializeField] private int _stabilityAddValue;
+    [Range(1, 10), SerializeField] private int _stabilityRemoveValue;
 
     public int PeopleToGiveProvision => _peopleToGiveProvision;
     public int TurnsToGiveProvisionOriginal => _turnsToGiveProvisionOriginal;

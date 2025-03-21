@@ -38,11 +38,11 @@ public class ResourceView : MonoBehaviour
         readyMaterialsSlider.maxValue = _viewModel.Model.MaxReadyMaterials;
         stabilitySlider.maxValue = _viewModel.Model.MaxStability;
 
-        SubscribeToResource(_viewModel.Provision, provisionSlider, provisionText, "œ–Œ¬»«»ﬂ", _viewModel.Model.MaxProvision);
-        SubscribeToResource(_viewModel.Medicine, medicineSlider, medicineText, "Ã≈ƒ» ¿Ã≈Õ“€", _viewModel.Model.MaxMedicine);
-        SubscribeToResource(_viewModel.RawMaterials, rawMaterialsSlider, rawMaterialsText, "—€–‹≈", _viewModel.Model.MaxRawMaterials);
-        SubscribeToResource(_viewModel.ReadyMaterials, readyMaterialsSlider, readyMaterialsText, "—“–Œ…Ã¿“≈–»¿À€", _viewModel.Model.MaxReadyMaterials);
-        SubscribeToResource(_viewModel.Stability, stabilitySlider, stabilityText, "—“¿¡»À‹ÕŒ—“‹", _viewModel.Model.MaxStability);
+        SubscribeToResource(_viewModel.Provision, provisionSlider, provisionText, "–ü—Ä–æ–≤–∏–∑–∏—è", _viewModel.Model.MaxProvision);
+        SubscribeToResource(_viewModel.Medicine, medicineSlider, medicineText, "–ú–µ–¥–∏–∫–∞–º–µ–Ω—Ç—ã", _viewModel.Model.MaxMedicine);
+        SubscribeToResource(_viewModel.RawMaterials, rawMaterialsSlider, rawMaterialsText, "–°—ã—Ä—å–µ", _viewModel.Model.MaxRawMaterials);
+        SubscribeToResource(_viewModel.ReadyMaterials, readyMaterialsSlider, readyMaterialsText, "–°—Ç—Ä–æ–π–º–∞—Ç–µ—Ä–∏–∞–ª—ã", _viewModel.Model.MaxReadyMaterials);
+        SubscribeToResource(_viewModel.Stability, stabilitySlider, stabilityText, "–°—Ç–∞–±–∏–ª—å–Ω–æ—Å—Ç—å", _viewModel.Model.MaxStability);
     }
 
     private void SubscribeToResource(IReadOnlyReactiveProperty<int> resource, Slider slider, TextMeshProUGUI text, string name, int maxValue)
@@ -63,7 +63,7 @@ public class ResourceView : MonoBehaviour
                     stabilitySlider.fillRect.GetComponent<Image>().color = newColor;
                 }
 
-                string action = difference > 0 ? "ƒÓ·‡‚ÎÂÌÓ" : "”·‡‚ÎÂÌÓ";
+                string action = difference > 0 ? "–î–æ–±–∞–≤–ª–µ–Ω–æ" : "–£–±–∞–≤–ª–µ–Ω–æ";
                 string message = $"{action} {name.ToLower()} {Mathf.Abs(difference)}";
                 _popUpFactory.CreateNotification(message, difference > 0);
             }

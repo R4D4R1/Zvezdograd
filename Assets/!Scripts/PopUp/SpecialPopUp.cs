@@ -1,8 +1,6 @@
 using DG.Tweening;
 using TMPro;
-using UniRx;
 using UnityEngine;
-using Zenject;
 
 public class SpecialPopUp : ReturnToPoolPopUp
 {
@@ -25,10 +23,6 @@ public class SpecialPopUp : ReturnToPoolPopUp
     public CollectableBuilding CollectableBuilding;
     [HideInInspector]
     public FactoryBuilding FactoryBuilding;
-    [HideInInspector]
-    public FoodTrucksBuilding FoodTrucksBuilding;
-    [HideInInspector]
-    public HospitalBuilding HospitalBuilding;
 
     [HideInInspector]
     public PopUpFuncs CurrentFunc;
@@ -39,8 +33,6 @@ public class SpecialPopUp : ReturnToPoolPopUp
     private CityHallPopUp _cityHallPopUp;
     private FoodTrucksPopUp _foodTrucksPopUp;
     private HospitalPopUp _hospitalPopUp;
-
-    public readonly Subject<Unit> OnSpecialPopUpHide;
 
     private void Start()
     {
@@ -88,8 +80,6 @@ public class SpecialPopUp : ReturnToPoolPopUp
             case PopUpFuncs.OpenNextTutorialPopUp:
                 _controllersManager.TutorialController.ShowTutorial();
                 break;
-            default:
-                break;
         }
 
         if (CurrentFunc != PopUpFuncs.OpenNextTutorialPopUp)
@@ -100,7 +90,7 @@ public class SpecialPopUp : ReturnToPoolPopUp
         HidePopUp();
     }
 
-    public void ShowPopUp(string Label, string Description, string Button)
+    public void ShowPopUp(string label, string description, string button)
     {
         IsActive = true;
 
@@ -108,11 +98,11 @@ public class SpecialPopUp : ReturnToPoolPopUp
         DescriptionText.text = "";
         ButtonText.text = "";
 
-        transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
+        transform.DOScale(Vector3.one, SCALE_DURATION).OnComplete(() =>
         {
-            LabelText.text = Label;
-            DescriptionText.text = Description;
-            ButtonText.text = Button;
+            LabelText.text = label;
+            DescriptionText.text = description;
+            ButtonText.text = button;
 
             SetAlpha(1);
         });

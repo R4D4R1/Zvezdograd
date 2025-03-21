@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,27 +19,27 @@ public class PeopleUnit : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _statusText;
     [SerializeField] private Image _image;
 
-    public int BusyTime { get; private set; }
-    public int RestingTime { get; private set; }
+    public int BusyTurns { get; private set; }
+    public int RestingTurns { get; private set; }
 
-    private void Awake()
-    {
-        EnableUnit();
-    }
+    // private void Awake()
+    // {
+    //     EnableUnit();
+    // }
 
-    public void EnableUnit()
+    private void EnableUnit()
     {
         Color whiteColor = Color.white;
         _image.DOColor(whiteColor, 0.5f);
 
-        if (currentState == UnitState.Injured || currentState == UnitState.Resting)
-        {
-            BusyTime = 0;
-            currentState = UnitState.Ready;
-        }
+        // if (currentState == UnitState.Injured || currentState == UnitState.Resting)
+        // {
+        //     BusyTurns = 0;
+        //     currentState = UnitState.Ready;
+        // }
     }
 
-    public void DisableUnit()
+    private void DisableUnit()
     {
         if (currentState == UnitState.Busy)
         {
@@ -60,8 +61,10 @@ public class PeopleUnit : MonoBehaviour
     public void SetState(UnitState state, int busyTurns, int restingTurns)
     {
         currentState = state;
-        BusyTime = busyTurns;
-        RestingTime = restingTurns;
+        BusyTurns = busyTurns;
+        RestingTurns = restingTurns;
+        
+        UpdateStatusText();
 
         switch (currentState)
         {
@@ -73,18 +76,12 @@ public class PeopleUnit : MonoBehaviour
             case UnitState.Resting:
                 DisableUnit();
                 break;
+            case UnitState.NotCreated:
+                gameObject.SetActive(false);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
-
-        UpdateStatusText();
-    }
-
-    public void SetBusyForTurns(int busyTurns, int restingTurns)
-    {
-        currentState = UnitState.Busy;
-        BusyTime = busyTurns;
-        RestingTime = restingTurns;
-
-        UpdateStatusText();
     }
 
     public void SetInjured()
@@ -103,65 +100,52 @@ public class PeopleUnit : MonoBehaviour
     {
         if (currentState == UnitState.Busy)
         {
-            
-            if(BusyTime>1)
+            if(BusyTurns>1)
             {
-                BusyTime--;
-                UpdateStatusText();
+                BusyTurns--;
             }
             else
             {
-                UnitResting();
+                SetState(UnitState.Resting,0,RestingTurns);
             }
         }
         else if (currentState == UnitState.Resting)
         {
-            if (RestingTime > 1)
+            if (RestingTurns > 1)
             {
-                RestingTime--;
-                UpdateStatusText();
+                RestingTurns--;
             }
             else
             {
-                currentState = UnitState.Ready;
-                RestingTime = 0;
-
-                _statusText.text = "ГОТОВ";
-
-                EnableUnit();
+                SetState(UnitState.Ready,0,0);
             }
             
         }
         else if (currentState == UnitState.Injured)
         {
-            // Sorting with busy time
-            BusyTime = 999;
-            UpdateStatusText();
+            // Sorting with busy turns
+            BusyTurns = 999;
         }
-    }
-
-    public void UnitResting()
-    {
-        if (currentState == UnitState.Busy)
-        {
-            currentState = UnitState.Resting;
-            UpdateStatusText();
-        }
+        UpdateStatusText();
     }
 
     private void UpdateStatusText()
     {
         if (currentState == UnitState.Busy)
         {
-            _statusText.text = $"ЗАНЯТ {BusyTime}";
+            _statusText.text = $"ЗАНЯТ {BusyTurns}";
         }
         else if (currentState == UnitState.Resting)
         {
-            _statusText.text = $"ОТДЫХ {RestingTime}";
+            _statusText.text = $"ОТДЫХ {RestingTurns}";
+        }
+        else if (currentState == UnitState.Ready)
+        {
+            _statusText.text = $"ГОТОВ";
         }
         else if (currentState == UnitState.Injured)
         {
-            _statusText.text = $"ГОТОВ ";
+            _statusText.text = $"РАНЕН";
         }
     }
 }

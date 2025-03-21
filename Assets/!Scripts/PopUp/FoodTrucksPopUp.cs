@@ -1,14 +1,14 @@
-using DG.Tweening;
 using UnityEngine;
 using UniRx;
 
 public class FoodTrucksPopUp : QuestPopUp
 {
+    [SerializeField] private GameObject giveFoodBtnParent;
     public override void Init()
     {
         base.Init();
 
-        SetButtonState(true);
+        SetButtonState(giveFoodBtnParent,true);
 
         _controllersManager.TimeController.OnNextDayEvent
             .Subscribe(_ => OnNextDayEvent())
@@ -17,11 +17,9 @@ public class FoodTrucksPopUp : QuestPopUp
 
     private void OnNextDayEvent()
     {
-        // включаем на следующий день если раздали еду
         if (_controllersManager.BuildingController.GetFoodTruckBuilding().FoodWasGivenAwayToday())
         {
-            activeBtn.SetActive(true);
-            inactiveBtn.SetActive(false);
+            SetButtonState(giveFoodBtnParent,true);
         }
     }
 
@@ -30,7 +28,7 @@ public class FoodTrucksPopUp : QuestPopUp
         if (CanGiveAwayProvision())
         {
 
-            SetButtonState(false);
+            SetButtonState(giveFoodBtnParent,false);
             _controllersManager.BuildingController.GetFoodTruckBuilding().SendPeopleToGiveProvision();
         }
     }

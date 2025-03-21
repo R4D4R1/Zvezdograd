@@ -13,11 +13,8 @@ public class RepairPopUp : EnoughPopUp
     {
         _buildingToUse = buildingToRepair;
 
-        _demandsText.text = $" - {_buildingToUse.PeopleToRepair} отряда ( у вас {_controllersManager.PeopleUnitsController.ReadyUnits.Count} )\n" +
-                            $" - {_buildingToUse.BuildingMaterialsToRepair} стройматериалов ( у вас {_resourceViewModel.ReadyMaterials.Value} )\n" +
-                            $" - Займет {_buildingToUse.TurnsToRepair} ходов\n" +
-                            $" - Подразделения будут отдыхать {_buildingToUse.TurnsToRestFromRepair} ходов";
-
+        _demandsText.text = $" - {_buildingToUse.PeopleToRepair} РїРѕРґСЂР°Р·РґРµР»РµРЅРёР№\n" +
+                            $" - {_buildingToUse.BuildingMaterialsToRepair} СЃС‚СЂРѕР№РјР°С‚РµСЂРёР°Р»РѕРІ \n";
         ShowPopUp();
     }
 

@@ -8,8 +8,6 @@ using UniRx;
 public class QuestPopUp : EnoughPopUp
 {
     [SerializeField] private List<GameObject> questObjects;
-    [SerializeField] protected GameObject activeBtn;
-    [SerializeField] protected GameObject inactiveBtn;
 
     private Dictionary<GameObject, (int deadline, int stabilityToGet, int stabilityToLose, int relationshipWithGovToGet, int relationshipWithGovToLose)> questDeadlines = new Dictionary<GameObject, (int, int, int, int, int)>();
 
@@ -36,17 +34,17 @@ public class QuestPopUp : EnoughPopUp
             if (!quest.activeSelf)
             {
                 quest.SetActive(true);
-                quest.GetComponent<TextMeshProUGUI>().text = questName + "  " + deadlineInDays + " дн.";
+                quest.GetComponent<TextMeshProUGUI>().text = questName + "  " + deadlineInDays + " DS.";
 
                 Button completeButton = quest.GetComponentInChildren<Button>();
-                if (completeButton != null)
+                if (completeButton)
                 {
                     completeButton.onClick.RemoveAllListeners();
                     completeButton.onClick.AddListener(() =>
                     {
                     if (!HasEnoughPeople(unitSize))
                     {
-                        _errorText.text = "Недостаточно людей!";
+                        _errorText.text = "NOT ENOUGH PEOPLE!";
                         return;
                     }
 
@@ -58,17 +56,20 @@ public class QuestPopUp : EnoughPopUp
                     {
                         case QuestType.Provision:
                             canComplete = CheckResourceAvailability(_resourceViewModel.Provision.Value, _resourceViewModel.Model.MaxProvision,
-                                materialsToGet, materialsToLose, "еды");
+                                materialsToGet, materialsToLose, "FOOD");
                             if (canComplete)
                             {
-                                _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Provision, materialsToGet));
-                                _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Provision, -materialsToLose));
-                                }
-                                break;
+                                _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Provision,
+                                    materialsToGet));
+                                _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Provision,
+                                    -materialsToLose));
+                            }
+
+                            break;
 
                             case QuestType.Medicine:
                                 canComplete = CheckResourceAvailability(_resourceViewModel.Medicine.Value, _resourceViewModel.Model.MaxMedicine,
-                                    materialsToGet, materialsToLose, "медикаментов");
+                                    materialsToGet, materialsToLose, "MEDICINE");
                                 if (canComplete)
                                 {
                                     _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Medicine, materialsToGet));
@@ -78,7 +79,7 @@ public class QuestPopUp : EnoughPopUp
 
                             case QuestType.CityBuilding:
                                 canComplete = CheckResourceAvailability(_resourceViewModel.ReadyMaterials.Value, _resourceViewModel.Model.MaxReadyMaterials,
-                                    materialsToGet, materialsToLose, "стройматериалов");
+                                    materialsToGet, materialsToLose, "BUILDING MATERIALS");
                                 if (canComplete)
                                 {
                                     _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.ReadyMaterials, materialsToGet));
@@ -97,12 +98,9 @@ public class QuestPopUp : EnoughPopUp
 
                 questDeadlines[quest] = (deadlineInDays, stabilityToGet, stabilityToLose, relationshipWithGovToGet, relationshipWithGovToLose);
 
-                //Debug.Log($"Задание {questName} активировано: {quest.name} с дедлайном {deadlineInDays} дней");
                 return;
             }
         }
-
-        //Debug.LogWarning("Нет доступных заданий для активации.");
     }
 
     private void OnNextDay()
@@ -116,7 +114,6 @@ public class QuestPopUp : EnoughPopUp
 
                 if (questDeadlines[quest].deadline <= 0)
                 {
-                    //Debug.Log($"Квест {quest.name} не выполнен в срок и завершён.");
                     LoseQuest(quest, data.stabilityToLose, data.relationshipWithGovToLose);
                 }
             }
@@ -131,7 +128,6 @@ public class QuestPopUp : EnoughPopUp
 
         quest.SetActive(false);
         questDeadlines.Remove(quest);
-        //Debug.Log($"Задание {quest.name} завершено и отключено.");
     }
 
     private void LoseQuest(GameObject quest, int stabilityToLose, int relationshipWithGovToLose)
@@ -141,32 +137,27 @@ public class QuestPopUp : EnoughPopUp
 
         quest.SetActive(false);
         questDeadlines.Remove(quest);
-        //Debug.Log($"Задание {quest.name} завершено и отключено.");
     }
-
-    /// <summary>
-    /// Проверяет, можно ли выполнить квест с текущими ресурсами.
-    /// </summary>
     private bool CheckResourceAvailability(int currentAmount, int maxAmount, int materialsToGet, int materialsToLose, string resourceName)
     {
         if (currentAmount < materialsToLose)
         {
             _errorText.enabled = true;
-            _errorText.text = $"Недостаточно {resourceName}!";
+            _errorText.text = $"NOT ENOUGH {resourceName}!";
             return false;
         }
         if (currentAmount + materialsToGet > maxAmount)
         {
             _errorText.enabled = true;
-            _errorText.text = $"Нет места для {resourceName}!";
+            _errorText.text = $"NOT ENOUGH SPACE FOR {resourceName}!";
             return false;
         }
         return true;
     }
 
-    protected void SetButtonState(bool isActive)
+    protected void SetButtonState(GameObject btnsParent, bool isActive)
     {
-        activeBtn.SetActive(isActive);
-        inactiveBtn.SetActive(!isActive);
+        btnsParent.transform.GetChild(0).gameObject.SetActive(isActive);
+        btnsParent.transform.GetChild(1).gameObject.SetActive(!isActive);
     }
 }

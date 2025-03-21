@@ -1,4 +1,3 @@
-using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
@@ -11,21 +10,21 @@ public class EnoughPopUp : InfoPopUp
         HideError();
     }
 
-    public bool HasEnoughPeople(int requiredPeople)
+    protected bool HasEnoughPeople(int requiredPeople)
     {
         if (_controllersManager.PeopleUnitsController.ReadyUnits.Count >= requiredPeople)
             return true;
 
-        ShowError("ме днярюрнвмн кчдеи");
+        ShowError("п²п╣ п╢п╬я│я┌п╟я┌п╬я┤п╫п╬ п©п╬п╢я─п╟п╥п╢п╣п╩п╣п╫п╦п╧");
         return false;
     }
 
-    public bool HasEnoughResources(ResourceModel.ResourceType resourceType, int requiredAmount)
+    protected bool HasEnoughResources(ResourceModel.ResourceType resourceType, int requiredAmount)
     {
         if (_resourceViewModel.GetResourceValue(resourceType) >= requiredAmount)
             return true;
 
-        ShowError("меднярюрнвмн пеяспянб");
+        ShowError("п²п╣п╢п╬я│я┌п╟я┌п╬я┤п╫п╬ я─п╣я│я┐я─я│п╬п╡");
         return false;
     }
 
@@ -34,17 +33,17 @@ public class EnoughPopUp : InfoPopUp
         if (_controllersManager.TimeController.OnActionPointUsed())
             return true;
 
-        ShowError("ме днярюрнвмн нвйнб деиярбхъ");
+        ShowError("п²п╣п╢п╬я│я┌п╟я┌п╬я┤п╫п╬ п╬я┤п╨п╬п╡ п╢п╣п╧я│я┌п╡п╦п╧");
         return false;
     }
 
-    public void ShowError(string message)
+    protected void ShowError(string message)
     {
         _errorText.text = message;
         _errorText.enabled = true;
     }
 
-    public void HideError()
+    private void HideError()
     {
         _errorText.enabled = false;
     }

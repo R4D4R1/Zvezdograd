@@ -86,7 +86,7 @@ public class SelectionController : MonoBehaviour
         {
             SelectableBuilding hitObject = hit.collider.GetComponentInParent<SelectableBuilding>();
 
-            if (hitObject && hitObject.BuildingIsSelectable) // Проверяем, активное ли здание
+            if (hitObject && hitObject.BuildingIsSelectable) // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
             {
                 if (_currentHoveredObject != hitObject)
                 {
@@ -145,7 +145,7 @@ public class SelectionController : MonoBehaviour
             {
                 SelectableBuilding hitObject = hit.collider.GetComponentInParent<SelectableBuilding>();
 
-                if (hitObject && hitObject.BuildingIsSelectable) // Проверяем, активное ли здание
+                if (hitObject && hitObject.BuildingIsSelectable) // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
                 {
                     if (hitObject == _selectedBuilding)
                     {
@@ -190,7 +190,7 @@ public class SelectionController : MonoBehaviour
                             _currentPopUp = _popUpFactory.CreateSpecialPopUp();
                             SpecialPopUp popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
 
-                            popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "ОТКРЫТЬ");
+                            popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ");
 
                             if (repairableBuilding.Type == RepairableBuilding.BuildingType.CityHall)
                             {
@@ -206,13 +206,11 @@ public class SelectionController : MonoBehaviour
 
                             if (repairableBuilding.Type == RepairableBuilding.BuildingType.FoodTrucks)
                             {
-                                popUpObject.FoodTrucksBuilding = repairableBuilding as FoodTrucksBuilding;
                                 popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenFoodTrucksMenu;
                             }
 
                             if (repairableBuilding.Type == RepairableBuilding.BuildingType.Hospital)
                             {
-                                popUpObject.HospitalBuilding = repairableBuilding as HospitalBuilding;
                                 popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenHospitalMenu;
                             }
                         }
@@ -221,7 +219,7 @@ public class SelectionController : MonoBehaviour
                             _currentPopUp = _popUpFactory.CreateSpecialPopUp();
                             SpecialPopUp popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
 
-                            popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "РЕМОНТ");
+                            popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "пїЅпїЅпїЅпїЅпїЅпїЅ");
 
                             popUpObject.RepairableBuilding = repairableBuilding;
                             popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenRepairMenu;
@@ -233,13 +231,13 @@ public class SelectionController : MonoBehaviour
                         _currentPopUp = _popUpFactory.CreateSpecialPopUp();
                         SpecialPopUp popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
 
-                        popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "СОБРАТЬ");
+                        popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ");
 
                         popUpObject.CollectableBuilding = collectableBuilding;
                         popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenCollectMenu;
                     }
 
-                    // Спавн попапа
+                    // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
                     RectTransform popUpRect = _currentPopUp.GetComponent<RectTransform>();
                     Vector2 screenPosition = RectTransformUtility.WorldToScreenPoint(_mainCamera, hit.point);
                     Vector2 localPoint;
@@ -260,17 +258,17 @@ public class SelectionController : MonoBehaviour
 
     public void Deselect()
     {
-        // Отключаем аутлайн у всех объектов с компонентом Outline
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Outline
         Outline[] allOutlines = FindObjectsByType<Outline>(FindObjectsSortMode.None);
         foreach (Outline outline in allOutlines)
         {
             outline.enabled = false;
         }
 
-        // Сбрасываем текущий выбранный объект
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         _selectedBuilding = null;
 
-        // Прячем все попапы на сцене
+        // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
         InfoPopUp[] allPopUps = FindObjectsByType<InfoPopUp>(FindObjectsSortMode.None);
         foreach (InfoPopUp popUp in allPopUps)
         {
@@ -280,7 +278,7 @@ public class SelectionController : MonoBehaviour
             }
         }
 
-        // Сбрасываем текущий попап, если он есть
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ
         if (_currentPopUp != null)
         {
             _currentPopUp = null;

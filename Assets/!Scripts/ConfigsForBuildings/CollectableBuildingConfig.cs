@@ -4,9 +4,9 @@ using UnityEngine;
 public class CollectableBuildingConfig : ScriptableObject
 {
     [Header("Resources")]
-    [SerializeField] private int rawMaterialsLeft;
-    [SerializeField] private int rawMaterialsGet;
-    [SerializeField] private int peopleToCollect;
+    [Range(1, 10), SerializeField] private int rawMaterialsLeft;
+    [Range(1, 10), SerializeField] private int rawMaterialsGet;
+    [Range(1, 10), SerializeField] private int peopleToCollect;
 
     [Header("Turns Settings")]
     [SerializeField] private int turnsToCollectOriginal;

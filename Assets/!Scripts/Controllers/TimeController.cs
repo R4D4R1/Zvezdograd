@@ -6,6 +6,7 @@ using DG.Tweening;
 using Cysharp.Threading.Tasks;
 using Zenject;
 using UniRx;
+using UnityEngine.Serialization;
 
 public class TimeController : MonoBehaviour
 {
@@ -17,19 +18,19 @@ public class TimeController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI periodText;
     [SerializeField] private Image blackoutImage;
 
-    [SerializeField] private TextMeshProUGUI _actionPointsText;
-    [Range(1f, 10f), SerializeField] private int _actionPointsValue;
-    [Range(1f, 10f), SerializeField] private int _actionPointsMaxValue;
-    [Range(1f, 5f), SerializeField] private int _actionPointsAddValueInTheNextDay;
+    [FormerlySerializedAs("_actionPointsText")] [SerializeField] private TextMeshProUGUI actionPointsText;
+    [FormerlySerializedAs("_actionPointsValue")] [Range(1f, 10f), SerializeField] private int actionPointsValue;
+    [FormerlySerializedAs("_actionPointsMaxValue")] [Range(1f, 10f), SerializeField] private int actionPointsMaxValue;
+    [FormerlySerializedAs("_actionPointsAddValueInTheNextDay")] [Range(1f, 5f), SerializeField] private int actionPointsAddValueInTheNextDay;
 
-    [Range(1f, 5f), SerializeField] private int _daysBetweenBombingRegularBuildings;
-    [Range(1f, 5f), SerializeField] private int _daysBetweenBombingSpecialBuildings;
-    [Range(1.02f, 2f), SerializeField] private float _nextTurnFadeTime;
+    [FormerlySerializedAs("_daysBetweenBombingRegularBuildings")] [Range(1f, 5f), SerializeField] private int daysBetweenBombingRegularBuildings;
+    [FormerlySerializedAs("_daysBetweenBombingSpecialBuildings")] [Range(1f, 5f), SerializeField] private int daysBetweenBombingSpecialBuildings;
+    [FormerlySerializedAs("_nextTurnFadeTime")] [Range(1.02f, 2f), SerializeField] private float nextTurnFadeTime;
 
-    [SerializeField] private Button _nextTurnBtn;
-    [SerializeField] private MonoBehaviour[] _btnScripts;
+    [FormerlySerializedAs("_nextTurnBtn")] [SerializeField] private Button nextTurnBtn;
+    [FormerlySerializedAs("_btnScripts")] [SerializeField] private MonoBehaviour[] btnScripts;
 
-    public Button NextTurnButton => _nextTurnBtn;
+    public Button NextTurnButton => nextTurnBtn;
 
     private readonly DateTime _startDate = new DateTime(1942, 8, 30);
     private int _daysWithoutBombing;
@@ -72,8 +73,8 @@ public class TimeController : MonoBehaviour
         _currentDate.Subscribe(_ => UpdateText()).AddTo(this);
         _currentPeriod.Subscribe(_ => UpdateLighting()).AddTo(this);
 
-        _nextTurnBtn.OnClickAsObservable()
-            .ThrottleFirst(TimeSpan.FromSeconds(0.5)) // ��������
+        nextTurnBtn.OnClickAsObservable()
+            .ThrottleFirst(TimeSpan.FromSeconds(0.5)) //anti spam
             .Subscribe(_ => EndTurnButtonClicked().Forget())
             .AddTo(this);
 
@@ -91,9 +92,9 @@ public class TimeController : MonoBehaviour
 
     public bool OnActionPointUsed()
     {
-        if (_actionPointsValue > 0)
+        if (actionPointsValue > 0)
         {
-            _actionPointsValue--;
+            actionPointsValue--;
             UpdateActionPointsText();
             return true;
         }
@@ -119,7 +120,7 @@ public class TimeController : MonoBehaviour
                 _currentDate.Value = _currentDate.Value.AddDays(1);
                 _daysWithoutBombing++;
 
-                if (_daysWithoutBombing == _daysBetweenBombingRegularBuildings)
+                if (_daysWithoutBombing == daysBetweenBombingRegularBuildings)
                 {
                     _controllersManager.BuildingController.BombRegularBuilding();
                     _daysWithoutBombing = 0;
@@ -130,7 +131,6 @@ public class TimeController : MonoBehaviour
 
         UpdateText();
     }
-
 
     private void UpdateLighting()
     {
@@ -147,15 +147,15 @@ public class TimeController : MonoBehaviour
 
     private void UpdateActionPointsText()
     {
-        _actionPointsText.text = $"���� ��������  {_actionPointsValue.ToString()}/{_actionPointsMaxValue.ToString()} ";
+        actionPointsText.text = $"ОД  {actionPointsValue.ToString()} / {actionPointsMaxValue.ToString()} ";
     }
 
     private async UniTaskVoid EndTurnButtonClicked()
     {
-        _nextTurnBtn.interactable = false;
-        foreach (var script in _btnScripts) script.enabled = false;
+        nextTurnBtn.interactable = false;
+        foreach (var script in btnScripts) script.enabled = false;
 
-        await blackoutImage.DOFade(1, _nextTurnFadeTime / 2).AsyncWaitForCompletion();
+        await blackoutImage.DOFade(1, nextTurnFadeTime / 2).AsyncWaitForCompletion();
         UpdateTime();
 
         //await UniTask.Delay(100);
@@ -164,10 +164,10 @@ public class TimeController : MonoBehaviour
 
         AddActionPoints();
 
-        await blackoutImage.DOFade(0, _nextTurnFadeTime / 2).AsyncWaitForCompletion();
+        await blackoutImage.DOFade(0, nextTurnFadeTime / 2).AsyncWaitForCompletion();
 
-        _nextTurnBtn.interactable = true;
-        foreach (var script in _btnScripts) script.enabled = true;
+        nextTurnBtn.interactable = true;
+        foreach (var script in btnScripts) script.enabled = true;
 
         if (!_eventPopUp.IsActive)
         {
@@ -177,8 +177,8 @@ public class TimeController : MonoBehaviour
 
     private void AddActionPoints()
     {
-        _actionPointsValue += _actionPointsAddValueInTheNextDay;
-        _actionPointsValue = Math.Clamp(_actionPointsValue, 0, _actionPointsMaxValue);
+        actionPointsValue += actionPointsAddValueInTheNextDay;
+        actionPointsValue = Math.Clamp(actionPointsValue, 0, actionPointsMaxValue);
 
         UpdateActionPointsText();
     }

@@ -1,5 +1,3 @@
-using Cysharp.Threading.Tasks;
-using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -74,13 +72,13 @@ public class FactoryPopUp : EnoughPopUp
             return true;
         else
         {
-            ShowError("ÍÅ ÄÎÑÒÀÒÎ×ÍÎ ÌÅÑÒÀ ÄËß ÌÀÒÅĞÈÀËÎÂ");
+            ShowError("ĞĞµ Ğ´Ğ¾ÑÑ‚Ğ°Ñ‚Ğ¾Ñ‡Ğ½Ğ¾ Ğ¼ĞµÑÑ‚Ğ° Ğ´Ğ»Ñ ÑÑ‚Ñ€Ğ¾Ğ¹Ğ¼Ğ°Ñ‚ĞµÑ€Ğ¸Ğ°Ğ»Ğ¾Ğ²");
             return false;
         }
     }
 
     private string FormatResourceDemand(int rawMaterials, int people)
     {
-        return $"ÍÅÎÁÕÎÄÈÌÎ \n {rawMaterials} ñûğüÿ \n {people} ïîäğàçäåëåíèÿ";
+        return $"ĞĞµĞ¾Ğ±Ñ…Ğ¾Ğ´Ğ¸Ğ¼Ğ¾ \n {rawMaterials} ÑÑ‹Ñ€ÑŒÑ \n {people} Ğ¿Ğ¾Ğ´Ñ€Ğ°Ğ·Ğ´ĞµĞ»ĞµĞ½Ğ¸Ğ¹";
     }
 }

@@ -14,9 +14,9 @@ public class CityHallBuilding : RepairableBuilding
     public int DaysLeftToSendArmyMaterials { get; private set; }
     public bool IsMaterialsSent { get; private set; }
     
-    private int _amountOfHelpSent = 0;
+    private int _amountOfHelpSent;
     private int _turnsToCreateNewUnit;
-    private bool _isWorking = false;
+    private bool _isWorking;
 
     public readonly Subject<Unit> OnCityHallUnitCreated = new();
 
@@ -29,15 +29,22 @@ public class CityHallBuilding : RepairableBuilding
             .AddTo(this);
 
         _controllersManager.TimeController.OnNextTurnBtnClickBetween
-            .Subscribe(_ => CheckIfCreatedNewUnit())
+            .Subscribe(_ => OnNextTurnEvent())
             .AddTo(this);
 
         ReadyMaterialsToCreateNewPeopleUnit = cityHallConfig.ReadyMaterialsToCreateNewPeopleUnit;
         RelationWithGoverment = cityHallConfig.RelationWithGoverment;
         DaysLeftToRecieveGovHelp = cityHallConfig.DaysLeftToRecieveGovHelpOriginal;
         DaysLeftToSendArmyMaterials = cityHallConfig.DaysLeftToSendArmyMaterialsOriginal;
+        _isWorking = false;
+        _amountOfHelpSent = 0;
     }
-
+    
+    private void OnNextTurnEvent()
+    {
+        CheckIfCreatedNewUnit();
+    }
+    
     private void CheckIfCreatedNewUnit()
     {
         if (_isWorking)
@@ -66,7 +73,7 @@ public class CityHallBuilding : RepairableBuilding
         }
     }
 
-    public bool DayPassed()
+    private bool DayPassed()
     {
         if (--DaysLeftToSendArmyMaterials <= 0)
         {

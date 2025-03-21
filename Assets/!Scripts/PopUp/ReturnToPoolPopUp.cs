@@ -12,7 +12,7 @@ public class ReturnToPoolPopUp : InfoPopUp
         {
             IsActive = false;
 
-            transform.DOScale(Vector3.zero, scaleDuration).OnComplete(() =>
+            transform.DOScale(Vector3.zero, SCALE_DURATION).OnComplete(() =>
             {
                 DelayAndReturnToPool().Forget();
             });

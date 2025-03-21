@@ -14,7 +14,7 @@ public class EventPopUp : InfoPopUp
         DescriptionText.text = "";
         ButtonText.text = "";
 
-        transform.DOScale(Vector3.one, scaleDuration).OnComplete(() =>
+        transform.DOScale(Vector3.one, SCALE_DURATION).OnComplete(() =>
         {
             LabelText.text = Label;
             DescriptionText.text = Description;
