@@ -14,14 +14,13 @@ public class SelectionController : MonoBehaviour
 
     private SelectableBuilding _currentHoveredObject;
     private SelectableBuilding _selectedBuilding;
-    private Camera _mainCamera;
     private GameObject _currentPopUp;
     private bool _isActivated;
 
     // INJECT OBJECTS
     private ControllersManager _controllersManager;
     private PopUpFactory _popUpFactory;
-    private Camera mainCamera;
+    private Camera _mainCamera;
     private SoundController _soundController;
 
     [Inject]
@@ -69,7 +68,7 @@ public class SelectionController : MonoBehaviour
         }
     }
 
-    public void SetSelectionControllerState(bool isActive)
+    private void SetSelectionControllerState(bool isActive)
     {
         _isActivated = isActive;
     }
@@ -90,10 +89,10 @@ public class SelectionController : MonoBehaviour
             {
                 if (_currentHoveredObject != hitObject)
                 {
-                    if (_currentHoveredObject != null && _currentHoveredObject != _selectedBuilding)
+                    if (_currentHoveredObject && _currentHoveredObject != _selectedBuilding)
                     {
                         Outline previousOutline = _currentHoveredObject.GetComponentInChildren<Outline>();
-                        if (previousOutline != null)
+                        if (previousOutline)
                         {
                             previousOutline.enabled = false;
                         }
@@ -102,7 +101,7 @@ public class SelectionController : MonoBehaviour
                     if (_currentHoveredObject != _selectedBuilding)
                     {
                         Outline newOutline = _currentHoveredObject.GetComponentInChildren<Outline>();
-                        if (newOutline != null)
+                        if (newOutline)
                         {
                             newOutline.enabled = true;
                         }
@@ -110,20 +109,20 @@ public class SelectionController : MonoBehaviour
                     }
                 }
             }
-            else if (_currentHoveredObject != null && _currentHoveredObject != _selectedBuilding)
+            else if (_currentHoveredObject && _currentHoveredObject != _selectedBuilding)
             {
                 Outline outline = _currentHoveredObject.GetComponentInChildren<Outline>();
-                if (outline != null)
+                if (outline)
                 {
                     outline.enabled = false;
                 }
                 _currentHoveredObject = null;
             }
         }
-        else if (_currentHoveredObject != null && _currentHoveredObject != _selectedBuilding)
+        else if (_currentHoveredObject && _currentHoveredObject != _selectedBuilding)
         {
             Outline outline = _currentHoveredObject.GetComponentInChildren<Outline>();
-            if (outline != null)
+            if (outline)
             {
                 outline.enabled = false;
             }
@@ -190,7 +189,7 @@ public class SelectionController : MonoBehaviour
                             _currentPopUp = _popUpFactory.CreateSpecialPopUp();
                             SpecialPopUp popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
 
-                            popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "�������");
+                            popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "ОТКРЫТЬ");
 
                             if (repairableBuilding.Type == RepairableBuilding.BuildingType.CityHall)
                             {
@@ -219,7 +218,7 @@ public class SelectionController : MonoBehaviour
                             _currentPopUp = _popUpFactory.CreateSpecialPopUp();
                             SpecialPopUp popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
 
-                            popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "������");
+                            popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "ПОЧИНИТЬ");
 
                             popUpObject.RepairableBuilding = repairableBuilding;
                             popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenRepairMenu;
@@ -231,13 +230,12 @@ public class SelectionController : MonoBehaviour
                         _currentPopUp = _popUpFactory.CreateSpecialPopUp();
                         SpecialPopUp popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
 
-                        popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "�������");
+                        popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "СОБРАТЬ");
 
                         popUpObject.CollectableBuilding = collectableBuilding;
                         popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenCollectMenu;
                     }
 
-                    // ����� ������
                     RectTransform popUpRect = _currentPopUp.GetComponent<RectTransform>();
                     Vector2 screenPosition = RectTransformUtility.WorldToScreenPoint(_mainCamera, hit.point);
                     Vector2 localPoint;
@@ -258,17 +256,14 @@ public class SelectionController : MonoBehaviour
 
     public void Deselect()
     {
-        // ��������� ������� � ���� �������� � ����������� Outline
         Outline[] allOutlines = FindObjectsByType<Outline>(FindObjectsSortMode.None);
         foreach (Outline outline in allOutlines)
         {
             outline.enabled = false;
         }
 
-        // ���������� ������� ��������� ������
         _selectedBuilding = null;
 
-        // ������ ��� ������ �� �����
         InfoPopUp[] allPopUps = FindObjectsByType<InfoPopUp>(FindObjectsSortMode.None);
         foreach (InfoPopUp popUp in allPopUps)
         {
@@ -278,8 +273,7 @@ public class SelectionController : MonoBehaviour
             }
         }
 
-        // ���������� ������� �����, ���� �� ����
-        if (_currentPopUp != null)
+        if (_currentPopUp)
         {
             _currentPopUp = null;
         }

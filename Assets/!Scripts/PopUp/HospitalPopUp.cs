@@ -18,7 +18,7 @@ public class HospitalPopUp : QuestPopUp
     {
         base.Init();
 
-        _building = _controllersManager.BuildingController.GetHospitalBuilding();
+        _building = _controllersManager.BombBuildingController.GetHospitalBuilding();
         
         SetButtonState(giveMedicineBtnParent, true);
         UpdateMedicineTimerText();
@@ -48,7 +48,7 @@ public class HospitalPopUp : QuestPopUp
 
     private void OnNextDayEvent()
     {
-        if (_controllersManager.BuildingController.GetHospitalBuilding().MedicineWasGiven())
+        if (_controllersManager.BombBuildingController.GetHospitalBuilding().MedicineWasGiven())
         {
             SetButtonState(giveMedicineBtnParent, true);
         }
@@ -61,13 +61,13 @@ public class HospitalPopUp : QuestPopUp
         if (CanGiveAwayMedicine())
         {
             SetButtonState(giveMedicineBtnParent, false);
-            _controllersManager.BuildingController.GetHospitalBuilding().SendPeopleToGiveMedicine();
+            _controllersManager.BombBuildingController.GetHospitalBuilding().SendPeopleToGiveMedicine();
         }
     }
 
     private bool CanGiveAwayMedicine()
     {
-        return HasEnoughPeople(_controllersManager.BuildingController.GetHospitalBuilding().PeopleToGiveMedicine) &&
+        return HasEnoughPeople(_controllersManager.BombBuildingController.GetHospitalBuilding().PeopleToGiveMedicine) &&
                EnoughMedicineToGiveAway() &&
                CanUseActionPoint();
     }
@@ -91,13 +91,13 @@ public class HospitalPopUp : QuestPopUp
     private void UpdateMedicineTimerText()
     {
         medicineTimerText.text = "Осталось времени до раздачи - " +
-            _controllersManager.BuildingController.GetHospitalBuilding().DaysToGiveMedicine.ToString() + " дн.";
+            _controllersManager.BombBuildingController.GetHospitalBuilding().DaysToGiveMedicine.ToString() + " дн.";
     }
 
     private bool EnoughMedicineToGiveAway()
     {
         return HasEnoughResources(ResourceModel.ResourceType.Medicine,
-            _controllersManager.BuildingController.GetHospitalBuilding().MedicineToGive);
+            _controllersManager.BombBuildingController.GetHospitalBuilding().MedicineToGive);
     }
     
     private void UpdateHealUnitGOButtonState()

@@ -8,8 +8,8 @@ public class ControllersManager : MonoBehaviour
     public MainGameController MainGameController { get; private set; }
     public TimeController TimeController { get; private set; }
     public PeopleUnitsController PeopleUnitsController { get; private set; }
-    public BuildingController BuildingController { get; private set; }
-    public BlurController BlurController { get; private set; }
+    public BombBuildingController BombBuildingController { get; private set; }
+    private BlurController BlurController { get; set; }
     public PopUpsController PopUpsController { get; private set; }
     public PopupEventController PopupEventController { get; private set; }
     public TutorialController TutorialController { get; private set; }
@@ -21,7 +21,7 @@ public class ControllersManager : MonoBehaviour
         MainGameController mainGameController,
         TimeController timeController,
         PeopleUnitsController peopleUnitsController,
-        BuildingController buildingController,
+        BombBuildingController bombBuildingController,
         BlurController blurController,
         PopUpsController popUpsController,
         PopupEventController popupEventController,
@@ -33,7 +33,7 @@ public class ControllersManager : MonoBehaviour
         MainGameController = mainGameController;
         TimeController = timeController;
         PeopleUnitsController = peopleUnitsController;
-        BuildingController = buildingController;
+        BombBuildingController = bombBuildingController;
         BlurController = blurController;
         PopUpsController = popUpsController;
         PopupEventController = popupEventController;
@@ -45,7 +45,7 @@ public class ControllersManager : MonoBehaviour
         BlurController.Init();
         MainGameUIController.Init();
         SelectionController.Init();
-        BuildingController.Init();
+        BombBuildingController.Init();
         MainGameController.Init();
         TimeController.Init();
         PeopleUnitsController.Init();

@@ -31,22 +31,19 @@ public class MainGameController : MonoBehaviour
         Lose
     }
 
-    protected ControllersManager _controllersManager;
-    protected ResourceViewModel _resourceViewModel;
-    protected Camera _mainCamera;
+    private ControllersManager _controllersManager;
+    private Camera _mainCamera;
 
     [Inject]
-    public void Construct(ControllersManager controllersManager, ResourceViewModel resourceViewModel,Camera mainCamera)
+    public void Construct(ControllersManager controllersManager,Camera mainCamera)
     {
         _controllersManager = controllersManager;
-        _resourceViewModel = resourceViewModel;
         _mainCamera = mainCamera;
     }
 
     public void Init()
     {
-
-        foreach (SelectableBuilding building in _controllersManager.BuildingController.AllBuildings)
+        foreach (var building in _controllersManager.BombBuildingController.AllBuildings)
         {
             building.Init();
         }
@@ -86,10 +83,5 @@ public class MainGameController : MonoBehaviour
     private void AnimateCamera(float targetYPosition)
     {
         _mainCamera.transform.DOLocalMoveY(targetYPosition, _showCityDuration).SetEase(_easeType);
-    }
-
-    public int GetAnimDuration()
-    {
-        return (int)(_showCityDuration*1000);
     }
 }

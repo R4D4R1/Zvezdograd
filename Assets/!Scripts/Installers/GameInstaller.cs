@@ -31,21 +31,21 @@ public class GameInstaller : MonoInstaller
             throw new System.Exception("Main Camera is missing in the scene!");
         }
 
-        // Регистрируем все конфиги отдельно
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         Container.Bind<BlurConfig>().FromInstance(blurConfig).AsSingle();
 
-        // Регистрируем контроллеры
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         Container.Bind<MainGameController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<SelectionController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<MainGameUIController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<PopupEventController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<TimeController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<PeopleUnitsController>().FromComponentInHierarchy().AsSingle();
-        Container.Bind<BuildingController>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<BombBuildingController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<BlurController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<TutorialController>().FromComponentInHierarchy().AsSingle();
 
-        // Фабрики
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         Container.Bind<PopUpFactory>()
             .AsSingle()
             .WithArguments(Container, _parentPopUpPrefab, _parentNotificationsPrefab, _infoPopUpPrefab, _specialPopUpPrefab, _notificationPrefab);
@@ -54,7 +54,7 @@ public class GameInstaller : MonoInstaller
         Container.Bind<ControllersManager>().FromInstance(controllersManager).AsSingle();
         Container.Bind<EventPopUp>().FromInstance(eventPopUp).AsSingle();
 
-        // Оставшиеся зависимости
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         Container.Bind<PopUpsController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<Camera>().FromInstance(Camera.main).AsSingle();
 

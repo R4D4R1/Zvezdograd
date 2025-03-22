@@ -44,7 +44,7 @@ public class QuestPopUp : EnoughPopUp
                     {
                     if (!HasEnoughPeople(unitSize))
                     {
-                        _errorText.text = "NOT ENOUGH PEOPLE!";
+                        errorText.text = "NOT ENOUGH PEOPLE!";
                         return;
                     }
 
@@ -124,7 +124,7 @@ public class QuestPopUp : EnoughPopUp
     {
         _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, stabilityToGet));
         
-        _controllersManager.BuildingController.GetCityHallBuilding().ModifyRelationWithGov(relationshipWithGovToGet);
+        _controllersManager.BombBuildingController.GetCityHallBuilding().ModifyRelationWithGov(relationshipWithGovToGet);
 
         quest.SetActive(false);
         questDeadlines.Remove(quest);
@@ -133,7 +133,7 @@ public class QuestPopUp : EnoughPopUp
     private void LoseQuest(GameObject quest, int stabilityToLose, int relationshipWithGovToLose)
     {
         _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, -stabilityToLose));
-        _controllersManager.BuildingController.GetCityHallBuilding().ModifyRelationWithGov(-relationshipWithGovToLose);
+        _controllersManager.BombBuildingController.GetCityHallBuilding().ModifyRelationWithGov(-relationshipWithGovToLose);
 
         quest.SetActive(false);
         questDeadlines.Remove(quest);
@@ -142,14 +142,14 @@ public class QuestPopUp : EnoughPopUp
     {
         if (currentAmount < materialsToLose)
         {
-            _errorText.enabled = true;
-            _errorText.text = $"NOT ENOUGH {resourceName}!";
+            errorText.enabled = true;
+            errorText.text = $"NOT ENOUGH {resourceName}!";
             return false;
         }
         if (currentAmount + materialsToGet > maxAmount)
         {
-            _errorText.enabled = true;
-            _errorText.text = $"NOT ENOUGH SPACE FOR {resourceName}!";
+            errorText.enabled = true;
+            errorText.text = $"NOT ENOUGH SPACE FOR {resourceName}!";
             return false;
         }
         return true;

@@ -18,36 +18,35 @@ public class TimeController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI periodText;
     [SerializeField] private Image blackoutImage;
 
-    [FormerlySerializedAs("_actionPointsText")] [SerializeField] private TextMeshProUGUI actionPointsText;
-    [FormerlySerializedAs("_actionPointsValue")] [Range(1f, 10f), SerializeField] private int actionPointsValue;
-    [FormerlySerializedAs("_actionPointsMaxValue")] [Range(1f, 10f), SerializeField] private int actionPointsMaxValue;
-    [FormerlySerializedAs("_actionPointsAddValueInTheNextDay")] [Range(1f, 5f), SerializeField] private int actionPointsAddValueInTheNextDay;
+    [SerializeField] private TextMeshProUGUI actionPointsText;
+    [Range(1, 10), SerializeField] private int actionPointsMaxValue;
+    [Range(1, 5), SerializeField] private int actionPointsAddValueInTheNextDay;
 
-    [FormerlySerializedAs("_daysBetweenBombingRegularBuildings")] [Range(1f, 5f), SerializeField] private int daysBetweenBombingRegularBuildings;
-    [FormerlySerializedAs("_daysBetweenBombingSpecialBuildings")] [Range(1f, 5f), SerializeField] private int daysBetweenBombingSpecialBuildings;
-    [FormerlySerializedAs("_nextTurnFadeTime")] [Range(1.02f, 2f), SerializeField] private float nextTurnFadeTime;
+    [Range(1, 5), SerializeField] private int daysBetweenBombingRegularBuildings;
+    [Range(1, 5), SerializeField] private int daysBetweenBombingSpecialBuildings;
+    [Range(1.02f, 2f), SerializeField] private float nextTurnFadeTime;
 
-    [FormerlySerializedAs("_nextTurnBtn")] [SerializeField] private Button nextTurnBtn;
+    [SerializeField] private Button nextTurnBtn;
     [FormerlySerializedAs("_btnScripts")] [SerializeField] private MonoBehaviour[] btnScripts;
 
     public Button NextTurnButton => nextTurnBtn;
 
     private readonly DateTime _startDate = new DateTime(1942, 8, 30);
-    private int _daysWithoutBombing;
 
     private ReactiveProperty<DateTime> _currentDate;
     private ReactiveProperty<PeriodOfDay> _currentPeriod;
+    private ReactiveProperty<int> _actionPoints;
+    
     public DateTime CurrentDate => _currentDate.Value;
     public PeriodOfDay CurrentPeriod => _currentPeriod.Value;
-
-
+    
     private ControllersManager _controllersManager;
-    private ResourceViewModel _resourceViewModel;
     private EventPopUp _eventPopUp;
 
     public readonly Subject<Unit> OnNextDayEvent = new();
     public readonly Subject<Unit> OnNextTurnBtnClickBetween = new();
     public readonly Subject<Unit> OnNextTurnBtnClickEnded = new();
+    public readonly Subject<Unit> OnBuildingBombed  = new();
 
     public enum PeriodOfDay
     {
@@ -57,52 +56,41 @@ public class TimeController : MonoBehaviour
     }
 
     [Inject]
-    public void Construct(ControllersManager controllersManager, ResourceViewModel resourceViewModel,EventPopUp eventPopUp)
+    public void Construct(ControllersManager controllersManager, ResourceViewModel resourceViewModel, EventPopUp eventPopUp)
     {
         _controllersManager = controllersManager;
-        _resourceViewModel = resourceViewModel;
         _eventPopUp = eventPopUp;
     }
 
     public void Init()
     {
-        _daysWithoutBombing = 0;
         _currentDate = new ReactiveProperty<DateTime>(_startDate);
         _currentPeriod = new ReactiveProperty<PeriodOfDay>(PeriodOfDay.Утро);
+        _actionPoints = new ReactiveProperty<int>(actionPointsMaxValue); // Initialize with max AP
 
         _currentDate.Subscribe(_ => UpdateText()).AddTo(this);
         _currentPeriod.Subscribe(_ => UpdateLighting()).AddTo(this);
+        _actionPoints.Subscribe(value => 
+            actionPointsText.text = $"ОД  {value} / {actionPointsMaxValue}"
+        ).AddTo(this);
 
         nextTurnBtn.OnClickAsObservable()
-            .ThrottleFirst(TimeSpan.FromSeconds(0.5)) //anti spam
+            .ThrottleFirst(TimeSpan.FromSeconds(0.5)) // Anti-spam
             .Subscribe(_ => EndTurnButtonClicked().Forget())
             .AddTo(this);
 
         UpdateLighting();
         UpdateText();
-
-        UpdateActionPointsText();
-    }
-
-    public void SetDateAndPeriod(DateTime newDate, PeriodOfDay newPeriod)
-    {
-        _currentDate.Value = newDate;
-        _currentPeriod.Value = newPeriod;
     }
 
     public bool OnActionPointUsed()
     {
-        if (actionPointsValue > 0)
+        if (_actionPoints.Value > 0)
         {
-            actionPointsValue--;
-            UpdateActionPointsText();
+            _actionPoints.Value--;
             return true;
         }
-        else
-        {
-            Debug.Log("NO ACTION POINTS");
-            return false;
-        }
+        return false;
     }
 
     private void UpdateTime()
@@ -118,19 +106,12 @@ public class TimeController : MonoBehaviour
             case PeriodOfDay.Вечер:
                 _currentPeriod.SetValueAndForceNotify(PeriodOfDay.Утро);
                 _currentDate.Value = _currentDate.Value.AddDays(1);
-                _daysWithoutBombing++;
 
-                if (_daysWithoutBombing == daysBetweenBombingRegularBuildings)
-                {
-                    _controllersManager.BuildingController.BombRegularBuilding();
-                    _daysWithoutBombing = 0;
-                    OnNextDayEvent.OnNext(Unit.Default);
-                }
+                OnNextDayEvent.OnNext(Unit.Default);
                 break;
         }
-
-        UpdateText();
     }
+
 
     private void UpdateLighting()
     {
@@ -145,30 +126,21 @@ public class TimeController : MonoBehaviour
         periodText.text = _currentPeriod.Value.ToString();
     }
 
-    private void UpdateActionPointsText()
-    {
-        actionPointsText.text = $"ОД  {actionPointsValue.ToString()} / {actionPointsMaxValue.ToString()} ";
-    }
-
     private async UniTaskVoid EndTurnButtonClicked()
     {
         nextTurnBtn.interactable = false;
         foreach (var script in btnScripts) script.enabled = false;
 
         await blackoutImage.DOFade(1, nextTurnFadeTime / 2).AsyncWaitForCompletion();
+        
         UpdateTime();
-
-        //await UniTask.Delay(100);
-
         OnNextTurnBtnClickBetween.OnNext(Unit.Default);
-
         AddActionPoints();
 
         await blackoutImage.DOFade(0, nextTurnFadeTime / 2).AsyncWaitForCompletion();
 
         nextTurnBtn.interactable = true;
         foreach (var script in btnScripts) script.enabled = true;
-
         if (!_eventPopUp.IsActive)
         {
             OnNextTurnBtnClickEnded.OnNext(Unit.Default);
@@ -177,9 +149,8 @@ public class TimeController : MonoBehaviour
 
     private void AddActionPoints()
     {
-        actionPointsValue += actionPointsAddValueInTheNextDay;
-        actionPointsValue = Math.Clamp(actionPointsValue, 0, actionPointsMaxValue);
-
-        UpdateActionPointsText();
+        _actionPoints.Value = Mathf.Clamp(
+            _actionPoints.Value + actionPointsAddValueInTheNextDay, 0, actionPointsMaxValue
+        );
     }
 }

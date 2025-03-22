@@ -17,7 +17,7 @@ public class CityHallPopUp : QuestPopUp
     {
         base.Init();
 
-        _building = _controllersManager.BuildingController.GetCityHallBuilding();
+        _building = _controllersManager.BombBuildingController.GetCityHallBuilding();
 
         _controllersManager.PeopleUnitsController.OnUnitCreatedByPeopleUnitController
             .Subscribe(_ => UpdateCreateUnitGOButtonState())
@@ -45,20 +45,21 @@ public class CityHallPopUp : QuestPopUp
     {
         return HasEnoughResources(ResourceModel.ResourceType.ReadyMaterials,
                _building.ReadyMaterialsToCreateNewPeopleUnit) &&
-               HasEnoughPeople(_controllersManager.BuildingController.GetFoodTruckBuilding().PeopleToGiveProvision) &&
+               HasEnoughPeople(_controllersManager.BombBuildingController.GetFoodTruckBuilding().PeopleToGiveProvision) &&
                CanUseActionPoint();
     }
 
     private void UpdateAllText()
     {
-        relationWithGovermentText.text = $"RELATIONSHIP {_building.RelationWithGoverment}";
+        relationWithGovermentText.text = $"Отношения {_building.RelationWithGoverment}";
+        
         militaryTimerText.text = _building.IsMaterialsSent
-            ? "ARMY MATERIALS SENT, AWAIT ORDERS"
-            : $"SEND ARMY MATERIALS YOU HAVE {_building.DaysLeftToSendArmyMaterials} DS.";
+            ? "Военная помощь отправлена, ожидайте указаний"
+            : $"До конца отправки воен помощи {_building.DaysLeftToSendArmyMaterials} дн.";
 
-        helpFromGovTimerText.text = $"AIRDROP WITH HELP WILL COME IN {_building.DaysLeftToRecieveGovHelp} DS.";
+        helpFromGovTimerText.text = $"Помощь от гос-ва прибудет через {_building.DaysLeftToRecieveGovHelp} дн.";
 
-        createPeopleText.text = $"ORGANIZE NEW GROUP OF PEOPLE  " +
+        createPeopleText.text = $"Организовать новое подразделение, осталось  " +
                                  $"{_controllersManager.PeopleUnitsController.NotCreatedUnits.Count}";
     }
 

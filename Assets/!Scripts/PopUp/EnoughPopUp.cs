@@ -1,9 +1,10 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class EnoughPopUp : InfoPopUp
 {
-    [SerializeField] protected TextMeshProUGUI _errorText;
+    [FormerlySerializedAs("_errorText")] [SerializeField] protected TextMeshProUGUI errorText;
 
     public virtual void Init()
     {
@@ -15,7 +16,7 @@ public class EnoughPopUp : InfoPopUp
         if (_controllersManager.PeopleUnitsController.ReadyUnits.Count >= requiredPeople)
             return true;
 
-        ShowError("Не достаточно подразделений");
+        ShowError("Недостаточно подразделений");
         return false;
     }
 
@@ -39,13 +40,13 @@ public class EnoughPopUp : InfoPopUp
 
     protected void ShowError(string message)
     {
-        _errorText.text = message;
-        _errorText.enabled = true;
+        errorText.text = message;
+        errorText.enabled = true;
     }
 
     private void HideError()
     {
-        _errorText.enabled = false;
+        errorText.enabled = false;
     }
 
     public override void HidePopUp()

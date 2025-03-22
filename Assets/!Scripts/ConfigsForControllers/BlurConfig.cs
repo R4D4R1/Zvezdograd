@@ -3,7 +3,7 @@
 [CreateAssetMenu(fileName = "BlurConfig", menuName = "Configs/BlurConfig")]
 public class BlurConfig : ScriptableObject
 {
-    [Range(0.25f, 5f), SerializeField]
+    [Range(0.25f, 1f), SerializeField]
     private float _timeOfDepthAppearing = 0.25f;
 
     [Range(1, 200f), SerializeField]

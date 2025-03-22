@@ -1,20 +1,36 @@
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
+using Zenject;
+using UniRx;
 
-public class BuildingController : MonoBehaviour
+public class BombBuildingController : MonoBehaviour
 {
     public List<SelectableBuilding> AllBuildings { get; private set; } = new();
     public List<RepairableBuilding> RegularBuildings { get; private set; } = new();
     public List<RepairableBuilding> SpecialBuildings { get; private set; } = new();
-    public List<RepairableBuilding> RepairableBuildings { get; private set; } = new();
     public List<FactoryBuilding> Factories { get; private set; } = new();
 
-    [Range(0f, 100f)]
-    [SerializeField] private int _specialBuildingBombChance;
-
+    public readonly Subject<Unit> OnBuildingBombed = new();
+    
+    [Range(0f, 100f)] [SerializeField] private int chanceOfBombingBuilding;
+    [Range(0f, 100f)] [SerializeField] private int chanceOfBombingSpecialBuilding;
+    
+    private ControllersManager _controllersManager;
+    
+    [Inject]
+    public void Construct(ControllersManager controllersManager)
+    {
+        _controllersManager = controllersManager;
+    }
+    
     public void Init()
     {
+        _controllersManager.TimeController.OnNextTurnBtnClickBetween
+            .Subscribe(_ => TryBombBuilding())
+            .AddTo(this);
+        
         AllBuildings = FindObjectsByType<SelectableBuilding>(FindObjectsSortMode.None).ToList();
         Factories = FindObjectsByType<FactoryBuilding>(FindObjectsSortMode.None).ToList();
 
@@ -30,38 +46,17 @@ public class BuildingController : MonoBehaviour
                 {
                     RegularBuildings.Add(building as RepairableBuilding);
                 }
-
-                RepairableBuildings.Add(building as RepairableBuilding);
             }
         }
     }
 
-    //private void Awake()
-    //{
-    //    AllBuildings = FindObjectsByType<SelectableBuilding>(FindObjectsSortMode.None).ToList();
-    //    Factories = FindObjectsByType<FactoryBuilding>(FindObjectsSortMode.None).ToList();
-
-    //    foreach (var building in AllBuildings)
-    //    {
-    //        if (building.GetComponent<RepairableBuilding>() != null)
-    //        {
-    //            if (building.GetComponent<SpecialBuilding>() != null)
-    //            {
-    //                SpecialBuildings.Add(building as RepairableBuilding);
-    //            }
-    //            else
-    //            {
-    //                RegularBuildings.Add(building as RepairableBuilding);
-    //            }
-
-    //            RepairableBuildings.Add(building as RepairableBuilding);
-    //        }
-    //    }
-    //}
-
-    public void BombRegularBuilding()
+    private void TryBombBuilding()
     {
-        ChooseBuildingToBomb()?.BombBuilding();
+        var randomValue = Random.Range(0, 100);
+        if (randomValue <= chanceOfBombingBuilding)
+        {
+            ChooseBuildingToBomb()?.BombBuilding();
+        }
     }
 
     private RepairableBuilding ChooseBuildingToBomb()
@@ -70,11 +65,11 @@ public class BuildingController : MonoBehaviour
 
         for (int i = 0; i < SpecialBuildings.Count + RegularBuildings.Count; i++)
         {
-            if (Random.Range(0, 100) <= _specialBuildingBombChance)
+            if (Random.Range(0, 100) <= chanceOfBombingSpecialBuilding)
             {
                 int randomBuildingIndex = Random.Range(0, SpecialBuildings.Count);
 
-                if (SpecialBuildings[randomBuildingIndex]. CurrentState == RepairableBuilding.State.Intact
+                if (SpecialBuildings[randomBuildingIndex].CurrentState == RepairableBuilding.State.Intact
                     && SpecialBuildings[randomBuildingIndex].BuildingIsSelectable)
                 {
                     buildingToReturn = SpecialBuildings[randomBuildingIndex];
@@ -84,7 +79,7 @@ public class BuildingController : MonoBehaviour
             {
                 int randomBuildingIndex = Random.Range(0, RegularBuildings.Count);
 
-                if (RegularBuildings[randomBuildingIndex].CurrentState == RepairableBuilding.State.Intact)  
+                if (RegularBuildings[randomBuildingIndex].CurrentState == RepairableBuilding.State.Intact)
                 {
                     buildingToReturn = RegularBuildings[randomBuildingIndex];
                 }
@@ -92,11 +87,15 @@ public class BuildingController : MonoBehaviour
         }
 
         if (buildingToReturn)
+        {
+            var randomValue = Random.Range(0, 100);
+                OnBuildingBombed.OnNext(Unit.Default);
+            
             return buildingToReturn;
+        }
         else
         {
             Debug.Log("NO BUILDING FOR BOMBING");
-
             return null;
         }
 

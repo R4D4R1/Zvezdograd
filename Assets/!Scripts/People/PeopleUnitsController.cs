@@ -9,8 +9,9 @@ using UnityEngine.Serialization;
 public class PeopleUnitsController : MonoBehaviour
 {
     private List<PeopleUnit> _allUnits;
-    [FormerlySerializedAs("_startPeopleUnitAmount")] [Range(1f, 18f), SerializeField] private int startPeopleUnitAmount;
-    [FormerlySerializedAs("_durationOfAnimationOfTransitionOfUnits")] [Range(0f, 1f), SerializeField] private float durationOfAnimationOfTransitionOfUnits;
+    [Range(1f, 18f), SerializeField] private int startPeopleUnitAmount;
+    [Range(0f, 1f), SerializeField] private float durationOfAnimationOfTransitionOfUnits;
+    [Range(0f, 100f)] [SerializeField] private int chanceOfInjuringRandomReadyUnit;
 
     public List<PeopleUnit> ReadyUnits { get; } = new();
     public Queue<PeopleUnit> InjuredUnits { get; } = new();
@@ -35,17 +36,17 @@ public class PeopleUnitsController : MonoBehaviour
         _controllersManager.TimeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => NextTurn())
             .AddTo(this);
-
-        _controllersManager.TimeController.OnNextDayEvent
-            .Subscribe(_ => InjureRandomReadyUnit())
-            .AddTo(this);
         
-        _controllersManager.BuildingController.GetCityHallBuilding().OnCityHallUnitCreated
+        _controllersManager.BombBuildingController.GetCityHallBuilding().OnCityHallUnitCreated
             .Subscribe(_ => CreateUnit())
             .AddTo(this);
         
-        _controllersManager.BuildingController.GetHospitalBuilding().OnHospitaUnitHealed
+        _controllersManager.BombBuildingController.GetHospitalBuilding().OnHospitaUnitHealed
             .Subscribe(_ => HealInuredUnit())
+            .AddTo(this);
+
+        _controllersManager.BombBuildingController.OnBuildingBombed
+            .Subscribe(_ => TryInjureRandomReadyUnit())
             .AddTo(this);
         
         PeopleUnit anyUnit = FindFirstObjectByType<PeopleUnit>();
@@ -129,30 +130,34 @@ public class PeopleUnitsController : MonoBehaviour
     }
 
     // МЕТОД ДЛЯ РАНЕНИЯ ГОТОВЫХ К РАБОТЕ ЮНИТОВ
-    private void InjureRandomReadyUnit()
+    private void TryInjureRandomReadyUnit()
     {
-        if (ReadyUnits.Count > 0)
+        var randomValue = Random.Range(0, 100);
+        if (randomValue <= chanceOfInjuringRandomReadyUnit)
         {
-            // Выбираем случайный юнит из списка readyUnits
-            int randomIndex = Random.Range(0, ReadyUnits.Count);
-            PeopleUnit randomUnit = ReadyUnits[randomIndex];
+            if (ReadyUnits.Count > 0)
+            {
+                // Выбираем случайный юнит из списка readyUnits
+                int randomIndex = Random.Range(0, ReadyUnits.Count);
+                PeopleUnit randomUnit = ReadyUnits[randomIndex];
 
-            // Устанавливаем состояние юнита как Injured
-            
-            randomUnit.SetState(PeopleUnit.UnitState.Injured,0,0);
-            InjuredUnits.Enqueue(randomUnit);
-            
-            OnUnitInjuredByPeopleUnitController.OnNext(Unit.Default);
+                // Устанавливаем состояние юнита как Injured
 
-            // Обновляем список готовых юнитов
-            UpdateReadyUnits();
-            AnimateUnitPositions();
+                randomUnit.SetState(PeopleUnit.UnitState.Injured, 0, 0);
+                InjuredUnits.Enqueue(randomUnit);
 
-            Debug.Log($"Unit {randomUnit.name} has been injured.");
-        }
-        else
-        {
-            Debug.Log("No ready units available to injure.");
+                OnUnitInjuredByPeopleUnitController.OnNext(Unit.Default);
+
+                // Обновляем список готовых юнитов
+                UpdateReadyUnits();
+                AnimateUnitPositions();
+
+                Debug.Log($"Unit {randomUnit.name} has been injured.");
+            }
+            else
+            {
+                Debug.Log("No ready units available to injure.");
+            }
         }
     }
 

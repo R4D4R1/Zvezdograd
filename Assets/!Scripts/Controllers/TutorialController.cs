@@ -14,7 +14,6 @@ public class TutorialController : MonoBehaviour
 
     [SerializeField] private Transform _popUpParent;
 
-    [Header("Текст для подсказок зданий")]
     [SerializeField] private string collectableBuildingDescription;
     [SerializeField] private string intactBuildingDescription;
     [SerializeField] private string damagedBuildingDescription;
@@ -31,7 +30,7 @@ public class TutorialController : MonoBehaviour
 
     private Canvas _canvas;
 
-    protected ControllersManager _controllersManager;
+    private ControllersManager _controllersManager;
     private PopUpFactory _popUpFactory;
     private Camera _mainCamera;
 
@@ -53,7 +52,7 @@ public class TutorialController : MonoBehaviour
 
         _canvas = _popUpParent.GetComponentInParent<Canvas>();
 
-        var buildingController = _controllersManager.BuildingController;
+        var buildingController = _controllersManager.BombBuildingController;
 
         AddBuildingToTutorial(buildingController.GetCityHallBuilding(), cityHallBuildingDescription);
         AddBuildingToTutorial(buildingController.GetHospitalBuilding(), hospitalBuildingDescription);
@@ -68,11 +67,9 @@ public class TutorialController : MonoBehaviour
 
     private void AddBuildingToTutorial(SelectableBuilding building, string description)
     {
-        if (building != null)
-        {
-            tutorialBuildings.Enqueue(building);
-            buildingDescriptions[building] = description;
-        }
+        if (!building) return;
+        tutorialBuildings.Enqueue(building);
+        buildingDescriptions[building] = description;
     }
 
     public void ShowTutorial()
@@ -82,23 +79,20 @@ public class TutorialController : MonoBehaviour
         if (tutorialBuildings.Count == 0)
         {
             OnTutorialEnd.Invoke();
-
-            Debug.Log("Туториал завершен!");
             return;
         }
 
         var tutorialBuilding = tutorialBuildings.Dequeue();
-        if (tutorialBuilding == null) return;
+        if (!tutorialBuilding) return;
 
         var outline = tutorialBuilding.GetComponentInChildren<Outline>();
-        if (outline != null)
+        if (outline)
         {
             outline.enabled = true;
         }
 
         _currentPopUp = _popUpFactory.CreateSpecialPopUp();
 
-        // Позиционируем поп-ап над зданием
         Vector3 buildingWorldPosition = tutorialBuilding.transform.position;
         Vector3 screenPosition = _mainCamera.WorldToScreenPoint(buildingWorldPosition);
 
@@ -107,9 +101,9 @@ public class TutorialController : MonoBehaviour
         _currentPopUp.transform.localPosition = new Vector3(localPosition.x + popUpRect.rect.width * 0.75f, localPosition.y + popUpRect.rect.height * 0.75f, 0);
 
         var popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
-        string description = buildingDescriptions.TryGetValue(tutorialBuilding, out var desc) ? desc : "Нет описания";
+        string description = buildingDescriptions.GetValueOrDefault(tutorialBuilding, "NO DESCRIPTION");
 
-        popUpObject.ShowPopUp(tutorialBuilding.BuildingNameText, description, "ПРОДОЛЖИТЬ");
+        popUpObject.ShowPopUp(tutorialBuilding.BuildingNameText, description, "РџСЂРѕРґРѕР»Р¶РёС‚СЊ");
         popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenNextTutorialPopUp;
     }
 }

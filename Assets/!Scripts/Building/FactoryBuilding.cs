@@ -67,7 +67,7 @@ public class FactoryBuilding : RepairableBuilding
                     }
                     else
                     {
-                        _controllersManager.BuildingController.GetCityHallBuilding().ArmyMaterialsSent();
+                        _controllersManager.BombBuildingController.GetCityHallBuilding().ArmyMaterialsSent();
                     }
 
                     BuildingIsSelectable = true;
