@@ -41,7 +41,7 @@ public class CollectPopUp : EnoughPopUp
 
     private bool HasEnoughSpaceForRawMaterials()
     {
-        if (_resourceViewModel.RawMaterials.Value + _buildingToUse.RawMaterialsGet <= _resourceViewModel.Model.MaxRawMaterials)
+        if (ResourceViewModel.RawMaterials.Value + _buildingToUse.RawMaterialsGet <= ResourceViewModel.Model.MaxRawMaterials)
             return true;
 
         ShowError("�� ���������� ����� ��� ��������");

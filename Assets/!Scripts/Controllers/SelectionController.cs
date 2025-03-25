@@ -1,16 +1,15 @@
-using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Zenject;
 using UniRx;
-using Cysharp.Threading.Tasks;
+using UnityEngine.Serialization;
 
-public class SelectionController : MonoBehaviour
+public class SelectionController : MonoInit
 {
-    [SerializeField] private Canvas _canvas;
+    [FormerlySerializedAs("_canvas")] [SerializeField] private Canvas canvas;
 
-    [SerializeField] private Color _outlineColor;
-    [Range(0f,1f), SerializeField] private float _outlineWidth;
+    [FormerlySerializedAs("_outlineColor")] [SerializeField] private Color outlineColor;
+    [FormerlySerializedAs("_outlineWidth")] [Range(0f,1f), SerializeField] private float outlineWidth;
 
     private SelectableBuilding _currentHoveredObject;
     private SelectableBuilding _selectedBuilding;
@@ -18,43 +17,50 @@ public class SelectionController : MonoBehaviour
     private bool _isActivated;
 
     // INJECT OBJECTS
-    private ControllersManager _controllersManager;
     private PopUpFactory _popUpFactory;
     private Camera _mainCamera;
     private SoundController _soundController;
+    private TimeController _timeController;
+    private MainGameUIController _mainGameUIController;
+    private MainGameController _mainGameController;
 
     [Inject]
-    public void Construct(PopUpFactory popUpFactory,Camera mainCamera,ControllersManager controllersManager, SoundController soundController)
+    public void Construct(PopUpFactory popUpFactory,Camera mainCamera,
+        SoundController soundController,TimeController timeController,
+        MainGameUIController mainGameUIController,MainGameController mainGameController)
     {
-        _controllersManager = controllersManager;
         _popUpFactory = popUpFactory;
         _mainCamera = mainCamera;
         _soundController = soundController;
+        _timeController = timeController;
+        _mainGameUIController = mainGameUIController;
+        _mainGameController = mainGameController;
     }
 
-    public void Init()
+    public override void Init()
     {
-        _controllersManager.TimeController.NextTurnButton.OnClickAsObservable()
+        base.Init();
+        _timeController.NextTurnButton.OnClickAsObservable()
             .Subscribe(_ => Deselect())
             .AddTo(this);
 
-        _controllersManager.TimeController.OnNextTurnBtnClickEnded
+        _timeController.OnNextTurnBtnClickEnded
             .Subscribe(_ => SetSelectionControllerState(true))
             .AddTo(this);
 
-        _controllersManager.MainGameUIController.OnUITurnOff
+        _mainGameUIController.OnUITurnOff
             .Subscribe(_ => Deselect())
             .AddTo(this);
 
-        _controllersManager.MainGameUIController.OnUITurnOff
+        _mainGameUIController.OnUITurnOff
             .Subscribe(_ => SetSelectionControllerState(false))
             .AddTo(this);
 
-        _controllersManager.MainGameUIController.OnUITurnOn
+        _mainGameUIController.OnUITurnOn
             .Subscribe(_ => SetSelectionControllerState(true))
             .AddTo(this);
 
-        _controllersManager.MainGameController.OnGameStarted
+        _mainGameController.OnGameStarted
             .Subscribe(_ => SetSelectionControllerState(false))
             .AddTo(this);
     }
@@ -85,7 +91,7 @@ public class SelectionController : MonoBehaviour
         {
             SelectableBuilding hitObject = hit.collider.GetComponentInParent<SelectableBuilding>();
 
-            if (hitObject && hitObject.BuildingIsSelectable) // ���������, �������� �� ������
+            if (hitObject && hitObject.buildingIsSelectable)
             {
                 if (_currentHoveredObject != hitObject)
                 {
@@ -144,7 +150,7 @@ public class SelectionController : MonoBehaviour
             {
                 SelectableBuilding hitObject = hit.collider.GetComponentInParent<SelectableBuilding>();
 
-                if (hitObject && hitObject.BuildingIsSelectable) // ���������, �������� �� ������
+                if (hitObject && hitObject.buildingIsSelectable) // ���������, �������� �� ������
                 {
                     if (hitObject == _selectedBuilding)
                     {
@@ -167,7 +173,7 @@ public class SelectionController : MonoBehaviour
                     _selectedBuilding = hitObject;
                     Outline selectedOutline = _selectedBuilding.GetComponentInChildren<Outline>();
 
-                    if (selectedOutline != null)
+                    if (selectedOutline)
                     {
                         selectedOutline.enabled = true;
                     }
@@ -239,7 +245,7 @@ public class SelectionController : MonoBehaviour
                     RectTransform popUpRect = _currentPopUp.GetComponent<RectTransform>();
                     Vector2 screenPosition = RectTransformUtility.WorldToScreenPoint(_mainCamera, hit.point);
                     Vector2 localPoint;
-                    RectTransformUtility.ScreenPointToLocalPointInRectangle(_canvas.transform as RectTransform, screenPosition, _canvas.worldCamera, out localPoint);
+                    RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas.transform as RectTransform, screenPosition, canvas.worldCamera, out localPoint);
                     _currentPopUp.transform.localPosition = localPoint + new Vector2(popUpRect.rect.width * 0.5f, popUpRect.rect.height * 0.5f);
                 }
                 else
@@ -256,8 +262,8 @@ public class SelectionController : MonoBehaviour
 
     public void Deselect()
     {
-        Outline[] allOutlines = FindObjectsByType<Outline>(FindObjectsSortMode.None);
-        foreach (Outline outline in allOutlines)
+        var allOutlines = FindObjectsByType<Outline>(FindObjectsSortMode.None);
+        foreach (var outline in allOutlines)
         {
             outline.enabled = false;
         }

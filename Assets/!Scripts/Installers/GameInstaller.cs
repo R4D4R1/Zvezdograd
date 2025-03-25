@@ -1,11 +1,11 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using Zenject;
 
 public class GameInstaller : MonoInstaller
 {
-    [Header("DEPENDENICES")]
+    [Header("DEPENDENCIES")]
     [SerializeField] private EventPopUp eventPopUp;
-    [SerializeField] private ControllersManager controllersManager;
 
     [Header("CONFIGS")]
     [SerializeField] private BlurConfig blurConfig;
@@ -22,39 +22,30 @@ public class GameInstaller : MonoInstaller
 
     public override void InstallBindings()
     {
-        if (controllersManager == null)
-        {
-            throw new System.Exception("ControllersManager is not assigned in GameInstaller!");
-        }
-        if (Camera.main == null)
+        if (!Camera.main)
         {
             throw new System.Exception("Main Camera is missing in the scene!");
         }
 
-        // ������������ ��� ������� ��������
         Container.Bind<BlurConfig>().FromInstance(blurConfig).AsSingle();
 
-        // ������������ �����������
         Container.Bind<MainGameController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<SelectionController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<MainGameUIController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<PopupEventController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<TimeController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<PeopleUnitsController>().FromComponentInHierarchy().AsSingle();
-        Container.Bind<BombBuildingController>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<BuildingController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<BlurController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<TutorialController>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<EffectsController>().FromComponentInHierarchy().AsSingle();
 
-        // �������
         Container.Bind<PopUpFactory>()
             .AsSingle()
             .WithArguments(Container, _parentPopUpPrefab, _parentNotificationsPrefab, _infoPopUpPrefab, _specialPopUpPrefab, _notificationPrefab);
 
-        // Putting dependencies inside container
-        Container.Bind<ControllersManager>().FromInstance(controllersManager).AsSingle();
         Container.Bind<EventPopUp>().FromInstance(eventPopUp).AsSingle();
 
-        // ���������� �����������
         Container.Bind<PopUpsController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<Camera>().FromInstance(Camera.main).AsSingle();
 
@@ -62,5 +53,4 @@ public class GameInstaller : MonoInstaller
         Container.BindInstance(resourceConfig).AsSingle();
         Container.Bind<ResourceViewModel>().AsSingle();
     }
-
 }

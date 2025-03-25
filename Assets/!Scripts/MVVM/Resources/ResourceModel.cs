@@ -9,19 +9,20 @@ public class ResourceModel
     public ReactiveProperty<int> RawMaterials { get; }
     public ReactiveProperty<int> ReadyMaterials { get; }
     public ReactiveProperty<int> Stability { get; }
-
-    private readonly ControllersManager _controllersManager;
-
+    
     public readonly int MaxProvision;
     public readonly int MaxMedicine;
     public readonly int MaxRawMaterials;
     public readonly int MaxReadyMaterials;
     public readonly int MaxStability;
 
+    private readonly MainGameController _mainGameController;
+
     [Inject]
-    public ResourceModel(ControllersManager controllersManager, ResourcesConfig resourceConfig)
+    public ResourceModel(MainGameController mainGameController, ResourcesConfig resourceConfig)
     {
-        _controllersManager = controllersManager;
+        
+        _mainGameController = mainGameController;
 
         Provision = new ReactiveProperty<int>(resourceConfig.Provision);
         Medicine = new ReactiveProperty<int>(resourceConfig.Medicine);
@@ -57,7 +58,7 @@ public class ResourceModel
                 Stability.Value = Mathf.Clamp(Stability.Value + value, 0, MaxStability);
                 if (Stability.Value == 0)
                 {
-                    _controllersManager.MainGameController.GameLost();
+                    _mainGameController.GameLost();
                 }
                 break;
         }

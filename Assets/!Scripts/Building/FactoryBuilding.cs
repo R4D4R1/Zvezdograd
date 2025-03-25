@@ -1,10 +1,12 @@
 using UnityEngine;
 using UniRx;
+using UnityEngine.Serialization;
 
 public class FactoryBuilding : RepairableBuilding
 {
+    [FormerlySerializedAs("_factoryConfig")]
     [Header("FACTORY CONFIG")]
-    [SerializeField] private FactoryBuildingConfig _factoryConfig;
+    [SerializeField] private FactoryBuildingConfig factoryConfig;
 
     public int TurnsToCreateArmyMaterials { get; private set; }
     public int TurnsToCreateReadyMaterials { get; private set; }
@@ -21,28 +23,28 @@ public class FactoryBuilding : RepairableBuilding
     public override void Init()
     {
         base.Init();
-        _controllersManager.TimeController.OnNextTurnBtnClickBetween
+        TimeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => UpdateAmountOfTurnsNeededToDoSMTH())
             .AddTo(this);
 
         UpdateAmountOfTurnsNeededToDoSMTH();
 
-        RawMaterialsToCreateReadyMaterials = _factoryConfig.RawMaterialsToCreateReadyMaterials;
-        RawMaterialsToCreateArmyMaterials = _factoryConfig.RawMaterialsToCreateArmyMaterials;
-        PeopleToCreateReadyMaterials = _factoryConfig.PeopleToCreateReadyMaterials;
-        PeopleToCreateArmyMaterials = _factoryConfig.PeopleToCreateArmyMaterials;
-        ReadyMaterialsGet = _factoryConfig.ReadyMaterialsGet;
+        RawMaterialsToCreateReadyMaterials = factoryConfig.RawMaterialsToCreateReadyMaterials;
+        RawMaterialsToCreateArmyMaterials = factoryConfig.RawMaterialsToCreateArmyMaterials;
+        PeopleToCreateReadyMaterials = factoryConfig.PeopleToCreateReadyMaterials;
+        PeopleToCreateArmyMaterials = factoryConfig.PeopleToCreateArmyMaterials;
+        ReadyMaterialsGet = factoryConfig.ReadyMaterialsGet;
     }
 
     private void UpdateAmountOfTurnsNeededToDoSMTH()
     {
-        TurnsToCreateReadyMaterials = UpdateAmountOfTurnsNeededToDoSMTH(_factoryConfig.TurnsToCreateReadyMaterialsOriginal);
-        TurnsToCreateArmyMaterials = UpdateAmountOfTurnsNeededToDoSMTH(_factoryConfig.TurnsToCreateArmyMaterialsOriginal);
+        TurnsToCreateReadyMaterials = UpdateAmountOfTurnsNeededToDoSmth(factoryConfig.TurnsToCreateReadyMaterialsOriginal);
+        TurnsToCreateArmyMaterials = UpdateAmountOfTurnsNeededToDoSmth(factoryConfig.TurnsToCreateArmyMaterialsOriginal);
     }
 
     protected override void TryTurnOnBuilding()
     {
-        if (!BuildingIsSelectable)
+        if (!buildingIsSelectable)
         {
             if (!_isWorking)
             {
@@ -50,7 +52,7 @@ public class FactoryBuilding : RepairableBuilding
 
                 if (TurnsToRepair == 0)
                 {
-                    BuildingIsSelectable = true;
+                    buildingIsSelectable = true;
                     CurrentState = State.Intact;
                     RestoreOriginalMaterials();
                 }
@@ -63,14 +65,14 @@ public class FactoryBuilding : RepairableBuilding
                 {
                     if (_isCreatingReadyMaterials)
                     {
-                        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.ReadyMaterials, _factoryConfig.ReadyMaterialsGet));
+                        ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.ReadyMaterials, factoryConfig.ReadyMaterialsGet));
                     }
                     else
                     {
-                        _controllersManager.BombBuildingController.GetCityHallBuilding().ArmyMaterialsSent();
+                        BuildingController.GetCityHallBuilding().ArmyMaterialsSent();
                     }
 
-                    BuildingIsSelectable = true;
+                    buildingIsSelectable = true;
                     _isWorking = false;
                     RestoreOriginalMaterials();
                 }
@@ -80,14 +82,14 @@ public class FactoryBuilding : RepairableBuilding
 
     public void CreateReadyMaterials()
     {
-        _controllersManager.PeopleUnitsController.AssignUnitsToTask(
-            _factoryConfig.PeopleToCreateReadyMaterials,
+        PeopleUnitsController.AssignUnitsToTask(
+            factoryConfig.PeopleToCreateReadyMaterials,
             TurnsToCreateReadyMaterials,
-            _factoryConfig.TurnsToRestFromReadyMaterials
+            factoryConfig.TurnsToRestFromReadyMaterials
         );
-        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.RawMaterials, -_factoryConfig.RawMaterialsToCreateReadyMaterials));
+        ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.RawMaterials, -factoryConfig.RawMaterialsToCreateReadyMaterials));
 
-        BuildingIsSelectable = false;
+        buildingIsSelectable = false;
         _isWorking = true;
         _isCreatingReadyMaterials = true;
         _turnsToWork = TurnsToCreateReadyMaterials;
@@ -97,14 +99,14 @@ public class FactoryBuilding : RepairableBuilding
 
     public void CreateArmyMaterials()
     {
-        _controllersManager.PeopleUnitsController.AssignUnitsToTask(
-            _factoryConfig.PeopleToCreateArmyMaterials,
+        PeopleUnitsController.AssignUnitsToTask(
+            factoryConfig.PeopleToCreateArmyMaterials,
             TurnsToCreateArmyMaterials,
-            _factoryConfig.TurnsToRestFromArmyMaterials
+            factoryConfig.TurnsToRestFromArmyMaterials
         );
-        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.RawMaterials, -_factoryConfig.RawMaterialsToCreateArmyMaterials));
+        ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.RawMaterials, -factoryConfig.RawMaterialsToCreateArmyMaterials));
 
-        BuildingIsSelectable = false;
+        buildingIsSelectable = false;
         _isWorking = true;
         _isCreatingReadyMaterials = false;
         _turnsToWork = TurnsToCreateArmyMaterials;

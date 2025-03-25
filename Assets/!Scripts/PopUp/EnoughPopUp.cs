@@ -13,7 +13,7 @@ public class EnoughPopUp : InfoPopUp
 
     protected bool HasEnoughPeople(int requiredPeople)
     {
-        if (_controllersManager.PeopleUnitsController.ReadyUnits.Count >= requiredPeople)
+        if (PeopleUnitsController.ReadyUnits.Count >= requiredPeople)
             return true;
 
         ShowError("Недостаточно подразделений");
@@ -22,7 +22,7 @@ public class EnoughPopUp : InfoPopUp
 
     protected bool HasEnoughResources(ResourceModel.ResourceType resourceType, int requiredAmount)
     {
-        if (_resourceViewModel.GetResourceValue(resourceType) >= requiredAmount)
+        if (ResourceViewModel.GetResourceValue(resourceType) >= requiredAmount)
             return true;
 
         ShowError("Недостаточно ресурсов");
@@ -31,7 +31,7 @@ public class EnoughPopUp : InfoPopUp
 
     protected bool CanUseActionPoint()
     {
-        if (_controllersManager.TimeController.OnActionPointUsed())
+        if (TimeController.OnActionPointUsed())
             return true;
 
         ShowError("Недостаточно очков действий");

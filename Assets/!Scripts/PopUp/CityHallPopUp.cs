@@ -17,9 +17,9 @@ public class CityHallPopUp : QuestPopUp
     {
         base.Init();
 
-        _building = _controllersManager.BombBuildingController.GetCityHallBuilding();
+        _building = BuildingController.GetCityHallBuilding();
 
-        _controllersManager.PeopleUnitsController.OnUnitCreatedByPeopleUnitController
+        PeopleUnitsController.OnUnitCreatedByPeopleUnitController
             .Subscribe(_ => UpdateCreateUnitGOButtonState())
             .AddTo(this);
 
@@ -45,27 +45,27 @@ public class CityHallPopUp : QuestPopUp
     {
         return HasEnoughResources(ResourceModel.ResourceType.ReadyMaterials,
                _building.ReadyMaterialsToCreateNewPeopleUnit) &&
-               HasEnoughPeople(_controllersManager.BombBuildingController.GetFoodTruckBuilding().PeopleToGiveProvision) &&
+               HasEnoughPeople(BuildingController.GetFoodTruckBuilding().PeopleToGiveProvision) &&
                CanUseActionPoint();
     }
 
     private void UpdateAllText()
     {
-        relationWithGovermentText.text = $"Отношения {_building.RelationWithGoverment}";
+        relationWithGovermentText.text = $"Отношения {_building.RelationWithGovernment}";
         
         militaryTimerText.text = _building.IsMaterialsSent
             ? "Военная помощь отправлена, ожидайте указаний"
             : $"До конца отправки воен помощи {_building.DaysLeftToSendArmyMaterials} дн.";
 
-        helpFromGovTimerText.text = $"Помощь от гос-ва прибудет через {_building.DaysLeftToRecieveGovHelp} дн.";
+        helpFromGovTimerText.text = $"Помощь от гос-ва прибудет через {_building.DaysLeftToReceiveGovHelp} дн.";
 
         createPeopleText.text = $"Организовать новое подразделение, осталось  " +
-                                 $"{_controllersManager.PeopleUnitsController.NotCreatedUnits.Count}";
+                                 $"{PeopleUnitsController.NotCreatedUnits.Count}";
     }
 
     private void UpdateCreateUnitGOButtonState()
     {
-        if (_controllersManager.PeopleUnitsController.NotCreatedUnits.Count > 0)
+        if (PeopleUnitsController.NotCreatedUnits.Count > 0)
         {
             SetButtonState(createNewUnitBtnParent,true);
         }

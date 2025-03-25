@@ -6,39 +6,45 @@ using Zenject;
 using UniRx;
 using Cysharp.Threading.Tasks;
 
-public class BlurController : MonoBehaviour
+public class BlurController : MonoInit
 {
     private DepthOfField _depthOfField;
     private Volume _volumeProfile;
 
-    protected ControllersManager _controllersManager;
-    protected BlurConfig _config;
+    private MainGameUIController _mainGameUIController;
+    private MainGameController _mainGameController;
+    private TutorialController _tutorialController;
+    private BlurConfig _config;
 
     [Inject]
-    public void Construct(ControllersManager controllersManager, BlurConfig config)
+    public void Construct(MainGameUIController mainGameUIController,
+        MainGameController mainGameController,TutorialController tutorialController, BlurConfig config)
     {
-        _controllersManager = controllersManager;
+        _mainGameUIController = mainGameUIController;
+        _mainGameController = mainGameController;
+        _tutorialController = tutorialController;
         _config = config;
     }
 
-    public void Init()
+    public override void Init()
     {
+        base.Init();
         _volumeProfile = FindFirstObjectByType<Volume>();
         _volumeProfile.profile.TryGet(out _depthOfField);
 
-        _controllersManager.MainGameUIController.OnUITurnOn
+        _mainGameUIController.OnUITurnOn
             .Subscribe(_ => UnBlurBackGroundSmoothly())
             .AddTo(this);
 
-        _controllersManager.MainGameUIController.OnUITurnOff
+        _mainGameUIController.OnUITurnOff
             .Subscribe(_ => BlurBackGroundSmoothly())
             .AddTo(this);
 
-        _controllersManager.MainGameController.OnGameStarted
+        _mainGameController.OnGameStarted
             .Subscribe(_ => BlurBackGroundNow())
             .AddTo(this);
 
-        _controllersManager.TutorialController.OnTutorialStarted
+        _tutorialController.OnTutorialStarted
             .Subscribe(_ => UnBlurBackGroundSmoothly())
             .AddTo(this);
     }

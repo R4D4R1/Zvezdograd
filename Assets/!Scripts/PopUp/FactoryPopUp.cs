@@ -67,8 +67,8 @@ public class FactoryPopUp : EnoughPopUp
 
     private bool EnoughSpaceToStoreReadyMaterials()
     {
-        if (_resourceViewModel.ReadyMaterials.Value + _buildingToUse.ReadyMaterialsGet
-               < _resourceViewModel.Model.MaxReadyMaterials)
+        if (ResourceViewModel.ReadyMaterials.Value + _buildingToUse.ReadyMaterialsGet
+               < ResourceViewModel.Model.MaxReadyMaterials)
             return true;
         else
         {

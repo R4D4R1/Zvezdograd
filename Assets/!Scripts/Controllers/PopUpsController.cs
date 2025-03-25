@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PopUpsController : MonoBehaviour
+public class PopUpsController : MonoInit
 {
     public FoodTrucksPopUp FoodTrucksPopUp { get; private set; }
     public HospitalPopUp HospitalPopUp { get; private set; }
@@ -10,8 +10,9 @@ public class PopUpsController : MonoBehaviour
     public RepairPopUp RepairPopUp  { get; private set; }
 
 
-    public void Init()
+    public override void Init()
     {
+        base.Init();
         FoodTrucksPopUp = FindFirstObjectByType<FoodTrucksPopUp>();
         HospitalPopUp = FindFirstObjectByType<HospitalPopUp>();
         CityHallPopUp = FindFirstObjectByType<CityHallPopUp>();

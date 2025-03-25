@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 using Zenject;
 
 public class TutorialController : MonoBehaviour
@@ -12,7 +13,7 @@ public class TutorialController : MonoBehaviour
     [SerializeField] private RepairableBuilding damagedBuilding;
     [SerializeField] private FactoryBuilding factoryBuilding;
 
-    [SerializeField] private Transform _popUpParent;
+    [FormerlySerializedAs("_popUpParent")] [SerializeField] private Transform popUpParent;
 
     [SerializeField] private string collectableBuildingDescription;
     [SerializeField] private string intactBuildingDescription;
@@ -22,24 +23,27 @@ public class TutorialController : MonoBehaviour
     [SerializeField] private string hospitalBuildingDescription;
     [SerializeField] private string foodTruckBuildingDescription;
 
-    [SerializeField] private UnityEvent OnTutorialEnd;
+    [FormerlySerializedAs("OnTutorialEnd")] [SerializeField] private UnityEvent onTutorialEnd;
 
     private GameObject _currentPopUp;
-    private Queue<SelectableBuilding> tutorialBuildings = new();
-    private Dictionary<SelectableBuilding, string> buildingDescriptions = new();
+    private readonly Queue<SelectableBuilding> _tutorialBuildings = new();
+    private readonly Dictionary<SelectableBuilding, string> _buildingDescriptions = new();
 
     private Canvas _canvas;
 
-    private ControllersManager _controllersManager;
+    private SelectionController _selectionController;
+    private BuildingController _buildingController;
     private PopUpFactory _popUpFactory;
     private Camera _mainCamera;
 
     public readonly Subject<Unit> OnTutorialStarted = new();
 
     [Inject]
-    public void Construct(ControllersManager controllersManager, PopUpFactory popUpFactory,Camera camera)
+    public void Construct(SelectionController selectionController, BuildingController buildingController,
+        PopUpFactory popUpFactory,Camera camera)
     {
-        _controllersManager = controllersManager;
+        _selectionController = selectionController;
+        _buildingController = buildingController;
         _popUpFactory = popUpFactory;
         _mainCamera = camera;
     }
@@ -50,13 +54,11 @@ public class TutorialController : MonoBehaviour
 
         OnTutorialStarted.OnNext(Unit.Default);
 
-        _canvas = _popUpParent.GetComponentInParent<Canvas>();
+        _canvas = popUpParent.GetComponentInParent<Canvas>();
 
-        var buildingController = _controllersManager.BombBuildingController;
-
-        AddBuildingToTutorial(buildingController.GetCityHallBuilding(), cityHallBuildingDescription);
-        AddBuildingToTutorial(buildingController.GetHospitalBuilding(), hospitalBuildingDescription);
-        AddBuildingToTutorial(buildingController.GetFoodTruckBuilding(), foodTruckBuildingDescription);
+        AddBuildingToTutorial(_buildingController.GetCityHallBuilding(), cityHallBuildingDescription);
+        AddBuildingToTutorial(_buildingController.GetHospitalBuilding(), hospitalBuildingDescription);
+        AddBuildingToTutorial(_buildingController.GetFoodTruckBuilding(), foodTruckBuildingDescription);
         AddBuildingToTutorial(factoryBuilding, factoryBuildingDescription);
         AddBuildingToTutorial(intactBuilding, intactBuildingDescription);
         AddBuildingToTutorial(damagedBuilding, damagedBuildingDescription);
@@ -68,21 +70,21 @@ public class TutorialController : MonoBehaviour
     private void AddBuildingToTutorial(SelectableBuilding building, string description)
     {
         if (!building) return;
-        tutorialBuildings.Enqueue(building);
-        buildingDescriptions[building] = description;
+        _tutorialBuildings.Enqueue(building);
+        _buildingDescriptions[building] = description;
     }
 
     public void ShowTutorial()
     {
-        _controllersManager.SelectionController.Deselect();
+        _selectionController.Deselect();
 
-        if (tutorialBuildings.Count == 0)
+        if (_tutorialBuildings.Count == 0)
         {
-            OnTutorialEnd.Invoke();
+            onTutorialEnd.Invoke();
             return;
         }
 
-        var tutorialBuilding = tutorialBuildings.Dequeue();
+        var tutorialBuilding = _tutorialBuildings.Dequeue();
         if (!tutorialBuilding) return;
 
         var outline = tutorialBuilding.GetComponentInChildren<Outline>();
@@ -101,7 +103,7 @@ public class TutorialController : MonoBehaviour
         _currentPopUp.transform.localPosition = new Vector3(localPosition.x + popUpRect.rect.width * 0.75f, localPosition.y + popUpRect.rect.height * 0.75f, 0);
 
         var popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
-        string description = buildingDescriptions.GetValueOrDefault(tutorialBuilding, "NO DESCRIPTION");
+        string description = _buildingDescriptions.GetValueOrDefault(tutorialBuilding, "NO DESCRIPTION");
 
         popUpObject.ShowPopUp(tutorialBuilding.BuildingNameText, description, "Продолжить");
         popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenNextTutorialPopUp;

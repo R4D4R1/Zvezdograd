@@ -1,23 +1,21 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
+using UnityEngine.Serialization;
 
 public class RepairableBuilding : ChangeMaterialsBuiliding
 {
+    [FormerlySerializedAs("_repairableConfig")]
     [Header("REPAIRABLE SETTINGS")]
-    [SerializeField] private RepairableBuildingConfig _repairableConfig;
+    [SerializeField] private RepairableBuildingConfig repairableConfig;
 
     public int PeopleToRepair { get; private set; }
     public int BuildingMaterialsToRepair { get; private set; }
     public int TurnsToRestFromRepair { get; private set; }
-
-
-    private List<Material[]> _originalMaterials = new List<Material[]>();
-    public int TurnsToRepair { get;protected set; }
+    
+    protected int TurnsToRepair { get; set; }
 
     public State CurrentState;
-    public BuildingType Type => _repairableConfig.BuildingType;
+    public BuildingType Type => repairableConfig.BuildingType;
 
     public enum State
     {
@@ -39,29 +37,29 @@ public class RepairableBuilding : ChangeMaterialsBuiliding
     {
         base.Init();
 
-        CurrentState = _repairableConfig.State;
+        CurrentState = repairableConfig.State;
 
         FindBuildingModels();
 
-        _controllersManager.TimeController.OnNextTurnBtnClickBetween
+        TimeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => TryTurnOnBuilding())
             .AddTo(this);
-        _controllersManager.TimeController.OnNextTurnBtnClickBetween
+        TimeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => UpdateAmountOfTurnsNeededToDoSMTH())
             .AddTo(this);
 
         UpdateBuildingModel();
         UpdateAmountOfTurnsNeededToDoSMTH();
 
-        PeopleToRepair = _repairableConfig.PeopleToRepair;
-        BuildingMaterialsToRepair = _repairableConfig.BuildingMaterialsToRepair;
-        TurnsToRestFromRepair = _repairableConfig.TurnsToRestFromRepair;
+        PeopleToRepair = repairableConfig.PeopleToRepair;
+        BuildingMaterialsToRepair = repairableConfig.BuildingMaterialsToRepair;
+        TurnsToRestFromRepair = repairableConfig.TurnsToRestFromRepair;
     }
 
     private void UpdateAmountOfTurnsNeededToDoSMTH()
     {
         if (CurrentState != State.Repairing)
-            TurnsToRepair = UpdateAmountOfTurnsNeededToDoSMTH(_repairableConfig.TurnsToRepairOriginal);
+            TurnsToRepair = UpdateAmountOfTurnsNeededToDoSmth(repairableConfig.TurnsToRepairOriginal);
     }
 
     protected virtual void TryTurnOnBuilding()
@@ -72,7 +70,7 @@ public class RepairableBuilding : ChangeMaterialsBuiliding
 
             if (TurnsToRepair == 0)
             {
-                BuildingIsSelectable = true;
+                buildingIsSelectable = true;
                 RestoreOriginalMaterials();
                 CurrentState = State.Intact;
                 UpdateBuildingModel();
@@ -84,10 +82,10 @@ public class RepairableBuilding : ChangeMaterialsBuiliding
     {
         if (CurrentState == State.Damaged)
         {
-            _controllersManager.PeopleUnitsController.AssignUnitsToTask(_repairableConfig.PeopleToRepair, TurnsToRepair, _repairableConfig.TurnsToRestFromRepair);
-            _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.ReadyMaterials, -_repairableConfig.BuildingMaterialsToRepair));
+            PeopleUnitsController.AssignUnitsToTask(repairableConfig.PeopleToRepair, TurnsToRepair, repairableConfig.TurnsToRestFromRepair);
+            ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.ReadyMaterials, -repairableConfig.BuildingMaterialsToRepair));
 
-            BuildingIsSelectable = false;
+            buildingIsSelectable = false;
             SetGreyMaterials();
             CurrentState = State.Repairing;
         }
@@ -97,7 +95,7 @@ public class RepairableBuilding : ChangeMaterialsBuiliding
     {
         if (CurrentState == State.Intact)
         {
-            BuildingIsSelectable = true;
+            buildingIsSelectable = true;
             CurrentState = State.Damaged;
             UpdateBuildingModel();
         }
@@ -108,7 +106,7 @@ public class RepairableBuilding : ChangeMaterialsBuiliding
         IntactBuilding intactComponent = GetComponentInChildren<IntactBuilding>();
         DamagedBuilding damagedComponent = GetComponentInChildren<DamagedBuilding>();
 
-        if (intactComponent != null)
+        if (intactComponent)
         {
             _intactBuildingModel = intactComponent.gameObject;
         }
@@ -117,7 +115,7 @@ public class RepairableBuilding : ChangeMaterialsBuiliding
             Debug.LogError("IntactBuilding component not found on any child object.");
         }
 
-        if (damagedComponent != null)
+        if (damagedComponent)
         {
             _damagedBuildingModel = damagedComponent.gameObject;
         }
@@ -135,7 +133,7 @@ public class RepairableBuilding : ChangeMaterialsBuiliding
 
     private void SetModelActive(GameObject model, bool isActive)
     {
-        if (model != null)
+        if (model)
             model.SetActive(isActive);
     }
 

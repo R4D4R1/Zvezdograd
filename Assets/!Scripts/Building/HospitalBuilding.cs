@@ -18,14 +18,14 @@ public class HospitalBuilding : RepairableBuilding
     private bool _isWorking;
     private int _turnsToCreateNewUnit;
     
-    public readonly Subject<Unit> OnHospitaUnitHealed = new();
+    public readonly Subject<Unit> OnHospitalUnitHealed = new();
 
 
     public override void Init()
     {
         base.Init();
 
-        _controllersManager.TimeController.OnNextTurnBtnClickBetween
+        TimeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => OnNextTurnEvent())
             .AddTo(this);
 
@@ -48,7 +48,7 @@ public class HospitalBuilding : RepairableBuilding
     
     private void UpdateAmountOfTurnsNeededToDoSmth()
     {
-        TurnsToGiveMedicine = UpdateAmountOfTurnsNeededToDoSMTH(hospitalConfig.TurnsToGiveMedicineOriginal);
+        TurnsToGiveMedicine = UpdateAmountOfTurnsNeededToDoSmth(hospitalConfig.TurnsToGiveMedicineOriginal);
     }
 
     private void CheckIfHealedInjuredUnit()
@@ -58,7 +58,7 @@ public class HospitalBuilding : RepairableBuilding
             _turnsToCreateNewUnit--;
             if (_turnsToCreateNewUnit == 0)
             {
-                OnHospitaUnitHealed.OnNext(Unit.Default);
+                OnHospitalUnitHealed.OnNext(Unit.Default);
                 _isWorking = false;
             }
         }
@@ -68,31 +68,29 @@ public class HospitalBuilding : RepairableBuilding
     {
         _medicineWasGivenAwayInLastTwoDays = true;
 
-        _controllersManager.PeopleUnitsController.AssignUnitsToTask(hospitalConfig.PeopleToGiveMedicine, TurnsToGiveMedicine, hospitalConfig.TurnsToRestFromMedicine);
-        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Medicine, -hospitalConfig.MedicineToGive));
-        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, hospitalConfig.StabilityAddValue));
+        PeopleUnitsController.AssignUnitsToTask(hospitalConfig.PeopleToGiveMedicine, TurnsToGiveMedicine, hospitalConfig.TurnsToRestFromMedicine);
+        ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Medicine, -hospitalConfig.MedicineToGive));
+        ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, hospitalConfig.StabilityAddValue));
     }
 
     public bool MedicineWasGiven()
     {
         DaysToGiveMedicine--;
 
-        if (DaysToGiveMedicine == 0)
+        if (DaysToGiveMedicine != 0) return false;
+        
+        DaysToGiveMedicine = hospitalConfig.OriginalDaysToGiveMedicine;
+
+        if (_medicineWasGivenAwayInLastTwoDays)
         {
-            DaysToGiveMedicine = hospitalConfig.OriginalDaysToGiveMedicine;
+            _medicineWasGivenAwayInLastTwoDays = false;
 
-            if (_medicineWasGivenAwayInLastTwoDays)
-            {
-                return true;
-            }
-            else
-            {
-                _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, -hospitalConfig.StabilityRemoveValue));
-                _medicineWasGivenAwayInLastTwoDays = false;
-                return false;
-            }
+            return true;
         }
+        _medicineWasGivenAwayInLastTwoDays = false;
 
+        ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability,
+            -hospitalConfig.StabilityRemoveValue));
         return false;
     }
     
@@ -100,6 +98,6 @@ public class HospitalBuilding : RepairableBuilding
     {
         _isWorking = true;
         _turnsToCreateNewUnit = hospitalConfig.TurnsToHealInjuredUnit;
-        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Medicine, -MedicineToHealInjuredUnit));
+        ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Medicine, -MedicineToHealInjuredUnit));
     }
 }

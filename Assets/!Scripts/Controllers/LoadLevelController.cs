@@ -2,16 +2,19 @@ using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Zenject;
 
 public class LoadLevelController : MonoBehaviour
 {
-    [SerializeField] private GameObject _loaderCanvas;
-    [SerializeField] private Slider _progressBar;
+    [FormerlySerializedAs("_loaderCanvas")] [SerializeField] private GameObject loaderCanvas;
+    [FormerlySerializedAs("_progressBar")] [SerializeField] private Slider progressBar;
+    
     [SerializeField] private bool Test;
 
     private float _target;
+    
     private GameController _gameController;
 
     [Inject]
@@ -31,36 +34,36 @@ public class LoadLevelController : MonoBehaviour
     public async UniTask LoadSceneAsync(string sceneName)
     {
         _target = 0;
-        _progressBar.value = 0;
+        progressBar.value = 0;
 
         await UniTask.Delay((int)(_gameController.GameStartDelay * 1000));
 
         var scene = SceneManager.LoadSceneAsync(sceneName);
         scene.allowSceneActivation = false;
 
-        _loaderCanvas.SetActive(true);
+        loaderCanvas.SetActive(true);
 
-        // �������� ����� � ����������
         while (scene.progress < 0.9f)
         {
             _target = Mathf.Clamp01(scene.progress / 0.9f);
-            _progressBar.value = _target;
-            await UniTask.Delay(100); // �������� �� ��������� ����������
+            progressBar.value = _target;
+            await UniTask.Delay(100);
         }
 
         _target = 1;
-        _progressBar.value = _target;
+        progressBar.value = _target;
 
         await UniTask.Delay((int)(_gameController.GameAfterLoadDelay * 1000));
 
         scene.allowSceneActivation = true;
 
         await UniTask.Yield();
-        _loaderCanvas.SetActive(false);
+        loaderCanvas.SetActive(false);
     }
 
     private void Update()
     {
-        _progressBar.value = Mathf.MoveTowards(_progressBar.value, _target, 3 * Time.deltaTime);
+        Debug.Log("TEST");
+        progressBar.value = Mathf.MoveTowards(progressBar.value, _target, 3 * Time.deltaTime);
     }
 }

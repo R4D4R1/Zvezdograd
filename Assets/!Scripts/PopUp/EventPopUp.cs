@@ -8,7 +8,7 @@ public class EventPopUp : InfoPopUp
 
     public void ShowEventPopUp(string Label, string Description, string Button)
     {
-        _controllersManager.MainGameUIController.TurnOffUI();
+        MainGameUIController.TurnOffUI();
 
         LabelText.text = "";
         DescriptionText.text = "";
@@ -30,9 +30,9 @@ public class EventPopUp : InfoPopUp
     {
         base.HidePopUp();
 
-        if (_controllersManager.MainGameController.GameOverState != MainGameController.GameOverStateEnum.Playing)
+        if (MainGameController.GameOverState != MainGameController.GameOverStateEnum.Playing)
         {
-            _controllersManager.MainGameUIController.LoadMainMenu();
+            MainGameUIController.LoadMainMenu();
         }
     }
 }

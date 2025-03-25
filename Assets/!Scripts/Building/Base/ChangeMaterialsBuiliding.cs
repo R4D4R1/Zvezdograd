@@ -1,12 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class ChangeMaterialsBuiliding : BuildingDependingOnStability
 {
+    [FormerlySerializedAs("_M_Grey")]
     [Header("MATERIAL FOR INACTIVE BUILDING")]
-    [SerializeField] private Material _M_Grey;
+    [SerializeField] private Material mGrey;
 
-    private List<Material[]> _originalMaterials = new List<Material[]>();
+    private readonly List<Material[]> _originalMaterials = new();
 
     public override void Init()
     {
@@ -15,7 +17,7 @@ public class ChangeMaterialsBuiliding : BuildingDependingOnStability
         SaveOriginalMaterials();
     }
 
-    protected void SaveOriginalMaterials()
+    private void SaveOriginalMaterials()
     {
         _originalMaterials.Clear();
         var renderers = GetComponentsInChildren<MeshRenderer>();
@@ -33,9 +35,9 @@ public class ChangeMaterialsBuiliding : BuildingDependingOnStability
         foreach (var renderer in renderers)
         {
             var greyMaterials = new Material[renderer.materials.Length];
-            for (int i = 0; i < renderer.materials.Length; i++)
+            for (var i = 0; i < renderer.materials.Length; i++)
             {
-                greyMaterials[i] = _M_Grey;
+                greyMaterials[i] = mGrey;
             }
             renderer.materials = greyMaterials;
         }
@@ -45,7 +47,7 @@ public class ChangeMaterialsBuiliding : BuildingDependingOnStability
     {
         var renderers = GetComponentsInChildren<MeshRenderer>();
 
-        for (int i = 0; i < renderers.Length; i++)
+        for (var i = 0; i < renderers.Length; i++)
         {
             if (i < _originalMaterials.Count)
             {

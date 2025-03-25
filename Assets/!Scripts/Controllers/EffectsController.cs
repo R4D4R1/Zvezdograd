@@ -1,31 +1,32 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 using Zenject;
+using UniRx;
 
-public class EffectsController : MonoBehaviour
+public class EffectsController : MonoInit
 {
-    [SerializeField] private GameObject _snow;
-    [SerializeField] private GameObject _ashes;
-    protected ControllersManager _controllersManager;
+    [FormerlySerializedAs("_snow")] [SerializeField] private GameObject snow;
+    [FormerlySerializedAs("_ashes")] [SerializeField] private GameObject ashes;
+
+    private PopupEventController _popupEventController;
 
     [Inject]
-    public void Construct(ControllersManager controllersManager)
+    public void Construct(PopupEventController popupEventController)
     {
-        _controllersManager = controllersManager;
+        _popupEventController = popupEventController;
     }
 
-    private void OnEnable()
+    public override void Init()
     {
-        _controllersManager.PopupEventController.OnSnowStartedEvent += StartedSnowEvent;
+        base.Init();
+        _popupEventController.OnSnowStarted
+            .Subscribe(_ => StartedSnowEvent())
+            .AddTo(this);
     }
 
-    private void OnDisable()
+    private void StartedSnowEvent()
     {
-        _controllersManager.PopupEventController.OnSnowStartedEvent -= StartedSnowEvent;
-    }
-
-    public void StartedSnowEvent()
-    {
-        _snow.SetActive(true);
-        _ashes.SetActive(false);
+        snow.SetActive(true);
+        ashes.SetActive(false);
     }
 }

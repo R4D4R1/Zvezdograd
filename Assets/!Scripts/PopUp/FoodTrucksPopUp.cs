@@ -10,14 +10,14 @@ public class FoodTrucksPopUp : QuestPopUp
 
         SetButtonState(giveFoodBtnParent,true);
 
-        _controllersManager.TimeController.OnNextDayEvent
+        TimeController.OnNextDayEvent
             .Subscribe(_ => OnNextDayEvent())
             .AddTo(this);
     }
 
     private void OnNextDayEvent()
     {
-        if (_controllersManager.BombBuildingController.GetFoodTruckBuilding().FoodWasGivenAwayToday())
+        if (BuildingController.GetFoodTruckBuilding().FoodWasGivenAwayToday())
         {
             SetButtonState(giveFoodBtnParent,true);
         }
@@ -29,15 +29,15 @@ public class FoodTrucksPopUp : QuestPopUp
         {
 
             SetButtonState(giveFoodBtnParent,false);
-            _controllersManager.BombBuildingController.GetFoodTruckBuilding().SendPeopleToGiveProvision();
+            BuildingController.GetFoodTruckBuilding().SendPeopleToGiveProvision();
         }
     }
 
     private bool CanGiveAwayProvision()
     {
-        return HasEnoughPeople(_controllersManager.BombBuildingController.GetFoodTruckBuilding().PeopleToGiveProvision) &&
+        return HasEnoughPeople(BuildingController.GetFoodTruckBuilding().PeopleToGiveProvision) &&
                HasEnoughResources(ResourceModel.ResourceType.Provision,
-               _controllersManager.BombBuildingController.GetFoodTruckBuilding().FoodToGive)
+               BuildingController.GetFoodTruckBuilding().FoodToGive)
                && CanUseActionPoint();
     }
 }

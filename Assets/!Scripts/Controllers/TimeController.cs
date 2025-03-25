@@ -8,7 +8,7 @@ using Zenject;
 using UniRx;
 using UnityEngine.Serialization;
 
-public class TimeController : MonoBehaviour
+public class TimeController : MonoInit
 {
     [SerializeField] private Light morningLight;
     [SerializeField] private Light dayLight;
@@ -31,7 +31,7 @@ public class TimeController : MonoBehaviour
 
     public Button NextTurnButton => nextTurnBtn;
 
-    private readonly DateTime _startDate = new DateTime(1942, 8, 30);
+    private readonly DateTime _startDate = new(1942, 8, 30);
 
     private ReactiveProperty<DateTime> _currentDate;
     private ReactiveProperty<PeriodOfDay> _currentPeriod;
@@ -40,7 +40,6 @@ public class TimeController : MonoBehaviour
     public DateTime CurrentDate => _currentDate.Value;
     public PeriodOfDay CurrentPeriod => _currentPeriod.Value;
     
-    private ControllersManager _controllersManager;
     private EventPopUp _eventPopUp;
 
     public readonly Subject<Unit> OnNextDayEvent = new();
@@ -56,20 +55,22 @@ public class TimeController : MonoBehaviour
     }
 
     [Inject]
-    public void Construct(ControllersManager controllersManager, ResourceViewModel resourceViewModel, EventPopUp eventPopUp)
+    public void Construct(ResourceViewModel resourceViewModel, EventPopUp eventPopUp)
     {
-        _controllersManager = controllersManager;
         _eventPopUp = eventPopUp;
     }
 
-    public void Init()
+    public override void Init()
     {
         _currentDate = new ReactiveProperty<DateTime>(_startDate);
         _currentPeriod = new ReactiveProperty<PeriodOfDay>(PeriodOfDay.Утро);
-        _actionPoints = new ReactiveProperty<int>(actionPointsMaxValue); // Initialize with max AP
+        _actionPoints = new ReactiveProperty<int>(actionPointsMaxValue);
 
         _currentDate.Subscribe(_ => UpdateText()).AddTo(this);
+        
+        _currentPeriod.Subscribe(_ => UpdateText()).AddTo(this);
         _currentPeriod.Subscribe(_ => UpdateLighting()).AddTo(this);
+        
         _actionPoints.Subscribe(value => 
             actionPointsText.text = $"ОД  {value} / {actionPointsMaxValue}"
         ).AddTo(this);

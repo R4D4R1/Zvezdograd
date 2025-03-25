@@ -1,38 +1,48 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 using Zenject;
 
 public class SelectableBuilding : MonoBehaviour
 {
+    [FormerlySerializedAs("_selectableBuildingConfig")]
     [Header("DEFAULT SETTINGS")]
-    [SerializeField] private SelectableBuildingConfig _selectableBuildingConfig;
+    [SerializeField] private SelectableBuildingConfig selectableBuildingConfig;
 
-    [HideInInspector] public bool BuildingIsSelectable = true;
+    [FormerlySerializedAs("BuildingIsSelectable")] [HideInInspector] public bool buildingIsSelectable = true;
 
-    public int BuildingId { get; private set; }
+    private int BuildingId { get; set; }
 
-    protected ControllersManager _controllersManager;
-    protected ResourceViewModel _resourceViewModel;
+    protected TimeController TimeController;
+    protected ResourceViewModel ResourceViewModel;
+    protected BuildingController BuildingController;
+    protected PeopleUnitsController PeopleUnitsController;
+    protected MainGameController MainGameController;
+    protected PopUpsController PopUpsController;
 
     [Inject]
-    public void Construct(ControllersManager controllersManager, ResourceViewModel resourceViewModel)
+    public void Construct(TimeController timeController,ResourceViewModel resourceViewModel,
+        BuildingController buildingController, PeopleUnitsController peopleUnitsController,
+        MainGameController mainGameController,PopUpsController popUpsController)
     {
-        _controllersManager = controllersManager;
-        _resourceViewModel = resourceViewModel;
+        TimeController = timeController;
+        ResourceViewModel = resourceViewModel;
+        BuildingController = buildingController;
+        PeopleUnitsController = peopleUnitsController;
+        MainGameController = mainGameController;
+        PopUpsController = popUpsController;
     }
-
+    
     public virtual void Init()
     {
-        if (_selectableBuildingConfig != null)
+        if (selectableBuildingConfig)
         {
-            BuildingNameText = _selectableBuildingConfig.BuildingNameText;
-            DescriptionText = _selectableBuildingConfig.DescriptionText;
+            BuildingNameText = selectableBuildingConfig.BuildingNameText;
+            DescriptionText = selectableBuildingConfig.DescriptionText;
         }
 
-        BuildingIsSelectable = true;
+        buildingIsSelectable = true;
 
         GenerateOrLoadBuildingId();
-
-        //Debug.Log($"{gameObject.name} - Initialized successfully");
     }
 
     private void GenerateOrLoadBuildingId()
@@ -51,19 +61,7 @@ public class SelectableBuilding : MonoBehaviour
         }
     }
 
-    public string BuildingNameText { get; protected set; }
-    public string DescriptionText { get; protected set; }
-
-    //public bool BuildingIsSelectable
-    //{
-    //    get => _selectableBuildingConfig != null && _selectableBuildingConfig.BuildingIsSelectable;
-    //    set
-    //    {
-    //        if (_selectableBuildingConfig != null)
-    //        {
-    //            _selectableBuildingConfig.BuildingIsSelectable = value;
-    //        }
-    //    }
-    //}
+    public string BuildingNameText { get; private set; }
+    public string DescriptionText { get; private set; }
 
 }

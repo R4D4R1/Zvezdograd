@@ -7,29 +7,33 @@ using Zenject;
 using System.IO;
 using UniRx;
 
-public class PopupEventController : MonoBehaviour
+public class PopupEventController : MonoInit
 {
-    private bool _isGameOver = false;
+    private bool _isGameOver;
 
     private Dictionary<string, PopupEvent> _specificEvents;
 
-    protected ControllersManager _controllersManager;
-    protected ResourceViewModel _resourceViewModel;
-    protected EventPopUp _eventPopUp;
+    private EventPopUp _eventPopUp;
+    private TimeController _timeController;
+    private MainGameController _mainGameController;
+    private PopUpsController _popUpsController;
 
-    public event Action OnSnowStartedEvent;
+    public readonly Subject<Unit> OnSnowStarted = new();
 
     [Inject]
-    public void Construct(ControllersManager controllersManager, ResourceViewModel resourceViewModel,EventPopUp eventPopUp)
+    public void Construct(EventPopUp eventPopUp, TimeController timeController,
+        MainGameController mainGameController,PopUpsController popUpsController)
     {
-        _controllersManager = controllersManager;
-        _resourceViewModel = resourceViewModel;
         _eventPopUp = eventPopUp;
+        _timeController = timeController;
+        _mainGameController = mainGameController;
+        _popUpsController = popUpsController;
     }
 
-    public void Init()
+    public override void Init()
     {
-        _controllersManager.TimeController.OnNextTurnBtnClickBetween
+        base.Init();
+        _timeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => OnPeriodChanged())
             .AddTo(this);
 
@@ -44,7 +48,7 @@ public class PopupEventController : MonoBehaviour
 
         if (!File.Exists(jsonPath))
         {
-            Debug.LogError($"Файл не найден по пути: {jsonPath}");
+            Debug.LogError($"NO FILE IN PATH : {jsonPath}");
             return;
         }
 
@@ -63,11 +67,11 @@ public class PopupEventController : MonoBehaviour
         // Delay to check WIN/LOSE condition
         await UniTask.Delay(1);
 
-        if (_controllersManager.MainGameController.GameOverState == MainGameController.GameOverStateEnum.Win)
+        if (_mainGameController.GameOverState == MainGameController.GameOverStateEnum.Win)
         {
             OnGameWonEventShow();
         }
-        else if (_controllersManager.MainGameController.GameOverState == MainGameController.GameOverStateEnum.Lose)
+        else if (_mainGameController.GameOverState == MainGameController.GameOverStateEnum.Lose)
         {
             OnGameLoseEventShow();
         }
@@ -77,8 +81,8 @@ public class PopupEventController : MonoBehaviour
             return;
         }
 
-        DateTime currentDate = _controllersManager.TimeController.CurrentDate;
-        string currentPeriod = _controllersManager.TimeController.CurrentPeriod.ToString();
+        DateTime currentDate = _timeController.CurrentDate;
+        string currentPeriod = _timeController.CurrentPeriod.ToString();
 
         string eventKey = currentDate.ToString("yyyy-MM-dd") + currentPeriod;
 
@@ -86,9 +90,9 @@ public class PopupEventController : MonoBehaviour
         {
             if (!string.IsNullOrEmpty(popupEvent.weatherType))
             {
-                if (popupEvent.weatherType == "Снег")
+                if (popupEvent.weatherType == "СЃРЅРµРі")
                 {
-                    OnSnowStartedEvent?.Invoke();
+                    OnSnowStarted.OnNext(Unit.Default);
                 }
             }
 
@@ -109,21 +113,21 @@ public class PopupEventController : MonoBehaviour
 
     private void HandleBuildingTypePopup(PopupEvent popupEvent)
     {
-        if (popupEvent.buildingType == "Еда")
+        if (popupEvent.buildingType == "Р•РґР°")
         {
-            _controllersManager.PopUpsController.FoodTrucksPopUp.EnableQuest(QuestPopUp.QuestType.Provision, popupEvent.questText, popupEvent.unitSize, popupEvent.deadlineInDays,
+            _popUpsController.FoodTrucksPopUp.EnableQuest(QuestPopUp.QuestType.Provision, popupEvent.questText, popupEvent.unitSize, popupEvent.deadlineInDays,
                 popupEvent.turnsToWork, popupEvent.turnsToRest, popupEvent.materialsToGet, popupEvent.materialsToLose,
                 popupEvent.stabilityToGet, popupEvent.stabilityToLose, popupEvent.relationshipWithGovToGet, popupEvent.relationshipWithGovToLose);
         }
-        else if (popupEvent.buildingType == "Медикаменты")
+        else if (popupEvent.buildingType == "РњРµРґРёРєР°РјРµРЅС‚С‹")
         {
-            _controllersManager.PopUpsController.HospitalPopUp.EnableQuest(QuestPopUp.QuestType.Medicine, popupEvent.questText, popupEvent.unitSize, popupEvent.deadlineInDays,
+            _popUpsController.HospitalPopUp.EnableQuest(QuestPopUp.QuestType.Medicine, popupEvent.questText, popupEvent.unitSize, popupEvent.deadlineInDays,
                 popupEvent.turnsToWork, popupEvent.turnsToRest, popupEvent.materialsToGet, popupEvent.materialsToLose,
                 popupEvent.stabilityToGet, popupEvent.stabilityToLose, popupEvent.relationshipWithGovToGet, popupEvent.relationshipWithGovToLose);
         }
-        else if (popupEvent.buildingType == "Совет")
+        else if (popupEvent.buildingType == "РЎС‚СЂРѕР№РјР°С‚РµСЂРёР°Р»С‹")
         {
-            _controllersManager.PopUpsController.CityHallPopUp.EnableQuest(QuestPopUp.QuestType.CityBuilding, popupEvent.questText, popupEvent.unitSize, popupEvent.deadlineInDays,
+            _popUpsController.CityHallPopUp.EnableQuest(QuestPopUp.QuestType.CityBuilding, popupEvent.questText, popupEvent.unitSize, popupEvent.deadlineInDays,
                 popupEvent.turnsToWork, popupEvent.turnsToRest, popupEvent.materialsToGet, popupEvent.materialsToLose,
                 popupEvent.stabilityToGet, popupEvent.stabilityToLose, popupEvent.relationshipWithGovToGet, popupEvent.relationshipWithGovToLose);
         }
@@ -137,18 +141,20 @@ public class PopupEventController : MonoBehaviour
     {
         _isGameOver = true;
         _eventPopUp.ShowEventPopUp(
-            "ПОБЕДА",
-            "После долгих и бессонных ночей мы все же дождались прибытия помощи, но какой ценой...",
-            "МЫ СПАСЕНЫ");
+            "РџРћР‘Р•Р”Рђ",
+            "РџР РРњР•Р  РўР•РљРЎРўРђ РџР РРњР•Р  РўР•РљРЎРўРђ РџР РРњР•Р  РўР•РљРЎРўРђ РџР РРњР•Р  РўР•РљРЎРўРђ РџР РРњР•Р  РўР•РљРЎРўРђ" +
+            " РџР РРњР•Р  РўР•РљРЎРўРђ РџР РРњР•Р  РўР•РљРЎРўРђ РџР РРњР•Р  РўР•РљРЎРўРђ РџР РРњР•Р  РўР•РљРЎРўРђ РџР РРњР•Р  РўР•РљРЎРўРђ РџР РРњР•Р  РўР•РљРЎРўРђ РџР РРњР•Р  РўР•РљРЎРўРђ ",
+            "Р“Р›РђР’РќРћР• РњР•РќР®");
     }
 
     private void OnGameLoseEventShow()
     {
         _isGameOver = true;
         _eventPopUp.ShowEventPopUp(
-            "ВАС СВЕРГЛИ",
-            "Вы не смогли удержать наш город в стабильности и мире, из-за чего и были расстреляны незамедлительно",
-            "КОНЕЦ");
+            "Р’Р« РџР РћРР“Р РђР›Р",
+            "РџР РРњР•Р  РўР•РљРЎРўРђ РџР РРњР•Р  РўР•РљРЎРўРђ РџР РРњР•Р  РўР•РљРЎРўРђ РџР РРњР•Р  РўР•РљРЎРўРђ РџР РРњР•Р  РўР•РљРЎРўРђ" +
+            " РџР РРњР•Р  РўР•РљРЎРўРђ РџР РРњР•Р  РўР•РљРЎРўРђ РџР РРњР•Р  РўР•РљРЎРўРђ РџР РРњР•Р  РўР•РљРЎРўРђ РџР РРњР•Р  РўР•РљРЎРўРђ РџР РРњР•Р  РўР•РљРЎРўРђ РџР РРњР•Р  РўР•РљРЎРўРђ ",
+            "Р“Р›РђР’РќРћР• РњР•РќР®");
     }
 }
 

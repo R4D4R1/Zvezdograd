@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using DG.Tweening;
+using UnityEngine.Serialization;
 using Zenject;
 
 public class InfoPopUp : MonoBehaviour
@@ -10,20 +11,37 @@ public class InfoPopUp : MonoBehaviour
 
     public TextMeshProUGUI LabelText;
     public TextMeshProUGUI DescriptionText;
-    [SerializeField] private CanvasGroup _canvasGroup;
+    [FormerlySerializedAs("_canvasGroup")] [SerializeField] private CanvasGroup canvasGroup;
 
-    public bool IsActive { get; protected set; } = false;
+    public bool IsActive { get; protected set; }
 
-    protected ControllersManager _controllersManager;
-    protected ResourceViewModel _resourceViewModel;
-    protected PopUpFactory _popUpFactory;
+    protected ResourceViewModel ResourceViewModel;
+    protected PopUpFactory PopUpFactory;
+    protected PeopleUnitsController PeopleUnitsController;
+    protected TimeController TimeController;
+    protected BuildingController BuildingController;
+    protected MainGameController MainGameController;
+    protected MainGameUIController MainGameUIController;
+    protected TutorialController TutorialController;
+    protected PopUpsController PopUpsController;
     
     [Inject]
-    public void Construct(ControllersManager controllersManager, ResourceViewModel resourceViewModel,PopUpFactory popUpFactory)
+    public void Construct(
+        ResourceViewModel resourceViewModel,PopUpFactory popUpFactory,
+        PeopleUnitsController peopleUnitsController, TimeController timeController,
+        BuildingController buildingController, MainGameController mainGameController,
+        MainGameUIController mainGameUIController,TutorialController tutorialController,
+        PopUpsController popUpsController)
     {
-        _controllersManager = controllersManager;
-        _resourceViewModel = resourceViewModel;
-        _popUpFactory = popUpFactory;
+        ResourceViewModel = resourceViewModel;
+        PopUpFactory = popUpFactory;
+        PeopleUnitsController = peopleUnitsController;
+        TimeController = timeController;
+        BuildingController = buildingController;
+        MainGameController = mainGameController;
+        MainGameUIController = mainGameUIController;
+        TutorialController = tutorialController;
+        PopUpsController = popUpsController;
     }
 
     private void OnEnable()
@@ -45,7 +63,7 @@ public class InfoPopUp : MonoBehaviour
         });
     }
 
-    public void ShowPopUp(string Label, string Description)
+    public void ShowPopUp(string label, string description)
     {
         IsActive = true;
 
@@ -54,8 +72,8 @@ public class InfoPopUp : MonoBehaviour
 
         transform.DOScale(Vector3.one, SCALE_DURATION).OnComplete(() =>
         {
-            LabelText.text = Label;
-            DescriptionText.text = Description;
+            LabelText.text = label;
+            DescriptionText.text = description;
             SetAlpha(1);
         });
     }
@@ -69,7 +87,7 @@ public class InfoPopUp : MonoBehaviour
                 IsActive = false;
             });
 
-            _controllersManager.MainGameUIController.TurnOnUI();
+            MainGameUIController.TurnOnUI();
 
             SetAlpha(0);
         }
@@ -90,6 +108,6 @@ public class InfoPopUp : MonoBehaviour
 
     protected void SetAlpha(float alpha)
     {
-        _canvasGroup.DOFade(alpha, FADE_DURATION);
+        canvasGroup.DOFade(alpha, FADE_DURATION);
     }
 }

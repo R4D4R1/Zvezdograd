@@ -1,42 +1,46 @@
 using UnityEngine;
 using DG.Tweening;
 using Zenject;
-using System;
 using UniRx;
+using UnityEngine.Serialization;
 
-public class MainGameUIController : MonoBehaviour
+public class MainGameUIController : MonoInit
 { 
-    [SerializeField] private GameObject _settingsMenu;
-    [SerializeField] private GameObject _turnOffUIParent;
+    [FormerlySerializedAs("_settingsMenu")] [SerializeField] private GameObject settingsMenu;
+    [FormerlySerializedAs("_turnOffUIParent")] [SerializeField] private GameObject turnOffUIParent;
     [SerializeField] private float fadeDuration = 0.5f;
 
     private CanvasGroup _turnOffUICanvasGroup;
     private InfoPopUp _popUpToClose;
 
-    protected ControllersManager _controllersManager;
+    private TutorialController _tutorialController;
     private LoadLevelController _loadLevelController;
+    private MainGameController _mainGameController;
 
     public readonly Subject<Unit> OnUITurnOn = new();
     public readonly Subject<Unit> OnUITurnOff = new();
+    public readonly Subject<Unit> OnMainMenuLoad = new();
 
     [Inject]
-    public void Construct(ControllersManager controllersManager, LoadLevelController loadLevelController)
+    public void Construct(TutorialController tutorialController, LoadLevelController loadLevelController,MainGameController mainGameController)
     {
-        _controllersManager = controllersManager;
+        _tutorialController = tutorialController;
         _loadLevelController = loadLevelController;
+        _mainGameController = mainGameController;
     }
 
-    public void Init()
+    public override void Init()
     {
-        _controllersManager.TutorialController.OnTutorialStarted
+        base.Init();
+        _tutorialController.OnTutorialStarted
            .Subscribe(_ => TurnOnUIForTutorial())
            .AddTo(this);
 
-        _turnOffUICanvasGroup = _turnOffUIParent.GetComponent<CanvasGroup>();
+        _turnOffUICanvasGroup = turnOffUIParent.GetComponent<CanvasGroup>();
 
-        if (_turnOffUICanvasGroup == null)
+        if (!_turnOffUICanvasGroup)
         {
-            _turnOffUICanvasGroup = _turnOffUIParent.AddComponent<CanvasGroup>();
+            _turnOffUICanvasGroup = turnOffUIParent.AddComponent<CanvasGroup>();
         }
 
         _turnOffUICanvasGroup.alpha = 0;
@@ -46,19 +50,19 @@ public class MainGameUIController : MonoBehaviour
 
     public void TurnOnMenu()
     {
-        _settingsMenu.SetActive(true);
+        settingsMenu.SetActive(true);
         TurnOffUI();
-        _controllersManager.MainGameController.HideCity();
+        _mainGameController.HideCity();
     }
 
     public void TurnOffMenu()
     {
-        _settingsMenu.SetActive(false);
-        _controllersManager.MainGameController.ShowCity();
+        settingsMenu.SetActive(false);
+        _mainGameController.ShowCity();
         TurnOnUI();
     }
 
-    public void TurnOnUIForTutorial()
+    private void TurnOnUIForTutorial()
     {
         _turnOffUICanvasGroup.DOFade(1f, fadeDuration);
     }
@@ -85,6 +89,7 @@ public class MainGameUIController : MonoBehaviour
 
     public void LoadMainMenu()
     {
+        OnMainMenuLoad.OnNext(Unit.Default);
         _loadLevelController?.LoadSceneAsync(Scenes.MAIN_MENU);
     }
 }

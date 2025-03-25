@@ -4,9 +4,8 @@ using DG.Tweening;
 using System.Linq;
 using Zenject;
 using UniRx;
-using UnityEngine.Serialization;
 
-public class PeopleUnitsController : MonoBehaviour
+public class PeopleUnitsController : MonoInit
 {
     private List<PeopleUnit> _allUnits;
     [Range(1f, 18f), SerializeField] private int startPeopleUnitAmount;
@@ -19,51 +18,54 @@ public class PeopleUnitsController : MonoBehaviour
     public Queue<PeopleUnit> NotCreatedUnits { get; } = new();
     private List<float> InitialPositions { get; } = new();
 
-    private ControllersManager _controllersManager;
+    private TimeController _timeController;
+    private BuildingController _buildingController;
 
     public readonly Subject<Unit> OnUnitCreatedByPeopleUnitController = new();
     public readonly Subject<Unit> OnUnitInjuredByPeopleUnitController = new();
     public readonly Subject<Unit> OnUnitHealedByPeopleUnitController = new();
 
     [Inject]
-    public void Construct(ControllersManager controllersManager)
+    public void Construct(BuildingController buildingController,TimeController timeController)
     {
-        _controllersManager = controllersManager;
+        _buildingController = buildingController;
+        _timeController = timeController;
     }
 
-    public void Init()
+    public override void Init()
     {
-        _controllersManager.TimeController.OnNextTurnBtnClickBetween
+        base.Init();
+        _timeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => NextTurn())
             .AddTo(this);
         
-        _controllersManager.BombBuildingController.GetCityHallBuilding().OnCityHallUnitCreated
+        _buildingController.GetCityHallBuilding().OnCityHallUnitCreated
             .Subscribe(_ => CreateUnit())
             .AddTo(this);
         
-        _controllersManager.BombBuildingController.GetHospitalBuilding().OnHospitaUnitHealed
+        _buildingController.GetHospitalBuilding().OnHospitalUnitHealed
             .Subscribe(_ => HealInuredUnit())
             .AddTo(this);
 
-        _controllersManager.BombBuildingController.OnBuildingBombed
+        _buildingController.OnBuildingBombed
             .Subscribe(_ => TryInjureRandomReadyUnit())
             .AddTo(this);
         
         PeopleUnit anyUnit = FindFirstObjectByType<PeopleUnit>();
 
-        if (anyUnit == null)
+        if (!anyUnit)
         {
             Debug.LogError("Не найден ни один PeopleUnit!");
             return;
         }
 
-        Transform parent = anyUnit.transform.parent;
+        var parent = anyUnit.transform.parent;
 
         _allUnits = new List<PeopleUnit>();
         foreach (Transform child in parent)
         {
             PeopleUnit unit = child.GetComponent<PeopleUnit>();
-            if (unit != null)
+            if (unit)
             {
                 _allUnits.Add(unit);
             }
@@ -105,19 +107,13 @@ public class PeopleUnitsController : MonoBehaviour
     {
         if (AreUnitsReady(requiredUnits))
         {
-            int assignedUnits = 0;
+            var assignedUnits = 0;
 
-            foreach (var unit in ReadyUnits)
+            foreach (var unit in ReadyUnits.Where(_ => assignedUnits < requiredUnits))
             {
-                if (assignedUnits < requiredUnits)
-                {
-                    unit.SetState(PeopleUnit.UnitState.Busy,busyTurns,restingTurns);
+                unit.SetState(PeopleUnit.UnitState.Busy,busyTurns,restingTurns);
                     
-                    // unit.SetBusyForTurns(busyTurns, restingTurns);
-                    // unit.DisableUnit();
-                    
-                    assignedUnits++;
-                }
+                assignedUnits++;
             }
 
             UpdateReadyUnits();
@@ -138,8 +134,8 @@ public class PeopleUnitsController : MonoBehaviour
             if (ReadyUnits.Count > 0)
             {
                 // Выбираем случайный юнит из списка readyUnits
-                int randomIndex = Random.Range(0, ReadyUnits.Count);
-                PeopleUnit randomUnit = ReadyUnits[randomIndex];
+                var randomIndex = Random.Range(0, ReadyUnits.Count);
+                var randomUnit = ReadyUnits[randomIndex];
 
                 // Устанавливаем состояние юнита как Injured
 
@@ -192,12 +188,9 @@ public class PeopleUnitsController : MonoBehaviour
     private void UpdateReadyUnits()
     {
         ReadyUnits.Clear();
-        foreach (var unit in _allUnits)
+        foreach (var unit in _allUnits.Where(unit => unit.GetCurrentState() == PeopleUnit.UnitState.Ready))
         {
-            if (unit.GetCurrentState() == PeopleUnit.UnitState.Ready)
-            {
-                ReadyUnits.Add(unit);
-            }
+            ReadyUnits.Add(unit);
         }
     }
     
@@ -210,21 +203,16 @@ public class PeopleUnitsController : MonoBehaviour
 
         indexedUnits.Sort((a, b) =>
         {
-            int result = (a.unit.BusyTurns + a.unit.RestingTurns).CompareTo(b.unit.BusyTurns + b.unit.RestingTurns);
+            var result = (a.unit.BusyTurns + a.unit.RestingTurns).CompareTo(b.unit.BusyTurns + b.unit.RestingTurns);
             return result != 0 ? result : a.index.CompareTo(b.index);
         });
 
         CreatedUnits = indexedUnits.Select(x => x.unit).ToList();
 
 
-        for (int i = 0; i < CreatedUnits.Count; i++)
+        for (var i = 0; i < CreatedUnits.Count; i++)
         {
             CreatedUnits[i].transform.DOLocalMoveX(InitialPositions[i], durationOfAnimationOfTransitionOfUnits);
         }
     }
-    
-    // public List<PeopleUnit> GetAllUnits()
-    // {
-    //     return _allUnits;
-    // }
 }
