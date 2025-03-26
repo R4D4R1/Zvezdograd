@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(fileName = "BuildingConfig", menuName = "Configs/BuildingConfig")]
-public class BuildingConfig : ScriptableObject
+[CreateAssetMenu(fileName = "BuildingControllerConfig", menuName = "Configs/BuildingControllerConfig")]
+public class BuildingControllerConfig : ScriptableObject
 {
-    [Range(0f, 100f), SerializeField]
-    private int _specialBuildingBombChance;
+    [SerializeField, Range(0f, 100f)] private float chanceOfBombingBuilding = 50f;
+    [SerializeField, Range(0f, 100f)] private float chanceOfBombingSpecialBuilding = 25f;
 
-    public int SpecialBuildingBombChance => _specialBuildingBombChance;
+    public float ChanceOfBombingBuilding => chanceOfBombingBuilding;
+    public float ChanceOfBombingSpecialBuilding => chanceOfBombingSpecialBuilding;
 }

@@ -11,7 +11,7 @@ public class GameInitializer : MonoBehaviour
     private BuildingController _buildingController;
     private BlurController _blurController;
     private PopUpsController _popUpsController;
-    private PopupEventController _popupEventController;
+    private EventController _eventController;
     private EffectsController _effectsController;
 
     [Inject]
@@ -24,7 +24,7 @@ public class GameInitializer : MonoBehaviour
         BuildingController buildingController,
         BlurController blurController,
         PopUpsController popUpsController,
-        PopupEventController popupEventController,
+        EventController eventController,
         TutorialController tutorialController,
         EffectsController effectsController
         )
@@ -37,7 +37,7 @@ public class GameInitializer : MonoBehaviour
         _buildingController = buildingController;
         _blurController = blurController;
         _popUpsController = popUpsController;
-        _popupEventController = popupEventController;
+        _eventController = eventController;
         _effectsController = effectsController;
     }
 
@@ -51,7 +51,7 @@ public class GameInitializer : MonoBehaviour
         _timeController.Init();
         _peopleUnitsController.Init();
         _popUpsController.Init();
-        _popupEventController.Init();
+        _eventController.Init();
         _effectsController.Init();
     }
 }

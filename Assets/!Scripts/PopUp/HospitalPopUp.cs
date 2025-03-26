@@ -38,12 +38,10 @@ public class HospitalPopUp : QuestPopUp
 
     private void CreateHealGOPrefabIfNeeded()
     {
-        if (!_healUnitBtn) 
-        {
-            _healUnitBtn = Instantiate(healGOPrefab, healGOParent);
-            _healUnitBtn.transform.GetChild(0).GetComponent<Button>().onClick.AddListener(HealInjuredUnit);
-            SetButtonState(_healUnitBtn, true);
-        }
+        if (_healUnitBtn) return;
+        _healUnitBtn = Instantiate(healGOPrefab, healGOParent);
+        _healUnitBtn.transform.GetChild(0).GetComponent<Button>().onClick.AddListener(HealInjuredUnit);
+        SetButtonState(_healUnitBtn, true);
     }
 
     private void OnNextDayEvent()
@@ -58,11 +56,9 @@ public class HospitalPopUp : QuestPopUp
 
     public void GiveAwayMedicine()
     {
-        if (CanGiveAwayMedicine())
-        {
-            SetButtonState(giveMedicineBtnParent, false);
-            BuildingController.GetHospitalBuilding().SendPeopleToGiveMedicine();
-        }
+        if (!CanGiveAwayMedicine()) return;
+        SetButtonState(giveMedicineBtnParent, false);
+        BuildingController.GetHospitalBuilding().SendPeopleToGiveMedicine();
     }
 
     private bool CanGiveAwayMedicine()
@@ -74,11 +70,9 @@ public class HospitalPopUp : QuestPopUp
 
     private void HealInjuredUnit()
     {
-        if (CanHealInjuredUnit())
-        {
-            _building.InjuredUnitStartedHealing();
-            SetButtonState(_healUnitBtn, false);
-        }
+        if (!CanHealInjuredUnit()) return;
+        _building.InjuredUnitStartedHealing();
+        SetButtonState(_healUnitBtn, false);
     }
 
     private bool CanHealInjuredUnit()

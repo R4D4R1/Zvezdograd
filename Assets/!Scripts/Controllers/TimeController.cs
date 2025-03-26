@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using System.Threading.Tasks;
 using DG.Tweening;
 using Cysharp.Threading.Tasks;
 using Zenject;
@@ -19,12 +20,6 @@ public class TimeController : MonoInit
     [SerializeField] private Image blackoutImage;
 
     [SerializeField] private TextMeshProUGUI actionPointsText;
-    [Range(1, 10), SerializeField] private int actionPointsMaxValue;
-    [Range(1, 5), SerializeField] private int actionPointsAddValueInTheNextDay;
-
-    [Range(1, 5), SerializeField] private int daysBetweenBombingRegularBuildings;
-    [Range(1, 5), SerializeField] private int daysBetweenBombingSpecialBuildings;
-    [Range(1.02f, 2f), SerializeField] private float nextTurnFadeTime;
 
     [SerializeField] private Button nextTurnBtn;
     [FormerlySerializedAs("_btnScripts")] [SerializeField] private MonoBehaviour[] btnScripts;
@@ -41,11 +36,11 @@ public class TimeController : MonoInit
     public PeriodOfDay CurrentPeriod => _currentPeriod.Value;
     
     private EventPopUp _eventPopUp;
+    private TimeControllerConfig _timeControllerConfig;
 
     public readonly Subject<Unit> OnNextDayEvent = new();
     public readonly Subject<Unit> OnNextTurnBtnClickBetween = new();
     public readonly Subject<Unit> OnNextTurnBtnClickEnded = new();
-    public readonly Subject<Unit> OnBuildingBombed  = new();
 
     public enum PeriodOfDay
     {
@@ -53,26 +48,27 @@ public class TimeController : MonoInit
         День,
         Вечер,
     }
-
+    
     [Inject]
-    public void Construct(ResourceViewModel resourceViewModel, EventPopUp eventPopUp)
+    public void Construct(EventPopUp eventPopUp, TimeControllerConfig timeControllerConfig)
     {
         _eventPopUp = eventPopUp;
+        _timeControllerConfig = timeControllerConfig;
     }
 
     public override void Init()
     {
+        // Инициализация значений из конфига
         _currentDate = new ReactiveProperty<DateTime>(_startDate);
         _currentPeriod = new ReactiveProperty<PeriodOfDay>(PeriodOfDay.Утро);
-        _actionPoints = new ReactiveProperty<int>(actionPointsMaxValue);
+        _actionPoints = new ReactiveProperty<int>(_timeControllerConfig.ActionPointsMaxValue);
 
         _currentDate.Subscribe(_ => UpdateText()).AddTo(this);
-        
         _currentPeriod.Subscribe(_ => UpdateText()).AddTo(this);
         _currentPeriod.Subscribe(_ => UpdateLighting()).AddTo(this);
         
         _actionPoints.Subscribe(value => 
-            actionPointsText.text = $"ОД  {value} / {actionPointsMaxValue}"
+            actionPointsText.text = $"ОД  {value} / {_timeControllerConfig.ActionPointsMaxValue}"
         ).AddTo(this);
 
         nextTurnBtn.OnClickAsObservable()
@@ -113,7 +109,6 @@ public class TimeController : MonoInit
         }
     }
 
-
     private void UpdateLighting()
     {
         morningLight.enabled = _currentPeriod.Value == PeriodOfDay.Утро;
@@ -132,13 +127,13 @@ public class TimeController : MonoInit
         nextTurnBtn.interactable = false;
         foreach (var script in btnScripts) script.enabled = false;
 
-        await blackoutImage.DOFade(1, nextTurnFadeTime / 2).AsyncWaitForCompletion();
+        await blackoutImage.DOFade(1, _timeControllerConfig.NextTurnFadeTime / 2).AsyncWaitForCompletion();
         
         UpdateTime();
         OnNextTurnBtnClickBetween.OnNext(Unit.Default);
         AddActionPoints();
 
-        await blackoutImage.DOFade(0, nextTurnFadeTime / 2).AsyncWaitForCompletion();
+        await blackoutImage.DOFade(0, _timeControllerConfig.NextTurnFadeTime / 2).AsyncWaitForCompletion();
 
         nextTurnBtn.interactable = true;
         foreach (var script in btnScripts) script.enabled = true;
@@ -151,7 +146,7 @@ public class TimeController : MonoInit
     private void AddActionPoints()
     {
         _actionPoints.Value = Mathf.Clamp(
-            _actionPoints.Value + actionPointsAddValueInTheNextDay, 0, actionPointsMaxValue
+            _actionPoints.Value + _timeControllerConfig.ActionPointsAddValueInTheNextDay, 0, _timeControllerConfig.ActionPointsMaxValue
         );
     }
 }

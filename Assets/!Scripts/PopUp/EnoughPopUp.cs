@@ -28,6 +28,15 @@ public class EnoughPopUp : InfoPopUp
         ShowError("Недостаточно ресурсов");
         return false;
     }
+    
+    protected bool HasEnoughSpaceForResources(ResourceModel.ResourceType resourceType, int materialsToGet)
+    {
+        if (ResourceViewModel.GetResourceValue(resourceType) + materialsToGet <= ResourceViewModel.GetMaxResourceValue(resourceType))
+            return true;
+        
+        ShowError("Недостаточно места для ресурсов");
+        return false;
+    }
 
     protected bool CanUseActionPoint()
     {

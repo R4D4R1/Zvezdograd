@@ -15,14 +15,6 @@ public class TutorialController : MonoBehaviour
 
     [FormerlySerializedAs("_popUpParent")] [SerializeField] private Transform popUpParent;
 
-    [SerializeField] private string collectableBuildingDescription;
-    [SerializeField] private string intactBuildingDescription;
-    [SerializeField] private string damagedBuildingDescription;
-    [SerializeField] private string factoryBuildingDescription;
-    [SerializeField] private string cityHallBuildingDescription;
-    [SerializeField] private string hospitalBuildingDescription;
-    [SerializeField] private string foodTruckBuildingDescription;
-
     [FormerlySerializedAs("OnTutorialEnd")] [SerializeField] private UnityEvent onTutorialEnd;
 
     private GameObject _currentPopUp;
@@ -31,6 +23,7 @@ public class TutorialController : MonoBehaviour
 
     private Canvas _canvas;
 
+    private TutorialControllerConfig _tutorialControllerConfig;
     private SelectionController _selectionController;
     private BuildingController _buildingController;
     private PopUpFactory _popUpFactory;
@@ -39,9 +32,10 @@ public class TutorialController : MonoBehaviour
     public readonly Subject<Unit> OnTutorialStarted = new();
 
     [Inject]
-    public void Construct(SelectionController selectionController, BuildingController buildingController,
-        PopUpFactory popUpFactory,Camera camera)
+    public void Construct(TutorialControllerConfig tutorialControllerConfig, SelectionController selectionController, BuildingController buildingController,
+        PopUpFactory popUpFactory, Camera camera)
     {
+        _tutorialControllerConfig = tutorialControllerConfig;
         _selectionController = selectionController;
         _buildingController = buildingController;
         _popUpFactory = popUpFactory;
@@ -50,19 +44,20 @@ public class TutorialController : MonoBehaviour
 
     public async void StartTutorial()
     {
-        await UniTask.Delay(500);
+        await UniTask.Delay(5000);
 
         OnTutorialStarted.OnNext(Unit.Default);
 
         _canvas = popUpParent.GetComponentInParent<Canvas>();
 
-        AddBuildingToTutorial(_buildingController.GetCityHallBuilding(), cityHallBuildingDescription);
-        AddBuildingToTutorial(_buildingController.GetHospitalBuilding(), hospitalBuildingDescription);
-        AddBuildingToTutorial(_buildingController.GetFoodTruckBuilding(), foodTruckBuildingDescription);
-        AddBuildingToTutorial(factoryBuilding, factoryBuildingDescription);
-        AddBuildingToTutorial(intactBuilding, intactBuildingDescription);
-        AddBuildingToTutorial(damagedBuilding, damagedBuildingDescription);
-        AddBuildingToTutorial(collectableBuilding, collectableBuildingDescription);
+        // Используем данные из конфига для добавления зданий в tutorial
+        AddBuildingToTutorial(_buildingController.GetCityHallBuilding(), _tutorialControllerConfig.CityHallBuildingDescription);
+        AddBuildingToTutorial(_buildingController.GetHospitalBuilding(), _tutorialControllerConfig.HospitalBuildingDescription);
+        AddBuildingToTutorial(_buildingController.GetFoodTruckBuilding(), _tutorialControllerConfig.FoodTruckBuildingDescription);
+        AddBuildingToTutorial(factoryBuilding, _tutorialControllerConfig.FactoryBuildingDescription);
+        AddBuildingToTutorial(intactBuilding, _tutorialControllerConfig.IntactBuildingDescription);
+        AddBuildingToTutorial(damagedBuilding, _tutorialControllerConfig.DamagedBuildingDescription);
+        AddBuildingToTutorial(collectableBuilding, _tutorialControllerConfig.CollectableBuildingDescription);
 
         ShowTutorial();
     }

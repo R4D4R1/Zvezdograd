@@ -29,7 +29,7 @@ public class ResourceView : MonoBehaviour
         _resourcesConfig = resourcesConfig;
         BindUI();
     }
-
+    
     private void BindUI()
     {
         provisionSlider.maxValue = _viewModel.Model.MaxProvision;
@@ -37,7 +37,7 @@ public class ResourceView : MonoBehaviour
         rawMaterialsSlider.maxValue = _viewModel.Model.MaxRawMaterials;
         readyMaterialsSlider.maxValue = _viewModel.Model.MaxReadyMaterials;
         stabilitySlider.maxValue = _viewModel.Model.MaxStability;
-
+        
         SubscribeToResource(_viewModel.Provision, provisionSlider, provisionText, "Провизия", _viewModel.Model.MaxProvision);
         SubscribeToResource(_viewModel.Medicine, medicineSlider, medicineText, "Медикаменты", _viewModel.Model.MaxMedicine);
         SubscribeToResource(_viewModel.RawMaterials, rawMaterialsSlider, rawMaterialsText, "Сырье", _viewModel.Model.MaxRawMaterials);
@@ -45,14 +45,14 @@ public class ResourceView : MonoBehaviour
         SubscribeToResource(_viewModel.Stability, stabilitySlider, stabilityText, "Стабильность", _viewModel.Model.MaxStability);
     }
 
-    private void SubscribeToResource(IReadOnlyReactiveProperty<int> resource, Slider slider, TextMeshProUGUI text, string name, int maxValue)
+    private void SubscribeToResource(IReadOnlyReactiveProperty<int> resource, Slider slider, TextMeshProUGUI text, string sliderText, int maxValue)
     {
         resource.Subscribe(newValue =>
         {
             int previousValue = (int)slider.value;
 
             slider.value = newValue;
-            text.text = $"{name} {newValue}/{maxValue}";
+            text.text = $"{sliderText} {newValue}/{maxValue}";
 
             int difference = newValue - previousValue;
             if (difference != 0)
@@ -64,7 +64,7 @@ public class ResourceView : MonoBehaviour
                 }
 
                 string action = difference > 0 ? "Добавлено" : "Убавлено";
-                string message = $"{action} {name.ToLower()} {Mathf.Abs(difference)}";
+                string message = $"{action} {sliderText.ToLower()} {Mathf.Abs(difference)}";
                 _popUpFactory.CreateNotification(message, difference > 0);
             }
         }).AddTo(this);

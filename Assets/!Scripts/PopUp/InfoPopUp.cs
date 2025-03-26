@@ -24,6 +24,7 @@ public class InfoPopUp : MonoBehaviour
     protected MainGameUIController MainGameUIController;
     protected TutorialController TutorialController;
     protected PopUpsController PopUpsController;
+    protected EventController EventController;
     
     [Inject]
     public void Construct(
@@ -31,7 +32,7 @@ public class InfoPopUp : MonoBehaviour
         PeopleUnitsController peopleUnitsController, TimeController timeController,
         BuildingController buildingController, MainGameController mainGameController,
         MainGameUIController mainGameUIController,TutorialController tutorialController,
-        PopUpsController popUpsController)
+        PopUpsController popUpsController,EventController eventController)
     {
         ResourceViewModel = resourceViewModel;
         PopUpFactory = popUpFactory;
@@ -42,6 +43,7 @@ public class InfoPopUp : MonoBehaviour
         MainGameUIController = mainGameUIController;
         TutorialController = tutorialController;
         PopUpsController = popUpsController;
+        EventController = eventController;
     }
 
     private void OnEnable()

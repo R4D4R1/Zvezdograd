@@ -1,14 +1,13 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(fileName = "PeopleUnitsConfig", menuName = "Configs/PeopleUnitsConfig")]
-public class PeopleUnitsConfig : ScriptableObject
+[CreateAssetMenu(fileName = "PeopleUnitsControllerConfig", menuName = "Configs/PeopleUnitsControllerConfig")]
+public class PeopleUnitsControllerConfig : ScriptableObject
 {
-    [Range(1f, 18f), SerializeField]
-    private int _startPeopleUnitAmount;
+    [SerializeField, Range(1f, 18f)] private int startPeopleUnitAmount = 5;
+    [SerializeField, Range(0f, 1f)] private float durationOfAnimationOfTransitionOfUnits = 0.5f;
+    [SerializeField, Range(0f, 100f)] private int chanceOfInjuringRandomReadyUnit = 25;
 
-    [Range(0f, 1f), SerializeField]
-    private float _durationOfAnimationOfTransitionOfUnits;
-
-    public int StartPeopleUnitAmount => _startPeopleUnitAmount;
-    public float DurationOfAnimationOfTransitionOfUnits => _durationOfAnimationOfTransitionOfUnits;
+    public int StartPeopleUnitAmount => startPeopleUnitAmount;
+    public float DurationOfAnimationOfTransitionOfUnits => durationOfAnimationOfTransitionOfUnits;
+    public int ChanceOfInjuringRandomReadyUnit => chanceOfInjuringRandomReadyUnit;
 }

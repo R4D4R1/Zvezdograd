@@ -27,7 +27,7 @@ public class Notification : MonoBehaviour
             return;
         }
 
-        //Delay before destroy
+        //Delay before returning to pool
         await UniTask.Delay((int)(delayBeforeFade * 1000));
 
         _canvasGroup.DOFade(0f, fadeDuration).OnComplete(() =>

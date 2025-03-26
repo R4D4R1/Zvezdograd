@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
@@ -23,6 +25,10 @@ public class MainGameController : MonoInit
     [FormerlySerializedAs("_cameraCityShowY")] [SerializeField] private float cameraCityShowY;
     [FormerlySerializedAs("_cameraCityHideY")] [SerializeField] private float cameraCityHideY;
     [FormerlySerializedAs("_easeType")] [SerializeField] private Ease easeType;
+
+    [Header("GameObjects")] [SerializeField]
+    private GameObject notificationsParent;
+    
     public GameOverStateEnum GameOverState { get; private set; }
 
     public readonly Subject<Unit> OnGameStarted = new();
@@ -44,9 +50,12 @@ public class MainGameController : MonoInit
         _mainCamera = mainCamera;
     }
 
-    public override void Init()
+    public override async void Init()
     {
         base.Init();
+        
+        notificationsParent.SetActive(false);
+        
         foreach (var building in _buildingController.AllBuildings)
         {
             building.Init();
@@ -60,6 +69,10 @@ public class MainGameController : MonoInit
         {
             startPopUp.ShowPopUp();
         });
+
+        await UniTask.Delay(5000);
+        
+        notificationsParent.SetActive(true);
     }
 
     public void GameWin()

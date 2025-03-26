@@ -29,6 +29,18 @@ public class ResourceViewModel
             _ => 0
         };
     }
+    
+    public int GetMaxResourceValue(ResourceModel.ResourceType resourceType)
+    {
+        return resourceType switch
+        {
+            ResourceModel.ResourceType.Provision => Model.MaxProvision,
+            ResourceModel.ResourceType.Medicine => Model.MaxMedicine,
+            ResourceModel.ResourceType.RawMaterials => Model.MaxRawMaterials,
+            ResourceModel.ResourceType.ReadyMaterials => Model.MaxReadyMaterials,
+            _ => 0
+        };
+    }
 
     private void ModifyResource(ResourceModel.ResourceType type, int value)
     {

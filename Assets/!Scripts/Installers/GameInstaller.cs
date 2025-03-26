@@ -1,5 +1,6 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Zenject;
 
 public class GameInstaller : MonoInstaller
@@ -9,16 +10,20 @@ public class GameInstaller : MonoInstaller
 
     [Header("CONFIGS")]
     [SerializeField] private BlurConfig blurConfig;
-    [SerializeField] private ResourcesConfig resourceConfig;
+    [SerializeField] private ResourcesConfig resourcesConfig;
+    [SerializeField] private TimeControllerConfig timeControllerConfig;
+    [SerializeField] private TutorialControllerConfig tutorialControllerConfig;
+    [SerializeField] private BuildingControllerConfig buildingControllerConfig;
+    [SerializeField] private PeopleUnitsControllerConfig peopleUnitsControllerConfig;
 
     [Header("PARENTS PREFABS")]
-    [SerializeField] private Transform _parentPopUpPrefab;
-    [SerializeField] private Transform _parentNotificationsPrefab;
+    [SerializeField] private Transform parentPopUpPrefab;
+    [SerializeField] private Transform parentNotificationsPrefab;
 
     [Header("POP UPS PREFABS")]
-    [SerializeField] private GameObject _infoPopUpPrefab;
-    [SerializeField] private GameObject _specialPopUpPrefab;
-    [SerializeField] private GameObject _notificationPrefab;
+    [SerializeField] private GameObject infoPopUpPrefab;
+    [SerializeField] private GameObject specialPopUpPrefab;
+    [SerializeField] private GameObject notificationPrefab;
 
     public override void InstallBindings()
     {
@@ -28,11 +33,16 @@ public class GameInstaller : MonoInstaller
         }
 
         Container.Bind<BlurConfig>().FromInstance(blurConfig).AsSingle();
+        Container.Bind<ResourcesConfig>().FromInstance(resourcesConfig).AsSingle();
+        Container.Bind<TimeControllerConfig>().FromInstance(timeControllerConfig).AsSingle();
+        Container.Bind<TutorialControllerConfig>().FromInstance(tutorialControllerConfig).AsSingle();
+        Container.Bind<BuildingControllerConfig>().FromInstance(buildingControllerConfig).AsSingle();
+        Container.Bind<PeopleUnitsControllerConfig>().FromInstance(peopleUnitsControllerConfig).AsSingle();
 
         Container.Bind<MainGameController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<SelectionController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<MainGameUIController>().FromComponentInHierarchy().AsSingle();
-        Container.Bind<PopupEventController>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<EventController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<TimeController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<PeopleUnitsController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<BuildingController>().FromComponentInHierarchy().AsSingle();
@@ -42,7 +52,7 @@ public class GameInstaller : MonoInstaller
 
         Container.Bind<PopUpFactory>()
             .AsSingle()
-            .WithArguments(Container, _parentPopUpPrefab, _parentNotificationsPrefab, _infoPopUpPrefab, _specialPopUpPrefab, _notificationPrefab);
+            .WithArguments(Container, parentPopUpPrefab, parentNotificationsPrefab, infoPopUpPrefab, specialPopUpPrefab, notificationPrefab);
 
         Container.Bind<EventPopUp>().FromInstance(eventPopUp).AsSingle();
 
@@ -50,7 +60,7 @@ public class GameInstaller : MonoInstaller
         Container.Bind<Camera>().FromInstance(Camera.main).AsSingle();
 
         Container.Bind<ResourceModel>().AsSingle();
-        Container.BindInstance(resourceConfig).AsSingle();
+        //Container.BindInstance(resourcesConfig).AsSingle();
         Container.Bind<ResourceViewModel>().AsSingle();
     }
 }

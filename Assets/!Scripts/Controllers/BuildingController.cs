@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using Zenject;
 using UniRx;
@@ -11,16 +12,15 @@ public class BuildingController : MonoInit
     private List<RepairableBuilding> SpecialBuildings { get; } = new();
 
     public readonly Subject<Unit> OnBuildingBombed = new();
-    
-    [Range(0f, 100f)] [SerializeField] private int chanceOfBombingBuilding;
-    [Range(0f, 100f)] [SerializeField] private int chanceOfBombingSpecialBuilding;
-    
+
     private TimeController _timeController;
+    private BuildingControllerConfig _buildingControllerConfig;
     
     [Inject]
-    public void Construct(TimeController timeController)
+    public void Construct(TimeController timeController,BuildingControllerConfig buildingControllerConfig)
     {
         _timeController = timeController;
+        _buildingControllerConfig = buildingControllerConfig;
     }
     
     public override void Init()
@@ -51,7 +51,7 @@ public class BuildingController : MonoInit
     private void TryBombBuilding()
     {
         var randomValue = Random.Range(0, 100);
-        if (randomValue <= chanceOfBombingBuilding)
+        if (randomValue <= _buildingControllerConfig.ChanceOfBombingBuilding)
         {
             ChooseBuildingToBomb()?.BombBuilding();
             OnBuildingBombed.OnNext(Unit.Default);
@@ -64,7 +64,7 @@ public class BuildingController : MonoInit
 
         for (var i = 0; i < SpecialBuildings.Count + RegularBuildings.Count; i++)
         {
-            if (Random.Range(0, 100) <= chanceOfBombingSpecialBuilding)
+            if (Random.Range(0, 100) <= _buildingControllerConfig.ChanceOfBombingSpecialBuilding)
             {
                 var randomBuildingIndex = Random.Range(0, SpecialBuildings.Count);
 
@@ -93,7 +93,6 @@ public class BuildingController : MonoInit
             Debug.Log("NO BUILDING FOR BOMBING");
             return null;
         }
-
     }
 
     public CityHallBuilding GetCityHallBuilding()

@@ -9,7 +9,7 @@ public class CollectableBuilding : ChangeMaterialsBuiliding
     [SerializeField] private CollectableBuildingConfig config;
 
     public int RawMaterialsLeft { get; private set; }
-    public int TurnsToCollect { get; private set; }
+    private int TurnsToCollect { get; set; }
     public int RawMaterialsGet { get; private set; }
     public int PeopleToCollect { get; private set; }
     public int TurnsToRest { get; private set; }

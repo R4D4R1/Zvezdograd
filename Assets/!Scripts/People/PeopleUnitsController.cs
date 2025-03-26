@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using DG.Tweening;
 using System.Linq;
+using System.Threading.Tasks;
 using Zenject;
 using UniRx;
 
 public class PeopleUnitsController : MonoInit
 {
     private List<PeopleUnit> _allUnits;
-    [Range(1f, 18f), SerializeField] private int startPeopleUnitAmount;
-    [Range(0f, 1f), SerializeField] private float durationOfAnimationOfTransitionOfUnits;
-    [Range(0f, 100f)] [SerializeField] private int chanceOfInjuringRandomReadyUnit;
+    private PeopleUnitsControllerConfig _config;
 
     public List<PeopleUnit> ReadyUnits { get; } = new();
     public Queue<PeopleUnit> InjuredUnits { get; } = new();
@@ -26,8 +25,9 @@ public class PeopleUnitsController : MonoInit
     public readonly Subject<Unit> OnUnitHealedByPeopleUnitController = new();
 
     [Inject]
-    public void Construct(BuildingController buildingController,TimeController timeController)
+    public void Construct(PeopleUnitsControllerConfig config, BuildingController buildingController, TimeController timeController)
     {
+        _config = config;
         _buildingController = buildingController;
         _timeController = timeController;
     }
@@ -38,11 +38,11 @@ public class PeopleUnitsController : MonoInit
         _timeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => NextTurn())
             .AddTo(this);
-        
+
         _buildingController.GetCityHallBuilding().OnCityHallUnitCreated
             .Subscribe(_ => CreateUnit())
             .AddTo(this);
-        
+
         _buildingController.GetHospitalBuilding().OnHospitalUnitHealed
             .Subscribe(_ => HealInuredUnit())
             .AddTo(this);
@@ -50,7 +50,7 @@ public class PeopleUnitsController : MonoInit
         _buildingController.OnBuildingBombed
             .Subscribe(_ => TryInjureRandomReadyUnit())
             .AddTo(this);
-        
+
         PeopleUnit anyUnit = FindFirstObjectByType<PeopleUnit>();
 
         if (!anyUnit)
@@ -75,7 +75,7 @@ public class PeopleUnitsController : MonoInit
         {
             InitialPositions.Add(_allUnits[unitNum].transform.localPosition.x);
 
-            if (unitNum < startPeopleUnitAmount)
+            if (unitNum < _config.StartPeopleUnitAmount)
             {
                 CreatedUnits.Add(_allUnits[unitNum]);
                 CreatedUnits[unitNum].SetState(PeopleUnit.UnitState.Ready, 0, 0);
@@ -86,10 +86,9 @@ public class PeopleUnitsController : MonoInit
                 NotCreatedUnits.Enqueue(_allUnits[unitNum]);
             }
         }
-        
+
         UpdateReadyUnits();
     }
-    
 
     private void NextTurn()
     {
@@ -102,7 +101,6 @@ public class PeopleUnitsController : MonoInit
         AnimateUnitPositions();
     }
 
-    // МЕТОД ДЛЯ УСТАНОВКИ НЕОБХОД КОЛ-ВА ЮНИТОВ В СОСТОЯНИЕ РАБОТЫ И ОТДЫХА
     public void AssignUnitsToTask(int requiredUnits, int busyTurns, int restingTurns)
     {
         if (AreUnitsReady(requiredUnits))
@@ -111,8 +109,7 @@ public class PeopleUnitsController : MonoInit
 
             foreach (var unit in ReadyUnits.Where(_ => assignedUnits < requiredUnits))
             {
-                unit.SetState(PeopleUnit.UnitState.Busy,busyTurns,restingTurns);
-                    
+                unit.SetState(PeopleUnit.UnitState.Busy, busyTurns, restingTurns);
                 assignedUnits++;
             }
 
@@ -125,26 +122,21 @@ public class PeopleUnitsController : MonoInit
         }
     }
 
-    // МЕТОД ДЛЯ РАНЕНИЯ ГОТОВЫХ К РАБОТЕ ЮНИТОВ
     private void TryInjureRandomReadyUnit()
     {
         var randomValue = Random.Range(0, 100);
-        if (randomValue <= chanceOfInjuringRandomReadyUnit)
+        if (randomValue <= _config.ChanceOfInjuringRandomReadyUnit)
         {
             if (ReadyUnits.Count > 0)
             {
-                // Выбираем случайный юнит из списка readyUnits
                 var randomIndex = Random.Range(0, ReadyUnits.Count);
                 var randomUnit = ReadyUnits[randomIndex];
-
-                // Устанавливаем состояние юнита как Injured
 
                 randomUnit.SetState(PeopleUnit.UnitState.Injured, 0, 0);
                 InjuredUnits.Enqueue(randomUnit);
 
                 OnUnitInjuredByPeopleUnitController.OnNext(Unit.Default);
 
-                // Обновляем список готовых юнитов
                 UpdateReadyUnits();
                 AnimateUnitPositions();
 
@@ -157,7 +149,6 @@ public class PeopleUnitsController : MonoInit
         }
     }
 
-    // МЕТОД ДЛЯ СОЗДАНИЯ ЮНИТА
     private void CreateUnit()
     {
         var unit = NotCreatedUnits.Dequeue();
@@ -169,12 +160,12 @@ public class PeopleUnitsController : MonoInit
         OnUnitCreatedByPeopleUnitController.OnNext(Unit.Default);
         AnimateUnitPositions();
     }
-    
+
     private void HealInuredUnit()
     {
         var unit = InjuredUnits.Dequeue();
         unit.SetState(PeopleUnit.UnitState.Ready, 0, 0);
-        
+
         OnUnitHealedByPeopleUnitController.OnNext(Unit.Default);
         AnimateUnitPositions();
     }
@@ -184,7 +175,6 @@ public class PeopleUnitsController : MonoInit
         return units <= ReadyUnits.Count;
     }
 
-    // МЕТОД ДЛЯ ДОБАВЛЕНИЯ СВОБОДНЫХ ЮНИТОВ В ЛИСТ ДЛЯ ВЫБОРА ЮНИТА ДЛЯ РАБОТ
     private void UpdateReadyUnits()
     {
         ReadyUnits.Clear();
@@ -193,8 +183,7 @@ public class PeopleUnitsController : MonoInit
             ReadyUnits.Add(unit);
         }
     }
-    
-    // МЕТОД ДЛЯ АНИМАЦИИ СОЗДАНЫХ ЮНИТОВ
+
     private void AnimateUnitPositions()
     {
         var indexedUnits = CreatedUnits
@@ -209,10 +198,9 @@ public class PeopleUnitsController : MonoInit
 
         CreatedUnits = indexedUnits.Select(x => x.unit).ToList();
 
-
         for (var i = 0; i < CreatedUnits.Count; i++)
         {
-            CreatedUnits[i].transform.DOLocalMoveX(InitialPositions[i], durationOfAnimationOfTransitionOfUnits);
+            CreatedUnits[i].transform.DOLocalMoveX(InitialPositions[i], _config.DurationOfAnimationOfTransitionOfUnits);
         }
     }
 }

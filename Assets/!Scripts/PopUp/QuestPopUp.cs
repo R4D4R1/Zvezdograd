@@ -8,14 +8,27 @@ using UniRx;
 public class QuestPopUp : EnoughPopUp
 {
     [SerializeField] private List<GameObject> questObjects;
+    
+    private Dictionary<GameObject, QuestData> questDeadlines = new Dictionary<GameObject, QuestData>();
 
-    private Dictionary<GameObject, (int deadline, int stabilityToGet, int stabilityToLose, int relationshipWithGovToGet, int relationshipWithGovToLose)> questDeadlines = new Dictionary<GameObject, (int, int, int, int, int)>();
-
-    public enum QuestType
+    private struct QuestData
     {
-        Provision,
-        Medicine,
-        CityBuilding
+        public string QuestName;
+        public int Deadline;
+        public int StabilityToGet;
+        public int StabilityToLose;
+        public int RelationshipWithGovToGet;
+        public int RelationshipWithGovToLose;
+        
+        public QuestData(string questName, int deadline, int stabilityToGet, int stabilityToLose, int relationshipWithGovToGet, int relationshipWithGovToLose)
+        {
+            QuestName = questName;
+            Deadline = deadline;
+            StabilityToGet = stabilityToGet;
+            StabilityToLose = stabilityToLose;
+            RelationshipWithGovToGet = relationshipWithGovToGet;
+            RelationshipWithGovToLose = relationshipWithGovToLose;
+        }
     }
 
     public override void Init()
@@ -23,96 +36,65 @@ public class QuestPopUp : EnoughPopUp
         TimeController.OnNextDayEvent
             .Subscribe(_ => OnNextDay())
             .AddTo(this);
+        
+        EventController.OnQuestTriggered
+            .Subscribe(popupEvent => EnableQuest(
+                popupEvent.buildingType, popupEvent.questText, popupEvent.deadlineInDays, popupEvent.unitSize,
+                popupEvent.turnsToWork, popupEvent.turnsToRest, popupEvent.materialsToGet, popupEvent.materialsToLose,
+                popupEvent.stabilityToGet, popupEvent.stabilityToLose, popupEvent.relationshipWithGovToGet, popupEvent.relationshipWithGovToLose))
+            .AddTo(this);
     }
 
-    public void EnableQuest(QuestType questType, string questName, int deadlineInDays, int unitSize, int turnsToWork, int turnsToRest,
-    int materialsToGet, int materialsToLose, int stabilityToGet, int stabilityToLose,
-    int relationshipWithGovToGet, int relationshipWithGovToLose)
+    private void EnableQuest(string buildingType, string questName, int deadlineInDays, int unitSize, int turnsToWork, int turnsToRest,
+        int materialsToGet, int materialsToLose, int stabilityToGet, int stabilityToLose,
+        int relationshipWithGovToGet, int relationshipWithGovToLose)
     {
-        foreach (var quest in questObjects.Where(quest => !quest.activeSelf))
+        var quest = questObjects.FirstOrDefault(q => !q.activeSelf);
+        if (!quest) return;
+
+        quest.SetActive(true);
+        quest.GetComponent<TextMeshProUGUI>().text = $"{questName}  {deadlineInDays} дн.";
+
+        var completeButton = quest.GetComponentInChildren<Button>();
+        if (completeButton)
         {
-            quest.SetActive(true);
-            quest.GetComponent<TextMeshProUGUI>().text = questName + "  " + deadlineInDays + " DS.";
-
-            var completeButton = quest.GetComponentInChildren<Button>();
-            if (completeButton)
+            completeButton.onClick.RemoveAllListeners();
+            completeButton.onClick.AddListener(() =>
             {
-                completeButton.onClick.RemoveAllListeners();
-                completeButton.onClick.AddListener(() =>
+                if (!HasEnoughPeople(unitSize))
                 {
-                    if (!HasEnoughPeople(unitSize))
-                    {
-                        errorText.text = "NOT ENOUGH PEOPLE!";
-                        return;
-                    }
+                    return;
+                }
 
-                    if (!CanUseActionPoint())
-                        return;
+                if (!CanUseActionPoint()) return;
 
-                    bool canComplete = false;
-                    switch (questType)
-                    {
-                        case QuestType.Provision:
-                            canComplete = CheckResourceAvailability(ResourceViewModel.Provision.Value, ResourceViewModel.Model.MaxProvision,
-                                materialsToGet, materialsToLose, "FOOD");
-                            if (canComplete)
-                            {
-                                ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Provision,
-                                    materialsToGet));
-                                ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Provision,
-                                    -materialsToLose));
-                            }
-
-                            break;
-
-                        case QuestType.Medicine:
-                            canComplete = CheckResourceAvailability(ResourceViewModel.Medicine.Value, ResourceViewModel.Model.MaxMedicine,
-                                materialsToGet, materialsToLose, "MEDICINE");
-                            if (canComplete)
-                            {
-                                ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Medicine, materialsToGet));
-                                ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Medicine, -materialsToLose));
-                            }
-                            break;
-
-                        case QuestType.CityBuilding:
-                            canComplete = CheckResourceAvailability(ResourceViewModel.ReadyMaterials.Value, ResourceViewModel.Model.MaxReadyMaterials,
-                                materialsToGet, materialsToLose, "BUILDING MATERIALS");
-                            if (canComplete)
-                            {
-                                ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.ReadyMaterials, materialsToGet));
-                                ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.ReadyMaterials, -materialsToLose));
-                            }
-                            break;
-                    }
-
-                    if (canComplete)
-                    {
-                        PeopleUnitsController.AssignUnitsToTask(unitSize, turnsToWork, turnsToRest);
-                        CompleteQuest(quest, stabilityToGet, relationshipWithGovToGet);
-                    }
-                });
-            }
-
-            questDeadlines[quest] = (deadlineInDays, stabilityToGet, stabilityToLose, relationshipWithGovToGet, relationshipWithGovToLose);
-
-            return;
+                if (ProcessResources(buildingType, materialsToGet, materialsToLose))
+                {
+                    PeopleUnitsController.AssignUnitsToTask(unitSize, turnsToWork, turnsToRest);
+                    CompleteQuest(quest, stabilityToGet, relationshipWithGovToGet);
+                }
+            });
         }
+
+        questDeadlines[quest] = new QuestData(questName, deadlineInDays, stabilityToGet, stabilityToLose, relationshipWithGovToGet, relationshipWithGovToLose);
     }
 
     private void OnNextDay()
     {
-        if (questDeadlines.Count > 0)
+        foreach (var quest in questDeadlines.Keys.ToList())
         {
-            foreach (var quest in questDeadlines.Keys.ToList())
-            {
-                var data = questDeadlines[quest];
-                questDeadlines[quest] = (data.deadline - 1, data.stabilityToGet, data.stabilityToLose, data.relationshipWithGovToGet, data.relationshipWithGovToLose);
+            var data = questDeadlines[quest];
+            data.Deadline--;
 
-                if (questDeadlines[quest].deadline <= 0)
-                {
-                    LoseQuest(quest, data.stabilityToLose, data.relationshipWithGovToLose);
-                }
+            if (data.Deadline <= 0)
+            {
+                LoseQuest(quest, data.StabilityToLose, data.RelationshipWithGovToLose);
+            }
+            else
+            {
+                questDeadlines[quest] = data;
+                
+                quest.GetComponent<TextMeshProUGUI>().text = $"{data.QuestName}  {data.Deadline} дн.";
             }
         }
     }
@@ -120,9 +102,8 @@ public class QuestPopUp : EnoughPopUp
     private void CompleteQuest(GameObject quest, int stabilityToGet, int relationshipWithGovToGet)
     {
         ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, stabilityToGet));
-        
         BuildingController.GetCityHallBuilding().ModifyRelationWithGov(relationshipWithGovToGet);
-
+        
         quest.SetActive(false);
         questDeadlines.Remove(quest);
     }
@@ -131,27 +112,43 @@ public class QuestPopUp : EnoughPopUp
     {
         ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, -stabilityToLose));
         BuildingController.GetCityHallBuilding().ModifyRelationWithGov(-relationshipWithGovToLose);
-
+        
         quest.SetActive(false);
         questDeadlines.Remove(quest);
     }
-    private bool CheckResourceAvailability(int currentAmount, int maxAmount, int materialsToGet, int materialsToLose, string resourceName)
+
+    private bool ProcessResources(string buildingType, int materialsToGet, int materialsToLose)
     {
-        if (currentAmount < materialsToLose)
+        ResourceModel.ResourceType resourceType;
+        switch (buildingType)
         {
-            errorText.enabled = true;
-            errorText.text = $"NOT ENOUGH {resourceName}!";
+            case "Еда":
+                resourceType = ResourceModel.ResourceType.Provision;
+                break;
+            case "Медикаменты":
+                resourceType = ResourceModel.ResourceType.Medicine;
+                break;
+            case "Сырье":
+                resourceType = ResourceModel.ResourceType.ReadyMaterials;
+                break;
+            default:
+                return false;
+        }
+
+        if (HasEnoughResources(resourceType,materialsToLose))
+        {
             return false;
         }
-        if (currentAmount + materialsToGet > maxAmount)
+        if (HasEnoughSpaceForResources(resourceType,materialsToGet))
         {
-            errorText.enabled = true;
-            errorText.text = $"NOT ENOUGH SPACE FOR {resourceName}!";
             return false;
         }
+
+        ResourceViewModel.ModifyResourceCommand.Execute((resourceType, materialsToGet));
+        ResourceViewModel.ModifyResourceCommand.Execute((resourceType, -materialsToLose));
         return true;
     }
-
+    
     protected void SetButtonState(GameObject btnsParent, bool isActive)
     {
         btnsParent.transform.GetChild(0).gameObject.SetActive(isActive);
