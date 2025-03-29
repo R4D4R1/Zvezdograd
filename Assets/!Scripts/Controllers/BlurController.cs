@@ -1,11 +1,9 @@
 using System.Threading.Tasks;
-using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using DG.Tweening;
 using Zenject;
 using UniRx;
-using Cysharp.Threading.Tasks;
 
 public class BlurController : MonoInit
 {

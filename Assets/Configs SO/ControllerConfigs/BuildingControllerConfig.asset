@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 050ce1a2f0d1da247a2db66355423d85, type: 3}
   m_Name: BuildingControllerConfig
   m_EditorClassIdentifier: 
-  chanceOfBombingBuilding: 7.5
+  chanceOfBombingBuilding: 15
   chanceOfBombingSpecialBuilding: 25

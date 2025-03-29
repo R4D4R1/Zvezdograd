@@ -7,47 +7,78 @@ using UniRx;
 
 public class BuildingController : MonoInit
 {
-    public List<SelectableBuilding> AllBuildings { get; private set; } = new();
+    private List<SelectableBuilding> AllBuildings { get; set; } = new();
     private List<RepairableBuilding> RegularBuildings { get; } = new();
     private List<RepairableBuilding> SpecialBuildings { get; } = new();
 
     public readonly Subject<Unit> OnBuildingBombed = new();
 
+    [SerializeField, Range(1, 10)] private int stabilityRemoveValueForRegularBombedBuilding;
+    [SerializeField, Range(1, 10)] private int stabilityRemoveValueForSpecialBombedBuilding;
+    
     private TimeController _timeController;
     private BuildingControllerConfig _buildingControllerConfig;
+    private ResourceViewModel _resourceViewModel;
     
     [Inject]
-    public void Construct(TimeController timeController,BuildingControllerConfig buildingControllerConfig)
+    public void Construct(TimeController timeController,BuildingControllerConfig buildingControllerConfig,ResourceViewModel resourceViewModel)
     {
         _timeController = timeController;
         _buildingControllerConfig = buildingControllerConfig;
+        _resourceViewModel = resourceViewModel;
     }
     
     public override void Init()
     {
         base.Init();
+        
         _timeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => TryBombBuilding())
             .AddTo(this);
         
+        _timeController.OnNextDayEvent
+            .Subscribe(_ => RemoveStabilityForEachBombedBuilding())
+            .AddTo(this);
+        
         AllBuildings = FindObjectsByType<SelectableBuilding>(FindObjectsSortMode.None).ToList();
 
+        foreach (var building in AllBuildings.Where(building => building.GetComponent<RepairableBuilding>()))
+        {
+            if (building.GetComponent<SpecialBuilding>())
+            {
+                SpecialBuildings.Add(building as RepairableBuilding);
+            }
+            else
+            {
+                RegularBuildings.Add(building as RepairableBuilding);
+            }
+        }
+        
         foreach (var building in AllBuildings)
         {
-            if (building.GetComponent<RepairableBuilding>() != null)
-            {
-                if (building.GetComponent<SpecialBuilding>() != null)
-                {
-                    SpecialBuildings.Add(building as RepairableBuilding);
-                }
-                else
-                {
-                    RegularBuildings.Add(building as RepairableBuilding);
-                }
-            }
+            building.Init();
         }
     }
 
+    private void RemoveStabilityForEachBombedBuilding()
+    {
+        foreach (var building in RegularBuildings.Where(building =>
+                     building.CurrentState == RepairableBuilding.State.Damaged))
+        {
+            _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability,
+                stabilityRemoveValueForRegularBombedBuilding));
+            Debug.Log(building.name);
+        }
+        
+        foreach (var specialBuilding in SpecialBuildings.Where(specialBuilding =>
+                     specialBuilding.CurrentState == RepairableBuilding.State.Damaged))
+        {
+            _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability,
+                stabilityRemoveValueForSpecialBombedBuilding));
+            Debug.Log(specialBuilding.name);
+        }
+    }
+    
     private void TryBombBuilding()
     {
         var randomValue = Random.Range(0, 100);

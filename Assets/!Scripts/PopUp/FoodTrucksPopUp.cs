@@ -4,14 +4,32 @@ using UniRx;
 public class FoodTrucksPopUp : QuestPopUp
 {
     [SerializeField] private GameObject giveFoodBtnParent;
+
+    private FoodTrucksBuilding _building;
+    
     public override void Init()
     {
         base.Init();
 
+        _building = BuildingController.GetFoodTruckBuilding();
+        
         SetButtonState(giveFoodBtnParent,true);
 
         TimeController.OnNextDayEvent
             .Subscribe(_ => OnNextDayEvent())
+            .AddTo(this);
+        
+        EventController.OnQuestTriggered
+            .Subscribe(popupEvent =>
+            {
+                if (popupEvent.buildingType == _building.Type.ToString())
+                {
+                    EnableQuest(
+                        popupEvent.buildingType, popupEvent.questText, popupEvent.deadlineInDays, popupEvent.unitSize,
+                        popupEvent.turnsToWork, popupEvent.turnsToRest, popupEvent.materialsToGet, popupEvent.materialsToLose,
+                        popupEvent.stabilityToGet, popupEvent.stabilityToLose, popupEvent.relationshipWithGovToGet, popupEvent.relationshipWithGovToLose);
+                }
+            })
             .AddTo(this);
     }
 

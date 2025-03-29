@@ -12,7 +12,7 @@ using UnityEngine.Serialization;
 public class TimeController : MonoInit
 {
     [SerializeField] private Light morningLight;
-    [SerializeField] private Light dayLight;
+    [FormerlySerializedAs("dayLight")] [SerializeField] private Light noonLight;
     [SerializeField] private Light eveningLight;
 
     [SerializeField] private TextMeshProUGUI dayText;
@@ -35,7 +35,7 @@ public class TimeController : MonoInit
     public DateTime CurrentDate => _currentDate.Value;
     public PeriodOfDay CurrentPeriod => _currentPeriod.Value;
     
-    private EventPopUp _eventPopUp;
+    private PopUpsController _popUpsController;
     private TimeControllerConfig _timeControllerConfig;
 
     public readonly Subject<Unit> OnNextDayEvent = new();
@@ -44,42 +44,60 @@ public class TimeController : MonoInit
 
     public enum PeriodOfDay
     {
-        Утро,
-        День,
-        Вечер,
+        Morning,
+        Noon,
+        Evening,
     }
     
     [Inject]
-    public void Construct(EventPopUp eventPopUp, TimeControllerConfig timeControllerConfig)
+    public void Construct(PopUpsController popUpsController, TimeControllerConfig timeControllerConfig)
     {
-        _eventPopUp = eventPopUp;
+        _popUpsController = popUpsController;
         _timeControllerConfig = timeControllerConfig;
     }
 
     public override void Init()
     {
-        // Инициализация значений из конфига
+        base.Init();
         _currentDate = new ReactiveProperty<DateTime>(_startDate);
-        _currentPeriod = new ReactiveProperty<PeriodOfDay>(PeriodOfDay.Утро);
+        _currentPeriod = new ReactiveProperty<PeriodOfDay>(PeriodOfDay.Morning);
         _actionPoints = new ReactiveProperty<int>(_timeControllerConfig.ActionPointsMaxValue);
 
         _currentDate.Subscribe(_ => UpdateText()).AddTo(this);
         _currentPeriod.Subscribe(_ => UpdateText()).AddTo(this);
         _currentPeriod.Subscribe(_ => UpdateLighting()).AddTo(this);
-        
-        _actionPoints.Subscribe(value => 
+
+        _actionPoints.Subscribe(value =>
             actionPointsText.text = $"ОД  {value} / {_timeControllerConfig.ActionPointsMaxValue}"
         ).AddTo(this);
 
         nextTurnBtn.OnClickAsObservable()
-            .ThrottleFirst(TimeSpan.FromSeconds(0.5)) // Anti-spam
+            .ThrottleFirst(TimeSpan.FromSeconds(0.5))
             .Subscribe(_ => EndTurnButtonClicked().Forget())
+            .AddTo(this);
+
+        _popUpsController.EventPopUp.OnEventPopUpHide
+            .Subscribe(_ => ActivateNextTurnLogic())
             .AddTo(this);
 
         UpdateLighting();
         UpdateText();
     }
 
+    // private void Update()
+    // {
+    //     if (Input.GetKeyDown(KeyCode.Space) && nextTurnBtn.interactable)
+    //     {
+    //         EndTurnButtonClicked().Forget();
+    //     }
+    // }
+
+    private void ActivateNextTurnLogic()
+    {
+        Debug.Log("On");
+        nextTurnBtn.interactable = true;
+    }
+    
     public bool OnActionPointUsed()
     {
         if (_actionPoints.Value > 0)
@@ -94,14 +112,14 @@ public class TimeController : MonoInit
     {
         switch (_currentPeriod.Value)
         {
-            case PeriodOfDay.Утро:
-                _currentPeriod.Value = PeriodOfDay.День;
+            case PeriodOfDay.Morning:
+                _currentPeriod.Value = PeriodOfDay.Noon;
                 break;
-            case PeriodOfDay.День:
-                _currentPeriod.Value = PeriodOfDay.Вечер;
+            case PeriodOfDay.Noon:
+                _currentPeriod.Value = PeriodOfDay.Evening;
                 break;
-            case PeriodOfDay.Вечер:
-                _currentPeriod.SetValueAndForceNotify(PeriodOfDay.Утро);
+            case PeriodOfDay.Evening:
+                _currentPeriod.SetValueAndForceNotify(PeriodOfDay.Morning);
                 _currentDate.Value = _currentDate.Value.AddDays(1);
 
                 OnNextDayEvent.OnNext(Unit.Default);
@@ -111,9 +129,9 @@ public class TimeController : MonoInit
 
     private void UpdateLighting()
     {
-        morningLight.enabled = _currentPeriod.Value == PeriodOfDay.Утро;
-        dayLight.enabled = _currentPeriod.Value == PeriodOfDay.День;
-        eveningLight.enabled = _currentPeriod.Value == PeriodOfDay.Вечер;
+        morningLight.enabled = _currentPeriod.Value == PeriodOfDay.Morning;
+        noonLight.enabled = _currentPeriod.Value == PeriodOfDay.Noon;
+        eveningLight.enabled = _currentPeriod.Value == PeriodOfDay.Evening;
     }
 
     private void UpdateText()
@@ -134,11 +152,12 @@ public class TimeController : MonoInit
         AddActionPoints();
 
         await blackoutImage.DOFade(0, _timeControllerConfig.NextTurnFadeTime / 2).AsyncWaitForCompletion();
-
-        nextTurnBtn.interactable = true;
+        
         foreach (var script in btnScripts) script.enabled = true;
-        if (!_eventPopUp.IsActive)
+        
+        if (!_popUpsController.EventPopUp.IsActive)
         {
+            ActivateNextTurnLogic();
             OnNextTurnBtnClickEnded.OnNext(Unit.Default);
         }
     }

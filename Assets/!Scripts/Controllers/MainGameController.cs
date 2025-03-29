@@ -40,13 +40,11 @@ public class MainGameController : MonoInit
         Lose
     }
     
-    private BuildingController _buildingController;
     private Camera _mainCamera;
 
     [Inject]
-    public void Construct(BuildingController buildingController,Camera mainCamera)
+    public void Construct(Camera mainCamera)
     {
-        _buildingController = buildingController;
         _mainCamera = mainCamera;
     }
 
@@ -55,11 +53,6 @@ public class MainGameController : MonoInit
         base.Init();
         
         notificationsParent.SetActive(false);
-        
-        foreach (var building in _buildingController.AllBuildings)
-        {
-            building.Init();
-        }
 
         OnGameStarted.OnNext(Unit.Default);
 
@@ -70,7 +63,7 @@ public class MainGameController : MonoInit
             startPopUp.ShowPopUp();
         });
 
-        await UniTask.Delay(5000);
+        await UniTask.Delay(3500);
         
         notificationsParent.SetActive(true);
     }

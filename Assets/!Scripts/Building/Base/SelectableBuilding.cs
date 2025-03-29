@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Zenject;
@@ -32,6 +34,7 @@ public class SelectableBuilding : MonoBehaviour
         PopUpsController = popUpsController;
     }
     
+    
     public virtual void Init()
     {
         if (selectableBuildingConfig)
@@ -43,6 +46,8 @@ public class SelectableBuilding : MonoBehaviour
         buildingIsSelectable = true;
 
         GenerateOrLoadBuildingId();
+
+        //Debug.Log($"{name} Init");
     }
 
     private void GenerateOrLoadBuildingId()

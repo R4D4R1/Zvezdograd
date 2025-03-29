@@ -31,12 +31,7 @@ public class RepairPopUp : EnoughPopUp
     private bool CanRepairBuilding()
     {
         return HasEnoughPeople(_buildingToUse.PeopleToRepair) &&
-               EnoughMaterialsToRepair() &&
+               HasEnoughResources(ResourceModel.ResourceType.ReadyMaterials, _buildingToUse.BuildingMaterialsToRepair) &&
                CanUseActionPoint();
-    }
-
-    public bool EnoughMaterialsToRepair()
-    {
-        return HasEnoughResources(ResourceModel.ResourceType.ReadyMaterials, _buildingToUse.BuildingMaterialsToRepair);
     }
 }

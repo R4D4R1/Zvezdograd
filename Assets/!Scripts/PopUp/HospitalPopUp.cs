@@ -34,6 +34,19 @@ public class HospitalPopUp : QuestPopUp
         PeopleUnitsController.OnUnitHealedByPeopleUnitController
             .Subscribe(_ => UpdateHealUnitGOButtonState())
             .AddTo(this);
+        
+        EventController.OnQuestTriggered
+            .Subscribe(popupEvent =>
+            {
+                if (popupEvent.buildingType == _building.Type.ToString())
+                {
+                    EnableQuest(
+                        popupEvent.buildingType, popupEvent.questText, popupEvent.deadlineInDays, popupEvent.unitSize,
+                        popupEvent.turnsToWork, popupEvent.turnsToRest, popupEvent.materialsToGet, popupEvent.materialsToLose,
+                        popupEvent.stabilityToGet, popupEvent.stabilityToLose, popupEvent.relationshipWithGovToGet, popupEvent.relationshipWithGovToLose);
+                }
+            })
+            .AddTo(this);
     }
 
     private void CreateHealGOPrefabIfNeeded()
@@ -85,7 +98,7 @@ public class HospitalPopUp : QuestPopUp
     private void UpdateMedicineTimerText()
     {
         medicineTimerText.text = "Осталось времени до раздачи - " +
-            BuildingController.GetHospitalBuilding().DaysToGiveMedicine.ToString() + " дн.";
+                                 BuildingController.GetHospitalBuilding().DaysToGiveMedicine + " дн.";
     }
 
     private bool EnoughMedicineToGiveAway()

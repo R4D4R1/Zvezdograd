@@ -38,7 +38,7 @@ public class FactoryPopUp : EnoughPopUp
     {
         if (CanCreateMaterials(_buildingToUse.PeopleToCreateReadyMaterials,
                                _buildingToUse.RawMaterialsToCreateReadyMaterials,
-                               EnoughSpaceToStoreReadyMaterials()))
+                               HasEnoughSpaceForResources(ResourceModel.ResourceType.ReadyMaterials, _buildingToUse.ReadyMaterialsGet)))
         {
             HidePopUp();
             _buildingToUse.CreateReadyMaterials();
@@ -65,17 +65,17 @@ public class FactoryPopUp : EnoughPopUp
                CanUseActionPoint();
     }
 
-    private bool EnoughSpaceToStoreReadyMaterials()
-    {
-        if (ResourceViewModel.ReadyMaterials.Value + _buildingToUse.ReadyMaterialsGet
-               < ResourceViewModel.Model.MaxReadyMaterials)
-            return true;
-        else
-        {
-            ShowError("Не достаточно места для стройматериалов");
-            return false;
-        }
-    }
+    // private bool EnoughSpaceToStoreReadyMaterials()
+    // {
+    //     if (ResourceViewModel.ReadyMaterials.Value + _buildingToUse.ReadyMaterialsGet
+    //            < ResourceViewModel.Model.MaxReadyMaterials)
+    //         return true;
+    //     else
+    //     {
+    //         ShowError("Не достаточно места для стройматериалов");
+    //         return false;
+    //     }
+    // }
 
     private string FormatResourceDemand(int rawMaterials, int people)
     {

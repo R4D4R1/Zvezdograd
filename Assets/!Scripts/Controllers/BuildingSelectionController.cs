@@ -5,7 +5,7 @@ using Zenject;
 using UniRx;
 using UnityEngine.Serialization;
 
-public class SelectionController : MonoInit
+public class BuildingSelectionController : MonoInit
 {
     [FormerlySerializedAs("_canvas")] [SerializeField] private Canvas canvas;
 
@@ -151,7 +151,7 @@ public class SelectionController : MonoInit
             {
                 SelectableBuilding hitObject = hit.collider.GetComponentInParent<SelectableBuilding>();
 
-                if (hitObject && hitObject.buildingIsSelectable) // ���������, �������� �� ������
+                if (hitObject && hitObject.buildingIsSelectable)
                 {
                     if (hitObject == _selectedBuilding)
                     {

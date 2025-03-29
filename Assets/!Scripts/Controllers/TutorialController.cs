@@ -12,6 +12,15 @@ public class TutorialController : MonoBehaviour
     [SerializeField] private RepairableBuilding intactBuilding;
     [SerializeField] private RepairableBuilding damagedBuilding;
     [SerializeField] private FactoryBuilding factoryBuilding;
+    
+    [SerializeField] private RectTransform clockUI;
+    [SerializeField] private RectTransform provisionUI;
+    [SerializeField] private RectTransform medsUI;
+    [SerializeField] private RectTransform rawMaterialsUI;
+    [SerializeField] private RectTransform readyMaterialsUI;
+    [SerializeField] private RectTransform unitsUI;
+    [SerializeField] private RectTransform stabilityUI;
+    [SerializeField] private RectTransform nextTurnUI;
 
     [FormerlySerializedAs("_popUpParent")] [SerializeField] private Transform popUpParent;
 
@@ -19,12 +28,15 @@ public class TutorialController : MonoBehaviour
 
     private GameObject _currentPopUp;
     private readonly Queue<SelectableBuilding> _tutorialBuildings = new();
+    private readonly Queue<RectTransform> _uiTutorials = new();
     private readonly Dictionary<SelectableBuilding, string> _buildingDescriptions = new();
+    private readonly Dictionary<RectTransform, string> _uiTutorialsLabels = new();
+    private readonly Dictionary<RectTransform, string> _uiTutorialsDescriptions = new();
 
     private Canvas _canvas;
 
     private TutorialControllerConfig _tutorialControllerConfig;
-    private SelectionController _selectionController;
+    private BuildingSelectionController _buildingSelectionController;
     private BuildingController _buildingController;
     private PopUpFactory _popUpFactory;
     private Camera _mainCamera;
@@ -32,11 +44,11 @@ public class TutorialController : MonoBehaviour
     public readonly Subject<Unit> OnTutorialStarted = new();
 
     [Inject]
-    public void Construct(TutorialControllerConfig tutorialControllerConfig, SelectionController selectionController, BuildingController buildingController,
+    public void Construct(TutorialControllerConfig tutorialControllerConfig, BuildingSelectionController buildingSelectionController, BuildingController buildingController,
         PopUpFactory popUpFactory, Camera camera)
     {
         _tutorialControllerConfig = tutorialControllerConfig;
-        _selectionController = selectionController;
+        _buildingSelectionController = buildingSelectionController;
         _buildingController = buildingController;
         _popUpFactory = popUpFactory;
         _mainCamera = camera;
@@ -44,7 +56,7 @@ public class TutorialController : MonoBehaviour
 
     public async void StartTutorial()
     {
-        await UniTask.Delay(5000);
+        await UniTask.Delay(500);
 
         OnTutorialStarted.OnNext(Unit.Default);
 
@@ -59,6 +71,15 @@ public class TutorialController : MonoBehaviour
         AddBuildingToTutorial(damagedBuilding, _tutorialControllerConfig.DamagedBuildingDescription);
         AddBuildingToTutorial(collectableBuilding, _tutorialControllerConfig.CollectableBuildingDescription);
 
+        AddUIToTutorial(clockUI,_tutorialControllerConfig.ClockLabel,_tutorialControllerConfig.ClockDescription);
+        AddUIToTutorial(provisionUI,_tutorialControllerConfig.ProvisionLabel,_tutorialControllerConfig.ProvisionDescription);
+        AddUIToTutorial(medsUI,_tutorialControllerConfig.MedsLabel,_tutorialControllerConfig.MedsDescription);
+        AddUIToTutorial(rawMaterialsUI,_tutorialControllerConfig.RawMaterialsLabel,_tutorialControllerConfig.RawMaterialsDescription);
+        AddUIToTutorial(readyMaterialsUI,_tutorialControllerConfig.ReadyMaterialsLabel,_tutorialControllerConfig.ReadyMaterialsDescription);
+        AddUIToTutorial(unitsUI,_tutorialControllerConfig.UnitsLabel,_tutorialControllerConfig.UnitsDescription);
+        AddUIToTutorial(stabilityUI,_tutorialControllerConfig.StabilityLabel,_tutorialControllerConfig.StabilityDescription);
+        AddUIToTutorial(nextTurnUI,_tutorialControllerConfig.NextTurnLabel,_tutorialControllerConfig.NextTurnDescription);
+        
         ShowTutorial();
     }
 
@@ -68,39 +89,64 @@ public class TutorialController : MonoBehaviour
         _tutorialBuildings.Enqueue(building);
         _buildingDescriptions[building] = description;
     }
+    
+    private void AddUIToTutorial(RectTransform transform, string label, string description)
+    {
+        if (!transform) return;
+        _uiTutorials.Enqueue(transform);
+        _uiTutorialsLabels[transform] = label;
+        _uiTutorialsDescriptions[transform] = description;
+    }
 
     public void ShowTutorial()
     {
-        _selectionController.Deselect();
+        _buildingSelectionController.Deselect();
+        
+        if (_uiTutorials.Count > 0)
+        {
+            var UITutorial = _uiTutorials.Dequeue();
+                
+            _currentPopUp = _popUpFactory.CreateSpecialPopUp();
+            //_currentPopUp.transform.SetParent(UITutorial);
+            _currentPopUp.transform.position = UITutorial.transform.position;
+            
+            var popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
+            var label = _uiTutorialsLabels.GetValueOrDefault(UITutorial, "NO LABEL!");
+            var description = _uiTutorialsDescriptions.GetValueOrDefault(UITutorial, "NO DESCRIPTION!");
+            
+            popUpObject.ShowPopUp(label, description, "Продолжить");
+            popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenNextTutorialPopUp;
+        }
+        else if (_uiTutorials.Count == 0 && _tutorialBuildings.Count > 0) 
+        {
+            var tutorialBuilding = _tutorialBuildings.Dequeue();
 
-        if (_tutorialBuildings.Count == 0)
+            var outline = tutorialBuilding.GetComponentInChildren<Outline>();
+            
+            if (outline)
+            {
+                outline.enabled = true;
+            }
+
+            _currentPopUp = _popUpFactory.CreateSpecialPopUp();
+
+            var buildingWorldPosition = tutorialBuilding.transform.position;
+            var screenPosition = _mainCamera.WorldToScreenPoint(buildingWorldPosition);
+
+            var localPosition = _canvas.transform.InverseTransformPoint(screenPosition);
+            var popUpRect = _currentPopUp.GetComponent<RectTransform>();
+            _currentPopUp.transform.localPosition = new Vector3(localPosition.x + popUpRect.rect.width * 0.75f,
+                localPosition.y + popUpRect.rect.height * 0.75f, 0);
+
+            var popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
+            var description = _buildingDescriptions.GetValueOrDefault(tutorialBuilding, "NO DESCRIPTION");
+
+            popUpObject.ShowPopUp(tutorialBuilding.BuildingNameText, description, "Продолжить");
+            popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenNextTutorialPopUp;
+        }
+        else if (_tutorialBuildings.Count == 0 && _uiTutorials.Count == 0) 
         {
             onTutorialEnd.Invoke();
-            return;
         }
-
-        var tutorialBuilding = _tutorialBuildings.Dequeue();
-        if (!tutorialBuilding) return;
-
-        var outline = tutorialBuilding.GetComponentInChildren<Outline>();
-        if (outline)
-        {
-            outline.enabled = true;
-        }
-
-        _currentPopUp = _popUpFactory.CreateSpecialPopUp();
-
-        Vector3 buildingWorldPosition = tutorialBuilding.transform.position;
-        Vector3 screenPosition = _mainCamera.WorldToScreenPoint(buildingWorldPosition);
-
-        Vector2 localPosition = _canvas.transform.InverseTransformPoint(screenPosition);
-        RectTransform popUpRect = _currentPopUp.GetComponent<RectTransform>();
-        _currentPopUp.transform.localPosition = new Vector3(localPosition.x + popUpRect.rect.width * 0.75f, localPosition.y + popUpRect.rect.height * 0.75f, 0);
-
-        var popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
-        string description = _buildingDescriptions.GetValueOrDefault(tutorialBuilding, "NO DESCRIPTION");
-
-        popUpObject.ShowPopUp(tutorialBuilding.BuildingNameText, description, "Продолжить");
-        popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenNextTutorialPopUp;
     }
 }

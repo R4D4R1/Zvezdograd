@@ -1,12 +1,15 @@
 using UnityEngine;
 using TMPro;
 using DG.Tweening;
+using UniRx;
 
 public class EventPopUp : InfoPopUp
 {
     public TextMeshProUGUI ButtonText;
 
-    public void ShowEventPopUp(string Label, string Description, string Button)
+    public readonly Subject<Unit> OnEventPopUpHide = new();
+    
+    public void ShowEventPopUp(string label, string description, string button)
     {
         MainGameUIController.TurnOffUI();
 
@@ -16,9 +19,9 @@ public class EventPopUp : InfoPopUp
 
         transform.DOScale(Vector3.one, SCALE_DURATION).OnComplete(() =>
         {
-            LabelText.text = Label;
-            DescriptionText.text = Description;
-            ButtonText.text = Button;
+            LabelText.text = label;
+            DescriptionText.text = description;
+            ButtonText.text = button;
 
             IsActive = true;
 
@@ -29,7 +32,9 @@ public class EventPopUp : InfoPopUp
     public override void HidePopUp()
     {
         base.HidePopUp();
-
+        
+        OnEventPopUpHide.OnNext(Unit.Default);
+        
         if (MainGameController.GameOverState != MainGameController.GameOverStateEnum.Playing)
         {
             MainGameUIController.LoadMainMenu();

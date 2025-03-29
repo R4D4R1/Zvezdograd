@@ -9,6 +9,7 @@ public class PopUpsController : MonoInit
     public FactoryPopUp FactoryPopUp  { get; private set; }
     public CollectPopUp CollectPopUp  { get; private set; }
     public RepairPopUp RepairPopUp  { get; private set; }
+    public EventPopUp EventPopUp  { get; private set; }
 
 
     public override void Init()
@@ -20,6 +21,8 @@ public class PopUpsController : MonoInit
         FactoryPopUp = FindFirstObjectByType<FactoryPopUp>();
         CollectPopUp = FindFirstObjectByType<CollectPopUp>();
         RepairPopUp = FindFirstObjectByType<RepairPopUp>();
+        EventPopUp = FindFirstObjectByType<EventPopUp>();
+
 
         FoodTrucksPopUp.Init();
         HospitalPopUp.Init();

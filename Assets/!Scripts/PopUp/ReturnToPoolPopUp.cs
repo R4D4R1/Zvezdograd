@@ -1,10 +1,11 @@
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class ReturnToPoolPopUp : InfoPopUp
 {
-    [Range(1, 2), SerializeField] private float _returnToPoolTimeInSeconds;
+    [FormerlySerializedAs("_returnToPoolTimeInSeconds")] [Range(1, 2), SerializeField] private float returnToPoolTimeInSeconds;
 
     public override void HidePopUp()
     {
@@ -21,7 +22,7 @@ public class ReturnToPoolPopUp : InfoPopUp
 
     private async UniTaskVoid DelayAndReturnToPool()
     {
-        await UniTask.Delay((int)(_returnToPoolTimeInSeconds * 1000));
+        await UniTask.Delay((int)(returnToPoolTimeInSeconds * 1000));
         PopUpFactory.ReturnInfoPopUpToPool(this);
     }
 }

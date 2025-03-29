@@ -5,7 +5,7 @@ using UnityEngine.Serialization;
 
 public class CityHallPopUp : QuestPopUp
 {
-    [FormerlySerializedAs("_relationWithGovermentText")] [SerializeField] private TextMeshProUGUI relationWithGovermentText;
+    [FormerlySerializedAs("relationWithGovermentText")] [FormerlySerializedAs("_relationWithGovermentText")] [SerializeField] private TextMeshProUGUI relationWithGovernmentText;
     [FormerlySerializedAs("_militaryTimerText")] [SerializeField] private TextMeshProUGUI militaryTimerText;
     [FormerlySerializedAs("_helpFromGovTimerText")] [SerializeField] private TextMeshProUGUI helpFromGovTimerText;
     [FormerlySerializedAs("_createPeopleText")] [SerializeField] private TextMeshProUGUI createPeopleText;
@@ -21,6 +21,19 @@ public class CityHallPopUp : QuestPopUp
 
         PeopleUnitsController.OnUnitCreatedByPeopleUnitController
             .Subscribe(_ => UpdateCreateUnitGOButtonState())
+            .AddTo(this);
+        
+        EventController.OnQuestTriggered
+            .Subscribe(popupEvent =>
+            {
+                if (popupEvent.buildingType == _building.Type.ToString())
+                {
+                    EnableQuest(
+                        popupEvent.buildingType, popupEvent.questText, popupEvent.deadlineInDays, popupEvent.unitSize,
+                        popupEvent.turnsToWork, popupEvent.turnsToRest, popupEvent.materialsToGet, popupEvent.materialsToLose,
+                        popupEvent.stabilityToGet, popupEvent.stabilityToLose, popupEvent.relationshipWithGovToGet, popupEvent.relationshipWithGovToLose);
+                }
+            })
             .AddTo(this);
 
         SetButtonState(createNewUnitBtnParent,true);
@@ -51,7 +64,7 @@ public class CityHallPopUp : QuestPopUp
 
     private void UpdateAllText()
     {
-        relationWithGovermentText.text = $"Отношения {_building.RelationWithGovernment}";
+        relationWithGovernmentText.text = $"Отношения {_building.RelationWithGovernment}";
         
         militaryTimerText.text = _building.IsMaterialsSent
             ? "Военная помощь отправлена, ожидайте указаний"

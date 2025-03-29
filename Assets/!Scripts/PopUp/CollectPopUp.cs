@@ -1,11 +1,12 @@
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class CollectPopUp : EnoughPopUp
 {
     private CollectableBuilding _buildingToUse;
-    [SerializeField] private TextMeshProUGUI _demandsText;
+    [FormerlySerializedAs("_demandsText")] [SerializeField] private TextMeshProUGUI demandsText;
 
     public void ShowCollectPopUp(CollectableBuilding collectableBuilding)
     {
@@ -17,7 +18,7 @@ public class CollectPopUp : EnoughPopUp
 
     private void UpdateDemandsText()
     {
-        _demandsText.text = $" - Осталось {_buildingToUse.RawMaterialsLeft} сырья\n" +
+        demandsText.text = $" - Осталось {_buildingToUse.RawMaterialsLeft} сырья\n" +
                             $" - Будет собрано {_buildingToUse.RawMaterialsGet} \n" +
                             $" - Необходимо {_buildingToUse.PeopleToCollect} подразделений \n";
     }
@@ -34,26 +35,27 @@ public class CollectPopUp : EnoughPopUp
     private bool CanCollectBuilding()
     {
         return HasEnoughPeople(_buildingToUse.PeopleToCollect) &&
-               HasEnoughSpaceForRawMaterials() &&
+               HasEnoughSpaceForResources(ResourceModel.ResourceType.RawMaterials,_buildingToUse.RawMaterialsGet) &&
+               //HasEnoughSpaceForRawMaterials() &&
                HasRawMaterialsInBuilding() &&
                CanUseActionPoint();
     }
 
-    private bool HasEnoughSpaceForRawMaterials()
-    {
-        if (ResourceViewModel.RawMaterials.Value + _buildingToUse.RawMaterialsGet <= ResourceViewModel.Model.MaxRawMaterials)
-            return true;
-
-        ShowError("�� ���������� ����� ��� ��������");
-        return false;
-    }
+    // private bool HasEnoughSpaceForRawMaterials()
+    // {
+    //     if (ResourceViewModel.RawMaterials.Value + _buildingToUse.RawMaterialsGet <= ResourceViewModel.Model.MaxRawMaterials)
+    //         return true;
+    //
+    //     ShowError("�� ���������� ����� ��� ��������");
+    //     return false;
+    // }
 
     private bool HasRawMaterialsInBuilding()
     {
         if (_buildingToUse.RawMaterialsLeft > 0)
             return true;
 
-        ShowError("������� �����������");
+        ShowError("Сырье кончилось");
         return false;
     }
 }

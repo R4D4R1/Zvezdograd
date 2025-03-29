@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -32,7 +33,9 @@ public class HospitalBuilding : RepairableBuilding
         UpdateAmountOfTurnsNeededToDoSmth();
 
         MedicineToHealInjuredUnit = hospitalConfig.MedicineToHealInjuredUnit;
+        
         DaysToGiveMedicine = hospitalConfig.OriginalDaysToGiveMedicine;
+
         PeopleToGiveMedicine = hospitalConfig.PeopleToGiveMedicine;
         MedicineToGive = hospitalConfig.MedicineToGive;
         

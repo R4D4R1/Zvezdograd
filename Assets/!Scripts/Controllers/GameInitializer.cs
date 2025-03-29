@@ -3,7 +3,7 @@ using Zenject;
 
 public class GameInitializer : MonoBehaviour
 {
-    private SelectionController _selectionController;
+    private BuildingSelectionController _buildingSelectionController;
     private MainGameUIController _mainGameUIController;
     private MainGameController _mainGameController;
     private TimeController _timeController;
@@ -16,7 +16,7 @@ public class GameInitializer : MonoBehaviour
 
     [Inject]
     public void Construct(
-        SelectionController selectionController,
+        BuildingSelectionController buildingSelectionController,
         MainGameUIController mainGameUIController,
         MainGameController mainGameController,
         TimeController timeController,
@@ -30,7 +30,7 @@ public class GameInitializer : MonoBehaviour
         )
     {
         _mainGameUIController = mainGameUIController;
-        _selectionController = selectionController;
+        _buildingSelectionController = buildingSelectionController;
         _mainGameController = mainGameController;
         _timeController = timeController;
         _peopleUnitsController = peopleUnitsController;
@@ -41,16 +41,19 @@ public class GameInitializer : MonoBehaviour
         _effectsController = effectsController;
     }
 
+    // ReSharper disable once AsyncVoidMethod
     private void Start()
     {
         _blurController.Init();
         _mainGameUIController.Init();
-        _selectionController.Init();
+        _buildingSelectionController.Init();
         _buildingController.Init();
+        
+        _popUpsController.Init();
+
         _mainGameController.Init();
         _timeController.Init();
         _peopleUnitsController.Init();
-        _popUpsController.Init();
         _eventController.Init();
         _effectsController.Init();
     }

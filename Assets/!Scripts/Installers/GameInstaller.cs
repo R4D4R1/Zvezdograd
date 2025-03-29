@@ -5,8 +5,8 @@ using Zenject;
 
 public class GameInstaller : MonoInstaller
 {
-    [Header("DEPENDENCIES")]
-    [SerializeField] private EventPopUp eventPopUp;
+    // [Header("DEPENDENCIES")]
+    // [SerializeField] private EventPopUp eventPopUp;
 
     [Header("CONFIGS")]
     [SerializeField] private BlurConfig blurConfig;
@@ -39,8 +39,9 @@ public class GameInstaller : MonoInstaller
         Container.Bind<BuildingControllerConfig>().FromInstance(buildingControllerConfig).AsSingle();
         Container.Bind<PeopleUnitsControllerConfig>().FromInstance(peopleUnitsControllerConfig).AsSingle();
 
+        Container.Bind<PopUpsController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<MainGameController>().FromComponentInHierarchy().AsSingle();
-        Container.Bind<SelectionController>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<BuildingSelectionController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<MainGameUIController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<EventController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<TimeController>().FromComponentInHierarchy().AsSingle();
@@ -54,13 +55,11 @@ public class GameInstaller : MonoInstaller
             .AsSingle()
             .WithArguments(Container, parentPopUpPrefab, parentNotificationsPrefab, infoPopUpPrefab, specialPopUpPrefab, notificationPrefab);
 
-        Container.Bind<EventPopUp>().FromInstance(eventPopUp).AsSingle();
+        //Container.Bind<EventPopUp>().FromInstance(eventPopUp).AsSingle();
 
-        Container.Bind<PopUpsController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<Camera>().FromInstance(Camera.main).AsSingle();
 
         Container.Bind<ResourceModel>().AsSingle();
-        //Container.BindInstance(resourcesConfig).AsSingle();
         Container.Bind<ResourceViewModel>().AsSingle();
     }
 }

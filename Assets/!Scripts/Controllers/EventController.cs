@@ -14,22 +14,20 @@ public class EventController : MonoInit
 
     private Dictionary<string, PopupEvent> _specificEvents;
 
-    private EventPopUp _eventPopUp;
+    private PopUpsController _popUpsController;
     private TimeController _timeController;
     private MainGameController _mainGameController;
-    private PopUpsController _popUpsController;
 
     public readonly Subject<Unit> OnSnowStarted = new();
     public readonly Subject<PopupEvent> OnQuestTriggered = new();
 
     [Inject]
-    public void Construct(EventPopUp eventPopUp, TimeController timeController,
-        MainGameController mainGameController,PopUpsController popUpsController)
+    public void Construct(PopUpsController popUpsController,TimeController timeController,
+        MainGameController mainGameController)
     {
-        _eventPopUp = eventPopUp;
+        _popUpsController = popUpsController;
         _timeController = timeController;
         _mainGameController = mainGameController;
-        _popUpsController = popUpsController;
     }
 
     public override void Init()
@@ -75,7 +73,7 @@ public class EventController : MonoInit
         }
         else if (_mainGameController.GameOverState == MainGameController.GameOverStateEnum.Lose)
         {
-            OnGameLoseEventShow();
+            OnStabilityGameLoseEventShow();
         }
 
         if (_isGameOver)
@@ -102,61 +100,42 @@ public class EventController : MonoInit
             if (!string.IsNullOrEmpty(popupEvent.buildingType))
             {
                 // Check for specific building types (Food, Medicine, City Hall, etc.)
-                HandleBuildingTypePopup(popupEvent);
+                OnQuestTriggered.OnNext(popupEvent);
             }
 
             // Show the popup
-            _eventPopUp.ShowEventPopUp(
+            _popUpsController.EventPopUp.ShowEventPopUp(
                 popupEvent.title,
                 popupEvent.mainText,
                 popupEvent.buttonText);
         }
     }
 
-    private void HandleBuildingTypePopup(PopupEvent popupEvent)
-    {
-        OnQuestTriggered.OnNext(popupEvent);
-        
-        // if (popupEvent.buildingType == "Еда")
-        // {
-        //     _popUpsController.FoodTrucksPopUp.EnableQuest(QuestPopUp.QuestType.Provision, popupEvent.questText, popupEvent.unitSize, popupEvent.deadlineInDays,
-        //         popupEvent.turnsToWork, popupEvent.turnsToRest, popupEvent.materialsToGet, popupEvent.materialsToLose,
-        //         popupEvent.stabilityToGet, popupEvent.stabilityToLose, popupEvent.relationshipWithGovToGet, popupEvent.relationshipWithGovToLose);
-        // }
-        // else if (popupEvent.buildingType == "Медикаменты")
-        // {
-        //     _popUpsController.HospitalPopUp.EnableQuest(QuestPopUp.QuestType.Medicine, popupEvent.questText, popupEvent.unitSize, popupEvent.deadlineInDays,
-        //         popupEvent.turnsToWork, popupEvent.turnsToRest, popupEvent.materialsToGet, popupEvent.materialsToLose,
-        //         popupEvent.stabilityToGet, popupEvent.stabilityToLose, popupEvent.relationshipWithGovToGet, popupEvent.relationshipWithGovToLose);
-        // }
-        // else if (popupEvent.buildingType == "Стройматериалы")
-        // {
-        //     _popUpsController.CityHallPopUp.EnableQuest(QuestPopUp.QuestType.CityBuilding, popupEvent.questText, popupEvent.unitSize, popupEvent.deadlineInDays,
-        //         popupEvent.turnsToWork, popupEvent.turnsToRest, popupEvent.materialsToGet, popupEvent.materialsToLose,
-        //         popupEvent.stabilityToGet, popupEvent.stabilityToLose, popupEvent.relationshipWithGovToGet, popupEvent.relationshipWithGovToLose);
-        // }
-        // else
-        // {
-        //     Debug.LogWarning($"Unknown Building Type: {popupEvent.buildingType}");
-        // }
-        
-    }
-
     private void OnGameWonEventShow()
     {
         _isGameOver = true;
-        _eventPopUp.ShowEventPopUp(
+        _popUpsController.EventPopUp.ShowEventPopUp(
             "ПОБЕДА",
             "ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА" +
             " ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ",
             "ГЛАВНОЕ МЕНЮ");
     }
 
-    private void OnGameLoseEventShow()
+    private void OnStabilityGameLoseEventShow()
     {
         _isGameOver = true;
-        _eventPopUp.ShowEventPopUp(
+        _popUpsController.EventPopUp.ShowEventPopUp(
             "ВЫ ПРОИГРАЛИ",
+            "ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА" +
+            " ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ",
+            "ГЛАВНОЕ МЕНЮ");
+    }
+    
+    private void OnWarMaterialGameLoseEventShow()
+    {
+        _isGameOver = true;
+        _popUpsController.EventPopUp.ShowEventPopUp(
+            "ДРУЖЕСТВЕННЫЕ ВОЙСКА НЕ УСПЕЛИ",
             "ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА" +
             " ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ",
             "ГЛАВНОЕ МЕНЮ");

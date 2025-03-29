@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using UnityEngine;
 using UniRx;
 using UnityEngine.Serialization;
@@ -23,6 +24,7 @@ public class FactoryBuilding : RepairableBuilding
     public override void Init()
     {
         base.Init();
+
         TimeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => UpdateAmountOfTurnsNeededToDoSMTH())
             .AddTo(this);
