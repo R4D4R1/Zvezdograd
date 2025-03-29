@@ -106,7 +106,7 @@ public class CityHallBuilding : RepairableBuilding
 
     private void ReceiveHelpFromGov()
     {
-        var foodAmount = RelationWithGovernment < 4 ? 2 : RelationWithGovernment < 8 ? 3 : 4;
+        var foodAmount = RelationWithGovernment < 4 ? 2 : RelationWithGovernment < 9 ? 3 : 4;
         var medicineAmount = RelationWithGovernment < 4 ? 1 : 2;
 
         ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Provision, foodAmount));

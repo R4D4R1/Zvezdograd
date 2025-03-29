@@ -11,6 +11,10 @@ public class CityHallPopUp : QuestPopUp
     [FormerlySerializedAs("_createPeopleText")] [SerializeField] private TextMeshProUGUI createPeopleText;
     [SerializeField] private GameObject createNewUnitBtnParent;
     
+    [SerializeField] private Color badRelationColor;
+    [SerializeField] private Color averageRelationColor;
+    [SerializeField] private Color goodRelationColor;
+    
     private CityHallBuilding _building;
 
     public override void Init()
@@ -64,16 +68,39 @@ public class CityHallPopUp : QuestPopUp
 
     private void UpdateAllText()
     {
-        relationWithGovernmentText.text = $"Отношения {_building.RelationWithGovernment}";
-        
+        relationWithGovernmentText.text = $"Отношение с правительством {GetRelationText(_building.RelationWithGovernment)}";
+
         militaryTimerText.text = _building.IsMaterialsSent
             ? "Военная помощь отправлена, ожидайте указаний"
             : $"До конца отправки воен помощи {_building.DaysLeftToSendArmyMaterials} дн.";
 
         helpFromGovTimerText.text = $"Помощь от гос-ва прибудет через {_building.DaysLeftToReceiveGovHelp} дн.";
 
-        createPeopleText.text = $"Организовать новое подразделение, осталось  " +
-                                 $"{PeopleUnitsController.NotCreatedUnits.Count}";
+        createPeopleText.text = $"Организовать новое подразделение, осталось {PeopleUnitsController.NotCreatedUnits.Count}";
+    }
+
+    private string GetRelationText(int relation)
+    {
+        string relationText;
+        string colorHex;
+
+        switch (relation)
+        {
+            case >= 0 and <= 3:
+                relationText = "Плохое";
+                colorHex = ColorUtility.ToHtmlStringRGB(badRelationColor);
+                break;
+            case >= 4 and <= 8:
+                relationText = "Хорошее";
+                colorHex = ColorUtility.ToHtmlStringRGB(averageRelationColor);
+                break;
+            default:
+                relationText = "Отличное";
+                colorHex = ColorUtility.ToHtmlStringRGB(goodRelationColor);
+                break;
+        }
+
+        return $"<color=#{colorHex}>{relationText}</color>";
     }
 
     private void UpdateCreateUnitGOButtonState()
