@@ -50,6 +50,10 @@ public class PeopleUnitsController : MonoInit
         _buildingController.OnBuildingBombed
             .Subscribe(_ => TryInjureRandomReadyUnit())
             .AddTo(this);
+        
+        _buildingController.GetCityHallBuilding().OnNewActionPointsStartedCreating
+            .Subscribe(RemoveReadyUnitsForNewActionPoints)
+            .AddTo(this);
 
         PeopleUnit anyUnit = FindFirstObjectByType<PeopleUnit>();
 
@@ -98,7 +102,6 @@ public class PeopleUnitsController : MonoInit
         }
 
         UpdateReadyUnits();
-        AnimateUnitPositions();
     }
 
     public void AssignUnitsToTask(int requiredUnits, int busyTurns, int restingTurns)
@@ -114,7 +117,6 @@ public class PeopleUnitsController : MonoInit
             }
 
             UpdateReadyUnits();
-            AnimateUnitPositions();
         }
         else
         {
@@ -138,7 +140,6 @@ public class PeopleUnitsController : MonoInit
                 OnUnitInjuredByPeopleUnitController.OnNext(Unit.Default);
 
                 UpdateReadyUnits();
-                AnimateUnitPositions();
 
                 Debug.Log($"Unit {randomUnit.name} has been injured.");
             }
@@ -158,7 +159,7 @@ public class PeopleUnitsController : MonoInit
 
         CreatedUnits.Add(unit);
         OnUnitCreatedByPeopleUnitController.OnNext(Unit.Default);
-        AnimateUnitPositions();
+        UpdateReadyUnits();
     }
 
     private void HealInuredUnit()
@@ -167,7 +168,7 @@ public class PeopleUnitsController : MonoInit
         unit.SetState(PeopleUnit.UnitState.Ready, 0, 0);
 
         OnUnitHealedByPeopleUnitController.OnNext(Unit.Default);
-        AnimateUnitPositions();
+        UpdateReadyUnits();
     }
 
     private bool AreUnitsReady(int units)
@@ -182,6 +183,8 @@ public class PeopleUnitsController : MonoInit
         {
             ReadyUnits.Add(unit);
         }
+
+        AnimateUnitPositions();
     }
 
     private void AnimateUnitPositions()
@@ -201,6 +204,20 @@ public class PeopleUnitsController : MonoInit
         for (var i = 0; i < CreatedUnits.Count; i++)
         {
             CreatedUnits[i].transform.DOLocalMoveX(InitialPositions[i], _config.DurationOfAnimationOfTransitionOfUnits);
+        }
+    }
+
+    private void RemoveReadyUnitsForNewActionPoints(int amountOfReadyUnitsToCreateNewActionPoints)
+    {
+        for (int i = 0; i < amountOfReadyUnitsToCreateNewActionPoints; i++)
+        {
+            var randomIndex = Random.Range(0, ReadyUnits.Count);
+            var unit = ReadyUnits[randomIndex];
+            unit.SetState(PeopleUnit.UnitState.NotCreated,0,0);
+            
+            CreatedUnits.Remove(unit);
+            
+            UpdateReadyUnits();
         }
     }
 }

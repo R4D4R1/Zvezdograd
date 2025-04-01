@@ -12,7 +12,7 @@ using UnityEngine.Serialization;
 public class TimeController : MonoInit
 {
     [SerializeField] private Light morningLight;
-    [FormerlySerializedAs("dayLight")] [SerializeField] private Light noonLight;
+    [SerializeField] private Light noonLight;
     [SerializeField] private Light eveningLight;
 
     [SerializeField] private TextMeshProUGUI dayText;
@@ -24,6 +24,12 @@ public class TimeController : MonoInit
     [SerializeField] private Button nextTurnBtn;
     [FormerlySerializedAs("_btnScripts")] [SerializeField] private MonoBehaviour[] btnScripts;
 
+    [Range(1,3),SerializeField] private int increaseMaxAPValue;
+    [Range(1,3),SerializeField] private int increaseAddAPValue;
+
+    private int _localIncreaseMaxAPValue = 0;
+    private int _localIncreaseAddAPValue = 0;
+    
     public Button NextTurnButton => nextTurnBtn;
 
     private readonly DateTime _startDate = new(1942, 8, 30);
@@ -37,8 +43,11 @@ public class TimeController : MonoInit
     
     private PopUpsController _popUpsController;
     private TimeControllerConfig _timeControllerConfig;
+    private TutorialController _tutorialController;
+    private BuildingController _buildingController;
 
     public readonly Subject<Unit> OnNextDayEvent = new();
+    public readonly Subject<Unit> OnNextTurnBtnClickStarted = new();
     public readonly Subject<Unit> OnNextTurnBtnClickBetween = new();
     public readonly Subject<Unit> OnNextTurnBtnClickEnded = new();
 
@@ -50,10 +59,13 @@ public class TimeController : MonoInit
     }
     
     [Inject]
-    public void Construct(PopUpsController popUpsController, TimeControllerConfig timeControllerConfig)
+    public void Construct(PopUpsController popUpsController, TimeControllerConfig timeControllerConfig,
+        TutorialController tutorialController, BuildingController buildingController)
     {
         _popUpsController = popUpsController;
         _timeControllerConfig = timeControllerConfig;
+        _tutorialController = tutorialController;
+        _buildingController = buildingController;
     }
 
     public override void Init()
@@ -68,7 +80,8 @@ public class TimeController : MonoInit
         _currentPeriod.Subscribe(_ => UpdateLighting()).AddTo(this);
 
         _actionPoints.Subscribe(value =>
-            actionPointsText.text = $"ОД  {value} / {_timeControllerConfig.ActionPointsMaxValue}"
+            actionPointsText.text =
+                $"ОД  {value} / {_timeControllerConfig.ActionPointsMaxValue + _localIncreaseMaxAPValue}"
         ).AddTo(this);
 
         nextTurnBtn.OnClickAsObservable()
@@ -77,25 +90,53 @@ public class TimeController : MonoInit
             .AddTo(this);
 
         _popUpsController.EventPopUp.OnEventPopUpHide
-            .Subscribe(_ => ActivateNextTurnLogic())
+            .Subscribe(_ => EnableNextTurnLogic())
             .AddTo(this);
 
+        _buildingController.GetCityHallBuilding().OnNewActionPointsCreated
+            .Subscribe(_ => NewActionPointsCreated())
+            .AddTo(this);
+        
+        _tutorialController.OnTutorialStarted
+            .Subscribe(_ => DisableNextTurnLogic())
+            .AddTo(this);
+        
         UpdateLighting();
         UpdateText();
     }
 
-    // private void Update()
-    // {
-    //     if (Input.GetKeyDown(KeyCode.Space) && nextTurnBtn.interactable)
-    //     {
-    //         EndTurnButtonClicked().Forget();
-    //     }
-    // }
-
-    private void ActivateNextTurnLogic()
+    private void OnEnable()
     {
-        Debug.Log("On");
+        _tutorialController.OnTutorialEnd.AddListener(EnableNextTurnLogic);
+    }
+
+    private void OnDisable()
+    {
+        _tutorialController.OnTutorialEnd.RemoveAllListeners();
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && nextTurnBtn.interactable)
+        {
+            EndTurnButtonClicked().Forget();
+        }
+    }
+
+    public void EnableNextTurnLogic()
+    {
         nextTurnBtn.interactable = true;
+    }
+    
+    public void DisableNextTurnLogic()
+    {
+        nextTurnBtn.interactable = false;
+    }
+
+    private void NewActionPointsCreated()
+    {
+        _localIncreaseMaxAPValue = increaseMaxAPValue;
+        _localIncreaseAddAPValue = increaseAddAPValue;
     }
     
     public bool OnActionPointUsed()
@@ -142,6 +183,7 @@ public class TimeController : MonoInit
 
     private async UniTaskVoid EndTurnButtonClicked()
     {
+        OnNextTurnBtnClickStarted.OnNext(Unit.Default);
         nextTurnBtn.interactable = false;
         foreach (var script in btnScripts) script.enabled = false;
 
@@ -157,7 +199,7 @@ public class TimeController : MonoInit
         
         if (!_popUpsController.EventPopUp.IsActive)
         {
-            ActivateNextTurnLogic();
+            EnableNextTurnLogic();
             OnNextTurnBtnClickEnded.OnNext(Unit.Default);
         }
     }
@@ -165,7 +207,8 @@ public class TimeController : MonoInit
     private void AddActionPoints()
     {
         _actionPoints.Value = Mathf.Clamp(
-            _actionPoints.Value + _timeControllerConfig.ActionPointsAddValueInTheNextDay, 0, _timeControllerConfig.ActionPointsMaxValue
+            _actionPoints.Value + _timeControllerConfig.ActionPointsAddValueInTheNextDay+_localIncreaseAddAPValue,
+            0, _timeControllerConfig.ActionPointsMaxValue + _localIncreaseAddAPValue
         );
     }
 }

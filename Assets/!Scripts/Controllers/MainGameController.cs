@@ -63,7 +63,7 @@ public class MainGameController : MonoInit
             startPopUp.ShowPopUp();
         });
 
-        await UniTask.Delay(3500);
+        await UniTask.Delay(5000);
         
         notificationsParent.SetActive(true);
     }

@@ -84,18 +84,6 @@ public class PeopleUnit : MonoBehaviour
         }
     }
 
-    public void SetInjured()
-    {
-        currentState = UnitState.Injured;
-
-        UpdateStatusText();
-    }
-
-    public void SetNotCreated()
-    {
-        currentState = UnitState.NotCreated;
-    }
-
     public void UpdateUnitState()
     {
         if (currentState == UnitState.Busy)
@@ -141,7 +129,7 @@ public class PeopleUnit : MonoBehaviour
         }
         else if (currentState == UnitState.Ready)
         {
-            _statusText.text = $"ГОТОВ";
+            _statusText.text = $"СВОБОДЕН";
         }
         else if (currentState == UnitState.Injured)
         {

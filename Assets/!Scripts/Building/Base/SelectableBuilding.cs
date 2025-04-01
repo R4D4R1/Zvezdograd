@@ -11,7 +11,10 @@ public class SelectableBuilding : MonoBehaviour
     [SerializeField] private SelectableBuildingConfig selectableBuildingConfig;
 
     [FormerlySerializedAs("BuildingIsSelectable")] [HideInInspector] public bool buildingIsSelectable = true;
-
+    
+    public string BuildingLabel { get; private set; }
+    public string BuildingDescription { get; private set; }
+    
     private int BuildingId { get; set; }
 
     protected TimeController TimeController;
@@ -39,8 +42,8 @@ public class SelectableBuilding : MonoBehaviour
     {
         if (selectableBuildingConfig)
         {
-            BuildingNameText = selectableBuildingConfig.BuildingNameText;
-            DescriptionText = selectableBuildingConfig.DescriptionText;
+            BuildingLabel = selectableBuildingConfig.BuildingLabel;
+            BuildingDescription = selectableBuildingConfig.BuildingDescription;
         }
 
         buildingIsSelectable = true;
@@ -65,8 +68,4 @@ public class SelectableBuilding : MonoBehaviour
             PlayerPrefs.Save();
         }
     }
-
-    public string BuildingNameText { get; private set; }
-    public string DescriptionText { get; private set; }
-
 }

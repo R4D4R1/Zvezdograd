@@ -1,5 +1,5 @@
-using DG.Tweening;
 using TMPro;
+using UniRx;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -11,8 +11,8 @@ public class CollectPopUp : EnoughPopUp
     public void ShowCollectPopUp(CollectableBuilding collectableBuilding)
     {
         _buildingToUse = collectableBuilding;
+        
         UpdateDemandsText();
-
         ShowPopUp();
     }
 
@@ -36,19 +36,9 @@ public class CollectPopUp : EnoughPopUp
     {
         return HasEnoughPeople(_buildingToUse.PeopleToCollect) &&
                HasEnoughSpaceForResources(ResourceModel.ResourceType.RawMaterials,_buildingToUse.RawMaterialsGet) &&
-               //HasEnoughSpaceForRawMaterials() &&
                HasRawMaterialsInBuilding() &&
                CanUseActionPoint();
     }
-
-    // private bool HasEnoughSpaceForRawMaterials()
-    // {
-    //     if (ResourceViewModel.RawMaterials.Value + _buildingToUse.RawMaterialsGet <= ResourceViewModel.Model.MaxRawMaterials)
-    //         return true;
-    //
-    //     ShowError("�� ���������� ����� ��� ��������");
-    //     return false;
-    // }
 
     private bool HasRawMaterialsInBuilding()
     {

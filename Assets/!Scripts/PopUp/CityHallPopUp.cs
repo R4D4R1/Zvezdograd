@@ -2,14 +2,18 @@ using TMPro;
 using UnityEngine;
 using UniRx;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 public class CityHallPopUp : QuestPopUp
 {
-    [FormerlySerializedAs("relationWithGovermentText")] [FormerlySerializedAs("_relationWithGovermentText")] [SerializeField] private TextMeshProUGUI relationWithGovernmentText;
-    [FormerlySerializedAs("_militaryTimerText")] [SerializeField] private TextMeshProUGUI militaryTimerText;
-    [FormerlySerializedAs("_helpFromGovTimerText")] [SerializeField] private TextMeshProUGUI helpFromGovTimerText;
-    [FormerlySerializedAs("_createPeopleText")] [SerializeField] private TextMeshProUGUI createPeopleText;
+    [Header("CITYHALL POPUP SETTINGS")]
+    [SerializeField] private TextMeshProUGUI relationWithGovernmentText;
+    [SerializeField] private TextMeshProUGUI militaryTimerText;
+    [SerializeField] private TextMeshProUGUI helpFromGovTimerText;
+    [SerializeField] private TextMeshProUGUI createPeopleText;
     [SerializeField] private GameObject createNewUnitBtnParent;
+    [SerializeField] private GameObject enableNewActionPointsQuestGO;
+    [Range(1,3),SerializeField] private int amountOfReadyUnitsToCreateNewActionPoints;
     
     [SerializeField] private Color badRelationColor;
     [SerializeField] private Color averageRelationColor;
@@ -40,9 +44,37 @@ public class CityHallPopUp : QuestPopUp
             })
             .AddTo(this);
 
+        EventController.OnNewActionPoints
+            .Subscribe(popupEvent =>
+            {
+                EnableNewActionPointsQuest();
+            })
+            .AddTo(this);
+        
         SetButtonState(createNewUnitBtnParent,true);
     }
 
+    private void EnableNewActionPointsQuest()
+    {
+        enableNewActionPointsQuestGO.SetActive(true);
+        enableNewActionPointsQuestGO.transform.GetChild(0).GetComponent<Button>().onClick.AddListener(CreateNewActionPoints);
+    }
+
+    private void CreateNewActionPoints()
+    {
+        if (CanCreateNewActionPoints())
+        {
+            _building.ActionPointsStartedCreating(amountOfReadyUnitsToCreateNewActionPoints);
+            enableNewActionPointsQuestGO.SetActive(false);
+            //Destroy(enableNewActionPointsQuestGO);
+        }
+    }
+    private bool CanCreateNewActionPoints()
+    {
+        return HasEnoughPeople(amountOfReadyUnitsToCreateNewActionPoints) &&
+               CanUseActionPoint();
+    }
+    
     public void ShowCityHallPopUp()
     {
         UpdateAllText();

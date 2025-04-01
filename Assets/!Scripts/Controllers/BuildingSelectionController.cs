@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -24,11 +25,13 @@ public class BuildingSelectionController : MonoInit
     private TimeController _timeController;
     private MainGameUIController _mainGameUIController;
     private MainGameController _mainGameController;
+    private TutorialController _tutorialController;
 
     [Inject]
     public void Construct(PopUpFactory popUpFactory,Camera mainCamera,
         SoundController soundController,TimeController timeController,
-        MainGameUIController mainGameUIController,MainGameController mainGameController)
+        MainGameUIController mainGameUIController,MainGameController mainGameController,
+        TutorialController tutorialController)
     {
         _popUpFactory = popUpFactory;
         _mainCamera = mainCamera;
@@ -36,12 +39,13 @@ public class BuildingSelectionController : MonoInit
         _timeController = timeController;
         _mainGameUIController = mainGameUIController;
         _mainGameController = mainGameController;
+        _tutorialController = tutorialController;
     }
 
     public override void Init()
     {
         base.Init();
-        _timeController.NextTurnButton.OnClickAsObservable()
+        _timeController.OnNextTurnBtnClickStarted
             .Subscribe(_ => Deselect())
             .AddTo(this);
 
@@ -64,6 +68,28 @@ public class BuildingSelectionController : MonoInit
         _mainGameController.OnGameStarted
             .Subscribe(_ => SetSelectionControllerState(false))
             .AddTo(this);
+
+        _tutorialController.OnNewBuildingTutorialShow
+            .Subscribe(_ => Deselect())
+            .AddTo(this);
+        
+        _tutorialController.OnTutorialStarted
+            .Subscribe(_ => SetSelectionControllerState(false))
+            .AddTo(this);
+        
+        _tutorialController.OnTutorialStarted
+            .Subscribe(_ => Deselect())
+            .AddTo(this);
+    }
+
+    private void OnEnable()
+    {
+        _tutorialController.OnTutorialEnd.AddListener(Deselect);
+    }
+
+    private void OnDisable()
+    {
+        _tutorialController.OnTutorialEnd.RemoveAllListeners();
     }
 
     private void Update()
@@ -188,7 +214,7 @@ public class BuildingSelectionController : MonoInit
                         {
                             _currentPopUp =  _popUpFactory.CreateInfoPopUp();
                             InfoPopUp popUpObject = _currentPopUp.GetComponent<InfoPopUp>();
-                            popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText);
+                            popUpObject.ShowPopUp(_selectedBuilding.BuildingLabel, _selectedBuilding.BuildingDescription);
                         }
                         else if (repairableBuilding.CurrentState == RepairableBuilding.State.Intact
                            && repairableBuilding.Type != RepairableBuilding.BuildingType.LivingArea)
@@ -196,7 +222,7 @@ public class BuildingSelectionController : MonoInit
                             _currentPopUp = _popUpFactory.CreateSpecialPopUp();
                             SpecialPopUp popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
 
-                            popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "ОТКРЫТЬ");
+                            popUpObject.ShowPopUp(_selectedBuilding.BuildingLabel, _selectedBuilding.BuildingDescription, "ОТКРЫТЬ");
 
                             if (repairableBuilding.Type == RepairableBuilding.BuildingType.CityHall)
                             {
@@ -225,7 +251,7 @@ public class BuildingSelectionController : MonoInit
                             _currentPopUp = _popUpFactory.CreateSpecialPopUp();
                             SpecialPopUp popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
 
-                            popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "ПОЧИНИТЬ");
+                            popUpObject.ShowPopUp(_selectedBuilding.BuildingLabel, _selectedBuilding.BuildingDescription, "ПОЧИНИТЬ");
 
                             popUpObject.RepairableBuilding = repairableBuilding;
                             popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenRepairMenu;
@@ -237,7 +263,7 @@ public class BuildingSelectionController : MonoInit
                         _currentPopUp = _popUpFactory.CreateSpecialPopUp();
                         SpecialPopUp popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
 
-                        popUpObject.ShowPopUp(_selectedBuilding.BuildingNameText, _selectedBuilding.DescriptionText, "СОБРАТЬ");
+                        popUpObject.ShowPopUp(_selectedBuilding.BuildingLabel, _selectedBuilding.BuildingDescription, "СОБРАТЬ");
 
                         popUpObject.CollectableBuilding = collectableBuilding;
                         popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenCollectMenu;
@@ -261,7 +287,7 @@ public class BuildingSelectionController : MonoInit
         }
     }
 
-    public void Deselect()
+    private void Deselect()
     {
         var allOutlines = FindObjectsByType<Outline>(FindObjectsSortMode.None);
         foreach (var outline in allOutlines)

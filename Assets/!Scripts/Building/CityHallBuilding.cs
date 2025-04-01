@@ -1,7 +1,9 @@
 using System.Threading.Tasks;
 using UnityEngine;
 using UniRx;
+using Unity.VisualScripting;
 using UnityEngine.Serialization;
+using Unit = UniRx.Unit;
 
 public class CityHallBuilding : RepairableBuilding
 {
@@ -17,9 +19,13 @@ public class CityHallBuilding : RepairableBuilding
     
     private int _amountOfHelpSent;
     private int _turnsToCreateNewUnit;
+    private int _turnsToCreateNewActionPoints;
     private bool _isWorking;
 
     public readonly Subject<Unit> OnCityHallUnitCreated = new();
+    public readonly Subject<int> OnNewActionPointsStartedCreating = new();
+    public readonly Subject<Unit> OnNewActionPointsCreated = new();
+    private bool _isCreatingActionPoints;
 
     public override void Init()
     {
@@ -34,10 +40,11 @@ public class CityHallBuilding : RepairableBuilding
             .AddTo(this);
 
         ReadyMaterialsToCreateNewPeopleUnit = cityHallConfig.ReadyMaterialsToCreateNewPeopleUnit;
-        RelationWithGovernment = cityHallConfig.RelationWithGoverment;
-        DaysLeftToReceiveGovHelp = cityHallConfig.DaysLeftToRecieveGovHelpOriginal;
+        RelationWithGovernment = cityHallConfig.RelationWithGovernment;
+        DaysLeftToReceiveGovHelp = cityHallConfig.DaysLeftToReceiveGovHelpOriginal;
         DaysLeftToSendArmyMaterials = cityHallConfig.DaysLeftToSendArmyMaterialsOriginal;
         _isWorking = false;
+        _isCreatingActionPoints = false;
         _amountOfHelpSent = 0;
     }
     
@@ -50,11 +57,26 @@ public class CityHallBuilding : RepairableBuilding
     {
         if (_isWorking)
         {
-            _turnsToCreateNewUnit--;
-            if (_turnsToCreateNewUnit == 0)
+            if (!_isCreatingActionPoints)
             {
-                OnCityHallUnitCreated.OnNext(Unit.Default);
-                _isWorking = false;
+                _turnsToCreateNewUnit--;
+                Debug.Log(_turnsToCreateNewUnit);
+
+                if (_turnsToCreateNewUnit == 0)
+                {
+                    OnCityHallUnitCreated.OnNext(Unit.Default);
+                    _isWorking = false;
+                }
+            }
+            else
+            {
+                _turnsToCreateNewActionPoints--;
+
+                if (_turnsToCreateNewActionPoints == 0)
+                {
+                    OnNewActionPointsCreated.OnNext(Unit.Default);
+                    _isWorking = false;
+                }
             }
         }
     }
@@ -69,7 +91,7 @@ public class CityHallBuilding : RepairableBuilding
     {
         if (--DaysLeftToReceiveGovHelp <= 0)
         {
-            DaysLeftToReceiveGovHelp = cityHallConfig.DaysLeftToRecieveGovHelpOriginal;
+            DaysLeftToReceiveGovHelp = cityHallConfig.DaysLeftToReceiveGovHelpOriginal;
             ReceiveHelpFromGov();
         }
     }
@@ -130,6 +152,14 @@ public class CityHallBuilding : RepairableBuilding
         _isWorking = true;
         _turnsToCreateNewUnit = cityHallConfig.TurnsToCreateNewUnitOriginal;
         ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.ReadyMaterials, -ReadyMaterialsToCreateNewPeopleUnit));
+    }
+    
+    public void ActionPointsStartedCreating(int amountOfReadyUnitsToCreateNewActionPoints)
+    {
+        _isWorking = true;
+        _isCreatingActionPoints = true;
+        _turnsToCreateNewActionPoints = cityHallConfig.TurnsToCreateNewActionPoints;
+        OnNewActionPointsStartedCreating.OnNext(amountOfReadyUnitsToCreateNewActionPoints);
     }
 
     public void ModifyRelationWithGov(int amount)

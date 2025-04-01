@@ -39,8 +39,8 @@ public class FoodTrucksBuilding : RepairableBuilding
     public void SendPeopleToGiveProvision()
     {
         IsFoodGivenAwayToday = true;
-        PeopleUnitsController.AssignUnitsToTask(foodTrucksConfig.PeopleToGiveProvision,
-            TurnsToToGiveProvision, foodTrucksConfig.TurnsToRestFromProvisionJob);
+        // PeopleUnitsController.AssignUnitsToTask(foodTrucksConfig.PeopleToGiveProvision,
+        //     TurnsToToGiveProvision, foodTrucksConfig.TurnsToRestFromProvisionJob);
 
         ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Provision, -foodTrucksConfig.FoodToGive));
         ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, foodTrucksConfig.StabilityAddValue));
@@ -48,16 +48,13 @@ public class FoodTrucksBuilding : RepairableBuilding
 
     public bool FoodWasGivenAwayToday()
     {
-        IsFoodGivenAwayToday = false;
-
         if (IsFoodGivenAwayToday)
         {
             return true;
         }
-        else
-        {
-            ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, -foodTrucksConfig.StabilityRemoveValue));
-            return false;
-        }
+        
+        IsFoodGivenAwayToday = false;
+        ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, -foodTrucksConfig.StabilityRemoveValue));
+        return false;
     }
 }

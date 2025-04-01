@@ -53,7 +53,9 @@ public class FoodTrucksPopUp : QuestPopUp
 
     private bool CanGiveAwayProvision()
     {
-        return HasEnoughPeople(BuildingController.GetFoodTruckBuilding().PeopleToGiveProvision) &&
+        return 
+            //HasEnoughPeople(BuildingController.GetFoodTruckBuilding().PeopleToGiveProvision) &&
+               
                HasEnoughResources(ResourceModel.ResourceType.Provision,
                BuildingController.GetFoodTruckBuilding().FoodToGive)
                && CanUseActionPoint();

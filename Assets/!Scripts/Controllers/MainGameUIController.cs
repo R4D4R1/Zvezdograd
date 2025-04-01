@@ -65,6 +65,10 @@ public class MainGameUIController : MonoInit
 
     private void TurnOnUIForTutorial()
     {
+        _turnOffUICanvasGroup.alpha = 0;
+        _turnOffUICanvasGroup.interactable = false;
+        _turnOffUICanvasGroup.blocksRaycasts = false;
+        
         _turnOffUICanvasGroup.DOFade(1f, fadeDuration);
     }
 

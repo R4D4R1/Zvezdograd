@@ -43,8 +43,12 @@ public class BlurController : MonoInit
             .Subscribe(_ => BlurBackGroundNow())
             .AddTo(this);
 
-        _tutorialController.OnTutorialStarted
+        _tutorialController.OnBuildingTutorialStarted
             .Subscribe(_ => UnBlurBackGroundSmoothly())
+            .AddTo(this);
+        
+        _tutorialController.OnTutorialStarted
+            .Subscribe(_ => BlurBackGroundSmoothly())
             .AddTo(this);
     }
 

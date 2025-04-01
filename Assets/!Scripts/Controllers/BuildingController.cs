@@ -67,7 +67,6 @@ public class BuildingController : MonoInit
         {
             _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability,
                 stabilityRemoveValueForRegularBombedBuilding));
-            Debug.Log(building.name);
         }
         
         foreach (var specialBuilding in SpecialBuildings.Where(specialBuilding =>
@@ -75,7 +74,6 @@ public class BuildingController : MonoInit
         {
             _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability,
                 stabilityRemoveValueForSpecialBombedBuilding));
-            Debug.Log(specialBuilding.name);
         }
     }
     

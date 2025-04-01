@@ -19,6 +19,7 @@ public class EventController : MonoInit
     private MainGameController _mainGameController;
 
     public readonly Subject<Unit> OnSnowStarted = new();
+    public readonly Subject<Unit> OnNewActionPoints = new();
     public readonly Subject<PopupEvent> OnQuestTriggered = new();
 
     [Inject]
@@ -88,11 +89,15 @@ public class EventController : MonoInit
 
         if (_specificEvents.TryGetValue(eventKey, out var popupEvent))
         {
-            if (!string.IsNullOrEmpty(popupEvent.weatherType))
+            if (!string.IsNullOrEmpty(popupEvent.subEvent))
             {
-                if (popupEvent.weatherType == "снег")
+                if (popupEvent.subEvent == "Snow")
                 {
                     OnSnowStarted.OnNext(Unit.Default);
+                }
+                if (popupEvent.subEvent == "NewActionPoints")
+                {
+                    OnNewActionPoints.OnNext(Unit.Default);
                 }
             }
 
@@ -153,7 +158,7 @@ public class PopupEvent
     public string mainText;
     public string buttonText;
 
-    public string weatherType;
+    public string subEvent;
 
     public string buildingType;
 

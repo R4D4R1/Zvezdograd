@@ -1,11 +1,12 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [CreateAssetMenu(fileName = "NewSelectableBuildingConfig", menuName = "BuildingConfigs/SelectableBuildingConfig")]
 public class SelectableBuildingConfig : ScriptableObject
 {
-    [SerializeField] private string _buildingNameText;
-    [SerializeField] private string _descriptionText;
+    [FormerlySerializedAs("_buildingNameText")] [SerializeField] private string buildingLabel;
+    [FormerlySerializedAs("_descriptionText")] [SerializeField] private string buildingDescription;
 
-    public string BuildingNameText => _buildingNameText;
-    public string DescriptionText => _descriptionText;
+    public string BuildingLabel => buildingLabel;
+    public string BuildingDescription => buildingDescription;
 }
