@@ -12,9 +12,6 @@ public class BuildingController : MonoInit
     private List<RepairableBuilding> SpecialBuildings { get; } = new();
 
     public readonly Subject<Unit> OnBuildingBombed = new();
-
-    [SerializeField, Range(1, 10)] private int stabilityRemoveValueForRegularBombedBuilding;
-    [SerializeField, Range(1, 10)] private int stabilityRemoveValueForSpecialBombedBuilding;
     
     private TimeController _timeController;
     private BuildingControllerConfig _buildingControllerConfig;
@@ -36,7 +33,7 @@ public class BuildingController : MonoInit
             .Subscribe(_ => TryBombBuilding())
             .AddTo(this);
         
-        _timeController.OnNextDayEvent
+        _timeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => RemoveStabilityForEachBombedBuilding())
             .AddTo(this);
         
@@ -65,15 +62,19 @@ public class BuildingController : MonoInit
         foreach (var building in RegularBuildings.Where(building =>
                      building.CurrentState == RepairableBuilding.State.Damaged))
         {
+            Debug.Log(building.name);
+
             _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability,
-                stabilityRemoveValueForRegularBombedBuilding));
+                -_buildingControllerConfig.StabilityRemoveValueForRegularBombedBuilding));
         }
         
         foreach (var specialBuilding in SpecialBuildings.Where(specialBuilding =>
                      specialBuilding.CurrentState == RepairableBuilding.State.Damaged))
         {
+            Debug.Log(specialBuilding.name);
+
             _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability,
-                stabilityRemoveValueForSpecialBombedBuilding));
+                -_buildingControllerConfig.StabilityRemoveValueForSpecialBombedBuilding));
         }
     }
     

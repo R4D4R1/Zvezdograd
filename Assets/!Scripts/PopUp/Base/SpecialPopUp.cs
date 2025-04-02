@@ -84,7 +84,6 @@ public class SpecialPopUp : ReturnToPoolPopUp
 
         if (CurrentFunc != PopUpFuncs.OpenNextTutorialPopUp)
         {
-            Debug.Log("Turn off ui");
             MainGameUIController.TurnOffUI();
         }
 

@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chanceOfBombingBuilding: 20
   chanceOfBombingSpecialBuilding: 25
+  stabilityRemoveValueForRegularBombedBuilding: 2
+  stabilityRemoveValueForSpecialBombedBuilding: 4

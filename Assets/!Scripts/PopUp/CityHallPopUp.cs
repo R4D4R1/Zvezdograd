@@ -100,7 +100,7 @@ public class CityHallPopUp : QuestPopUp
 
     private void UpdateAllText()
     {
-        relationWithGovernmentText.text = $"Отношение с правительством {GetRelationText(_building.RelationWithGovernment)}";
+        relationWithGovernmentText.text = $"Отношение с правительством {GetRelationText(_building.RelationWithGovernment)} {_building.RelationWithGovernment}";
 
         militaryTimerText.text = _building.IsMaterialsSent
             ? "Военная помощь отправлена, ожидайте указаний"

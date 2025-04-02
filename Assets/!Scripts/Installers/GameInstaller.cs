@@ -55,7 +55,6 @@ public class GameInstaller : MonoInstaller
             .AsSingle()
             .WithArguments(Container, parentPopUpPrefab, parentNotificationsPrefab, infoPopUpPrefab, specialPopUpPrefab, notificationPrefab);
 
-        //Container.Bind<EventPopUp>().FromInstance(eventPopUp).AsSingle();
 
         Container.Bind<Camera>().FromInstance(Camera.main).AsSingle();
 

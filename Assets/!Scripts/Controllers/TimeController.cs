@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
-using System.Threading.Tasks;
 using DG.Tweening;
 using Cysharp.Threading.Tasks;
 using Zenject;
@@ -27,8 +26,8 @@ public class TimeController : MonoInit
     [Range(1,3),SerializeField] private int increaseMaxAPValue;
     [Range(1,3),SerializeField] private int increaseAddAPValue;
 
-    private int _localIncreaseMaxAPValue = 0;
-    private int _localIncreaseAddAPValue = 0;
+    private int _localIncreaseMaxAPValue;
+    private int _localIncreaseAddAPValue;
     
     public Button NextTurnButton => nextTurnBtn;
 
@@ -75,9 +74,9 @@ public class TimeController : MonoInit
         _currentPeriod = new ReactiveProperty<PeriodOfDay>(PeriodOfDay.Morning);
         _actionPoints = new ReactiveProperty<int>(_timeControllerConfig.ActionPointsMaxValue);
 
-        _currentDate.Subscribe(_ => UpdateText()).AddTo(this);
-        _currentPeriod.Subscribe(_ => UpdateText()).AddTo(this);
-        _currentPeriod.Subscribe(_ => UpdateLighting()).AddTo(this);
+        _currentDate.Subscribe(_ => UpdateTime()).AddTo(this);
+        _currentPeriod.Subscribe(_ => UpdateTime()).AddTo(this);
+        //_currentPeriod.Subscribe(_ => UpdateLighting()).AddTo(this);
 
         _actionPoints.Subscribe(value =>
             actionPointsText.text =
@@ -101,8 +100,10 @@ public class TimeController : MonoInit
             .Subscribe(_ => DisableNextTurnLogic())
             .AddTo(this);
         
-        UpdateLighting();
-        UpdateText();
+        _localIncreaseMaxAPValue = 0;
+        _localIncreaseAddAPValue = 0;
+
+        UpdateTime();
     }
 
     private void OnEnable()
@@ -149,7 +150,7 @@ public class TimeController : MonoInit
         return false;
     }
 
-    private void UpdateTime()
+    private void ChangePeriodToNext()
     {
         switch (_currentPeriod.Value)
         {
@@ -168,6 +169,12 @@ public class TimeController : MonoInit
         }
     }
 
+    private void UpdateTime()
+    {
+        UpdateLighting();
+        UpdateText();
+    }
+    
     private void UpdateLighting()
     {
         morningLight.enabled = _currentPeriod.Value == PeriodOfDay.Morning;
@@ -178,7 +185,14 @@ public class TimeController : MonoInit
     private void UpdateText()
     {
         dayText.text = _currentDate.Value.ToString("d MMMM");
-        periodText.text = _currentPeriod.Value.ToString();
+
+        periodText.text = _currentPeriod.Value switch
+        {
+            PeriodOfDay.Morning => "Утро",
+            PeriodOfDay.Noon => "Полдень",
+            PeriodOfDay.Evening => "Вечер",
+            _ => periodText.text
+        };
     }
 
     private async UniTaskVoid EndTurnButtonClicked()
@@ -189,7 +203,7 @@ public class TimeController : MonoInit
 
         await blackoutImage.DOFade(1, _timeControllerConfig.NextTurnFadeTime / 2).AsyncWaitForCompletion();
         
-        UpdateTime();
+        ChangePeriodToNext();
         OnNextTurnBtnClickBetween.OnNext(Unit.Default);
         AddActionPoints();
 
