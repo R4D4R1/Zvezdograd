@@ -14,20 +14,23 @@ public class MainGameUIController : MonoInit
     private CanvasGroup _turnOffUICanvasGroup;
     private InfoPopUp _popUpToClose;
 
-    private TutorialController _tutorialController;
-    private LoadLevelController _loadLevelController;
-    private MainGameController _mainGameController;
-
     public readonly Subject<Unit> OnUITurnOn = new();
     public readonly Subject<Unit> OnUITurnOff = new();
     public readonly Subject<Unit> OnMainMenuLoad = new();
+    
+    private TutorialController _tutorialController;
+    private LoadLevelController _loadLevelController;
+    private MainGameController _mainGameController;
+    private SettingsController _settingsController;
 
     [Inject]
-    public void Construct(TutorialController tutorialController, LoadLevelController loadLevelController,MainGameController mainGameController)
+    public void Construct(TutorialController tutorialController, LoadLevelController loadLevelController,
+        MainGameController mainGameController, SettingsController settingsController)
     {
         _tutorialController = tutorialController;
         _loadLevelController = loadLevelController;
         _mainGameController = mainGameController;
+        _settingsController = settingsController;
     }
 
     public override void Init()
@@ -96,5 +99,15 @@ public class MainGameUIController : MonoInit
     {
         OnMainMenuLoad.OnNext(Unit.Default);
         _loadLevelController?.LoadSceneAsync(Scenes.MAIN_MENU);
+    }
+
+    public void OpenSettingsMenu()
+    {
+        _settingsController.Activate();
+    }
+    
+    public void CloseSettingsMenu()
+    {
+        _settingsController.Deactivate();
     }
 }

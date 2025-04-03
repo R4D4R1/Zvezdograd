@@ -6,11 +6,11 @@ public class UIController : MonoBehaviour
 {
 
     [Inject] private LoadLevelController _loadLevelController;
+    [Inject] private SettingsController _settingsController;
 
+    // ReSharper disable once AsyncVoidMethod
     public async void StartNewGame()
     {
-        //SaveLoadManager.SetStartedNewGame();
-
         await _loadLevelController.LoadSceneAsync(Scenes.GAME_SCENE);
     }
 
@@ -20,5 +20,15 @@ public class UIController : MonoBehaviour
 #if UNITY_EDITOR
         EditorApplication.isPlaying = false;
 #endif
+    }
+
+    public void OpenSettingsMenu()
+    {
+        _settingsController.Activate();
+    }
+    
+    public void CloseSettingsMenu()
+    {
+        _settingsController.Deactivate();
     }
 }

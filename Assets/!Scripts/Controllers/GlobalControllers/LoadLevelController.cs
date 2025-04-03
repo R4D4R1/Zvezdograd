@@ -1,5 +1,6 @@
 using System;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
@@ -13,16 +14,6 @@ public class LoadLevelController : MonoBehaviour
     
     [SerializeField] private bool Test;
 
-    private float _target;
-    
-    private GameController _gameController;
-
-    [Inject]
-    public void Construct(GameController gameController)
-    {
-        _gameController = gameController;
-    }
-
     private void Start()
     {
         if (Test)
@@ -33,37 +24,25 @@ public class LoadLevelController : MonoBehaviour
 
     public async UniTask LoadSceneAsync(string sceneName)
     {
-        _target = 0;
         progressBar.value = 0;
-
-        await UniTask.Delay((int)(_gameController.GameStartDelay * 1000));
+        loaderCanvas.SetActive(true);
 
         var scene = SceneManager.LoadSceneAsync(sceneName);
         scene.allowSceneActivation = false;
 
-        loaderCanvas.SetActive(true);
-
         while (scene.progress < 0.9f)
         {
-            _target = Mathf.Clamp01(scene.progress / 0.9f);
-            progressBar.value = _target;
-            await UniTask.Delay(100);
+            float target = Mathf.Clamp01(scene.progress / 0.9f);
+            Tween tween = progressBar.DOValue(target, 0.25f).SetEase(Ease.Linear);
+            await UniTask.WaitUntil(() => !tween.IsActive()); 
         }
 
-        _target = 1;
-        progressBar.value = _target;
-
-        await UniTask.Delay((int)(_gameController.GameAfterLoadDelay * 1000));
+        Tween finalTween = progressBar.DOValue(1, 0.25f).SetEase(Ease.Linear);
+        await UniTask.WaitUntil(() => !finalTween.IsActive());
 
         scene.allowSceneActivation = true;
-
         await UniTask.Yield();
-        loaderCanvas.SetActive(false);
-    }
 
-    private void Update()
-    {
-        Debug.Log("TEST");
-        progressBar.value = Mathf.MoveTowards(progressBar.value, _target, 3 * Time.deltaTime);
+        loaderCanvas.SetActive(false);
     }
 }
