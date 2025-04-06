@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: PeopleUnitsControllerConfig
   m_EditorClassIdentifier: 
   startPeopleUnitAmount: 8
-  durationOfAnimationOfTransitionOfUnits: 0.75
+  durationOfAnimationOfTransitionOfUnits: 0.5
   chanceOfInjuringRandomReadyUnit: 33

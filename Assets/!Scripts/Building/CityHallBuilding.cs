@@ -1,13 +1,9 @@
-using System.Threading.Tasks;
 using UnityEngine;
 using UniRx;
-using Unity.VisualScripting;
-using UnityEngine.Serialization;
 using Unit = UniRx.Unit;
 
 public class CityHallBuilding : RepairableBuilding
 {
-    [FormerlySerializedAs("_cityHallConfig")]
     [Header("CITY HALL SETTINGS")]
     [SerializeField] private CityHallBuildingConfig cityHallConfig;
 
@@ -143,7 +139,11 @@ public class CityHallBuilding : RepairableBuilding
 
         if (_amountOfHelpSent >= cityHallConfig.AmountOfHelpNeededToSend)
         {
-            MainGameController.GameWin();
+            TimeController.WaitDaysAndExecute(MainGameController.MainGameControllerConfig.DayAfterLastArmyMaterialSendWin, () =>
+            {
+                MainGameController.GameOverState = MainGameController.GameOverStateEnum.Win;
+                Debug.Log("Победа спустя 3 игровых дня");
+            });
         }
     }
 

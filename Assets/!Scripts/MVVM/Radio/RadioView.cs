@@ -3,10 +3,10 @@ using UnityEngine.UI;
 using TMPro;
 using UniRx;
 using System.Collections.Generic;
+using Zenject;
 
 public class RadioController : MonoBehaviour
 {
-    [SerializeField] private AudioSource audioSource;
     [SerializeField] private TMP_Text songTitleText;
     [SerializeField] private Button playButton;
     [SerializeField] private Button pauseButton;
@@ -16,6 +16,8 @@ public class RadioController : MonoBehaviour
 
     private RadioViewModel _viewModel;
 
+    [Inject] private SettingsController _settingsController;
+
     void Start()
     {
         var songList = new List<RadioModel>();
@@ -24,7 +26,7 @@ public class RadioController : MonoBehaviour
             songList.Add(new RadioModel(clip.name, clip));
         }
 
-        _viewModel = new RadioViewModel(audioSource, songList);
+        _viewModel = new RadioViewModel(_settingsController.SettingsMusicAudioSource, songList);
 
         _viewModel.OnSongChanged.Subscribe(UpdateSongTitle).AddTo(this);
 

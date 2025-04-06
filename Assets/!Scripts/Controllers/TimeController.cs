@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using System.Collections.Generic;
 using DG.Tweening;
 using Cysharp.Threading.Tasks;
 using Zenject;
@@ -31,7 +32,7 @@ public class TimeController : MonoInit
     
     public Button NextTurnButton => nextTurnBtn;
 
-    private readonly DateTime _startDate = new(1942, 8, 30);
+    private readonly DateTime _startDate = new(1942, 10, 30);
 
     private ReactiveProperty<DateTime> _currentDate;
     private ReactiveProperty<PeriodOfDay> _currentPeriod;
@@ -56,7 +57,21 @@ public class TimeController : MonoInit
         Noon,
         Evening,
     }
-    
+
+    private class DelayedAction
+    {
+        public int DaysRemaining;
+        public Action Action;
+
+        public DelayedAction(int days, Action action)
+        {
+            DaysRemaining = days;
+            Action = action;
+        }
+    }
+
+    private readonly List<DelayedAction> _delayedActions = new();
+
     [Inject]
     public void Construct(PopUpsController popUpsController, TimeControllerConfig timeControllerConfig,
         TutorialController tutorialController, BuildingController buildingController)
@@ -76,7 +91,6 @@ public class TimeController : MonoInit
 
         _currentDate.Subscribe(_ => UpdateTime()).AddTo(this);
         _currentPeriod.Subscribe(_ => UpdateTime()).AddTo(this);
-        //_currentPeriod.Subscribe(_ => UpdateLighting()).AddTo(this);
 
         _actionPoints.Subscribe(value =>
             actionPointsText.text =
@@ -165,6 +179,7 @@ public class TimeController : MonoInit
                 _currentDate.Value = _currentDate.Value.AddDays(1);
 
                 OnNextDayEvent.OnNext(Unit.Default);
+                ProcessDelayedActions();
                 break;
         }
     }
@@ -221,8 +236,33 @@ public class TimeController : MonoInit
     private void AddActionPoints()
     {
         _actionPoints.Value = Mathf.Clamp(
-            _actionPoints.Value + _timeControllerConfig.ActionPointsAddValueInTheNextDay+_localIncreaseAddAPValue,
+            _actionPoints.Value + _timeControllerConfig.ActionPointsAddValueInTheNextDay + _localIncreaseAddAPValue,
             0, _timeControllerConfig.ActionPointsMaxValue + _localIncreaseAddAPValue
         );
+    }
+
+    private void ProcessDelayedActions()
+    {
+        for (int i = _delayedActions.Count - 1; i >= 0; i--)
+        {
+            _delayedActions[i].DaysRemaining--;
+
+            if (_delayedActions[i].DaysRemaining <= 0)
+            {
+                _delayedActions[i].Action?.Invoke();
+                _delayedActions.RemoveAt(i);
+            }
+        }
+    }
+
+    public void WaitDaysAndExecute(int days, Action action)
+    {
+        if (days <= 0)
+        {
+            action?.Invoke();
+            return;
+        }
+
+        _delayedActions.Add(new DelayedAction(days, action));
     }
 }

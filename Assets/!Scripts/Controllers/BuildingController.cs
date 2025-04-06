@@ -62,8 +62,6 @@ public class BuildingController : MonoInit
         foreach (var building in RegularBuildings.Where(building =>
                      building.CurrentState == RepairableBuilding.State.Damaged))
         {
-            Debug.Log(building.name);
-
             _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability,
                 -_buildingControllerConfig.StabilityRemoveValueForRegularBombedBuilding));
         }
@@ -71,8 +69,6 @@ public class BuildingController : MonoInit
         foreach (var specialBuilding in SpecialBuildings.Where(specialBuilding =>
                      specialBuilding.CurrentState == RepairableBuilding.State.Damaged))
         {
-            Debug.Log(specialBuilding.name);
-
             _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability,
                 -_buildingControllerConfig.StabilityRemoveValueForSpecialBombedBuilding));
         }

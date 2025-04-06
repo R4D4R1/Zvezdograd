@@ -5,7 +5,7 @@ using UnityEngine;
 [Serializable]
 public class GameData
 {
-    public TimeController.PeriodOfDay periodOfDay;
+    //public TimeController.PeriodOfDay periodOfDay;
     public string dateString;
     public List<PeopleUnitData> allUnitsData;
     public List<BuildingData> allBuildingsData;

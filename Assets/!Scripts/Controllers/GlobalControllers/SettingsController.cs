@@ -7,6 +7,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using Zenject;
 
+[RequireComponent(typeof(CanvasGroup))]
 public class SettingsController : MonoInit
 {
     [SerializeField] private TMP_Dropdown _resolutionDropdown;
@@ -25,6 +26,8 @@ public class SettingsController : MonoInit
     private float _musicVolume;
     private float _soundVolume;
     private int _graphicsQualityIndex;
+    private CanvasGroup _canvasGroup;
+    public AudioSource SettingsMusicAudioSource => _musicAudioSource;
 
     private const string SettingsFile = "settings.json";
     private SettingsData _settingsData;
@@ -41,32 +44,11 @@ public class SettingsController : MonoInit
     public override void Init()
     {
         base.Init();
-        _resolutions = Screen.resolutions;
-        _filteredResolutions = FilterResolutions(_resolutions);
-        _resolutionDropdown.ClearOptions();
-
-        List<string> resolutionOptions = _filteredResolutions
-            .Select(r => r.width + " x " + r.height)
-            .ToList();
-        _resolutionDropdown.AddOptions(resolutionOptions);
 
         _graphicsDropdown.ClearOptions();
         List<string> presetNames = new List<string> { "Низкое", "Среднее", "Высокое" };
         _graphicsDropdown.AddOptions(presetNames);
-
-        LoadSettings();
-
-        QualitySettings.SetQualityLevel(_graphicsQualityIndex, false);
         
-        _resolutionDropdown.value = _currentResolutionIndex;
-        _fullscreenToggle.isOn = _isFullscreen;
-        _musicVolumeSlider.value = _musicVolume;
-        _SFXVolumeSlider.value = _soundVolume;
-        _graphicsDropdown.value = _graphicsQualityIndex;
-
-        _resolutionDropdown.RefreshShownValue();
-        _graphicsDropdown.RefreshShownValue();
-
         _resolutionDropdown.onValueChanged.AddListener(_ => OnSettingsChanged());
         _fullscreenToggle.onValueChanged.AddListener(_ => OnSettingsChanged());
         _musicVolumeSlider.onValueChanged.AddListener(_ => OnSettingsChanged());
@@ -83,53 +65,22 @@ public class SettingsController : MonoInit
             _resolutionDropdown.gameObject.SetActive(false);
             _fullscreenToggle.gameObject.SetActive(false);
         }
-    }
+        else
+        {
+            _resolutions = Screen.resolutions;
+            _filteredResolutions = FilterResolutions(_resolutions);
+            _resolutionDropdown.ClearOptions();
+            
+            List<string> resolutionOptions = _filteredResolutions
+                .Select(r => r.width + " x " + r.height)
+                .ToList();
+            _resolutionDropdown.AddOptions(resolutionOptions);
+        }
 
-    // private void Start()
-    // {
-    //     _resolutions = Screen.resolutions;
-    //     _filteredResolutions = FilterResolutions(_resolutions);
-    //     _resolutionDropdown.ClearOptions();
-    //
-    //     List<string> resolutionOptions = _filteredResolutions
-    //         .Select(r => r.width + " x " + r.height)
-    //         .ToList();
-    //     _resolutionDropdown.AddOptions(resolutionOptions);
-    //
-    //     _graphicsDropdown.ClearOptions();
-    //     List<string> presetNames = new List<string> { "Низкое", "Среднее", "Высокое" };
-    //     _graphicsDropdown.AddOptions(presetNames);
-    //
-    //     LoadSettings();
-    //
-    //     QualitySettings.SetQualityLevel(_graphicsQualityIndex, false);
-    //     
-    //     _resolutionDropdown.value = _currentResolutionIndex;
-    //     _fullscreenToggle.isOn = _isFullscreen;
-    //     _musicVolumeSlider.value = _musicVolume;
-    //     _SFXVolumeSlider.value = _soundVolume;
-    //     _graphicsDropdown.value = _graphicsQualityIndex;
-    //
-    //     _resolutionDropdown.RefreshShownValue();
-    //     _graphicsDropdown.RefreshShownValue();
-    //
-    //     _resolutionDropdown.onValueChanged.AddListener(_ => OnSettingsChanged());
-    //     _fullscreenToggle.onValueChanged.AddListener(_ => OnSettingsChanged());
-    //     _musicVolumeSlider.onValueChanged.AddListener(_ => OnSettingsChanged());
-    //     _SFXVolumeSlider.onValueChanged.AddListener(_ => OnSettingsChanged());
-    //     _graphicsDropdown.onValueChanged.AddListener(_ => OnSettingsChanged());
-    //     _applyButton.onClick.AddListener(ApplySettings);
-    //     _resetButton.onClick.AddListener(ResetSettings);
-    //
-    //     _applyButton.interactable = false;
-    //     _resetButton.interactable = false;
-    //     
-    //     if (Application.isMobilePlatform)
-    //     {
-    //         _resolutionDropdown.gameObject.SetActive(false);
-    //         _fullscreenToggle.gameObject.SetActive(false);
-    //     }
-    // }
+        _canvasGroup = GetComponent<CanvasGroup>();
+        
+        LoadSettings();
+    }
 
     private List<Resolution> FilterResolutions(Resolution[] resolutions)
     {
@@ -154,13 +105,15 @@ public class SettingsController : MonoInit
 
     private void ApplySettings()
     {
-        Resolution resolution = _filteredResolutions[_currentResolutionIndex];
-        Screen.SetResolution(resolution.width, resolution.height, _isFullscreen);
-
-        QualitySettings.SetQualityLevel(_graphicsQualityIndex, false);
-
-        _musicAudioSource.volume = _musicVolume;
+        if(!Application.isMobilePlatform)
+        {
+            Resolution resolution = _filteredResolutions[_currentResolutionIndex];
+            Screen.SetResolution(resolution.width, resolution.height, _isFullscreen);
+        }
+        
         _soundController.SFXAudioSource.volume = _soundVolume;
+        _musicAudioSource.volume = _musicVolume;
+        QualitySettings.SetQualityLevel(_graphicsQualityIndex, false);
 
         SaveSettings();
         
@@ -213,16 +166,36 @@ public class SettingsController : MonoInit
         _musicVolume = _settingsData.MusicVolume;
         _soundVolume = _settingsData.SoundVolume;
         _graphicsQualityIndex = _settingsData.GraphicsQualityIndex;
+        
+        _resolutionDropdown.value = _currentResolutionIndex;
+        _fullscreenToggle.isOn = _isFullscreen;
+        _musicVolumeSlider.value = _musicVolume;
+        _SFXVolumeSlider.value = _soundVolume;
+        _graphicsDropdown.value = _graphicsQualityIndex;
+        
+        _resolutionDropdown.RefreshShownValue();
+        _graphicsDropdown.RefreshShownValue();
+        
+        _musicAudioSource.volume = _musicVolume;
+        
+        if(!Application.isMobilePlatform)
+        {
+            _soundController.SFXAudioSource.volume = _soundVolume;
+            Resolution resolution = _filteredResolutions[_currentResolutionIndex];
+            Screen.SetResolution(resolution.width, resolution.height, _isFullscreen);
+        }
+        
+        QualitySettings.SetQualityLevel(_graphicsQualityIndex, false);
     }
 
     public void Activate()
     {
-        gameObject.SetActive(true);
+        _canvasGroup.alpha = 1;
     }
     
     public void Deactivate()
     {
-        gameObject.SetActive(false);
+        _canvasGroup.alpha = 0;
     }
 }
 

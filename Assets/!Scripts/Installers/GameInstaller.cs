@@ -9,6 +9,7 @@ public class GameInstaller : MonoInstaller
     // [SerializeField] private EventPopUp eventPopUp;
 
     [Header("CONFIGS")]
+    [SerializeField] private MainGameControllerConfig mainGameControllerConfig;
     [SerializeField] private BlurConfig blurConfig;
     [SerializeField] private ResourcesConfig resourcesConfig;
     [SerializeField] private TimeControllerConfig timeControllerConfig;
@@ -32,6 +33,7 @@ public class GameInstaller : MonoInstaller
             throw new System.Exception("Main Camera is missing in the scene!");
         }
 
+        Container.Bind<MainGameControllerConfig>().FromInstance(mainGameControllerConfig).AsSingle();
         Container.Bind<BlurConfig>().FromInstance(blurConfig).AsSingle();
         Container.Bind<ResourcesConfig>().FromInstance(resourcesConfig).AsSingle();
         Container.Bind<TimeControllerConfig>().FromInstance(timeControllerConfig).AsSingle();

@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b0e2c9cc4a7cb0458add77a6961dd99, type: 3}
   m_Name: BlurConfig
   m_EditorClassIdentifier: 
-  _timeOfDepthAppearing: 0.49
-  _blurValue: 120
+  timeOfDepthAppearing: 0.25
+  blurValue: 120

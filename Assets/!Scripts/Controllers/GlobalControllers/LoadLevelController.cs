@@ -1,11 +1,10 @@
-using System;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using UniRx;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
-using Zenject;
 
 public class LoadLevelController : MonoBehaviour
 {
@@ -13,7 +12,9 @@ public class LoadLevelController : MonoBehaviour
     [FormerlySerializedAs("_progressBar")] [SerializeField] private Slider progressBar;
     
     [SerializeField] private bool Test;
-
+    public readonly Subject<Unit> OnMainMenuSceneLoaded = new();
+    public readonly Subject<Unit> OnSceneChanged = new();
+    
     private void Start()
     {
         if (Test)
@@ -39,7 +40,14 @@ public class LoadLevelController : MonoBehaviour
 
         Tween finalTween = progressBar.DOValue(1, 0.25f).SetEase(Ease.Linear);
         await UniTask.WaitUntil(() => !finalTween.IsActive());
-
+        
+        OnSceneChanged.OnNext(Unit.Default);
+        
+        if (sceneName == Scenes.MAIN_MENU)
+        {
+            OnMainMenuSceneLoaded.OnNext(Unit.Default);
+        }
+        
         scene.allowSceneActivation = true;
         await UniTask.Yield();
 

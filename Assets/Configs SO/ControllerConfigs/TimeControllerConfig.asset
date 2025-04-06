@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nextTurnFadeTime: 1
   actionPointsMaxValue: 5
-  actionPointsAddValueInTheNextDay: 1
+  actionPointsAddValueInTheNextDay: 2

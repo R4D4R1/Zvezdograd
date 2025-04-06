@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 using Cysharp.Threading.Tasks;
 using Zenject;
 using System.IO;
-using System.Threading.Tasks;
 using UniRx;
 
 public class EventController : MonoInit
@@ -41,27 +40,74 @@ public class EventController : MonoInit
         LoadEvents();
     }
 
-    private void LoadEvents()
+    private async void LoadEvents()
+{
+    _specificEvents = new Dictionary<string, PopupEvent>();
+
+    const string FILE_NAME = "specificEvents.json";
+    const string EVENT_FILE_URL = "https://drive.google.com/uc?export=download&id=1ntL2TWuR70Dpi8gooGGMTca0V9LKadUB";
+
+    var persistentPath = Path.Combine(Application.persistentDataPath, FILE_NAME);
+
+    string jsonContent;
+
+    var isInternetAvailable = Application.internetReachability != NetworkReachability.NotReachable;
+
+    if (isInternetAvailable)
     {
-        _specificEvents = new Dictionary<string, PopupEvent>();
+        Debug.Log("Есть интернет, пытаюсь скачать файл...");
+        
+        using var www = UnityEngine.Networking.UnityWebRequest.Get(EVENT_FILE_URL);
+        
+        await www.SendWebRequest();
 
-        var jsonPath = Path.Combine(Application.streamingAssetsPath, "specificEvents.json");
-
-        if (!File.Exists(jsonPath))
+        if (www.result == UnityEngine.Networking.UnityWebRequest.Result.Success)
         {
-            Debug.LogError($"NO FILE IN PATH : {jsonPath}");
-            return;
+            jsonContent = www.downloadHandler.text;
+            File.WriteAllText(persistentPath, jsonContent);
+            Debug.Log("Файл успешно скачан и сохранён.");
         }
-
-        var jsonContent = File.ReadAllText(jsonPath);
-        var specificEventsData = JsonConvert.DeserializeObject<PopupEventData>(jsonContent);
-
-        foreach (var e in specificEventsData.events)
+        else
         {
-            var eventKey = e.date + e.period;
-            _specificEvents[eventKey] = e;
+            Debug.LogWarning($"Ошибка при скачивании: {www.error}");
+
+            if (File.Exists(persistentPath))
+            {
+                jsonContent = File.ReadAllText(persistentPath);
+                Debug.Log("Загружен локальный кэш-файл после ошибки.");
+            }
+            else
+            {
+                Debug.LogError("Нет ни скачанного, ни локального файла. Невозможно продолжить.");
+                return;
+            }
         }
     }
+    else
+    {
+        Debug.LogWarning("Интернет не найден, пробую использовать локальный файл...");
+
+        if (File.Exists(persistentPath))
+        {
+            jsonContent = File.ReadAllText(persistentPath);
+            Debug.Log("Файл загружен из локального хранилища.");
+        }
+        else
+        {
+            Debug.LogError("Нет интернета и нет локального файла!");
+            return;
+        }
+    }
+
+    var specificEventsData = JsonConvert.DeserializeObject<PopupEventData>(jsonContent);
+
+    foreach (var e in specificEventsData.events)
+    {
+        var eventKey = e.date + e.period;
+        _specificEvents[eventKey] = e;
+    }
+}
+
 
     private async void OnPeriodChanged()
     {
@@ -72,7 +118,7 @@ public class EventController : MonoInit
         {
             OnGameWonEventShow();
         }
-        else if (_mainGameController.GameOverState == MainGameController.GameOverStateEnum.Lose)
+        else if (_mainGameController.GameOverState == MainGameController.GameOverStateEnum.StabilityLose)
         {
             OnStabilityGameLoseEventShow();
         }
@@ -84,13 +130,15 @@ public class EventController : MonoInit
 
         var currentDate = _timeController.CurrentDate;
         var currentPeriod = _timeController.CurrentPeriod.ToString();
-
+        
         var eventKey = currentDate.ToString("yyyy-MM-dd") + currentPeriod;
-
+        
         if (_specificEvents.TryGetValue(eventKey, out var popupEvent))
         {
             if (!string.IsNullOrEmpty(popupEvent.subEvent))
             {
+                Debug.Log(popupEvent.subEvent);
+
                 if (popupEvent.subEvent == "Snow")
                 {
                     OnSnowStarted.OnNext(Unit.Default);
@@ -121,8 +169,8 @@ public class EventController : MonoInit
         _isGameOver = true;
         _popUpsController.EventPopUp.ShowEventPopUp(
             "ПОБЕДА",
-            "ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА" +
-            " ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ",
+            " Вы смогли вовремя отправить все материалы и дождаться помощи от правительства. " +
+            "Дружеская техника проезжает по нашим дорогам и движется на передовую чтобы спасти нашу страну. ",
             "ГЛАВНОЕ МЕНЮ");
     }
 
@@ -130,9 +178,10 @@ public class EventController : MonoInit
     {
         _isGameOver = true;
         _popUpsController.EventPopUp.ShowEventPopUp(
-            "ВЫ ПРОИГРАЛИ",
-            "ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА" +
-            " ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ",
+            "ВАС СВЕРГЛИ",
+            " В тяжелые времена встает вопрос решений. Вы не смогли сработаться с собственными согражданами и " +
+            "ни утратили веру в вас. Вы повергли граждан в ужасное состояние они погибают от стресса и мысли что вы не на их стороне. " +
+            "Народ принял решение, что лучшим наказанием для вас будет расстрел у берегу озера",
             "ГЛАВНОЕ МЕНЮ");
     }
     
@@ -141,8 +190,9 @@ public class EventController : MonoInit
         _isGameOver = true;
         _popUpsController.EventPopUp.ShowEventPopUp(
             "ДРУЖЕСТВЕННЫЕ ВОЙСКА НЕ УСПЕЛИ",
-            "ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА" +
-            " ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ПРИМЕР ТЕКСТА ",
+            "Прошло слишком много времени. Союзные силы не могут вечно держать оборону без достаточной поддержки государства. " +
+            "Сегодня было сообщено что оставшиеся силы сдались в плен и теперь проход к Звездограду открыт. " +
+            "По прибытии вражеских войск город был отдан без сенного сопротивления. Третий рейх основал Рейхскомиссариат Штерненштад ",
             "ГЛАВНОЕ МЕНЮ");
     }
 }
