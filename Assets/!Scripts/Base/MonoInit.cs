@@ -5,7 +5,7 @@ public class MonoInit : MonoBehaviour
 {
     public virtual UniTask Init()
     {
-        Debug.Log($"{name} - Initialized");
+        //Debug.Log($"{name} - Initialized");
         return UniTask.CompletedTask;
     }
 }
