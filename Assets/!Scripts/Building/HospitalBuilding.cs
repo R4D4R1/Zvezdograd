@@ -5,15 +5,12 @@ using UnityEngine.Serialization;
 
 public class HospitalBuilding : RepairableBuilding
 {
-    [FormerlySerializedAs("_hospitalConfig")]
     [Header("Hospital Config")]
     [SerializeField] private HospitalBuildingConfig hospitalConfig;
+    public HospitalBuildingConfig HospitalBuildingConfig => hospitalConfig;
 
-    public int MedicineToHealInjuredUnit { get; private set; }
     private int TurnsToGiveMedicine { get; set; }
     public int DaysToGiveMedicine { get; private set; }
-    public int PeopleToGiveMedicine { get; private set; }
-    public int MedicineToGive { get; private set; }
 
     private bool _medicineWasGivenAwayInLastTwoDays;
     private bool _isWorking;
@@ -31,13 +28,8 @@ public class HospitalBuilding : RepairableBuilding
             .AddTo(this);
 
         UpdateAmountOfTurnsNeededToDoSmth();
-
-        MedicineToHealInjuredUnit = hospitalConfig.MedicineToHealInjuredUnit;
         
         DaysToGiveMedicine = hospitalConfig.OriginalDaysToGiveMedicine;
-
-        PeopleToGiveMedicine = hospitalConfig.PeopleToGiveMedicine;
-        MedicineToGive = hospitalConfig.MedicineToGive;
         
         _medicineWasGivenAwayInLastTwoDays = false;
         _isWorking = false;
@@ -101,6 +93,6 @@ public class HospitalBuilding : RepairableBuilding
     {
         _isWorking = true;
         _turnsToCreateNewUnit = hospitalConfig.TurnsToHealInjuredUnit;
-        ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Medicine, -MedicineToHealInjuredUnit));
+        ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Medicine, -hospitalConfig.MedicineToHealInjuredUnit));
     }
 }

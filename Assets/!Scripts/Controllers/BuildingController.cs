@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Zenject;
 using UniRx;
@@ -10,129 +10,126 @@ public class BuildingController : MonoInit
     private List<SelectableBuilding> AllBuildings { get; set; } = new();
     private List<RepairableBuilding> RegularBuildings { get; } = new();
     private List<RepairableBuilding> SpecialBuildings { get; } = new();
-
-    public readonly Subject<Unit> OnBuildingBombed = new();
+    private List<FactoryBuilding> FactoryBuildings { get; } = new();
     
+    public readonly Subject<Unit> OnBuildingBombed = new();
+
     private TimeController _timeController;
     private BuildingControllerConfig _buildingControllerConfig;
     private ResourceViewModel _resourceViewModel;
-    
+
     [Inject]
-    public void Construct(TimeController timeController,BuildingControllerConfig buildingControllerConfig,ResourceViewModel resourceViewModel)
+    public void Construct(TimeController timeController, BuildingControllerConfig buildingControllerConfig, ResourceViewModel resourceViewModel)
     {
         _timeController = timeController;
         _buildingControllerConfig = buildingControllerConfig;
         _resourceViewModel = resourceViewModel;
     }
-    
-    public override void Init()
+
+    public override UniTask Init()
     {
         base.Init();
-        
+
         _timeController.OnNextTurnBtnClickBetween
-            .Subscribe(_ => TryBombBuilding())
+            .Subscribe(_ =>
+            {
+                TryBombBuilding();
+                RemoveStabilityForEachBombedBuilding();
+            })
             .AddTo(this);
-        
-        _timeController.OnNextTurnBtnClickBetween
-            .Subscribe(_ => RemoveStabilityForEachBombedBuilding())
-            .AddTo(this);
-        
+
         AllBuildings = FindObjectsByType<SelectableBuilding>(FindObjectsSortMode.None).ToList();
 
-        foreach (var building in AllBuildings.Where(building => building.GetComponent<RepairableBuilding>()))
-        {
-            if (building.GetComponent<SpecialBuilding>())
-            {
-                SpecialBuildings.Add(building as RepairableBuilding);
-            }
-            else
-            {
-                RegularBuildings.Add(building as RepairableBuilding);
-            }
-        }
-        
         foreach (var building in AllBuildings)
         {
+            if (building.TryGetComponent(out RepairableBuilding repairable))
+            {
+                if (building.TryGetComponent(out SpecialBuilding _))
+                    SpecialBuildings.Add(repairable);
+                else
+                    RegularBuildings.Add(repairable);
+            }
+            
             building.Init();
         }
+        return UniTask.CompletedTask;
     }
 
     private void RemoveStabilityForEachBombedBuilding()
     {
-        foreach (var building in RegularBuildings.Where(building =>
-                     building.CurrentState == RepairableBuilding.State.Damaged))
+        RemoveStability(RegularBuildings, _buildingControllerConfig.StabilityRemoveValueForRegularBombedBuilding);
+        RemoveStability(SpecialBuildings, _buildingControllerConfig.StabilityRemoveValueForSpecialBombedBuilding);
+    }
+
+    private void RemoveStability(IEnumerable<RepairableBuilding> buildings, int value)
+    {
+        foreach (var building in buildings.Where(b => b.CurrentState == RepairableBuilding.State.Damaged))
         {
-            _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability,
-                -_buildingControllerConfig.StabilityRemoveValueForRegularBombedBuilding));
-        }
-        
-        foreach (var specialBuilding in SpecialBuildings.Where(specialBuilding =>
-                     specialBuilding.CurrentState == RepairableBuilding.State.Damaged))
-        {
-            _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability,
-                -_buildingControllerConfig.StabilityRemoveValueForSpecialBombedBuilding));
+            _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, -value));
         }
     }
-    
+
     private void TryBombBuilding()
     {
         var randomValue = Random.Range(0, 100);
         if (randomValue <= _buildingControllerConfig.ChanceOfBombingBuilding)
         {
-            ChooseBuildingToBomb()?.BombBuilding();
-            OnBuildingBombed.OnNext(Unit.Default);
+            var building = ChooseBuildingToBomb();
+            if (building)
+            {
+                building.BombBuilding();
+                OnBuildingBombed.OnNext(Unit.Default);
+            }
         }
     }
 
     private RepairableBuilding ChooseBuildingToBomb()
     {
-        RepairableBuilding buildingToReturn = null;
+        var candidates = SpecialBuildings
+            .Where(b => b.CurrentState == RepairableBuilding.State.Intact && b.buildingIsSelectable)
+            .ToList();
 
-        for (var i = 0; i < SpecialBuildings.Count + RegularBuildings.Count; i++)
-        {
-            if (Random.Range(0, 100) <= _buildingControllerConfig.ChanceOfBombingSpecialBuilding)
-            {
-                var randomBuildingIndex = Random.Range(0, SpecialBuildings.Count);
+        candidates.AddRange(RegularBuildings
+            .Where(b => b.CurrentState == RepairableBuilding.State.Intact));
 
-                if (SpecialBuildings[randomBuildingIndex].CurrentState == RepairableBuilding.State.Intact
-                    && SpecialBuildings[randomBuildingIndex].buildingIsSelectable)
-                {
-                    buildingToReturn = SpecialBuildings[randomBuildingIndex];
-                }
-            }
-            else
-            {
-                int randomBuildingIndex = Random.Range(0, RegularBuildings.Count);
-
-                if (RegularBuildings[randomBuildingIndex].CurrentState == RepairableBuilding.State.Intact)
-                {
-                    buildingToReturn = RegularBuildings[randomBuildingIndex];
-                }
-            }
-        }
-        if (buildingToReturn)
-        {
-            return buildingToReturn;
-        }
-        else
+        if (!candidates.Any())
         {
             Debug.Log("NO BUILDING FOR BOMBING");
             return null;
         }
+
+        var factoryBuildings = GetAllSpecialBuildings<FactoryBuilding>();
+        var damagedFactoriesCount = factoryBuildings.Count(f => f.CurrentState == RepairableBuilding.State.Damaged);
+
+        // Перемешиваем список кандидатов для случайности
+        var shuffled = candidates.OrderBy(_ => Random.value).ToList();
+
+        foreach (var candidate in shuffled)
+        {
+            // если это завод и уже есть разбомбленный завод — пропускаем
+            if (candidate is FactoryBuilding && damagedFactoriesCount >= 1)
+                continue;
+
+            return candidate;
+        }
+
+        Debug.Log("NO VALID BUILDING TO BOMB AFTER FILTERING FACTORY RULE");
+        return null;
     }
 
-    public CityHallBuilding GetCityHallBuilding()
+
+
+    private T GetSpecialBuilding<T>() where T : RepairableBuilding
     {
-        return SpecialBuildings.OfType<CityHallBuilding>().FirstOrDefault();
+        return SpecialBuildings.OfType<T>().FirstOrDefault();
     }
 
-    public FoodTrucksBuilding GetFoodTruckBuilding()
+    private List<T> GetAllSpecialBuildings<T>() where T : RepairableBuilding
     {
-        return SpecialBuildings.OfType<FoodTrucksBuilding>().FirstOrDefault();
+        return SpecialBuildings.OfType<T>().ToList();
     }
-
-    public HospitalBuilding GetHospitalBuilding()
-    {
-        return SpecialBuildings.OfType<HospitalBuilding>().FirstOrDefault();
-    }
+    
+    public CityHallBuilding GetCityHallBuilding() => GetSpecialBuilding<CityHallBuilding>();
+    public FoodTrucksBuilding GetFoodTruckBuilding() => GetSpecialBuilding<FoodTrucksBuilding>();
+    public HospitalBuilding GetHospitalBuilding() => GetSpecialBuilding<HospitalBuilding>();
 }

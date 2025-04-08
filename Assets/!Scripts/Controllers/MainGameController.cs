@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
@@ -26,15 +27,15 @@ public class MainGameController : MonoInit
 
     private Camera _mainCamera;
     public MainGameControllerConfig MainGameControllerConfig { get; private set; }
-    
+
     [Inject]
-    public void Construct(Camera mainCamera,MainGameControllerConfig mainGameControllerConfig)
+    public void Construct(Camera mainCamera, MainGameControllerConfig mainGameControllerConfig)
     {
         _mainCamera = mainCamera;
         MainGameControllerConfig = mainGameControllerConfig;
     }
 
-    public override void Init()
+    public override async UniTask Init()
     {
         base.Init();
 
@@ -42,22 +43,22 @@ public class MainGameController : MonoInit
         OnGameStarted.OnNext(Unit.Default);
 
         blackImage.color = Color.black;
-        blackImage.DOFade(0, MainGameControllerConfig.BlackoutTime).OnComplete(() =>
-        {
-            startPopUp.ShowPopUp();
-            notificationsParent.SetActive(true); // Показ после попапа
-        });
+
+        await blackImage
+            .DOFade(0, MainGameControllerConfig.BlackoutTime)
+            .SetEase(Ease.Linear)
+            .AsyncWaitForCompletion();
+
+        startPopUp.ShowPopUp();
+
+        await UniTask.Delay(5000);
+        notificationsParent.SetActive(true);
     }
 
-    public void ShowCity()
-    {
-        AnimateCamera(MainGameControllerConfig.CameraCityShowY);
-    }
 
-    public void HideCity()
-    {
-        AnimateCamera(MainGameControllerConfig.CameraCityHideY);
-    }
+    public void ShowCity() => AnimateCamera(MainGameControllerConfig.CameraCityShowY);
+
+    public void HideCity() => AnimateCamera(MainGameControllerConfig.CameraCityHideY);
 
     private void AnimateCamera(float targetYPosition)
     {

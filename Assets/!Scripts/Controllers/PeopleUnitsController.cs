@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using System.Linq;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using Zenject;
 using UniRx;
 
@@ -32,9 +33,10 @@ public class PeopleUnitsController : MonoInit
         _timeController = timeController;
     }
 
-    public override void Init()
+    public override UniTask Init()
     {
         base.Init();
+
         _timeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => NextTurn())
             .AddTo(this);
@@ -60,7 +62,7 @@ public class PeopleUnitsController : MonoInit
         if (!anyUnit)
         {
             Debug.LogError("Не найден ни один PeopleUnit!");
-            return;
+            return UniTask.CompletedTask;
         }
 
         var parent = anyUnit.transform.parent;
@@ -82,7 +84,7 @@ public class PeopleUnitsController : MonoInit
             if (unitNum < _config.StartPeopleUnitAmount)
             {
                 CreatedUnits.Add(_allUnits[unitNum]);
-                CreatedUnits[unitNum].SetState(PeopleUnit.UnitState.Ready, 0, 0);
+                SetReadyState(CreatedUnits[unitNum]);
             }
             else
             {
@@ -92,6 +94,7 @@ public class PeopleUnitsController : MonoInit
         }
 
         UpdateReadyUnits();
+        return UniTask.CompletedTask;
     }
 
     private void NextTurn()
@@ -155,7 +158,7 @@ public class PeopleUnitsController : MonoInit
         var unit = NotCreatedUnits.Dequeue();
 
         unit.gameObject.SetActive(true);
-        unit.SetState(PeopleUnit.UnitState.Ready, 0, 0);
+        SetReadyState(unit);
 
         CreatedUnits.Add(unit);
         OnUnitCreatedByPeopleUnitController.OnNext(Unit.Default);
@@ -165,20 +168,18 @@ public class PeopleUnitsController : MonoInit
     private void HealInuredUnit()
     {
         var unit = InjuredUnits.Dequeue();
-        unit.SetState(PeopleUnit.UnitState.Ready, 0, 0);
+        SetReadyState(unit);
 
         OnUnitHealedByPeopleUnitController.OnNext(Unit.Default);
         UpdateReadyUnits();
     }
 
-    private bool AreUnitsReady(int units)
-    {
-        return units <= ReadyUnits.Count;
-    }
+    private bool AreUnitsReady(int units) => units <= ReadyUnits.Count;
 
     private void UpdateReadyUnits()
     {
         ReadyUnits.Clear();
+
         foreach (var unit in _allUnits.Where(unit => unit.GetCurrentState() == PeopleUnit.UnitState.Ready))
         {
             ReadyUnits.Add(unit);
@@ -189,17 +190,12 @@ public class PeopleUnitsController : MonoInit
 
     private void AnimateUnitPositions()
     {
-        var indexedUnits = CreatedUnits
+        CreatedUnits = CreatedUnits
             .Select((unit, index) => (unit, index))
+            .OrderBy(x => x.unit.BusyTurns + x.unit.RestingTurns)
+            .ThenBy(x => x.index)
+            .Select(x => x.unit)
             .ToList();
-
-        indexedUnits.Sort((a, b) =>
-        {
-            var result = (a.unit.BusyTurns + a.unit.RestingTurns).CompareTo(b.unit.BusyTurns + b.unit.RestingTurns);
-            return result != 0 ? result : a.index.CompareTo(b.index);
-        });
-
-        CreatedUnits = indexedUnits.Select(x => x.unit).ToList();
 
         for (var i = 0; i < CreatedUnits.Count; i++)
         {
@@ -213,11 +209,15 @@ public class PeopleUnitsController : MonoInit
         {
             var randomIndex = Random.Range(0, ReadyUnits.Count);
             var unit = ReadyUnits[randomIndex];
-            unit.SetState(PeopleUnit.UnitState.NotCreated,0,0);
-            
+
+            unit.SetState(PeopleUnit.UnitState.NotCreated, 0, 0);
             CreatedUnits.Remove(unit);
-            
             UpdateReadyUnits();
         }
+    }
+
+    private void SetReadyState(PeopleUnit unit)
+    {
+        unit.SetState(PeopleUnit.UnitState.Ready, 0, 0);
     }
 }

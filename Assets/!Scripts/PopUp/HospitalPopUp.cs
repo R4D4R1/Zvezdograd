@@ -76,7 +76,7 @@ public class HospitalPopUp : QuestPopUp
 
     private bool CanGiveAwayMedicine()
     {
-        return HasEnoughPeople(BuildingController.GetHospitalBuilding().PeopleToGiveMedicine) &&
+        return HasEnoughPeople(BuildingController.GetHospitalBuilding().HospitalBuildingConfig.PeopleToGiveMedicine) &&
                EnoughMedicineToGiveAway() &&
                CanUseActionPoint();
     }
@@ -91,7 +91,7 @@ public class HospitalPopUp : QuestPopUp
     private bool CanHealInjuredUnit()
     {
         return HasEnoughResources(ResourceModel.ResourceType.Medicine,
-                   _building.MedicineToHealInjuredUnit) &&
+                   _building.HospitalBuildingConfig.MedicineToHealInjuredUnit) &&
                CanUseActionPoint();
     }
 
@@ -104,7 +104,7 @@ public class HospitalPopUp : QuestPopUp
     private bool EnoughMedicineToGiveAway()
     {
         return HasEnoughResources(ResourceModel.ResourceType.Medicine,
-            BuildingController.GetHospitalBuilding().MedicineToGive);
+            BuildingController.GetHospitalBuilding().HospitalBuildingConfig.MedicineToGive);
     }
     
     private void UpdateHealUnitGOButtonState()

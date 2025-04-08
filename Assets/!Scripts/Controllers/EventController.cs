@@ -5,199 +5,181 @@ using Newtonsoft.Json;
 using Cysharp.Threading.Tasks;
 using Zenject;
 using System.IO;
+using DG.Tweening;
 using UniRx;
 
 public class EventController : MonoInit
 {
+    [Header("Camera Animation Points")]
+    [SerializeField] private Transform cameraPointA;
+    [SerializeField] private Transform cameraPointB;
+    [SerializeField,Range(1,5)] private float gameOverAnimationDuration;
+    
     private bool _isGameOver;
-
     private Dictionary<string, PopupEvent> _specificEvents;
 
     private PopUpsController _popUpsController;
     private TimeController _timeController;
     private MainGameController _mainGameController;
+    private Camera _camera;
 
     public readonly Subject<Unit> OnSnowStarted = new();
-    public readonly Subject<Unit> OnNewActionPoints = new();
+    public readonly Subject<Unit> OnNewActionPointsAdded = new();
     public readonly Subject<PopupEvent> OnQuestTriggered = new();
+    public readonly Subject<Unit> OnGameOverStarted = new();
+
+    private const string FileName = "specificEvents.json";
+    private const string EventFileUrl = "https://drive.google.com/uc?export=download&id=1ntL2TWuR70Dpi8gooGGMTca0V9LKadUB";
 
     [Inject]
-    public void Construct(PopUpsController popUpsController,TimeController timeController,
-        MainGameController mainGameController)
+    public void Construct(PopUpsController popUpsController, TimeController timeController,
+        MainGameController mainGameController,Camera mainCamera)
     {
         _popUpsController = popUpsController;
         _timeController = timeController;
         _mainGameController = mainGameController;
+        _camera = mainCamera;
     }
 
-    public override void Init()
+    public override UniTask Init()
     {
         base.Init();
         _timeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => OnPeriodChanged())
             .AddTo(this);
 
-        LoadEvents();
+        LoadEvents().Forget();
+        return UniTask.CompletedTask;
     }
 
-    private async void LoadEvents()
-{
-    _specificEvents = new Dictionary<string, PopupEvent>();
-
-    const string FILE_NAME = "specificEvents.json";
-    const string EVENT_FILE_URL = "https://drive.google.com/uc?export=download&id=1ntL2TWuR70Dpi8gooGGMTca0V9LKadUB";
-
-    var persistentPath = Path.Combine(Application.persistentDataPath, FILE_NAME);
-
-    string jsonContent;
-
-    var isInternetAvailable = Application.internetReachability != NetworkReachability.NotReachable;
-
-    if (isInternetAvailable)
+    private async UniTaskVoid LoadEvents()
     {
-        Debug.Log("Есть интернет, пытаюсь скачать файл...");
-        
-        using var www = UnityEngine.Networking.UnityWebRequest.Get(EVENT_FILE_URL);
-        
-        await www.SendWebRequest();
+        _specificEvents = new Dictionary<string, PopupEvent>();
+        var persistentPath = Path.Combine(Application.persistentDataPath, FileName);
+        string jsonContent;
 
-        if (www.result == UnityEngine.Networking.UnityWebRequest.Result.Success)
-        {
-            jsonContent = www.downloadHandler.text;
-            File.WriteAllText(persistentPath, jsonContent);
-            Debug.Log("Файл успешно скачан и сохранён.");
-        }
-        else
-        {
-            Debug.LogWarning($"Ошибка при скачивании: {www.error}");
+        bool hasInternet = Application.internetReachability != NetworkReachability.NotReachable;
 
-            if (File.Exists(persistentPath))
+        if (hasInternet)
+        {
+            Debug.Log("Есть интернет, пытаюсь скачать файл...");
+
+            using var www = UnityEngine.Networking.UnityWebRequest.Get(EventFileUrl);
+            await www.SendWebRequest();
+
+            if (www.result == UnityEngine.Networking.UnityWebRequest.Result.Success)
             {
-                jsonContent = File.ReadAllText(persistentPath);
-                Debug.Log("Загружен локальный кэш-файл после ошибки.");
+                jsonContent = www.downloadHandler.text;
+                File.WriteAllText(persistentPath, jsonContent);
+                Debug.Log("Файл успешно скачан и сохранён.");
             }
             else
             {
-                Debug.LogError("Нет ни скачанного, ни локального файла. Невозможно продолжить.");
-                return;
+                Debug.LogWarning($"Ошибка при скачивании: {www.error}");
+                jsonContent = TryLoadLocalFile(persistentPath);
+                if (jsonContent == null) return;
             }
-        }
-    }
-    else
-    {
-        Debug.LogWarning("Интернет не найден, пробую использовать локальный файл...");
-
-        if (File.Exists(persistentPath))
-        {
-            jsonContent = File.ReadAllText(persistentPath);
-            Debug.Log("Файл загружен из локального хранилища.");
         }
         else
         {
-            Debug.LogError("Нет интернета и нет локального файла!");
-            return;
+            Debug.LogWarning("Интернет не найден, пробую использовать локальный файл...");
+            jsonContent = TryLoadLocalFile(persistentPath);
+            if (jsonContent == null) return;
+        }
+
+        var specificEventsData = JsonConvert.DeserializeObject<PopupEventData>(jsonContent);
+        foreach (var e in specificEventsData.events)
+        {
+            var key = e.date + e.period;
+            _specificEvents[key] = e;
         }
     }
 
-    var specificEventsData = JsonConvert.DeserializeObject<PopupEventData>(jsonContent);
-
-    foreach (var e in specificEventsData.events)
+    private string TryLoadLocalFile(string path)
     {
-        var eventKey = e.date + e.period;
-        _specificEvents[eventKey] = e;
-    }
-}
+        if (File.Exists(path))
+        {
+            Debug.Log("Файл загружен из локального хранилища.");
+            return File.ReadAllText(path);
+        }
 
+        Debug.LogError("Нет интернета и нет локального файла!");
+        return null;
+    }
 
     private async void OnPeriodChanged()
     {
-        // Delay to check WIN/LOSE condition
         await UniTask.Delay(1);
 
-        if (_mainGameController.GameOverState == MainGameController.GameOverStateEnum.Win)
+        switch (_mainGameController.GameOverState)
         {
-            OnGameWonEventShow();
-        }
-        else if (_mainGameController.GameOverState == MainGameController.GameOverStateEnum.StabilityLose)
-        {
-            OnStabilityGameLoseEventShow();
+            case MainGameController.GameOverStateEnum.Win:
+                StartGameOver("ПОБЕДА",
+                    "Вы смогли вовремя отправить все материалы и дождаться помощи от правительства. " +
+                    "Дружеская техника проезжает по нашим дорогам и движется на передовую чтобы спасти нашу страну.");
+                return;
+
+            case MainGameController.GameOverStateEnum.StabilityLose:
+                StartGameOver("ВАС СВЕРГЛИ",
+                    "Вы не смогли сработаться с собственными согражданами и ни утратили веру в вас. " +
+                    "Народ принял решение, что лучшим наказанием для вас будет расстрел у берегу озера");
+                return;
+            
+            case MainGameController.GameOverStateEnum.NoTimeLeftLose:
+                StartGameOver("ДРУЖЕСТВЕННЫЕ ВОЙСКА НЕ УСПЕЛИ",
+                    "Прошло слишком много времени. Союзные силы не могут вечно держать оборону без достаточной поддержки государства. " +
+                    "Сегодня было сообщено что оставшиеся силы сдались в плен и теперь проход к Звездограду открыт. " +
+                    "По прибытии вражеских войск город был отдан без сенного сопротивления. " +
+                    "Третий рейх основал Рейхскомиссариат Штерненштад.");
+                return;
         }
 
-        if (_isGameOver)
-        {
-            return;
-        }
+        if (_isGameOver) return;
 
-        var currentDate = _timeController.CurrentDate;
-        var currentPeriod = _timeController.CurrentPeriod.ToString();
-        
-        var eventKey = currentDate.ToString("yyyy-MM-dd") + currentPeriod;
-        
+        var eventKey = _timeController.CurrentDate.ToString("yyyy-MM-dd") + _timeController.CurrentPeriod;
         if (_specificEvents.TryGetValue(eventKey, out var popupEvent))
         {
-            if (!string.IsNullOrEmpty(popupEvent.subEvent))
-            {
-                Debug.Log(popupEvent.subEvent);
-
-                if (popupEvent.subEvent == "Snow")
-                {
-                    OnSnowStarted.OnNext(Unit.Default);
-                }
-                if (popupEvent.subEvent == "NewActionPoints")
-                {
-                    OnNewActionPoints.OnNext(Unit.Default);
-                }
-            }
-
-            // Handle building type and popup events
+            TriggerSubEvents(popupEvent);
             if (!string.IsNullOrEmpty(popupEvent.buildingType))
             {
-                // Check for specific building types (Food, Medicine, City Hall, etc.)
                 OnQuestTriggered.OnNext(popupEvent);
             }
 
-            // Show the popup
-            _popUpsController.EventPopUp.ShowEventPopUp(
-                popupEvent.title,
-                popupEvent.mainText,
-                popupEvent.buttonText);
+            _popUpsController.EventPopUp.ShowEventPopUp(popupEvent.title, popupEvent.mainText, popupEvent.buttonText);
         }
     }
 
-    private void OnGameWonEventShow()
+    private void TriggerSubEvents(PopupEvent popupEvent)
     {
-        _isGameOver = true;
-        _popUpsController.EventPopUp.ShowEventPopUp(
-            "ПОБЕДА",
-            " Вы смогли вовремя отправить все материалы и дождаться помощи от правительства. " +
-            "Дружеская техника проезжает по нашим дорогам и движется на передовую чтобы спасти нашу страну. ",
-            "ГЛАВНОЕ МЕНЮ");
+        if (string.IsNullOrEmpty(popupEvent.subEvent)) return;
+
+        Debug.Log(popupEvent.subEvent);
+
+        switch (popupEvent.subEvent)
+        {
+            case "Snow":
+                OnSnowStarted.OnNext(Unit.Default);
+                break;
+            case "NewActionPoints":
+                OnNewActionPointsAdded.OnNext(Unit.Default);
+                break;
+        }
     }
 
-    private void OnStabilityGameLoseEventShow()
+    private async void StartGameOver(string title, string mainText)
     {
+        OnGameOverStarted.OnNext(Unit.Default);
+        
         _isGameOver = true;
-        _popUpsController.EventPopUp.ShowEventPopUp(
-            "ВАС СВЕРГЛИ",
-            " В тяжелые времена встает вопрос решений. Вы не смогли сработаться с собственными согражданами и " +
-            "ни утратили веру в вас. Вы повергли граждан в ужасное состояние они погибают от стресса и мысли что вы не на их стороне. " +
-            "Народ принял решение, что лучшим наказанием для вас будет расстрел у берегу озера",
-            "ГЛАВНОЕ МЕНЮ");
-    }
-    
-    private void OnWarMaterialGameLoseEventShow()
-    {
-        _isGameOver = true;
-        _popUpsController.EventPopUp.ShowEventPopUp(
-            "ДРУЖЕСТВЕННЫЕ ВОЙСКА НЕ УСПЕЛИ",
-            "Прошло слишком много времени. Союзные силы не могут вечно держать оборону без достаточной поддержки государства. " +
-            "Сегодня было сообщено что оставшиеся силы сдались в плен и теперь проход к Звездограду открыт. " +
-            "По прибытии вражеских войск город был отдан без сенного сопротивления. Третий рейх основал Рейхскомиссариат Штерненштад ",
-            "ГЛАВНОЕ МЕНЮ");
+        _camera.transform.position = cameraPointA.position;
+        _camera.transform.rotation = cameraPointA.rotation;
+        
+        await _camera.transform.DOMove(cameraPointB.position, gameOverAnimationDuration).
+            SetEase(Ease.InOutSine).AsyncWaitForCompletion();
+        
+        _popUpsController.EventPopUp.ShowEventPopUp(title, mainText, "ГЛАВНОЕ МЕНЮ");
     }
 }
-
-
 
 [Serializable]
 public class PopupEvent

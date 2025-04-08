@@ -6,8 +6,7 @@ public class CityHallBuilding : RepairableBuilding
 {
     [Header("CITY HALL SETTINGS")]
     [SerializeField] private CityHallBuildingConfig cityHallConfig;
-
-    public int ReadyMaterialsToCreateNewPeopleUnit { get; private set; }
+    public CityHallBuildingConfig CityHallBuildingConfig => cityHallConfig;
     public int RelationWithGovernment { get; private set; }
     public int DaysLeftToReceiveGovHelp { get; private set; }
     public int DaysLeftToSendArmyMaterials { get; private set; }
@@ -21,6 +20,7 @@ public class CityHallBuilding : RepairableBuilding
     public readonly Subject<Unit> OnCityHallUnitCreated = new();
     public readonly Subject<int> OnNewActionPointsStartedCreating = new();
     public readonly Subject<Unit> OnNewActionPointsCreated = new();
+    public readonly Subject<Unit> OnLastMilitaryHelpSent = new();
     private bool _isCreatingActionPoints;
 
     public override void Init()
@@ -35,10 +35,10 @@ public class CityHallBuilding : RepairableBuilding
             .Subscribe(_ => OnNextTurnEvent())
             .AddTo(this);
 
-        ReadyMaterialsToCreateNewPeopleUnit = cityHallConfig.ReadyMaterialsToCreateNewPeopleUnit;
-        RelationWithGovernment = cityHallConfig.RelationWithGovernment;
+        RelationWithGovernment = cityHallConfig.RelationWithGovernmentOriginal;
         DaysLeftToReceiveGovHelp = cityHallConfig.DaysLeftToReceiveGovHelpOriginal;
         DaysLeftToSendArmyMaterials = cityHallConfig.DaysLeftToSendArmyMaterialsOriginal;
+            
         _isWorking = false;
         _isCreatingActionPoints = false;
         _amountOfHelpSent = 0;
@@ -139,6 +139,7 @@ public class CityHallBuilding : RepairableBuilding
 
         if (_amountOfHelpSent >= cityHallConfig.AmountOfHelpNeededToSend)
         {
+            OnLastMilitaryHelpSent.OnNext(Unit.Default);
             TimeController.WaitDaysAndExecute(MainGameController.MainGameControllerConfig.DayAfterLastArmyMaterialSendWin, () =>
             {
                 MainGameController.GameOverState = MainGameController.GameOverStateEnum.Win;
@@ -151,7 +152,7 @@ public class CityHallBuilding : RepairableBuilding
     {
         _isWorking = true;
         _turnsToCreateNewUnit = cityHallConfig.TurnsToCreateNewUnitOriginal;
-        ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.ReadyMaterials, -ReadyMaterialsToCreateNewPeopleUnit));
+        ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.ReadyMaterials, -cityHallConfig.ReadyMaterialsToCreateNewPeopleUnit));
     }
     
     public void ActionPointsStartedCreating(int amountOfReadyUnitsToCreateNewActionPoints)

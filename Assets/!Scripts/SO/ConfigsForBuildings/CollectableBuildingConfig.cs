@@ -9,8 +9,8 @@ public class CollectableBuildingConfig : ScriptableObject
     [Range(1, 10), SerializeField] private int peopleToCollect;
 
     [Header("Turns Settings")]
-    [SerializeField] private int turnsToCollectOriginal;
-    [SerializeField] private int turnsToRest;
+    [Range(1, 10), SerializeField] private int turnsToCollectOriginal;
+    [Range(1, 10), SerializeField] private int turnsToRest;
 
     public int RawMaterialsLeft => rawMaterialsLeft;
     public int RawMaterialsGet => rawMaterialsGet;

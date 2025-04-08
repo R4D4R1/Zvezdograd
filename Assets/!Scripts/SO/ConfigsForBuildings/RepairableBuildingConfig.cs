@@ -4,7 +4,6 @@ using UnityEngine.Serialization;
 [CreateAssetMenu(fileName = "BuildingConfig", menuName = "BuildingConfigs/RepairableBuildingConfig")]
 public class RepairableBuildingConfig : ScriptableObject
 {
-    [FormerlySerializedAs("_damagedBuildingNameText")]
     [Header("Building Info")]
     [SerializeField] private string damagedBuildingLabel;
     [FormerlySerializedAs("damagedDescription")] [FormerlySerializedAs("_damagedDescriptionText")] [SerializeField] private string damagedBuildingDescription;

@@ -114,21 +114,21 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _Metallic: 0.706
+    - _Metallic: 0.5
     - _OcclusionStrength: 1
-    - _Occlussion: 0.772
+    - _Occlussion: 0.75
     - _Parallax: 0.005
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _Smoothness: 0.799
+    - _Smoothness: 0.75
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
     - _Test: 0
-    - _Transparency: 0.806
+    - _Transparency: 0.8
     - _Wave_Height: 3
     - _Wave_Speed: 0.05
     - _Wave_Stength: 10

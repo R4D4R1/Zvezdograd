@@ -3,17 +3,11 @@ using UnityEngine;
 using UniRx;
 using UnityEngine.Serialization;
 
-public class RepairableBuilding : ChangeMaterialsBuiliding
+public class RepairableBuilding : ChangeMaterialsBuilding
 {
-    [FormerlySerializedAs("_repairableConfig")]
     [Header("REPAIRABLE SETTINGS")]
     [SerializeField] private RepairableBuildingConfig repairableConfig;
-
-    public string DamagedBuildingLabel { get; private set; }
-    public string DamagedBuildingDescription { get; private set; }
-    public int PeopleToRepair { get; private set; }
-    public int BuildingMaterialsToRepair { get; private set; }
-    public int TurnsToRestFromRepair { get; private set; }
+    public RepairableBuildingConfig RepairableBuildingConfig => repairableConfig;
     
     protected int TurnsToRepair { get; set; }
 
@@ -53,12 +47,6 @@ public class RepairableBuilding : ChangeMaterialsBuiliding
 
         UpdateBuildingModel();
         UpdateAmountOfTurnsNeededToDoSMTH();
-
-        PeopleToRepair = repairableConfig.PeopleToRepair;
-        BuildingMaterialsToRepair = repairableConfig.BuildingMaterialsToRepair;
-        TurnsToRestFromRepair = repairableConfig.TurnsToRestFromRepair;
-        DamagedBuildingLabel = repairableConfig.DamagedBuildingLabel;
-        DamagedBuildingDescription = repairableConfig.DamagedBuildingDescription;
     }
 
     private void UpdateAmountOfTurnsNeededToDoSMTH()

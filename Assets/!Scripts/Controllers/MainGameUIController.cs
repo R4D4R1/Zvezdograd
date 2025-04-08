@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using DG.Tweening;
 using Zenject;
@@ -6,7 +7,7 @@ using UniRx;
 using UnityEngine.Serialization;
 
 public class MainGameUIController : MonoInit
-{ 
+{
     [FormerlySerializedAs("_settingsMenu")] [SerializeField] private GameObject settingsMenu;
     [FormerlySerializedAs("_turnOffUIParent")] [SerializeField] private GameObject turnOffUIParent;
     [SerializeField] private float fadeDuration = 0.5f;
@@ -17,15 +18,18 @@ public class MainGameUIController : MonoInit
     public readonly Subject<Unit> OnUITurnOn = new();
     public readonly Subject<Unit> OnUITurnOff = new();
     public readonly Subject<Unit> OnMainMenuLoad = new();
-    
+
     private TutorialController _tutorialController;
     private LoadLevelController _loadLevelController;
     private MainGameController _mainGameController;
     private SettingsController _settingsController;
 
     [Inject]
-    public void Construct(TutorialController tutorialController, LoadLevelController loadLevelController,
-        MainGameController mainGameController, SettingsController settingsController)
+    public void Construct(
+        TutorialController tutorialController,
+        LoadLevelController loadLevelController,
+        MainGameController mainGameController,
+        SettingsController settingsController)
     {
         _tutorialController = tutorialController;
         _loadLevelController = loadLevelController;
@@ -33,23 +37,21 @@ public class MainGameUIController : MonoInit
         _settingsController = settingsController;
     }
 
-    public override void Init()
+    public override UniTask Init()
     {
         base.Init();
+
         _tutorialController.OnTutorialStarted
-           .Subscribe(_ => TurnOnUIForTutorial())
-           .AddTo(this);
+            .Subscribe(_ => TurnOnUIForTutorial())
+            .AddTo(this);
 
-        _turnOffUICanvasGroup = turnOffUIParent.GetComponent<CanvasGroup>();
+        _turnOffUICanvasGroup = turnOffUIParent.GetComponent<CanvasGroup>() 
+                                ?? turnOffUIParent.AddComponent<CanvasGroup>();
 
-        if (!_turnOffUICanvasGroup)
-        {
-            _turnOffUICanvasGroup = turnOffUIParent.AddComponent<CanvasGroup>();
-        }
-
+        // Устанавливаем начальное состояние UI
+        SetCanvasGroupState(_turnOffUICanvasGroup, false);
         _turnOffUICanvasGroup.alpha = 0;
-        _turnOffUICanvasGroup.interactable = false;
-        _turnOffUICanvasGroup.blocksRaycasts = false;
+        return UniTask.CompletedTask;
     }
 
     public void TurnOnMenu()
@@ -68,31 +70,25 @@ public class MainGameUIController : MonoInit
 
     private void TurnOnUIForTutorial()
     {
-        _turnOffUICanvasGroup.alpha = 0;
-        _turnOffUICanvasGroup.interactable = false;
-        _turnOffUICanvasGroup.blocksRaycasts = false;
-        
-        _turnOffUICanvasGroup.DOFade(1f, fadeDuration);
+        _turnOffUICanvasGroup.DOFade(1f, fadeDuration)
+            .OnComplete(() => SetCanvasGroupState(_turnOffUICanvasGroup, false));
     }
 
     public void TurnOnUI()
     {
         OnUITurnOn.OnNext(Unit.Default);
 
-        _turnOffUICanvasGroup.DOFade(1f, fadeDuration).OnComplete(() => {
-            _turnOffUICanvasGroup.interactable = true;
-            _turnOffUICanvasGroup.blocksRaycasts = true;
-        });
+        _turnOffUICanvasGroup.DOFade(1f, fadeDuration)
+            .OnComplete(() => SetCanvasGroupState(_turnOffUICanvasGroup, true));
     }
 
     public void TurnOffUI()
     {
-        OnUITurnOff.OnNext(Unit.Default);
+        if(_mainGameController.GameOverState == MainGameController.GameOverStateEnum.Playing)
+            OnUITurnOff.OnNext(Unit.Default);
 
-        _turnOffUICanvasGroup.DOFade(0f, fadeDuration).OnComplete(() => {
-            _turnOffUICanvasGroup.interactable = false;
-            _turnOffUICanvasGroup.blocksRaycasts = false;
-        });
+        _turnOffUICanvasGroup.DOFade(0f, fadeDuration)
+            .OnComplete(() => SetCanvasGroupState(_turnOffUICanvasGroup, false));
     }
 
     public void LoadMainMenu()
@@ -105,9 +101,15 @@ public class MainGameUIController : MonoInit
     {
         _settingsController.Activate();
     }
-    
+
     public void CloseSettingsMenu()
     {
         _settingsController.Deactivate();
+    }
+
+    private void SetCanvasGroupState(CanvasGroup canvasGroup, bool interactive)
+    {
+        canvasGroup.interactable = interactive;
+        canvasGroup.blocksRaycasts = interactive;
     }
 }

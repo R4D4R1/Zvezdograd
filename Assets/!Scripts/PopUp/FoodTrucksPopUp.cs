@@ -45,7 +45,6 @@ public class FoodTrucksPopUp : QuestPopUp
     {
         if (CanGiveAwayProvision())
         {
-
             SetButtonState(giveFoodBtnParent,false);
             BuildingController.GetFoodTruckBuilding().SendPeopleToGiveProvision();
         }
@@ -57,7 +56,7 @@ public class FoodTrucksPopUp : QuestPopUp
             //HasEnoughPeople(BuildingController.GetFoodTruckBuilding().PeopleToGiveProvision) &&
                
                HasEnoughResources(ResourceModel.ResourceType.Provision,
-               BuildingController.GetFoodTruckBuilding().FoodToGive)
-               && CanUseActionPoint();
+               BuildingController.GetFoodTruckBuilding().FoodTrucksBuildingConfig.FoodToGive) &&
+               CanUseActionPoint();
     }
 }

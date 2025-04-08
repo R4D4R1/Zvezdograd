@@ -5,13 +5,11 @@ using UnityEngine.Serialization;
 
 public class FoodTrucksBuilding : RepairableBuilding
 {
-    [FormerlySerializedAs("_foodTrucksConfig")]
     [Header("FOOD TRUCKS SETTINGS")]
     [SerializeField] private FoodTrucksBuildingConfig foodTrucksConfig;
+    public FoodTrucksBuildingConfig FoodTrucksBuildingConfig => foodTrucksConfig;
 
     private int TurnsToToGiveProvision { get; set; }
-    public int PeopleToGiveProvision { get; private set; }
-    public int FoodToGive { get; private set; }
 
     // SAVE DATA
     private bool IsFoodGivenAwayToday { get; set; }
@@ -24,9 +22,6 @@ public class FoodTrucksBuilding : RepairableBuilding
             .AddTo(this);
 
         UpdateAmountOfTurnsNeededToDoSmth();
-
-        PeopleToGiveProvision = foodTrucksConfig.PeopleToGiveProvision;
-        FoodToGive = foodTrucksConfig.FoodToGive;
         
         IsFoodGivenAwayToday = false;
     }
@@ -39,8 +34,8 @@ public class FoodTrucksBuilding : RepairableBuilding
     public void SendPeopleToGiveProvision()
     {
         IsFoodGivenAwayToday = true;
-        // PeopleUnitsController.AssignUnitsToTask(foodTrucksConfig.PeopleToGiveProvision,
-        //     TurnsToToGiveProvision, foodTrucksConfig.TurnsToRestFromProvisionJob);
+        PeopleUnitsController.AssignUnitsToTask(foodTrucksConfig.PeopleToGiveProvision,
+            TurnsToToGiveProvision, foodTrucksConfig.TurnsToRestFromProvisionJob);
 
         ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Provision, -foodTrucksConfig.FoodToGive));
         ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, foodTrucksConfig.StabilityAddValue));

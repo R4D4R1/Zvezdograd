@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class PopUpsController : MonoInit
@@ -12,7 +13,7 @@ public class PopUpsController : MonoInit
     public EventPopUp EventPopUp  { get; private set; }
 
 
-    public override void Init()
+    public override UniTask Init()
     {
         base.Init();
         FoodTrucksPopUp = FindFirstObjectByType<FoodTrucksPopUp>();
@@ -30,5 +31,6 @@ public class PopUpsController : MonoInit
         FactoryPopUp.Init();
         CollectPopUp.Init();
         RepairPopUp.Init();
+        return UniTask.CompletedTask;
     }
 }

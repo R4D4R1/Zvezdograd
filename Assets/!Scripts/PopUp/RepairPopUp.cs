@@ -13,8 +13,8 @@ public class RepairPopUp : EnoughPopUp
     {
         _buildingToUse = buildingToRepair;
 
-        _demandsText.text = $" - {_buildingToUse.PeopleToRepair} подразделений\n" +
-                            $" - {_buildingToUse.BuildingMaterialsToRepair} стройматериалов \n";
+        _demandsText.text = $" - {_buildingToUse.RepairableBuildingConfig.PeopleToRepair} подразделений\n" +
+                            $" - {_buildingToUse.RepairableBuildingConfig.BuildingMaterialsToRepair} стройматериалов \n";
         ShowPopUp();
     }
 
@@ -30,8 +30,9 @@ public class RepairPopUp : EnoughPopUp
 
     private bool CanRepairBuilding()
     {
-        return HasEnoughPeople(_buildingToUse.PeopleToRepair) &&
-               HasEnoughResources(ResourceModel.ResourceType.ReadyMaterials, _buildingToUse.BuildingMaterialsToRepair) &&
+        return HasEnoughPeople(_buildingToUse.RepairableBuildingConfig.PeopleToRepair) &&
+               HasEnoughResources(ResourceModel.ResourceType.ReadyMaterials,
+                   _buildingToUse.RepairableBuildingConfig.BuildingMaterialsToRepair) &&
                CanUseActionPoint();
     }
 }

@@ -19,8 +19,8 @@ public class CollectPopUp : EnoughPopUp
     private void UpdateDemandsText()
     {
         demandsText.text = $" - Осталось {_buildingToUse.RawMaterialsLeft} сырья\n" +
-                            $" - Будет собрано {_buildingToUse.RawMaterialsGet} \n" +
-                            $" - Необходимо {_buildingToUse.PeopleToCollect} подразделений \n";
+                            $" - Будет собрано {_buildingToUse.CollectableBuildingConfig.RawMaterialsGet} \n" +
+                            $" - Необходимо {_buildingToUse.CollectableBuildingConfig.PeopleToCollect} подразделений \n";
     }
 
     public void CollectBuilding()
@@ -34,8 +34,8 @@ public class CollectPopUp : EnoughPopUp
 
     private bool CanCollectBuilding()
     {
-        return HasEnoughPeople(_buildingToUse.PeopleToCollect) &&
-               HasEnoughSpaceForResources(ResourceModel.ResourceType.RawMaterials,_buildingToUse.RawMaterialsGet) &&
+        return HasEnoughPeople(_buildingToUse.CollectableBuildingConfig.PeopleToCollect) &&
+               HasEnoughSpaceForResources(ResourceModel.ResourceType.RawMaterials,_buildingToUse.CollectableBuildingConfig.RawMaterialsGet) &&
                HasRawMaterialsInBuilding() &&
                CanUseActionPoint();
     }

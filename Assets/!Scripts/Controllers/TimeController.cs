@@ -18,34 +18,32 @@ public class TimeController : MonoInit
     [SerializeField] private TextMeshProUGUI dayText;
     [SerializeField] private TextMeshProUGUI periodText;
     [SerializeField] private Image blackoutImage;
-
     [SerializeField] private TextMeshProUGUI actionPointsText;
 
     [SerializeField] private Button nextTurnBtn;
     [FormerlySerializedAs("_btnScripts")] [SerializeField] private MonoBehaviour[] btnScripts;
 
-    [Range(1,3),SerializeField] private int increaseMaxAPValue;
-    [Range(1,3),SerializeField] private int increaseAddAPValue;
+    [Range(1, 3), SerializeField] private int increaseMaxAPValue;
+    [Range(1, 3), SerializeField] private int increaseAddAPValue;
 
     private int _localIncreaseMaxAPValue;
     private int _localIncreaseAddAPValue;
-    
-    public Button NextTurnButton => nextTurnBtn;
 
     private readonly DateTime _startDate = new(1942, 10, 30);
+    private readonly List<DelayedAction> _delayedActions = new();
 
     private ReactiveProperty<DateTime> _currentDate;
     private ReactiveProperty<PeriodOfDay> _currentPeriod;
     private ReactiveProperty<int> _actionPoints;
-    
-    public DateTime CurrentDate => _currentDate.Value;
-    public PeriodOfDay CurrentPeriod => _currentPeriod.Value;
-    
+
     private PopUpsController _popUpsController;
     private TimeControllerConfig _timeControllerConfig;
     private TutorialController _tutorialController;
     private BuildingController _buildingController;
 
+    public Button NextTurnButton => nextTurnBtn;
+    public DateTime CurrentDate => _currentDate.Value;
+    public PeriodOfDay CurrentPeriod => _currentPeriod.Value;
     public readonly Subject<Unit> OnNextDayEvent = new();
     public readonly Subject<Unit> OnNextTurnBtnClickStarted = new();
     public readonly Subject<Unit> OnNextTurnBtnClickBetween = new();
@@ -61,7 +59,7 @@ public class TimeController : MonoInit
     private class DelayedAction
     {
         public int DaysRemaining;
-        public Action Action;
+        public readonly Action Action;
 
         public DelayedAction(int days, Action action)
         {
@@ -69,8 +67,6 @@ public class TimeController : MonoInit
             Action = action;
         }
     }
-
-    private readonly List<DelayedAction> _delayedActions = new();
 
     [Inject]
     public void Construct(PopUpsController popUpsController, TimeControllerConfig timeControllerConfig,
@@ -82,9 +78,10 @@ public class TimeController : MonoInit
         _buildingController = buildingController;
     }
 
-    public override void Init()
+    public override UniTask Init()
     {
         base.Init();
+
         _currentDate = new ReactiveProperty<DateTime>(_startDate);
         _currentPeriod = new ReactiveProperty<PeriodOfDay>(PeriodOfDay.Morning);
         _actionPoints = new ReactiveProperty<int>(_timeControllerConfig.ActionPointsMaxValue);
@@ -109,26 +106,21 @@ public class TimeController : MonoInit
         _buildingController.GetCityHallBuilding().OnNewActionPointsCreated
             .Subscribe(_ => NewActionPointsCreated())
             .AddTo(this);
-        
+
         _tutorialController.OnTutorialStarted
             .Subscribe(_ => DisableNextTurnLogic())
             .AddTo(this);
-        
+
         _localIncreaseMaxAPValue = 0;
         _localIncreaseAddAPValue = 0;
 
         UpdateTime();
+        return UniTask.CompletedTask;
     }
 
-    private void OnEnable()
-    {
-        _tutorialController.OnTutorialEnd.AddListener(EnableNextTurnLogic);
-    }
+    private void OnEnable() => _tutorialController.OnTutorialEnd.AddListener(EnableNextTurnLogic);
 
-    private void OnDisable()
-    {
-        _tutorialController.OnTutorialEnd.RemoveAllListeners();
-    }
+    private void OnDisable() => _tutorialController.OnTutorialEnd.RemoveAllListeners();
 
     private void Update()
     {
@@ -138,22 +130,16 @@ public class TimeController : MonoInit
         }
     }
 
-    public void EnableNextTurnLogic()
-    {
-        nextTurnBtn.interactable = true;
-    }
+    public void EnableNextTurnLogic() => nextTurnBtn.interactable = true;
     
-    public void DisableNextTurnLogic()
-    {
-        nextTurnBtn.interactable = false;
-    }
+    public void DisableNextTurnLogic() => nextTurnBtn.interactable = false;
 
     private void NewActionPointsCreated()
     {
         _localIncreaseMaxAPValue = increaseMaxAPValue;
         _localIncreaseAddAPValue = increaseAddAPValue;
     }
-    
+
     public bool OnActionPointUsed()
     {
         if (_actionPoints.Value > 0)
@@ -177,7 +163,6 @@ public class TimeController : MonoInit
             case PeriodOfDay.Evening:
                 _currentPeriod.SetValueAndForceNotify(PeriodOfDay.Morning);
                 _currentDate.Value = _currentDate.Value.AddDays(1);
-
                 OnNextDayEvent.OnNext(Unit.Default);
                 ProcessDelayedActions();
                 break;
@@ -189,7 +174,7 @@ public class TimeController : MonoInit
         UpdateLighting();
         UpdateText();
     }
-    
+
     private void UpdateLighting()
     {
         morningLight.enabled = _currentPeriod.Value == PeriodOfDay.Morning;
@@ -214,6 +199,7 @@ public class TimeController : MonoInit
     {
         OnNextTurnBtnClickStarted.OnNext(Unit.Default);
         nextTurnBtn.interactable = false;
+
         foreach (var script in btnScripts) script.enabled = false;
 
         await blackoutImage.DOFade(1, _timeControllerConfig.NextTurnFadeTime / 2).AsyncWaitForCompletion();
@@ -223,9 +209,9 @@ public class TimeController : MonoInit
         AddActionPoints();
 
         await blackoutImage.DOFade(0, _timeControllerConfig.NextTurnFadeTime / 2).AsyncWaitForCompletion();
-        
+
         foreach (var script in btnScripts) script.enabled = true;
-        
+
         if (!_popUpsController.EventPopUp.IsActive)
         {
             EnableNextTurnLogic();
@@ -255,11 +241,12 @@ public class TimeController : MonoInit
         }
     }
 
+    // Method to wait in ingame days and then execute an action
     public void WaitDaysAndExecute(int days, Action action)
     {
         if (days <= 0)
         {
-            action?.Invoke();
+            Debug.LogError($"DAYS CANNOT BE LESS THAN 1!");
             return;
         }
 

@@ -8,14 +8,10 @@ public class FactoryBuilding : RepairableBuilding
     [FormerlySerializedAs("_factoryConfig")]
     [Header("FACTORY CONFIG")]
     [SerializeField] private FactoryBuildingConfig factoryConfig;
+    public FactoryBuildingConfig FactoryBuildingConfig => factoryConfig;
 
     public int TurnsToCreateArmyMaterials { get; private set; }
     public int TurnsToCreateReadyMaterials { get; private set; }
-    public int RawMaterialsToCreateReadyMaterials { get; private set; }
-    public int PeopleToCreateReadyMaterials { get; private set; }
-    public int RawMaterialsToCreateArmyMaterials { get; private set; }
-    public int PeopleToCreateArmyMaterials { get; private set; }
-    public int ReadyMaterialsGet { get; private set; }
 
     private bool _isWorking;
     private bool _isCreatingReadyMaterials;
@@ -30,12 +26,6 @@ public class FactoryBuilding : RepairableBuilding
             .AddTo(this);
 
         UpdateAmountOfTurnsNeededToDoSMTH();
-
-        RawMaterialsToCreateReadyMaterials = factoryConfig.RawMaterialsToCreateReadyMaterials;
-        RawMaterialsToCreateArmyMaterials = factoryConfig.RawMaterialsToCreateArmyMaterials;
-        PeopleToCreateReadyMaterials = factoryConfig.PeopleToCreateReadyMaterials;
-        PeopleToCreateArmyMaterials = factoryConfig.PeopleToCreateArmyMaterials;
-        ReadyMaterialsGet = factoryConfig.ReadyMaterialsGet;
     }
 
     private void UpdateAmountOfTurnsNeededToDoSMTH()

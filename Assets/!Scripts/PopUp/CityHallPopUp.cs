@@ -1,7 +1,6 @@
 using TMPro;
 using UnityEngine;
 using UniRx;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class CityHallPopUp : QuestPopUp
@@ -19,41 +18,48 @@ public class CityHallPopUp : QuestPopUp
     [SerializeField] private Color averageRelationColor;
     [SerializeField] private Color goodRelationColor;
     
-    private CityHallBuilding _building;
-
+    private CityHallBuilding _cityHallBuilding;
+    private bool LastMilitaryHelpSent;
     public override void Init()
     {
         base.Init();
 
-        _building = BuildingController.GetCityHallBuilding();
+        _cityHallBuilding = BuildingController.GetCityHallBuilding();
 
         PeopleUnitsController.OnUnitCreatedByPeopleUnitController
             .Subscribe(_ => UpdateCreateUnitGOButtonState())
             .AddTo(this);
-        
+
         EventController.OnQuestTriggered
             .Subscribe(popupEvent =>
             {
-                if (popupEvent.buildingType == _building.Type.ToString())
+                if (popupEvent.buildingType == _cityHallBuilding.Type.ToString())
                 {
                     EnableQuest(
                         popupEvent.buildingType, popupEvent.questText, popupEvent.deadlineInDays, popupEvent.unitSize,
-                        popupEvent.turnsToWork, popupEvent.turnsToRest, popupEvent.materialsToGet, popupEvent.materialsToLose,
-                        popupEvent.stabilityToGet, popupEvent.stabilityToLose, popupEvent.relationshipWithGovToGet, popupEvent.relationshipWithGovToLose);
+                        popupEvent.turnsToWork, popupEvent.turnsToRest, popupEvent.materialsToGet,
+                        popupEvent.materialsToLose,
+                        popupEvent.stabilityToGet, popupEvent.stabilityToLose, popupEvent.relationshipWithGovToGet,
+                        popupEvent.relationshipWithGovToLose);
                 }
             })
             .AddTo(this);
 
-        EventController.OnNewActionPoints
-            .Subscribe(popupEvent =>
+        EventController.OnNewActionPointsAdded
+            .Subscribe(_ => EnableNewActionPointsQuest())
+            .AddTo(this);
+
+        _cityHallBuilding.OnLastMilitaryHelpSent
+            .Subscribe(_ =>
             {
-                EnableNewActionPointsQuest();
+                LastMilitaryHelpSent = true;
             })
             .AddTo(this);
         
+        LastMilitaryHelpSent = false;
         SetButtonState(createNewUnitBtnParent,true);
     }
-
+    
     private void EnableNewActionPointsQuest()
     {
         enableNewActionPointsQuestGO.SetActive(true);
@@ -64,9 +70,8 @@ public class CityHallPopUp : QuestPopUp
     {
         if (CanCreateNewActionPoints())
         {
-            _building.ActionPointsStartedCreating(amountOfReadyUnitsToCreateNewActionPoints);
+            _cityHallBuilding.ActionPointsStartedCreating(amountOfReadyUnitsToCreateNewActionPoints);
             enableNewActionPointsQuestGO.SetActive(false);
-            //Destroy(enableNewActionPointsQuestGO);
         }
     }
     private bool CanCreateNewActionPoints()
@@ -85,7 +90,7 @@ public class CityHallPopUp : QuestPopUp
     {
         if (CanCreateNewUnit())
         {
-            _building.NewUnitStartedCreating();
+            _cityHallBuilding.NewUnitStartedCreating();
             SetButtonState(createNewUnitBtnParent,false);
         }
     }
@@ -93,20 +98,28 @@ public class CityHallPopUp : QuestPopUp
     private bool CanCreateNewUnit()
     {
         return HasEnoughResources(ResourceModel.ResourceType.ReadyMaterials,
-               _building.ReadyMaterialsToCreateNewPeopleUnit) &&
-               HasEnoughPeople(BuildingController.GetFoodTruckBuilding().PeopleToGiveProvision) &&
+               _cityHallBuilding.CityHallBuildingConfig.ReadyMaterialsToCreateNewPeopleUnit) &&
                CanUseActionPoint();
     }
 
     private void UpdateAllText()
     {
-        relationWithGovernmentText.text = $"Отношение с правительством {GetRelationText(_building.RelationWithGovernment)} {_building.RelationWithGovernment}";
-
-        militaryTimerText.text = _building.IsMaterialsSent
-            ? "Военная помощь отправлена, ожидайте указаний"
-            : $"До конца отправки воен помощи {_building.DaysLeftToSendArmyMaterials} дн.";
-
-        helpFromGovTimerText.text = $"Помощь от гос-ва прибудет через {_building.DaysLeftToReceiveGovHelp} дн.";
+        if (LastMilitaryHelpSent)
+        {
+            militaryTimerText.text = $"Вся военная техника отправлена," +
+                                     $" дождитесь спасения ";
+        }
+        else
+        {
+            militaryTimerText.text = _cityHallBuilding.IsMaterialsSent
+                ? "Военная помощь отправлена, ожидайте указаний"
+                : $"До конца отправки воен помощи {_cityHallBuilding.DaysLeftToSendArmyMaterials} дн.";
+        }
+        
+        relationWithGovernmentText.text = $"Отношение с правительством {GetRelationText(_cityHallBuilding.RelationWithGovernment)}" +
+                                          $" {_cityHallBuilding.RelationWithGovernment}";
+        
+        helpFromGovTimerText.text = $"Помощь от гос-ва прибудет через {_cityHallBuilding.DaysLeftToReceiveGovHelp} дн.";
 
         createPeopleText.text = $"Организовать новое подразделение, осталось {PeopleUnitsController.NotCreatedUnits.Count}";
     }

@@ -22,118 +22,101 @@ public class PeopleUnit : MonoBehaviour
     public int BusyTurns { get; private set; }
     public int RestingTurns { get; private set; }
 
-    // private void Awake()
-    // {
-    //     EnableUnit();
-    // }
-
-    private void EnableUnit()
-    {
-        Color whiteColor = Color.white;
-        _image.DOColor(whiteColor, 0.5f);
-
-        // if (currentState == UnitState.Injured || currentState == UnitState.Resting)
-        // {
-        //     BusyTurns = 0;
-        //     currentState = UnitState.Ready;
-        // }
-    }
-
-    private void DisableUnit()
-    {
-        if (currentState == UnitState.Busy)
-        {
-            Color grayColor = new Color(0.392f, 0.392f, 0.392f);
-            _image.DOColor(grayColor, 0.5f);
-        }
-        else if (currentState == UnitState.Injured)
-        {
-            Color darkRedColor = new Color(0.545f, 0f, 0f);
-            _image.DOColor(darkRedColor, 0.5f);
-        }
-    }
-
-    public UnitState GetCurrentState()
-    {
-        return currentState;
-    }
+    public UnitState GetCurrentState() => currentState;
 
     public void SetState(UnitState state, int busyTurns, int restingTurns)
     {
         currentState = state;
         BusyTurns = busyTurns;
         RestingTurns = restingTurns;
-        
-        UpdateStatusText();
 
+        UpdateStatusText();
+        HandleVisualState();
+    }
+
+    public void UpdateUnitState()
+    {
+        switch (currentState)
+        {
+            case UnitState.Busy:
+                if (BusyTurns > 1)
+                {
+                    BusyTurns--;
+                }
+                else
+                {
+                    SetState(UnitState.Resting, 0, RestingTurns);
+                }
+                break;
+
+            case UnitState.Resting:
+                if (RestingTurns > 1)
+                {
+                    RestingTurns--;
+                }
+                else
+                {
+                    SetState(UnitState.Ready, 0, 0);
+                }
+                break;
+
+            case UnitState.Injured:
+                BusyTurns = 999; // Used for sorting only
+                break;
+        }
+
+        UpdateStatusText();
+    }
+
+    private void HandleVisualState()
+    {
         switch (currentState)
         {
             case UnitState.Ready:
                 EnableUnit();
                 break;
+
             case UnitState.Busy:
             case UnitState.Injured:
             case UnitState.Resting:
                 DisableUnit();
                 break;
+
             case UnitState.NotCreated:
                 gameObject.SetActive(false);
                 break;
+
             default:
                 throw new ArgumentOutOfRangeException();
         }
     }
 
-    public void UpdateUnitState()
+    private void EnableUnit()
     {
-        if (currentState == UnitState.Busy)
+        _image.DOColor(Color.white, 0.5f);
+    }
+
+    private void DisableUnit()
+    {
+        Color targetColor = currentState switch
         {
-            if(BusyTurns>1)
-            {
-                BusyTurns--;
-            }
-            else
-            {
-                SetState(UnitState.Resting,0,RestingTurns);
-            }
-        }
-        else if (currentState == UnitState.Resting)
-        {
-            if (RestingTurns > 1)
-            {
-                RestingTurns--;
-            }
-            else
-            {
-                SetState(UnitState.Ready,0,0);
-            }
-            
-        }
-        else if (currentState == UnitState.Injured)
-        {
-            // Sorting with busy turns
-            BusyTurns = 999;
-        }
-        UpdateStatusText();
+            UnitState.Busy => new Color(0.392f, 0.392f, 0.392f),
+            UnitState.Injured => new Color(0.545f, 0f, 0f),
+            _ => _image.color
+        };
+
+        _image.DOColor(targetColor, 0.5f);
     }
 
     private void UpdateStatusText()
     {
-        if (currentState == UnitState.Busy)
+        _statusText.text = currentState switch
         {
-            _statusText.text = $"ЗАНЯТ {BusyTurns}";
-        }
-        else if (currentState == UnitState.Resting)
-        {
-            _statusText.text = $"ОТДЫХ {RestingTurns}";
-        }
-        else if (currentState == UnitState.Ready)
-        {
-            _statusText.text = $"СВОБОДЕН";
-        }
-        else if (currentState == UnitState.Injured)
-        {
-            _statusText.text = $"РАНЕН";
-        }
+            UnitState.Busy => $"ЗАНЯТ {BusyTurns}",
+            UnitState.Resting => $"ОТДЫХ {RestingTurns}",
+            UnitState.Ready => "СВОБОДЕН",
+            UnitState.Injured => "РАНЕН",
+            _ => string.Empty
+        };
     }
 }

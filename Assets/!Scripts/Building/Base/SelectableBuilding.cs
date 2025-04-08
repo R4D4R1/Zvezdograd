@@ -10,7 +10,7 @@ public class SelectableBuilding : MonoBehaviour
     [Header("DEFAULT SETTINGS")]
     [SerializeField] private SelectableBuildingConfig selectableBuildingConfig;
 
-    [FormerlySerializedAs("BuildingIsSelectable")] [HideInInspector] public bool buildingIsSelectable = true;
+    [HideInInspector] public bool buildingIsSelectable = true;
     
     public string BuildingLabel { get; private set; }
     public string BuildingDescription { get; private set; }

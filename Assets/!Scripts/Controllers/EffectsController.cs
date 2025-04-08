@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Zenject;
@@ -17,12 +18,14 @@ public class EffectsController : MonoInit
         _eventController = eventController;
     }
 
-    public override void Init()
+    public override UniTask Init()
     {
         base.Init();
         _eventController.OnSnowStarted
             .Subscribe(_ => StartedSnowEvent())
             .AddTo(this);
+        
+        return UniTask.CompletedTask;
     }
 
     private void StartedSnowEvent()

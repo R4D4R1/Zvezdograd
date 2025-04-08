@@ -1,5 +1,5 @@
 using System;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Zenject;
@@ -9,16 +9,15 @@ using UnityEngine.Serialization;
 public class BuildingSelectionController : MonoInit
 {
     [FormerlySerializedAs("_canvas")] [SerializeField] private Canvas canvas;
-
     [FormerlySerializedAs("_outlineColor")] [SerializeField] private Color outlineColor;
-    [FormerlySerializedAs("_outlineWidth")] [Range(0f,1f), SerializeField] private float outlineWidth;
+    [FormerlySerializedAs("_outlineWidth")] [Range(0f, 1f), SerializeField] private float outlineWidth;
 
     private SelectableBuilding _currentHoveredObject;
     private SelectableBuilding _selectedBuilding;
     private GameObject _currentPopUp;
     private bool _isActivated;
 
-    // INJECT OBJECTS
+    // Injected dependencies
     private PopUpFactory _popUpFactory;
     private Camera _mainCamera;
     private SoundController _soundController;
@@ -26,12 +25,13 @@ public class BuildingSelectionController : MonoInit
     private MainGameUIController _mainGameUIController;
     private MainGameController _mainGameController;
     private TutorialController _tutorialController;
+    private EventController _eventController;
 
     [Inject]
-    public void Construct(PopUpFactory popUpFactory,Camera mainCamera,
-        SoundController soundController,TimeController timeController,
-        MainGameUIController mainGameUIController,MainGameController mainGameController,
-        TutorialController tutorialController)
+    public void Construct(PopUpFactory popUpFactory, Camera mainCamera,
+        SoundController soundController, TimeController timeController,
+        MainGameUIController mainGameUIController, MainGameController mainGameController,
+        TutorialController tutorialController,EventController eventController)
     {
         _popUpFactory = popUpFactory;
         _mainCamera = mainCamera;
@@ -40,57 +40,43 @@ public class BuildingSelectionController : MonoInit
         _mainGameUIController = mainGameUIController;
         _mainGameController = mainGameController;
         _tutorialController = tutorialController;
+        _eventController = eventController;
     }
 
-    public override void Init()
+    public override UniTask Init()
     {
         base.Init();
+
         _timeController.OnNextTurnBtnClickStarted
-            .Subscribe(_ => Deselect())
-            .AddTo(this);
+            .Subscribe(_ => Deselect()).AddTo(this);
 
         _timeController.OnNextTurnBtnClickEnded
-            .Subscribe(_ => SetSelectionControllerState(true))
-            .AddTo(this);
+            .Subscribe(_ => SetSelectionControllerState(true)).AddTo(this);
 
         _mainGameUIController.OnUITurnOff
-            .Subscribe(_ => Deselect())
-            .AddTo(this);
-
-        _mainGameUIController.OnUITurnOff
-            .Subscribe(_ => SetSelectionControllerState(false))
-            .AddTo(this);
+            .Subscribe(_ => { Deselect(); SetSelectionControllerState(false); }).AddTo(this);
 
         _mainGameUIController.OnUITurnOn
-            .Subscribe(_ => SetSelectionControllerState(true))
-            .AddTo(this);
+            .Subscribe(_ => SetSelectionControllerState(true)).AddTo(this);
 
         _mainGameController.OnGameStarted
-            .Subscribe(_ => SetSelectionControllerState(false))
-            .AddTo(this);
+            .Subscribe(_ => SetSelectionControllerState(false)).AddTo(this);
 
         _tutorialController.OnNewBuildingTutorialShow
-            .Subscribe(_ => Deselect())
-            .AddTo(this);
-        
+            .Subscribe(_ => Deselect()).AddTo(this);
+
         _tutorialController.OnTutorialStarted
-            .Subscribe(_ => SetSelectionControllerState(false))
-            .AddTo(this);
+            .Subscribe(_ => { SetSelectionControllerState(false); Deselect(); }).AddTo(this);
         
-        _tutorialController.OnTutorialStarted
-            .Subscribe(_ => Deselect())
-            .AddTo(this);
+        _eventController.OnGameOverStarted
+            .Subscribe(_ => { SetSelectionControllerState(false); Deselect(); }).AddTo(this);
+
+        
+        return UniTask.CompletedTask;
     }
 
-    private void OnEnable()
-    {
-        _tutorialController.OnTutorialEnd.AddListener(Deselect);
-    }
-
-    private void OnDisable()
-    {
-        _tutorialController.OnTutorialEnd.RemoveAllListeners();
-    }
+    private void OnEnable() => _tutorialController.OnTutorialEnd.AddListener(Deselect);
+    private void OnDisable() => _tutorialController.OnTutorialEnd.RemoveAllListeners();
 
     private void Update()
     {
@@ -104,176 +90,64 @@ public class BuildingSelectionController : MonoInit
     private void SetSelectionControllerState(bool isActive)
     {
         _isActivated = isActive;
+        if (_mainGameController.GameOverState != MainGameController.GameOverStateEnum.Playing)
+        {
+            _isActivated = false;
+        }
     }
 
     private void HandleHover()
     {
-        if (EventSystem.current.IsPointerOverGameObject())
-        {
-            return;
-        }
+        if (EventSystem.current.IsPointerOverGameObject()) return;
 
         Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            SelectableBuilding hitObject = hit.collider.GetComponentInParent<SelectableBuilding>();
+            var hitObject = hit.collider.GetComponentInParent<SelectableBuilding>();
 
             if (hitObject && hitObject.buildingIsSelectable)
             {
                 if (_currentHoveredObject != hitObject)
                 {
-                    if (_currentHoveredObject && _currentHoveredObject != _selectedBuilding)
-                    {
-                        Outline previousOutline = _currentHoveredObject.GetComponentInChildren<Outline>();
-                        if (previousOutline)
-                        {
-                            previousOutline.enabled = false;
-                        }
-                    }
+                    DisableOutline(_currentHoveredObject, exclude: _selectedBuilding);
                     _currentHoveredObject = hitObject;
-                    if (_currentHoveredObject != _selectedBuilding)
-                    {
-                        Outline newOutline = _currentHoveredObject.GetComponentInChildren<Outline>();
-                        if (newOutline)
-                        {
-                            newOutline.enabled = true;
-                        }
-                        _soundController?.PlayHoverSound();
-                    }
+                    EnableOutline(_currentHoveredObject, exclude: _selectedBuilding);
                 }
             }
-            else if (_currentHoveredObject && _currentHoveredObject != _selectedBuilding)
+            else
             {
-                Outline outline = _currentHoveredObject.GetComponentInChildren<Outline>();
-                if (outline)
-                {
-                    outline.enabled = false;
-                }
+                DisableOutline(_currentHoveredObject, exclude: _selectedBuilding);
                 _currentHoveredObject = null;
             }
         }
-        else if (_currentHoveredObject && _currentHoveredObject != _selectedBuilding)
+        else
         {
-            Outline outline = _currentHoveredObject.GetComponentInChildren<Outline>();
-            if (outline)
-            {
-                outline.enabled = false;
-            }
+            DisableOutline(_currentHoveredObject, exclude: _selectedBuilding);
             _currentHoveredObject = null;
         }
     }
 
     private void HandleSelection()
     {
-        if (EventSystem.current.IsPointerOverGameObject())
-        {
-            return;
-        }
+        if (EventSystem.current.IsPointerOverGameObject()) return;
 
         if (Input.GetMouseButtonDown(0))
         {
             Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
-                SelectableBuilding hitObject = hit.collider.GetComponentInParent<SelectableBuilding>();
+                var hitObject = hit.collider.GetComponentInParent<SelectableBuilding>();
 
                 if (hitObject && hitObject.buildingIsSelectable)
                 {
-                    if (hitObject == _selectedBuilding)
-                    {
-                        return;
-                    }
+                    if (hitObject == _selectedBuilding) return;
 
-                    if (_selectedBuilding != null)
-                    {
-                        Outline previousSelectedOutline = _selectedBuilding.GetComponentInChildren<Outline>();
-                        if (previousSelectedOutline != null)
-                        {
-                            previousSelectedOutline.enabled = false;
-                        }
-                        if (_currentPopUp != null)
-                        {
-                            Deselect();
-                        }
-                    }
-
+                    Deselect();
                     _selectedBuilding = hitObject;
-                    Outline selectedOutline = _selectedBuilding.GetComponentInChildren<Outline>();
-
-                    if (selectedOutline)
-                    {
-                        selectedOutline.enabled = true;
-                    }
-
+                    EnableOutline(_selectedBuilding);
                     _soundController?.PlaySelectionSound();
 
-                    if (_selectedBuilding is RepairableBuilding repairableBuilding)
-                    {
-                        if (repairableBuilding.CurrentState == RepairableBuilding.State.Intact
-                          && repairableBuilding.Type == RepairableBuilding.BuildingType.LivingArea)
-                        {
-                            _currentPopUp =  _popUpFactory.CreateInfoPopUp();
-                            InfoPopUp popUpObject = _currentPopUp.GetComponent<InfoPopUp>();
-                            popUpObject.ShowPopUp(_selectedBuilding.BuildingLabel, _selectedBuilding.BuildingDescription);
-                        }
-                        else if (repairableBuilding.CurrentState == RepairableBuilding.State.Intact
-                           && repairableBuilding.Type != RepairableBuilding.BuildingType.LivingArea)
-                        {
-                            _currentPopUp = _popUpFactory.CreateSpecialPopUp();
-                            SpecialPopUp popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
-
-                            popUpObject.ShowPopUp(_selectedBuilding.BuildingLabel, _selectedBuilding.BuildingDescription, "ОТКРЫТЬ");
-
-                            if (repairableBuilding.Type == RepairableBuilding.BuildingType.CityHall)
-                            {
-                                popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenCityHallMenu;
-                            }
-
-                            if (repairableBuilding.Type == RepairableBuilding.BuildingType.Factory)
-                            {
-                                popUpObject.FactoryBuilding = repairableBuilding as FactoryBuilding;
-
-                                popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenFactoryMenu;
-                            }
-
-                            if (repairableBuilding.Type == RepairableBuilding.BuildingType.FoodTrucks)
-                            {
-                                popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenFoodTrucksMenu;
-                            }
-
-                            if (repairableBuilding.Type == RepairableBuilding.BuildingType.Hospital)
-                            {
-                                popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenHospitalMenu;
-                            }
-                        }
-                        else if (repairableBuilding.CurrentState == RepairableBuilding.State.Damaged)
-                        {
-                            _currentPopUp = _popUpFactory.CreateSpecialPopUp();
-                            SpecialPopUp popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
-
-                            popUpObject.ShowPopUp(_selectedBuilding.BuildingLabel, _selectedBuilding.BuildingDescription, "ПОЧИНИТЬ");
-
-                            popUpObject.RepairableBuilding = repairableBuilding;
-                            popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenRepairMenu;
-                        }
-                    }
-
-                    if (_selectedBuilding is CollectableBuilding collectableBuilding)
-                    {
-                        _currentPopUp = _popUpFactory.CreateSpecialPopUp();
-                        SpecialPopUp popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
-
-                        popUpObject.ShowPopUp(_selectedBuilding.BuildingLabel, _selectedBuilding.BuildingDescription, "СОБРАТЬ");
-
-                        popUpObject.CollectableBuilding = collectableBuilding;
-                        popUpObject.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenCollectMenu;
-                    }
-
-                    RectTransform popUpRect = _currentPopUp.GetComponent<RectTransform>();
-                    Vector2 screenPosition = RectTransformUtility.WorldToScreenPoint(_mainCamera, hit.point);
-                    Vector2 localPoint;
-                    RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas.transform as RectTransform, screenPosition, canvas.worldCamera, out localPoint);
-                    _currentPopUp.transform.localPosition = localPoint + new Vector2(popUpRect.rect.width * 0.5f, popUpRect.rect.height * 0.5f);
+                    ShowBuildingPopUp(hitObject, hit.point);
                 }
                 else
                 {
@@ -287,34 +161,100 @@ public class BuildingSelectionController : MonoInit
         }
     }
 
+    private void ShowBuildingPopUp(SelectableBuilding building, Vector3 hitPoint)
+    {
+        if (building is RepairableBuilding repairable)
+        {
+            switch (repairable.CurrentState)
+            {
+                case RepairableBuilding.State.Intact:
+                    if (repairable.Type == RepairableBuilding.BuildingType.LivingArea)
+                    {
+                        _currentPopUp = _popUpFactory.CreateInfoPopUp();
+                        _currentPopUp.GetComponent<InfoPopUp>().ShowPopUp(building.BuildingLabel, building.BuildingDescription);
+                    }
+                    else
+                    {
+                        _currentPopUp = _popUpFactory.CreateSpecialPopUp();
+                        var popup = _currentPopUp.GetComponent<SpecialPopUp>();
+                        popup.ShowPopUp(building.BuildingLabel, building.BuildingDescription, "ОТКРЫТЬ");
+                        popup.CurrentFunc = repairable.Type switch
+                        {
+                            RepairableBuilding.BuildingType.CityHall => SpecialPopUp.PopUpFuncs.OpenCityHallMenu,
+                            RepairableBuilding.BuildingType.Factory => SpecialPopUp.PopUpFuncs.OpenFactoryMenu,
+                            RepairableBuilding.BuildingType.FoodTrucks => SpecialPopUp.PopUpFuncs.OpenFoodTrucksMenu,
+                            RepairableBuilding.BuildingType.Hospital => SpecialPopUp.PopUpFuncs.OpenHospitalMenu,
+                            _ => popup.CurrentFunc
+                        };
+                        if (repairable.Type == RepairableBuilding.BuildingType.Factory)
+                            popup.FactoryBuilding = repairable as FactoryBuilding;
+                    }
+                    break;
+
+                case RepairableBuilding.State.Damaged:
+                    _currentPopUp = _popUpFactory.CreateSpecialPopUp();
+                    var damagedPopup = _currentPopUp.GetComponent<SpecialPopUp>();
+                    damagedPopup.ShowPopUp(repairable.RepairableBuildingConfig.DamagedBuildingLabel,
+                        repairable.RepairableBuildingConfig.DamagedBuildingDescription, "ПОЧИНИТЬ");
+                    damagedPopup.RepairableBuilding = repairable;
+                    damagedPopup.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenRepairMenu;
+                    break;
+            }
+        }
+        else if (building is CollectableBuilding collectable)
+        {
+            _currentPopUp = _popUpFactory.CreateSpecialPopUp();
+            var popup = _currentPopUp.GetComponent<SpecialPopUp>();
+            popup.ShowPopUp(building.BuildingLabel, building.BuildingDescription, "СОБРАТЬ");
+            popup.CollectableBuilding = collectable;
+            popup.CurrentFunc = SpecialPopUp.PopUpFuncs.OpenCollectMenu;
+        }
+
+        PositionPopUp(hitPoint);
+    }
+
+    private void PositionPopUp(Vector3 worldPosition)
+    {
+        if (_currentPopUp == null) return;
+
+        var rectTransform = _currentPopUp.GetComponent<RectTransform>();
+        Vector2 screenPosition = RectTransformUtility.WorldToScreenPoint(_mainCamera, worldPosition);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas.transform as RectTransform, screenPosition, canvas.worldCamera, out var localPoint);
+        _currentPopUp.transform.localPosition = localPoint + new Vector2(rectTransform.rect.width * 0.5f, rectTransform.rect.height * 0.5f);
+    }
+
+    private void EnableOutline(SelectableBuilding building, SelectableBuilding exclude = null)
+    {
+        if (building && building != exclude)
+        {
+            var outline = building.GetComponentInChildren<Outline>();
+            if (outline) outline.enabled = true;
+            _soundController?.PlayHoverSound();
+        }
+    }
+
+    private void DisableOutline(SelectableBuilding building, SelectableBuilding exclude = null)
+    {
+        if (building && building != exclude)
+        {
+            var outline = building.GetComponentInChildren<Outline>();
+            if (outline) outline.enabled = false;
+        }
+    }
+
     private void Deselect()
     {
-        var allOutlines = FindObjectsByType<Outline>(FindObjectsSortMode.None);
-        foreach (var outline in allOutlines)
+        foreach (var outline in FindObjectsByType<Outline>(FindObjectsSortMode.None))
         {
             outline.enabled = false;
         }
 
+        foreach (var popup in FindObjectsByType<InfoPopUp>(FindObjectsSortMode.None))
+        {
+            if (popup.IsActive) popup.HidePopUp();
+        }
+
         _selectedBuilding = null;
-
-        InfoPopUp[] allPopUps = FindObjectsByType<InfoPopUp>(FindObjectsSortMode.None);
-        foreach (InfoPopUp popUp in allPopUps)
-        {
-            if (popUp.IsActive)
-            {
-                popUp.HidePopUp();
-            }
-        }
-
-        if (_currentPopUp)
-        {
-            _currentPopUp = null;
-        }
-    }
-
-    private void TurnOfUI()
-    {
-        Deselect();
-        SetSelectionControllerState(false);
+        _currentPopUp = null;
     }
 }

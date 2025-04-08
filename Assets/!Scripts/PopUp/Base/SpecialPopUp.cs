@@ -17,15 +17,10 @@ public class SpecialPopUp : ReturnToPoolPopUp
         OpenNextTutorialPopUp,
     }
 
-    [HideInInspector]
-    public RepairableBuilding RepairableBuilding;
-    [HideInInspector]
-    public CollectableBuilding CollectableBuilding;
-    [HideInInspector]
-    public FactoryBuilding FactoryBuilding;
-
-    [HideInInspector]
-    public PopUpFuncs CurrentFunc;
+    [HideInInspector] public PopUpFuncs CurrentFunc;
+    [HideInInspector] public RepairableBuilding RepairableBuilding;
+    [HideInInspector] public CollectableBuilding CollectableBuilding;
+    [HideInInspector] public FactoryBuilding FactoryBuilding;
 
     private CollectPopUp _collectPopUp;
     private RepairPopUp _repairPopUp;
@@ -34,6 +29,12 @@ public class SpecialPopUp : ReturnToPoolPopUp
     private FoodTrucksPopUp _foodTrucksPopUp;
     private HospitalPopUp _hospitalPopUp;
 
+    private void OnEnable()
+    {
+        transform.localScale = Vector3.zero;
+        SetAlpha(0);
+    }
+    
     private void Start()
     {
         Init();
@@ -49,10 +50,21 @@ public class SpecialPopUp : ReturnToPoolPopUp
         _hospitalPopUp = PopUpsController.HospitalPopUp;
     }
 
-    private void OnEnable()
+    public void ShowPopUp(string label, string description, string button)
     {
-        transform.localScale = Vector3.zero;
-        SetAlpha(0);
+        IsActive = true;
+
+        LabelText.text = "";
+        DescriptionText.text = "";
+        ButtonText.text = "";
+
+        transform.DOScale(Vector3.one, SCALE_DURATION).OnComplete(() =>
+        {
+            LabelText.text = label;
+            DescriptionText.text = description;
+            ButtonText.text = button;
+            SetAlpha(1);
+        });
     }
 
     public void UseButton()
@@ -88,23 +100,5 @@ public class SpecialPopUp : ReturnToPoolPopUp
         }
 
         HidePopUp();
-    }
-
-    public void ShowPopUp(string label, string description, string button)
-    {
-        IsActive = true;
-
-        LabelText.text = "";
-        DescriptionText.text = "";
-        ButtonText.text = "";
-
-        transform.DOScale(Vector3.one, SCALE_DURATION).OnComplete(() =>
-        {
-            LabelText.text = label;
-            DescriptionText.text = description;
-            ButtonText.text = button;
-
-            SetAlpha(1);
-        });
     }
 }

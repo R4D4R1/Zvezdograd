@@ -3,20 +3,16 @@ using UnityEngine;
 using UniRx;
 using UnityEngine.Serialization;
 
-public class CollectableBuilding : ChangeMaterialsBuiliding
+public class CollectableBuilding : ChangeMaterialsBuilding
 {
-    [FormerlySerializedAs("_config")]
     [Header("COLLECTABLE CONFIG")]
     [SerializeField] private CollectableBuildingConfig config;
+    public CollectableBuildingConfig CollectableBuildingConfig => config;
 
     public int RawMaterialsLeft { get; private set; }
     private int TurnsToCollect { get; set; }
-    public int RawMaterialsGet { get; private set; }
-    public int PeopleToCollect { get; private set; }
-    public int TurnsToRest { get; private set; }
-
     private int _turnsToWork;
-
+    
 
     public override void Init()
     {
@@ -34,9 +30,6 @@ public class CollectableBuilding : ChangeMaterialsBuiliding
 
         RawMaterialsLeft = config.RawMaterialsLeft;
         TurnsToCollect = config.TurnsToCollectOriginal;
-        RawMaterialsGet = config.RawMaterialsGet;
-        PeopleToCollect = config.PeopleToCollect;
-        TurnsToRest = config.TurnsToRest;
     }
 
     private void UpdateTurnsDependingOnStability()
@@ -67,7 +60,7 @@ public class CollectableBuilding : ChangeMaterialsBuiliding
 
         PeopleUnitsController.AssignUnitsToTask(
             config.PeopleToCollect, TurnsToCollect, config.TurnsToRest);
-
+        
         _turnsToWork = TurnsToCollect;
 
         buildingIsSelectable = false;

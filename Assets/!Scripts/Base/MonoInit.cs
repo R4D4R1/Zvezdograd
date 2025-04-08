@@ -1,11 +1,11 @@
-using System.Threading.Tasks;
-using Cysharp.Threading.Tasks;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
 
 public class MonoInit : MonoBehaviour
 {
-    public virtual void Init()
+    public virtual UniTask Init()
     {
         Debug.Log($"{name} - Initialized");
+        return UniTask.CompletedTask;
     }
 }

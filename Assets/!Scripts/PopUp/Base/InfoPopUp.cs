@@ -11,10 +11,11 @@ public class InfoPopUp : MonoBehaviour
     [SerializeField] private CanvasGroup alphaCanvas;
 
     public bool IsActive { get; protected set; }
-    
+
     protected const float SCALE_DURATION = 0.25f;
     private const float FADE_DURATION = 0.25f;
-    
+
+    // Dependencies
     protected ResourceViewModel ResourceViewModel;
     protected PopUpFactory PopUpFactory;
     protected PeopleUnitsController PeopleUnitsController;
@@ -25,14 +26,19 @@ public class InfoPopUp : MonoBehaviour
     protected TutorialController TutorialController;
     protected PopUpsController PopUpsController;
     protected EventController EventController;
-    
+
     [Inject]
     public void Construct(
-        ResourceViewModel resourceViewModel,PopUpFactory popUpFactory,
-        PeopleUnitsController peopleUnitsController, TimeController timeController,
-        BuildingController buildingController, MainGameController mainGameController,
-        MainGameUIController mainGameUIController,TutorialController tutorialController,
-        PopUpsController popUpsController,EventController eventController)
+        ResourceViewModel resourceViewModel,
+        PopUpFactory popUpFactory,
+        PeopleUnitsController peopleUnitsController,
+        TimeController timeController,
+        BuildingController buildingController,
+        MainGameController mainGameController,
+        MainGameUIController mainGameUIController,
+        TutorialController tutorialController,
+        PopUpsController popUpsController,
+        EventController eventController)
     {
         ResourceViewModel = resourceViewModel;
         PopUpFactory = popUpFactory;
@@ -49,7 +55,6 @@ public class InfoPopUp : MonoBehaviour
     private void OnEnable()
     {
         IsActive = false;
-
         transform.localScale = Vector3.zero;
         SetAlpha(0);
     }
@@ -80,30 +85,27 @@ public class InfoPopUp : MonoBehaviour
 
     public virtual void HidePopUp()
     {
-        if (IsActive)
+        if (!IsActive) return;
+
+        transform.DOScale(Vector3.zero, SCALE_DURATION).OnComplete(() =>
         {
-            transform.DOScale(Vector3.zero, SCALE_DURATION).OnComplete(() =>
-            {
-                IsActive = false;
-            });
+            IsActive = false;
+        });
 
-            MainGameUIController.TurnOnUI();
-
-            SetAlpha(0);
-        }
+        SetAlpha(0);
+        MainGameUIController.TurnOnUI();
     }
 
     public void HideStartInfoPopUpPopUp()
     {
-        if (IsActive)
-        {
-            transform.DOScale(Vector3.zero, SCALE_DURATION).OnComplete(() =>
-            {
-                IsActive = false;
-            });
+        if (!IsActive) return;
 
-            SetAlpha(0);
-        }
+        transform.DOScale(Vector3.zero, SCALE_DURATION).OnComplete(() =>
+        {
+            IsActive = false;
+        });
+
+        SetAlpha(0);
     }
 
     protected void SetAlpha(float alpha)

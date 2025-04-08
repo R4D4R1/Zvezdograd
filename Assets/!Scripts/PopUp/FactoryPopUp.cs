@@ -24,21 +24,22 @@ public class FactoryPopUp : EnoughPopUp
         _buildingToUse = factoryBuilding;
 
         _readyMaterialsDemandsText.text = FormatResourceDemand(
-                _buildingToUse.RawMaterialsToCreateReadyMaterials,
-                _buildingToUse.PeopleToCreateReadyMaterials);
+                _buildingToUse.FactoryBuildingConfig.RawMaterialsToCreateReadyMaterials,
+                _buildingToUse.FactoryBuildingConfig.PeopleToCreateReadyMaterials);
 
         _armyMaterialsDemandsText.text = FormatResourceDemand(
-            _buildingToUse.RawMaterialsToCreateArmyMaterials,
-            _buildingToUse.PeopleToCreateArmyMaterials);
+            _buildingToUse.FactoryBuildingConfig.RawMaterialsToCreateArmyMaterials,
+            _buildingToUse.FactoryBuildingConfig.PeopleToCreateArmyMaterials);
 
         ShowPopUp();
     }
 
     public void CreateReadyMaterials()
     {
-        if (CanCreateMaterials(_buildingToUse.PeopleToCreateReadyMaterials,
-                               _buildingToUse.RawMaterialsToCreateReadyMaterials,
-                               HasEnoughSpaceForResources(ResourceModel.ResourceType.ReadyMaterials, _buildingToUse.ReadyMaterialsGet)))
+        if (CanCreateMaterials(_buildingToUse.FactoryBuildingConfig.PeopleToCreateReadyMaterials,
+                               _buildingToUse.FactoryBuildingConfig.RawMaterialsToCreateReadyMaterials,
+                               HasEnoughSpaceForResources(ResourceModel.ResourceType.ReadyMaterials,
+                                   _buildingToUse.FactoryBuildingConfig.ReadyMaterialsGet)))
         {
             HidePopUp();
             _buildingToUse.CreateReadyMaterials();
@@ -47,8 +48,8 @@ public class FactoryPopUp : EnoughPopUp
 
     public void CreateArmySupplies()
     {
-        if (CanCreateMaterials(_buildingToUse.PeopleToCreateArmyMaterials,
-                               _buildingToUse.RawMaterialsToCreateArmyMaterials,
+        if (CanCreateMaterials(_buildingToUse.FactoryBuildingConfig.PeopleToCreateArmyMaterials,
+                               _buildingToUse.FactoryBuildingConfig.RawMaterialsToCreateArmyMaterials,
                                true))
         {
             OnArmyBtnDisabled?.Invoke();
@@ -64,18 +65,6 @@ public class FactoryPopUp : EnoughPopUp
                extraCondition &&
                CanUseActionPoint();
     }
-
-    // private bool EnoughSpaceToStoreReadyMaterials()
-    // {
-    //     if (ResourceViewModel.ReadyMaterials.Value + _buildingToUse.ReadyMaterialsGet
-    //            < ResourceViewModel.Model.MaxReadyMaterials)
-    //         return true;
-    //     else
-    //     {
-    //         ShowError("Не достаточно места для стройматериалов");
-    //         return false;
-    //     }
-    // }
 
     private string FormatResourceDemand(int rawMaterials, int people)
     {

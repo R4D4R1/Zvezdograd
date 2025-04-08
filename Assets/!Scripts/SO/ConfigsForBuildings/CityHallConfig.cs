@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [CreateAssetMenu(fileName = "CityHallBuildingConfig", menuName = "BuildingConfigs/CityHallBuildingConfig")]
 public class CityHallBuildingConfig : ScriptableObject
@@ -9,7 +10,7 @@ public class CityHallBuildingConfig : ScriptableObject
     [SerializeField, Range(1, 5)] private int daysLeftToReceiveGovHelpOriginal;
     [SerializeField, Range(1, 10)] private int amountOfHelpNeededToSend;
     [SerializeField, Range(1, 5)] private int readyMaterialsToCreateNewPeopleUnit;
-    [SerializeField, Range(1, 10)] private int relationWithGovernment;
+    [SerializeField, Range(1, 10)] private int relationWithGovernmentOriginal;
     [SerializeField, Range(1, 5)] private int turnsToCreateNewUnitOriginal;
     [SerializeField, Range(1, 5)] private int turnsToCreateNewActionPoints;
 
@@ -17,7 +18,7 @@ public class CityHallBuildingConfig : ScriptableObject
     public int DaysLeftToReceiveGovHelpOriginal => daysLeftToReceiveGovHelpOriginal;
     public int AmountOfHelpNeededToSend => amountOfHelpNeededToSend;
     public int ReadyMaterialsToCreateNewPeopleUnit => readyMaterialsToCreateNewPeopleUnit;
-    public int RelationWithGovernment => relationWithGovernment;
+    public int RelationWithGovernmentOriginal => relationWithGovernmentOriginal;
     public int TurnsToCreateNewUnitOriginal => turnsToCreateNewUnitOriginal;
     public int TurnsToCreateNewActionPoints => turnsToCreateNewActionPoints;
 }

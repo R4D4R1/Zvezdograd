@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using DG.Tweening;
@@ -25,7 +26,7 @@ public class BlurController : MonoInit
         _config = config;
     }
 
-    public override void Init()
+    public override UniTask Init()
     {
         base.Init();
         _volumeProfile = FindFirstObjectByType<Volume>();
@@ -50,6 +51,8 @@ public class BlurController : MonoInit
         _tutorialController.OnTutorialStarted
             .Subscribe(_ => BlurBackGroundSmoothly())
             .AddTo(this);
+        
+        return UniTask.CompletedTask;
     }
 
     private void BlurBackGroundSmoothly()
