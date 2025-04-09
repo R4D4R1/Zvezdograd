@@ -1,4 +1,5 @@
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -11,7 +12,7 @@ public class PopUpsController : MonoInit
     public CollectPopUp CollectPopUp  { get; private set; }
     public RepairPopUp RepairPopUp  { get; private set; }
     public EventPopUp EventPopUp  { get; private set; }
-
+    public List<FullScreenPopUp> AllPopUps{ get; private set; }
 
     public override UniTask Init()
     {
@@ -23,8 +24,9 @@ public class PopUpsController : MonoInit
         CollectPopUp = FindFirstObjectByType<CollectPopUp>();
         RepairPopUp = FindFirstObjectByType<RepairPopUp>();
         EventPopUp = FindFirstObjectByType<EventPopUp>();
-
-
+        
+        AllPopUps = new List<FullScreenPopUp>(FindObjectsByType<FullScreenPopUp>(FindObjectsSortMode.None));
+        
         FoodTrucksPopUp.Init();
         HospitalPopUp.Init();
         CityHallPopUp.Init();

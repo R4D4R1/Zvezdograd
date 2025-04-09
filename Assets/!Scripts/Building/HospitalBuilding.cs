@@ -3,7 +3,7 @@ using UniRx;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class HospitalBuilding : RepairableBuilding
+public class HospitalBuilding : RepairableBuilding,ISaveableBuilding
 {
     [Header("Hospital Config")]
     [SerializeField] private HospitalBuildingConfig hospitalConfig;
@@ -95,4 +95,46 @@ public class HospitalBuilding : RepairableBuilding
         _turnsToCreateNewUnit = hospitalConfig.TurnsToHealInjuredUnit;
         ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Medicine, -hospitalConfig.MedicineToHealInjuredUnit));
     }
+    
+    public new int BuildingId => base.BuildingId;
+
+    public override BuildingSaveData GetSaveData()
+    {
+        return new HospitalBuildingSaveData
+        {
+            buildingId = BuildingId,
+            buildingIsSelectable = BuildingIsSelectable,
+            turnsToGiveMedicine = TurnsToGiveMedicine,
+            daysToGiveMedicine = DaysToGiveMedicine,
+            medicineWasGivenAwayInLastTwoDays = _medicineWasGivenAwayInLastTwoDays,
+            isWorking = _isWorking,
+            turnsToCreateNewUnit = _turnsToCreateNewUnit,
+            turnsToRepair = TurnsToRepair,
+            currentState = CurrentState
+        };
+    }
+
+    public override void LoadFromSaveData(BuildingSaveData data)
+    {
+        var save = data as HospitalBuildingSaveData;
+        if (save == null) return;
+
+        BuildingIsSelectable = save.buildingIsSelectable;
+        TurnsToGiveMedicine = save.turnsToGiveMedicine;
+        DaysToGiveMedicine = save.daysToGiveMedicine;
+        _medicineWasGivenAwayInLastTwoDays = save.medicineWasGivenAwayInLastTwoDays;
+        _isWorking = save.isWorking;
+        _turnsToCreateNewUnit = save.turnsToCreateNewUnit;
+        TurnsToRepair = save.turnsToRepair;
+        CurrentState = save.currentState;
+        
+        if (save.buildingIsSelectable)
+            RestoreOriginalMaterials();
+        else
+            SetGreyMaterials();
+        
+        // PopUpsController.HospitalPopUp.SetButtonState
+        //     (PopUpsController.HospitalPopUp.GiveMedicineBtnParent,!_medicineWasGivenAwayInLastTwoDays);
+    }
+
 }

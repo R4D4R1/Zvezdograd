@@ -102,7 +102,7 @@ public class CityHallPopUp : QuestPopUp
                CanUseActionPoint();
     }
 
-    private void UpdateAllText()
+    protected override void UpdateAllText()
     {
         if (LastMilitaryHelpSent)
         {
@@ -148,6 +148,7 @@ public class CityHallPopUp : QuestPopUp
         return $"<color=#{colorHex}>{relationText}</color>";
     }
 
+    // METHOD TO ENABLE CREATE NEW UNITS BUTTON OR DEACTIVATE IT WHEN NO MORE UNITS TO CREATE
     private void UpdateCreateUnitGOButtonState()
     {
         if (PeopleUnitsController.NotCreatedUnits.Count > 0)
@@ -156,7 +157,17 @@ public class CityHallPopUp : QuestPopUp
         }
         else
         {
-            Destroy(createPeopleText.gameObject);
+            createPeopleText.gameObject.SetActive(false);
         }
+    }
+    
+    public override void LoadFromSaveData(PopUpSaveData data)
+    {
+        var save = data as QuestPopUpSaveData;
+        if (save == null) return;
+        
+        IsBtnActive = save.isBtnActive;
+        SetButtonState(createNewUnitBtnParent,IsBtnActive);
+        UpdateAllText();
     }
 }

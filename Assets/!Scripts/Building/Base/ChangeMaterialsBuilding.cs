@@ -56,4 +56,39 @@ public class ChangeMaterialsBuilding : BuildingDependingOnStability
             }
         }
     }
+    
+    protected string[] GetCurrentMaterialPaths()
+    {
+        var renderers = GetComponentsInChildren<MeshRenderer>();
+        List<string> names = new();
+
+        foreach (var renderer in renderers)
+        {
+            foreach (var mat in renderer.materials)
+            {
+                names.Add(mat.name.Replace(" (Instance)", ""));
+            }
+        }
+        return names.ToArray();
+    }
+
+    protected void SetMaterialsFromPaths(string[] materialNames)
+    {
+        var renderers = GetComponentsInChildren<MeshRenderer>();
+        int index = 0;
+
+        foreach (var renderer in renderers)
+        {
+            Material[] mats = new Material[renderer.materials.Length];
+            for (int i = 0; i < mats.Length; i++)
+            {
+                if (index < materialNames.Length)
+                {
+                    var matName = materialNames[index++];
+                    mats[i] = Resources.Load<Material>($"Materials/{matName}");
+                }
+            }
+            renderer.materials = mats;
+        }
+    }
 }

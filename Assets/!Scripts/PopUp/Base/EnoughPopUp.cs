@@ -5,12 +5,30 @@ using UnityEngine.Serialization;
 public class EnoughPopUp : FullScreenPopUp
 {
     [FormerlySerializedAs("_errorText")] [SerializeField] protected TextMeshProUGUI errorText;
+    protected int PopUpId { get; private set; }
 
     public virtual void Init()
     {
         HideError();
+        GenerateOrLoadPopUpId();
     }
+    
+    private void GenerateOrLoadPopUpId()
+    {
+        string uniqueKey = $"PopUp_{gameObject.GetInstanceID()}";
 
+        if (PlayerPrefs.HasKey(uniqueKey))
+        {
+            PopUpId = PlayerPrefs.GetInt(uniqueKey);
+        }
+        else
+        {
+            PopUpId = Random.Range(100000, 999999);
+            PlayerPrefs.SetInt(uniqueKey, PopUpId);
+            PlayerPrefs.Save();
+        }
+    }
+    
     protected bool HasEnoughPeople(int requiredPeople)
     {
         if (PeopleUnitsController.ReadyUnits.Count >= requiredPeople)

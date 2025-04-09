@@ -3,15 +3,13 @@ using UnityEngine;
 using UniRx;
 using UnityEngine.Serialization;
 
-public class FoodTrucksBuilding : RepairableBuilding
+public class FoodTrucksBuilding : RepairableBuilding,ISaveableBuilding
 {
     [Header("FOOD TRUCKS SETTINGS")]
     [SerializeField] private FoodTrucksBuildingConfig foodTrucksConfig;
     public FoodTrucksBuildingConfig FoodTrucksBuildingConfig => foodTrucksConfig;
 
     private int TurnsToToGiveProvision { get; set; }
-
-    // SAVE DATA
     private bool IsFoodGivenAwayToday { get; set; }
 
     public override void Init()
@@ -52,4 +50,40 @@ public class FoodTrucksBuilding : RepairableBuilding
         ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, -foodTrucksConfig.StabilityRemoveValue));
         return false;
     }
+    
+    public new int BuildingId => base.BuildingId;
+
+    public override BuildingSaveData GetSaveData()
+    {
+        return new FoodTrucksBuildingSaveData
+        {
+            buildingId = BuildingId,
+            buildingIsSelectable = BuildingIsSelectable,
+            turnsToToGiveProvision = TurnsToToGiveProvision,
+            isFoodGivenAwayToday = IsFoodGivenAwayToday,
+            turnsToRepair = TurnsToRepair,
+            currentState = CurrentState
+        };
+    }
+    
+    public override void LoadFromSaveData(BuildingSaveData data)
+    {
+        var save = data as FoodTrucksBuildingSaveData;
+        if (save == null) return;
+        
+        BuildingIsSelectable = save.buildingIsSelectable;
+        TurnsToToGiveProvision = save.turnsToToGiveProvision;
+        IsFoodGivenAwayToday = save.isFoodGivenAwayToday;
+        TurnsToRepair = save.turnsToRepair;
+        CurrentState = save.currentState;
+        
+        if (save.buildingIsSelectable)
+            RestoreOriginalMaterials();
+        else
+            SetGreyMaterials();
+        
+        // PopUpsController.FoodTrucksPopUp.SetButtonState
+        //     (PopUpsController.FoodTrucksPopUp.GiveFoodBtnParent,!IsFoodGivenAwayToday);
+    }
+
 }

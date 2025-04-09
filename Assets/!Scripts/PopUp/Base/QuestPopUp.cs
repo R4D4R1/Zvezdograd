@@ -5,13 +5,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using UniRx;
 
-public class QuestPopUp : EnoughPopUp
+public class QuestPopUp : EnoughPopUp,ISaveablePopUp
 {
     [SerializeField] private GameObject questObjectPrefab;
     [SerializeField] private Transform questGroupTransform;
 
     private readonly Dictionary<GameObject, QuestData> _questDeadlines = new();
-
+    public bool IsBtnActive;
+    
     private struct QuestData
     {
         public readonly string QuestName;
@@ -30,6 +31,7 @@ public class QuestPopUp : EnoughPopUp
 
     public override void Init()
     {
+        base.Init();
         TimeController.OnNextDayEvent
             .Subscribe(_ => OnNextDay())
             .AddTo(this);
@@ -129,9 +131,36 @@ public class QuestPopUp : EnoughPopUp
         };
     }
 
-    protected void SetButtonState(GameObject btnsParent, bool isActive)
+    protected void SetButtonState(GameObject btnsParent, bool activeState)
     {
-        btnsParent.transform.GetChild(0).gameObject.SetActive(isActive);
-        btnsParent.transform.GetChild(1).gameObject.SetActive(!isActive);
+        Debug.Log($"Setting button {btnsParent} - {activeState}");
+        IsBtnActive = activeState;
+        btnsParent.transform.GetChild(0).gameObject.SetActive(activeState);
+        btnsParent.transform.GetChild(1).gameObject.SetActive(!activeState);
+    }
+
+    protected virtual void UpdateAllText()
+    {
+        // UPDATE UI TEXT
+    }
+    
+    public new int PopUpId => base.PopUpId;
+    
+    public virtual PopUpSaveData GetSaveData()
+    {
+        return new QuestPopUpSaveData
+        {
+            popUpId = PopUpId,
+            isBtnActive = IsBtnActive
+        };
+    }
+
+    public virtual void LoadFromSaveData(PopUpSaveData data)
+    {
+        var save = data as QuestPopUpSaveData;
+        if (save == null) return;
+        
+        IsBtnActive = save.isBtnActive;
+        UpdateAllText();
     }
 }

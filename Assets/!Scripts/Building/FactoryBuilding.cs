@@ -3,7 +3,7 @@ using UnityEngine;
 using UniRx;
 using UnityEngine.Serialization;
 
-public class FactoryBuilding : RepairableBuilding
+public class FactoryBuilding : RepairableBuilding,ISaveableBuilding
 {
     [FormerlySerializedAs("_factoryConfig")]
     [Header("FACTORY CONFIG")]
@@ -36,7 +36,7 @@ public class FactoryBuilding : RepairableBuilding
 
     protected override void TryTurnOnBuilding()
     {
-        if (!buildingIsSelectable)
+        if (!BuildingIsSelectable)
         {
             if (!_isWorking)
             {
@@ -44,7 +44,7 @@ public class FactoryBuilding : RepairableBuilding
 
                 if (TurnsToRepair == 0)
                 {
-                    buildingIsSelectable = true;
+                    BuildingIsSelectable = true;
                     CurrentState = State.Intact;
                     RestoreOriginalMaterials();
                 }
@@ -64,7 +64,7 @@ public class FactoryBuilding : RepairableBuilding
                         BuildingController.GetCityHallBuilding().ArmyMaterialsSent();
                     }
 
-                    buildingIsSelectable = true;
+                    BuildingIsSelectable = true;
                     _isWorking = false;
                     RestoreOriginalMaterials();
                 }
@@ -81,7 +81,7 @@ public class FactoryBuilding : RepairableBuilding
         );
         ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.RawMaterials, -factoryConfig.RawMaterialsToCreateReadyMaterials));
 
-        buildingIsSelectable = false;
+        BuildingIsSelectable = false;
         _isWorking = true;
         _isCreatingReadyMaterials = true;
         _turnsToWork = TurnsToCreateReadyMaterials;
@@ -98,11 +98,47 @@ public class FactoryBuilding : RepairableBuilding
         );
         ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.RawMaterials, -factoryConfig.RawMaterialsToCreateArmyMaterials));
 
-        buildingIsSelectable = false;
+        BuildingIsSelectable = false;
         _isWorking = true;
         _isCreatingReadyMaterials = false;
         _turnsToWork = TurnsToCreateArmyMaterials;
-
+        
         SetGreyMaterials();
+    }
+    
+    public new int BuildingId => base.BuildingId;
+    
+    public override BuildingSaveData GetSaveData()
+    {
+        return new FactoryBuildingSaveData
+        {
+            buildingId = BuildingId,
+            buildingIsSelectable = BuildingIsSelectable,
+            turnsToCreateArmyMaterials = TurnsToCreateArmyMaterials,
+            turnsToCreateReadyMaterials = TurnsToCreateReadyMaterials,
+            turnsToWork = _turnsToWork,
+            isWorking = _isWorking,
+            turnsToRepair = TurnsToRepair,
+            currentState = CurrentState
+        };
+    }
+
+    public override void LoadFromSaveData(BuildingSaveData data)
+    {
+        var save = data as FactoryBuildingSaveData;
+        if (save == null) return;
+
+        BuildingIsSelectable = save.buildingIsSelectable;
+        TurnsToCreateArmyMaterials = save.turnsToCreateArmyMaterials;
+        TurnsToCreateReadyMaterials = save.turnsToCreateReadyMaterials;
+        _turnsToWork = save.turnsToWork;
+        _isWorking = save.isWorking;
+        TurnsToRepair = save.turnsToRepair;
+        CurrentState = save.currentState;
+        
+        if (save.buildingIsSelectable)
+            RestoreOriginalMaterials();
+        else
+            SetGreyMaterials();
     }
 }

@@ -4,7 +4,7 @@ using UniRx;
 public class FoodTrucksPopUp : QuestPopUp
 {
     [SerializeField] private GameObject giveFoodBtnParent;
-
+    
     private FoodTrucksBuilding _building;
     
     public override void Init()
@@ -53,10 +53,19 @@ public class FoodTrucksPopUp : QuestPopUp
     private bool CanGiveAwayProvision()
     {
         return 
-            //HasEnoughPeople(BuildingController.GetFoodTruckBuilding().PeopleToGiveProvision) &&
-               
-               HasEnoughResources(ResourceModel.ResourceType.Provision,
-               BuildingController.GetFoodTruckBuilding().FoodTrucksBuildingConfig.FoodToGive) &&
-               CanUseActionPoint();
+                HasEnoughPeople(BuildingController.GetFoodTruckBuilding().FoodTrucksBuildingConfig.PeopleToGiveProvision) &&
+                HasEnoughResources(ResourceModel.ResourceType.Provision, 
+                    BuildingController.GetFoodTruckBuilding().FoodTrucksBuildingConfig.FoodToGive) &&
+                CanUseActionPoint();
+    }
+    
+    public override void LoadFromSaveData(PopUpSaveData data)
+    {
+        var save = data as QuestPopUpSaveData;
+        if (save == null) return;
+        
+        IsBtnActive = save.isBtnActive;
+        SetButtonState(giveFoodBtnParent,IsBtnActive);
+        UpdateAllText();
     }
 }

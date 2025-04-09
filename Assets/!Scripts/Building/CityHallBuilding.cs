@@ -2,7 +2,7 @@ using UnityEngine;
 using UniRx;
 using Unit = UniRx.Unit;
 
-public class CityHallBuilding : RepairableBuilding
+public class CityHallBuilding : RepairableBuilding,ISaveableBuilding
 {
     [Header("CITY HALL SETTINGS")]
     [SerializeField] private CityHallBuildingConfig cityHallConfig;
@@ -16,12 +16,13 @@ public class CityHallBuilding : RepairableBuilding
     private int _turnsToCreateNewUnit;
     private int _turnsToCreateNewActionPoints;
     private bool _isWorking;
+    private bool _isCreatingActionPoints;
 
     public readonly Subject<Unit> OnCityHallUnitCreated = new();
     public readonly Subject<int> OnNewActionPointsStartedCreating = new();
     public readonly Subject<Unit> OnNewActionPointsCreated = new();
     public readonly Subject<Unit> OnLastMilitaryHelpSent = new();
-    private bool _isCreatingActionPoints;
+    public readonly Subject<Unit> OnMilitaryHelpSent = new();
 
     public override void Init()
     {
@@ -106,7 +107,7 @@ public class CityHallBuilding : RepairableBuilding
     {
         if (IsMaterialsSent)
         {
-            PopUpsController.FactoryPopUp.UpdateCreateArmyButtonState();
+            OnMilitaryHelpSent.OnNext(Unit.Default);
             IsMaterialsSent = false;
             return false;
         }
@@ -166,5 +167,55 @@ public class CityHallBuilding : RepairableBuilding
     public void ModifyRelationWithGov(int amount)
     {
         RelationWithGovernment = Mathf.Clamp(RelationWithGovernment + amount, 1, 10);
+    }
+
+    public new int BuildingId => base.BuildingId;
+
+    public override BuildingSaveData GetSaveData()
+    {
+        return new CityHallBuildingSaveData
+        {
+            buildingId = BuildingId,
+            buildingIsSelectable = BuildingIsSelectable,
+            relationWithGovernment = RelationWithGovernment,
+            daysLeftToReceiveGovHelp = DaysLeftToReceiveGovHelp,
+            daysLeftToSendArmyMaterials = DaysLeftToSendArmyMaterials,
+            isMaterialsSent = IsMaterialsSent,
+            amountOfHelpSent = _amountOfHelpSent,
+            turnsToCreateNewUnit = _turnsToCreateNewUnit,
+            turnsToCreateNewActionPoints = _turnsToCreateNewActionPoints,
+            isWorking = _isWorking,
+            isCreatingActionPoints = _isCreatingActionPoints,
+            turnsToRepair = TurnsToRepair,
+            currentState = CurrentState
+        };
+    }
+
+    public override void LoadFromSaveData(BuildingSaveData data)
+    {
+        var save = data as CityHallBuildingSaveData;
+        if (save == null) return;
+
+        RelationWithGovernment = save.relationWithGovernment;
+        DaysLeftToReceiveGovHelp = save.daysLeftToReceiveGovHelp;
+        DaysLeftToSendArmyMaterials = save.daysLeftToSendArmyMaterials;
+        IsMaterialsSent = save.isMaterialsSent;
+        BuildingIsSelectable = save.buildingIsSelectable;
+        _amountOfHelpSent = save.amountOfHelpSent;
+        _turnsToCreateNewUnit = save.turnsToCreateNewUnit;
+        _turnsToCreateNewActionPoints = save.turnsToCreateNewActionPoints;
+        _isWorking = save.isWorking;
+        _isCreatingActionPoints = save.isCreatingActionPoints;
+        TurnsToRepair = save.turnsToRepair;
+        CurrentState = save.currentState;
+        
+        if (save.buildingIsSelectable)
+            RestoreOriginalMaterials();
+        else
+            SetGreyMaterials();
+        
+        // PopUpsController.CityHallPopUp.UpdateAllText();
+        // PopUpsController.CityHallPopUp.SetButtonState
+        //     (PopUpsController.CityHallPopUp.CreateNewUnitBtnParent, !(_turnsToCreateNewUnit>0));
     }
 }

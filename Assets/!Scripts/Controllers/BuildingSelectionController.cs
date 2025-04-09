@@ -105,7 +105,7 @@ public class BuildingSelectionController : MonoInit
         {
             var hitObject = hit.collider.GetComponentInParent<SelectableBuilding>();
 
-            if (hitObject && hitObject.buildingIsSelectable)
+            if (hitObject && hitObject.BuildingIsSelectable)
             {
                 if (_currentHoveredObject != hitObject)
                 {
@@ -138,7 +138,7 @@ public class BuildingSelectionController : MonoInit
             {
                 var hitObject = hit.collider.GetComponentInParent<SelectableBuilding>();
 
-                if (hitObject && hitObject.buildingIsSelectable)
+                if (hitObject && hitObject.BuildingIsSelectable)
                 {
                     if (hitObject == _selectedBuilding) return;
 

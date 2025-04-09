@@ -3,7 +3,7 @@ using UnityEngine;
 using UniRx;
 using UnityEngine.Serialization;
 
-public class CollectableBuilding : ChangeMaterialsBuilding
+public class CollectableBuilding : ChangeMaterialsBuilding, ISaveableBuilding
 {
     [Header("COLLECTABLE CONFIG")]
     [SerializeField] private CollectableBuildingConfig config;
@@ -12,7 +12,6 @@ public class CollectableBuilding : ChangeMaterialsBuilding
     public int RawMaterialsLeft { get; private set; }
     private int TurnsToCollect { get; set; }
     private int _turnsToWork;
-    
 
     public override void Init()
     {
@@ -39,7 +38,7 @@ public class CollectableBuilding : ChangeMaterialsBuilding
 
     private void TryTurnOnBuilding()
     {
-        if (!buildingIsSelectable)
+        if (!BuildingIsSelectable)
         {
             _turnsToWork--;
 
@@ -48,7 +47,7 @@ public class CollectableBuilding : ChangeMaterialsBuilding
                 RawMaterialsLeft -= config.RawMaterialsGet;
                 ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.RawMaterials, config.RawMaterialsGet));
 
-                buildingIsSelectable = true;
+                BuildingIsSelectable = true;
                 RestoreOriginalMaterials();
             }
         }
@@ -63,8 +62,38 @@ public class CollectableBuilding : ChangeMaterialsBuilding
         
         _turnsToWork = TurnsToCollect;
 
-        buildingIsSelectable = false;
+        BuildingIsSelectable = false;
 
         SetGreyMaterials();
+    }
+
+    public new int BuildingId => base.BuildingId;
+
+    public BuildingSaveData GetSaveData()
+    {
+        return new CollectableBuildingSaveData
+        {
+            buildingId = BuildingId,
+            buildingIsSelectable = BuildingIsSelectable,
+            rawMaterialsLeft = RawMaterialsLeft,
+            turnsToCollect = TurnsToCollect,
+            turnsToWork = _turnsToWork,
+        };
+    }
+
+    public void LoadFromSaveData(BuildingSaveData data)
+    {
+        var save = data as CollectableBuildingSaveData;
+        if (save == null) return;
+        
+        BuildingIsSelectable = save.buildingIsSelectable;
+        RawMaterialsLeft = save.rawMaterialsLeft;
+        TurnsToCollect = save.turnsToCollect;
+        _turnsToWork = save.turnsToWork;
+        
+        if (save.buildingIsSelectable)
+            RestoreOriginalMaterials();
+        else
+            SetGreyMaterials();
     }
 }

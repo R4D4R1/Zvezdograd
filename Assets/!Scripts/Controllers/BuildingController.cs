@@ -7,10 +7,10 @@ using UniRx;
 
 public class BuildingController : MonoInit
 {
-    private List<SelectableBuilding> AllBuildings { get; set; } = new();
+    public List<SelectableBuilding> AllBuildings { get; private set; } = new();
     private List<RepairableBuilding> RegularBuildings { get; } = new();
     private List<RepairableBuilding> SpecialBuildings { get; } = new();
-    private List<FactoryBuilding> FactoryBuildings { get; } = new();
+    //private List<FactoryBuilding> FactoryBuildings { get; } = new();
     
     public readonly Subject<Unit> OnBuildingBombed = new();
 
@@ -86,7 +86,7 @@ public class BuildingController : MonoInit
     private RepairableBuilding ChooseBuildingToBomb()
     {
         var candidates = SpecialBuildings
-            .Where(b => b.CurrentState == RepairableBuilding.State.Intact && b.buildingIsSelectable)
+            .Where(b => b.CurrentState == RepairableBuilding.State.Intact && b.BuildingIsSelectable)
             .ToList();
 
         candidates.AddRange(RegularBuildings
