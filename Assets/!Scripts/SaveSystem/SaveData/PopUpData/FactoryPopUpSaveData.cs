@@ -1,7 +1,6 @@
-using Newtonsoft.Json;
-
-[JsonObject(MemberSerialization.OptIn)]
+using System;
+[Serializable]
 public class FactoryPopUpSaveData : PopUpSaveData
 {
-    [JsonProperty] public bool isCreatingArmyMaterials;
+    public bool isCreatingArmyMaterials;
 }

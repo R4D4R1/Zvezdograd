@@ -34,7 +34,7 @@ public class TutorialController : MonoBehaviour
     private Canvas _canvas;
     private TutorialControllerConfig _tutorialControllerConfig;
     private BuildingSelectionController _buildingSelectionController;
-    private BuildingController _buildingController;
+    private BuildingsController _buildingsController;
     private PopUpFactory _popUpFactory;
     private Camera _mainCamera;
     private bool _isBuildingTutorialStarted;
@@ -44,11 +44,11 @@ public class TutorialController : MonoBehaviour
     public readonly Subject<Unit> OnBuildingTutorialStarted = new();
 
     [Inject]
-    public void Construct(TutorialControllerConfig tutorialControllerConfig, BuildingController buildingController,
+    public void Construct(TutorialControllerConfig tutorialControllerConfig, BuildingsController buildingsController,
         PopUpFactory popUpFactory, Camera mainCamera)
     {
         _tutorialControllerConfig = tutorialControllerConfig;
-        _buildingController = buildingController;
+        _buildingsController = buildingsController;
         _popUpFactory = popUpFactory;
         _mainCamera = mainCamera;
         _isBuildingTutorialStarted = false;
@@ -62,9 +62,9 @@ public class TutorialController : MonoBehaviour
         _canvas = popUpParent.GetComponentInParent<Canvas>();
 
         // Add buildings to tutorial using config data
-        AddBuildingToTutorial(_buildingController.GetCityHallBuilding(), _tutorialControllerConfig.CityHallBuildingDescription);
-        AddBuildingToTutorial(_buildingController.GetHospitalBuilding(), _tutorialControllerConfig.HospitalBuildingDescription);
-        AddBuildingToTutorial(_buildingController.GetFoodTruckBuilding(), _tutorialControllerConfig.FoodTruckBuildingDescription);
+        AddBuildingToTutorial(_buildingsController.GetCityHallBuilding(), _tutorialControllerConfig.CityHallBuildingDescription);
+        AddBuildingToTutorial(_buildingsController.GetHospitalBuilding(), _tutorialControllerConfig.HospitalBuildingDescription);
+        AddBuildingToTutorial(_buildingsController.GetFoodTruckBuilding(), _tutorialControllerConfig.FoodTruckBuildingDescription);
         AddBuildingToTutorial(factoryBuilding, _tutorialControllerConfig.FactoryBuildingDescription);
         AddBuildingToTutorial(intactBuilding, _tutorialControllerConfig.IntactBuildingDescription);
         AddBuildingToTutorial(collectableBuilding, _tutorialControllerConfig.CollectableBuildingDescription);

@@ -8,7 +8,7 @@ public class GameInitializer : MonoBehaviour
     private MainGameController _mainGameController;
     private TimeController _timeController;
     private PeopleUnitsController _peopleUnitsController;
-    private BuildingController _buildingController;
+    private BuildingsController _buildingsController;
     private BlurController _blurController;
     private PopUpsController _popUpsController;
     private EventController _eventController;
@@ -21,7 +21,7 @@ public class GameInitializer : MonoBehaviour
         MainGameController mainGameController,
         TimeController timeController,
         PeopleUnitsController peopleUnitsController,
-        BuildingController buildingController,
+        BuildingsController buildingsController,
         BlurController blurController,
         PopUpsController popUpsController,
         EventController eventController,
@@ -34,7 +34,7 @@ public class GameInitializer : MonoBehaviour
         _mainGameController = mainGameController;
         _timeController = timeController;
         _peopleUnitsController = peopleUnitsController;
-        _buildingController = buildingController;
+        _buildingsController = buildingsController;
         _blurController = blurController;
         _popUpsController = popUpsController;
         _eventController = eventController;
@@ -47,7 +47,7 @@ public class GameInitializer : MonoBehaviour
         _blurController.Init();
         _mainGameUIController.Init();
         _buildingSelectionController.Init();
-        _buildingController.Init();
+        _buildingsController.Init();
         
         _popUpsController.Init();
 

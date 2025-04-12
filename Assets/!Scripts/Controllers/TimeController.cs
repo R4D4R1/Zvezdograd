@@ -26,24 +26,26 @@ public class TimeController : MonoInit
     [Range(1, 3), SerializeField] private int increaseMaxAPValue;
     [Range(1, 3), SerializeField] private int increaseAddAPValue;
 
-    private int _localIncreaseMaxAPValue;
-    private int _localIncreaseAddAPValue;
+    [FormerlySerializedAs("_localIncreaseMaxAPValue")] public int LocalIncreaseMaxAPValue;
+    [FormerlySerializedAs("_localIncreaseAddAPValue")] public int LocalIncreaseAddAPValue;
 
     private readonly DateTime _startDate = new(1942, 10, 30);
-    private readonly List<DelayedAction> _delayedActions = new();
+    public List<DelayedAction> DelayedActions = new();
 
     private ReactiveProperty<DateTime> _currentDate;
     private ReactiveProperty<PeriodOfDay> _currentPeriod;
-    private ReactiveProperty<int> _actionPoints;
+    private ReactiveProperty<int> _currentActionPoints;
 
     private PopUpsController _popUpsController;
     private TimeControllerConfig _timeControllerConfig;
     private TutorialController _tutorialController;
-    private BuildingController _buildingController;
+    private BuildingsController _buildingsController;
 
     public Button NextTurnButton => nextTurnBtn;
     public DateTime CurrentDate => _currentDate.Value;
     public PeriodOfDay CurrentPeriod => _currentPeriod.Value;
+    public int CurrentActionPoints => _currentActionPoints.Value;
+    
     public readonly Subject<Unit> OnNextDayEvent = new();
     public readonly Subject<Unit> OnNextTurnBtnClickStarted = new();
     public readonly Subject<Unit> OnNextTurnBtnClickBetween = new();
@@ -56,7 +58,7 @@ public class TimeController : MonoInit
         Evening,
     }
 
-    private class DelayedAction
+    public class DelayedAction
     {
         public int DaysRemaining;
         public readonly Action Action;
@@ -70,12 +72,12 @@ public class TimeController : MonoInit
 
     [Inject]
     public void Construct(PopUpsController popUpsController, TimeControllerConfig timeControllerConfig,
-        TutorialController tutorialController, BuildingController buildingController)
+        TutorialController tutorialController, BuildingsController buildingsController)
     {
         _popUpsController = popUpsController;
         _timeControllerConfig = timeControllerConfig;
         _tutorialController = tutorialController;
-        _buildingController = buildingController;
+        _buildingsController = buildingsController;
     }
 
     public override UniTask Init()
@@ -84,14 +86,14 @@ public class TimeController : MonoInit
 
         _currentDate = new ReactiveProperty<DateTime>(_startDate);
         _currentPeriod = new ReactiveProperty<PeriodOfDay>(PeriodOfDay.Morning);
-        _actionPoints = new ReactiveProperty<int>(_timeControllerConfig.ActionPointsMaxValue);
+        _currentActionPoints = new ReactiveProperty<int>(_timeControllerConfig.ActionPointsMaxValue);
 
         _currentDate.Subscribe(_ => UpdateTime()).AddTo(this);
         _currentPeriod.Subscribe(_ => UpdateTime()).AddTo(this);
 
-        _actionPoints.Subscribe(value =>
+        _currentActionPoints.Subscribe(value =>
             actionPointsText.text =
-                $"ОД  {value} / {_timeControllerConfig.ActionPointsMaxValue + _localIncreaseMaxAPValue}"
+                $"ОД  {value} / {_timeControllerConfig.ActionPointsMaxValue + LocalIncreaseMaxAPValue}"
         ).AddTo(this);
 
         nextTurnBtn.OnClickAsObservable()
@@ -103,7 +105,7 @@ public class TimeController : MonoInit
             .Subscribe(_ => EnableNextTurnLogic())
             .AddTo(this);
 
-        _buildingController.GetCityHallBuilding().OnNewActionPointsCreated
+        _buildingsController.GetCityHallBuilding().OnNewActionPointsCreated
             .Subscribe(_ => NewActionPointsCreated())
             .AddTo(this);
 
@@ -111,8 +113,8 @@ public class TimeController : MonoInit
             .Subscribe(_ => DisableNextTurnLogic())
             .AddTo(this);
 
-        _localIncreaseMaxAPValue = 0;
-        _localIncreaseAddAPValue = 0;
+        LocalIncreaseMaxAPValue = 0;
+        LocalIncreaseAddAPValue = 0;
 
         UpdateTime();
         return UniTask.CompletedTask;
@@ -136,15 +138,15 @@ public class TimeController : MonoInit
 
     private void NewActionPointsCreated()
     {
-        _localIncreaseMaxAPValue = increaseMaxAPValue;
-        _localIncreaseAddAPValue = increaseAddAPValue;
+        LocalIncreaseMaxAPValue += increaseMaxAPValue;
+        LocalIncreaseAddAPValue += increaseAddAPValue;
     }
 
     public bool OnActionPointUsed()
     {
-        if (_actionPoints.Value > 0)
+        if (_currentActionPoints.Value > 0)
         {
-            _actionPoints.Value--;
+            _currentActionPoints.Value--;
             return true;
         }
         return false;
@@ -221,22 +223,22 @@ public class TimeController : MonoInit
 
     private void AddActionPoints()
     {
-        _actionPoints.Value = Mathf.Clamp(
-            _actionPoints.Value + _timeControllerConfig.ActionPointsAddValueInTheNextDay + _localIncreaseAddAPValue,
-            0, _timeControllerConfig.ActionPointsMaxValue + _localIncreaseAddAPValue
+        _currentActionPoints.Value = Mathf.Clamp(
+            _currentActionPoints.Value + _timeControllerConfig.ActionPointsAddValueInTheNextDay + LocalIncreaseAddAPValue,
+            0, _timeControllerConfig.ActionPointsMaxValue + LocalIncreaseAddAPValue
         );
     }
 
     private void ProcessDelayedActions()
     {
-        for (int i = _delayedActions.Count - 1; i >= 0; i--)
+        for (int i = DelayedActions.Count - 1; i >= 0; i--)
         {
-            _delayedActions[i].DaysRemaining--;
+            DelayedActions[i].DaysRemaining--;
 
-            if (_delayedActions[i].DaysRemaining <= 0)
+            if (DelayedActions[i].DaysRemaining <= 0)
             {
-                _delayedActions[i].Action?.Invoke();
-                _delayedActions.RemoveAt(i);
+                DelayedActions[i].Action?.Invoke();
+                DelayedActions.RemoveAt(i);
             }
         }
     }
@@ -250,6 +252,17 @@ public class TimeController : MonoInit
             return;
         }
 
-        _delayedActions.Add(new DelayedAction(days, action));
+        DelayedActions.Add(new DelayedAction(days, action));
+    }
+    
+    public void SetDateAndPeriod(DateTime newDate, PeriodOfDay newPeriod)
+    {
+        _currentDate.Value = newDate;
+        _currentPeriod.Value = newPeriod;
+    }
+    
+    public void SetActionPoints(int value)
+    {
+        _currentActionPoints.Value = value;
     }
 }

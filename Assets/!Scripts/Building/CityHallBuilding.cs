@@ -169,13 +169,13 @@ public class CityHallBuilding : RepairableBuilding,ISaveableBuilding
         RelationWithGovernment = Mathf.Clamp(RelationWithGovernment + amount, 1, 10);
     }
 
-    public new int BuildingId => base.BuildingId;
+    public new int BuildingID => base.BuildingID;
 
     public override BuildingSaveData GetSaveData()
     {
         return new CityHallBuildingSaveData
         {
-            buildingId = BuildingId,
+            buildingID = BuildingID,
             buildingIsSelectable = BuildingIsSelectable,
             relationWithGovernment = RelationWithGovernment,
             daysLeftToReceiveGovHelp = DaysLeftToReceiveGovHelp,

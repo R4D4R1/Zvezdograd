@@ -9,7 +9,7 @@ using UniRx;
 
 public class PeopleUnitsController : MonoInit
 {
-    private List<PeopleUnit> _allUnits;
+    public List<PeopleUnit> _allUnits;
     private PeopleUnitsControllerConfig _config;
 
     public List<PeopleUnit> ReadyUnits { get; } = new();
@@ -19,17 +19,17 @@ public class PeopleUnitsController : MonoInit
     private List<float> InitialPositions { get; } = new();
 
     private TimeController _timeController;
-    private BuildingController _buildingController;
+    private BuildingsController _buildingsController;
 
     public readonly Subject<Unit> OnUnitCreatedByPeopleUnitController = new();
     public readonly Subject<Unit> OnUnitInjuredByPeopleUnitController = new();
     public readonly Subject<Unit> OnUnitHealedByPeopleUnitController = new();
 
     [Inject]
-    public void Construct(PeopleUnitsControllerConfig config, BuildingController buildingController, TimeController timeController)
+    public void Construct(PeopleUnitsControllerConfig config, BuildingsController buildingsController, TimeController timeController)
     {
         _config = config;
-        _buildingController = buildingController;
+        _buildingsController = buildingsController;
         _timeController = timeController;
     }
 
@@ -41,19 +41,19 @@ public class PeopleUnitsController : MonoInit
             .Subscribe(_ => NextTurn())
             .AddTo(this);
 
-        _buildingController.GetCityHallBuilding().OnCityHallUnitCreated
+        _buildingsController.GetCityHallBuilding().OnCityHallUnitCreated
             .Subscribe(_ => CreateUnit())
             .AddTo(this);
 
-        _buildingController.GetHospitalBuilding().OnHospitalUnitHealed
+        _buildingsController.GetHospitalBuilding().OnHospitalUnitHealed
             .Subscribe(_ => HealInuredUnit())
             .AddTo(this);
 
-        _buildingController.OnBuildingBombed
+        _buildingsController.OnBuildingBombed
             .Subscribe(_ => TryInjureRandomReadyUnit())
             .AddTo(this);
         
-        _buildingController.GetCityHallBuilding().OnNewActionPointsStartedCreating
+        _buildingsController.GetCityHallBuilding().OnNewActionPointsStartedCreating
             .Subscribe(RemoveReadyUnitsForNewActionPoints)
             .AddTo(this);
 
@@ -176,7 +176,7 @@ public class PeopleUnitsController : MonoInit
 
     private bool AreUnitsReady(int units) => units <= ReadyUnits.Count;
 
-    private void UpdateReadyUnits()
+    public void UpdateReadyUnits()
     {
         ReadyUnits.Clear();
 

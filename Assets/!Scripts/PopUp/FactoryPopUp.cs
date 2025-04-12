@@ -20,7 +20,7 @@ public class FactoryPopUp : EnoughPopUp,ISaveablePopUp
     public override void Init()
     {
         base.Init();
-        BuildingController.GetCityHallBuilding().OnMilitaryHelpSent
+        BuildingsController.GetCityHallBuilding().OnMilitaryHelpSent
             .Subscribe(_ => SetCreateArmyMaterialsBtnState(true))
             .AddTo(this);
 
@@ -86,13 +86,13 @@ public class FactoryPopUp : EnoughPopUp,ISaveablePopUp
         backArmyBtn.SetActive(!activeState);
     }
 
-    public new int PopUpId => base.PopUpId;
+    public new int PopUpID => base.PopUpId;
 
     public PopUpSaveData GetSaveData()
     {
         return new FactoryPopUpSaveData()
         {
-            popUpId = PopUpId,
+            popUpID = PopUpID,
             isCreatingArmyMaterials = _isCreatingArmyMaterials
         };
     }

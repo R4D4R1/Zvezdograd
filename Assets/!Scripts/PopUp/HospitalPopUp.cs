@@ -19,7 +19,7 @@ public class HospitalPopUp : QuestPopUp
     {
         base.Init();
 
-        _building = BuildingController.GetHospitalBuilding();
+        _building = BuildingsController.GetHospitalBuilding();
         
         SetButtonState(giveMedicineBtnParent, true);
         UpdateAllText();
@@ -64,7 +64,7 @@ public class HospitalPopUp : QuestPopUp
 
     private void OnNextDayEvent()
     {
-        if (BuildingController.GetHospitalBuilding().MedicineWasGiven())
+        if (BuildingsController.GetHospitalBuilding().MedicineWasGiven())
         {
             SetButtonState(giveMedicineBtnParent, true);
         }
@@ -76,14 +76,14 @@ public class HospitalPopUp : QuestPopUp
     {
         if (!CanGiveAwayMedicine()) return;
         SetButtonState(giveMedicineBtnParent, false);
-        BuildingController.GetHospitalBuilding().SendPeopleToGiveMedicine();
+        BuildingsController.GetHospitalBuilding().SendPeopleToGiveMedicine();
     }
 
     private bool CanGiveAwayMedicine()
     {
-        return HasEnoughPeople(BuildingController.GetHospitalBuilding().HospitalBuildingConfig.PeopleToGiveMedicine) &&
+        return HasEnoughPeople(BuildingsController.GetHospitalBuilding().HospitalBuildingConfig.PeopleToGiveMedicine) &&
                HasEnoughResources(ResourceModel.ResourceType.Medicine,
-                   BuildingController.GetHospitalBuilding().HospitalBuildingConfig.MedicineToGive) &&
+                   BuildingsController.GetHospitalBuilding().HospitalBuildingConfig.MedicineToGive) &&
                CanUseActionPoint();
     }
 
@@ -104,7 +104,7 @@ public class HospitalPopUp : QuestPopUp
     protected override void UpdateAllText()
     {
         medicineTimerText.text = "Осталось времени до раздачи - " +
-                                 BuildingController.GetHospitalBuilding().DaysToGiveMedicine + " дн.";
+                                 BuildingsController.GetHospitalBuilding().DaysToGiveMedicine + " дн.";
     }
 
     private void SetHealButtonState(GameObject btnsParent, bool activeState)
@@ -130,7 +130,7 @@ public class HospitalPopUp : QuestPopUp
     {
         return new HospitalQuestPopUpSaveData()
         {
-            popUpId = PopUpId,
+            popUpID = PopUpID,
             isBtnActive = IsBtnActive,
             IsHealing = _isHealing
         };

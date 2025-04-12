@@ -1,26 +1,50 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using Newtonsoft.Json;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using Zenject;
 
 public class SaveLoadManager : MonoBehaviour
 {
     [SerializeField] private List<GameObject> _saveSlots;
+    [SerializeField] private List<Button> _slotButtons;  // Кнопки для выбора слотов
+    [SerializeField] private Button _loadButton;          // Кнопка для загрузки
+    [SerializeField] private Button _deleteButton;        // Кнопка для удаления сохранений
+    
     private List<TextMeshProUGUI> _slotTexts = new();
-    private static int? currentSlot = null;
-    public static bool IsStartedFromMainMenu { get; private set; } = false;
+    private static int? currentSlot;
+    private static bool IsStartedFromMainMenu { get; set; } = false;
 
     protected static ResourceViewModel _resourceViewModel;
     private LoadLevelController _loadLevelController;
+    private static TimeController _timeController;
+    private static PeopleUnitsController _peopleUnitsController;
+    private static PopUpsController _popUpsController;
+    private static BuildingsController _buildingsController;
 
-    [Inject]
-    public void Construct(ResourceViewModel resourceViewModel, LoadLevelController loadLevelController)
+    private static readonly JsonSerializerSettings settings = new()
     {
-        _resourceViewModel = resourceViewModel;
+        TypeNameHandling = TypeNameHandling.All,
+        Formatting = Formatting.Indented,
+        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+    };
+    
+    [Inject]
+    public void Construct(ResourceViewModel resourceViewModel, LoadLevelController loadLevelController,
+        TimeController timeController, PeopleUnitsController peopleUnitsController,PopUpsController popUpsController,
+        BuildingsController buildingsController)
+    {
         _loadLevelController = loadLevelController;
+        _resourceViewModel = resourceViewModel;
+        _timeController = timeController;
+        _peopleUnitsController = peopleUnitsController;
+        _popUpsController = popUpsController;
+        _buildingsController = buildingsController;
     }
 
     private void Start()
@@ -29,9 +53,20 @@ public class SaveLoadManager : MonoBehaviour
         {
             _slotTexts.Add(slot.GetComponentInChildren<TextMeshProUGUI>());
         }
-
+        
         UpdateSlotTexts();
+
+        // Привязка событий к кнопкам
+        for (int i = 0; i < _slotButtons.Count; i++)
+        {
+            int index = i;  // Локальная копия индекса для использования в лямбде
+            _slotButtons[i].onClick.AddListener(() => SelectSlot(index));
+        }
+        
+        _loadButton.onClick.AddListener(LoadGame);
+        _deleteButton.onClick.AddListener(DeleteSave);
     }
+
     public void SelectSlot(int slotIndex)
     {
         currentSlot = slotIndex;
@@ -40,9 +75,6 @@ public class SaveLoadManager : MonoBehaviour
 
         foreach (var slot in _saveSlots)
         {
-            // 0 - unselected
-            // 1 - selected
-
             var unselectedText = slot.transform.GetComponentInChildren<UnselectedText>(true);
             var selectedText = slot.transform.GetComponentInChildren<SelectedText>(true);
 
@@ -58,66 +90,89 @@ public class SaveLoadManager : MonoBehaviour
             slotNum++;
         }
     }
+
     public void SaveGame()
+{
+    if (currentSlot == null)
     {
-        if (currentSlot == null)
-        {
-            Debug.LogWarning("No save slot selected. Cannot save the game.");
-            return;
-        }
-
-        string filePath = GetFilePath(currentSlot.Value);
-
-        var unitsController = PeopleUnitsController;
-        var timeController = TimeController;
-
-        GameData gameData = new GameData
-        {
-            periodOfDay = timeController.CurrentPeriod,
-            allUnitsData = new List<PeopleUnitData>(),
-            allBuildingsData = new List<BuildingData>(),
-
-            provision = _resourceViewModel.Provision.Value,
-            medicine = _resourceViewModel.Medicine.Value,
-            rawMaterials = _resourceViewModel.RawMaterials.Value,
-            readyMaterials = _resourceViewModel.ReadyMaterials.Value,
-            stability = _resourceViewModel.Stability.Value
-        };
-
-        gameData.SetDate(timeController.CurrentDate);
-
-        foreach (var unit in unitsController.GetAllUnits())
-        {
-            PeopleUnitData unitData = new PeopleUnitData
-            {
-                currentState = unit.GetCurrentState(),
-                position = unit.transform.position,
-                busyTime = unit.BusyTime,
-                restingTime = unit.RestingTime
-            };
-            gameData.allUnitsData.Add(unitData);
-        }
-
-        foreach (var building in _controllersManager.BuildingController.AllBuildings)
-        {
-            BuildingData buildingData = new BuildingData
-            {
-                BuildingId = building.BuildingId,
-            };
-            gameData.allBuildingsData.Add(buildingData);
-        }
-
-        string json = JsonUtility.ToJson(gameData, true);
-        File.WriteAllText(filePath, json);
-
-
-        Debug.Log($"Game saved to slot {currentSlot.Value}.");
-
-        ClearCurrentSaveSlot();
-
-        UpdateSlotTexts();
+        Debug.LogWarning("No save slot selected. Cannot save the game.");
+        return;
     }
-    public async void LoadGame()
+
+    string filePath = GetFilePath(currentSlot.Value);
+
+    // Сбор основной информации
+    GameData gameData = new GameData
+    {
+        periodOfDay = _timeController.CurrentPeriod,
+        delayedActions = _timeController.DelayedActions,
+        allUnitsData = new List<PeopleUnitData>(),
+        localIncreaseMaxAPValue = _timeController.LocalIncreaseMaxAPValue,
+        localIncreaseAddAPValue = _timeController.LocalIncreaseAddAPValue,
+        currentActionPoints = _timeController.CurrentActionPoints,
+
+        provision = _resourceViewModel.Provision.Value,
+        medicine = _resourceViewModel.Medicine.Value,
+        rawMaterials = _resourceViewModel.RawMaterials.Value,
+        readyMaterials = _resourceViewModel.ReadyMaterials.Value,
+        stability = _resourceViewModel.Stability.Value
+    };
+    gameData.SetDate(_timeController.CurrentDate);
+
+    foreach (var unit in _peopleUnitsController._allUnits)
+    {
+        PeopleUnitData unitData = new PeopleUnitData
+        {
+            currentState = unit.GetCurrentState(),
+            position = unit.transform.position,
+            busyTime = unit.BusyTurns,
+            restingTime = unit.RestingTurns
+        };
+        gameData.allUnitsData.Add(unitData);
+    }
+
+    // Сбор попапов и зданий по интерфейсам
+    var allPopups = _popUpsController.AllPopUps.OfType<ISaveablePopUp>();
+    var allBuildings = _buildingsController.AllBuildings.OfType<ISaveableBuilding>();
+    
+    List<PopUpSaveData> popUpSaves = allPopups.Select(p => p.GetSaveData()).ToList();
+    List<BuildingSaveData> buildingSaves = allBuildings.Select(b => b.GetSaveData()).ToList();
+    
+    foreach (var p in popUpSaves)
+    {
+        Debug.Log(p);
+    }
+    foreach (var p in buildingSaves)
+    {
+        Debug.Log(p);
+    }
+    
+    Debug.Log(popUpSaves);
+    Debug.Log(buildingSaves);
+
+    // Комбинирование данных
+    CombinedGameData combined = new CombinedGameData
+    {
+        mainGameData = gameData,
+        popUpSaveData = popUpSaves,
+        buildingSaveData = buildingSaves
+    };
+    
+    string json = JsonConvert.SerializeObject(combined, settings);
+    File.WriteAllText(filePath, json);
+    
+    // string json = JsonUtility.ToJson(combined, true);
+    // File.WriteAllText(filePath, json);
+    
+    Debug.Log(json);
+    
+    Debug.Log($"Game saved to slot {currentSlot.Value}. Path: {filePath}");
+    
+    ClearCurrentSaveSlot();
+    UpdateSlotTexts();
+}
+
+    private async void LoadGame()
     {
         if (currentSlot == null)
         {
@@ -125,81 +180,107 @@ public class SaveLoadManager : MonoBehaviour
             return;
         }
 
-        if (SceneManager.GetActiveScene().name == Scenes.MAIN_MENU)
-        {
-            await _loadLevelController.LoadSceneAsync(Scenes.GAME_SCENE);
-        }
-
-        if (!IsStartedFromMainMenu)
-        {
-            ClearCurrentSaveSlot();
-        }
-    }
-
-    public static void LoadDataFromCurrentSlot()
-    {
         string filePath = GetFilePath(currentSlot.Value);
-
-        var unitsController = _controllersManager.PeopleUnitsController;
-        var timeController = _controllersManager.TimeController;
-
         if (File.Exists(filePath))
         {
-            string json = File.ReadAllText(filePath);
-            GameData gameData = JsonUtility.FromJson<GameData>(json);
-
-            Debug.Log(gameData.periodOfDay);
-            Debug.Log(gameData.GetDate());
-
-            timeController.SetDateAndPeriod(gameData.GetDate(), gameData.periodOfDay);
-
-            List<PeopleUnit> units = unitsController.GetAllUnits();
-
-            for (int i = 0; i < gameData.allUnitsData.Count && i < units.Count; i++)
+            if (SceneManager.GetActiveScene().name == Scenes.MAIN_MENU)
             {
-                var unit = units[i];
-                var unitData = gameData.allUnitsData[i];
-
-                unit.transform.position = unitData.position;
-                unit.SetState(unitData.currentState, unitData.busyTime, unitData.restingTime);
+                await _loadLevelController.LoadSceneAsync(Scenes.GAME_SCENE);
             }
 
-            var buildingController = _controllersManager.BuildingController;
+            LoadDataFromCurrentSlot();
 
-            Debug.Log(buildingController.gameObject);
-
-            foreach (var buildingData in gameData.allBuildingsData)
+            if (!IsStartedFromMainMenu)
             {
-                Debug.Log($"Looking for BuildingId: {buildingData.BuildingId}");
-
-                var building = buildingController.AllBuildings
-                    .FirstOrDefault(b => b.BuildingId == buildingData.BuildingId);
-
-                if (building != null)
-                {
-                    Debug.Log("LOADED DATA");
-                }
-                else
-                {
-                    Debug.LogWarning($"Building with ID {buildingData.BuildingId} not found.");
-                }
+                ClearCurrentSaveSlot();
             }
-
-            _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Provision, gameData.provision - _resourceViewModel.Provision.Value);
-            _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Medicine, gameData.medicine - _resourceViewModel.Medicine.Value);
-            _resourceViewModel.ModifyResource(ResourceModel.ResourceType.RawMaterials, gameData.rawMaterials - _resourceViewModel.RawMaterials.Value);
-            _resourceViewModel.ModifyResource(ResourceModel.ResourceType.ReadyMaterials, gameData.readyMaterials - _resourceViewModel.ReadyMaterials.Value);
-            _resourceViewModel.ModifyResource(ResourceModel.ResourceType.Stability, gameData.stability - _resourceViewModel.Stability.Value);
-
-            unitsController.UpdateReadyUnits();
-            Debug.Log($"Game loaded from slot {currentSlot.Value}.");
         }
         else
         {
-            Debug.LogWarning($"Save slot {currentSlot.Value} not found.");
+            Debug.LogWarning($"Save slot {currentSlot.Value} does not exist.");
         }
     }
-    public void DeleteSave()
+
+    private static void LoadDataFromCurrentSlot()
+{
+    string filePath = GetFilePath(currentSlot.Value);
+
+    if (File.Exists(filePath))
+    {
+        string json = File.ReadAllText(filePath);
+        CombinedGameData combined = JsonConvert.DeserializeObject<CombinedGameData>(json, settings);
+        GameData gameData = combined.mainGameData;
+        
+        // Load main game data
+        _timeController.SetDateAndPeriod(gameData.GetDate(), gameData.periodOfDay);
+        _timeController.SetActionPoints(gameData.currentActionPoints);
+        _timeController.DelayedActions = gameData.delayedActions;
+        _timeController.LocalIncreaseMaxAPValue = gameData.localIncreaseMaxAPValue;
+        _timeController.LocalIncreaseAddAPValue = gameData.localIncreaseAddAPValue;
+
+        // Load units
+        List<PeopleUnit> units = _peopleUnitsController._allUnits;
+        for (int i = 0; i < gameData.allUnitsData.Count && i < units.Count; i++)
+        {
+            var unit = units[i];
+            var unitData = gameData.allUnitsData[i];
+            unit.transform.position = unitData.position;
+            unit.SetState(unitData.currentState, unitData.busyTime, unitData.restingTime);
+        }
+
+        // Load resources
+        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Provision, gameData.provision - _resourceViewModel.Provision.Value));
+        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Medicine, gameData.medicine - _resourceViewModel.Medicine.Value));
+        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.RawMaterials, gameData.rawMaterials - _resourceViewModel.RawMaterials.Value));
+        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.ReadyMaterials, gameData.readyMaterials - _resourceViewModel.ReadyMaterials.Value));
+        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, gameData.stability - _resourceViewModel.Stability.Value));
+
+        _peopleUnitsController.UpdateReadyUnits();
+
+        // Load popups - ensure all popups have proper IDs assigned
+        foreach (var data in combined.popUpSaveData)
+        {
+            var popup = _popUpsController.AllPopUps.OfType<ISaveablePopUp>()
+                .FirstOrDefault(p => p.PopUpID == data.popUpID);
+            
+            if (popup != null)
+            {
+                popup.LoadFromSaveData(data);
+                Debug.Log($"Loaded popup with ID: {data.popUpID}");
+            }
+            else
+            {
+                Debug.LogWarning($"Popup with ID {data.popUpID} not found!");
+            }
+        }
+
+        // Load buildings - ensure all buildings have proper IDs assigned
+        foreach (var data in combined.buildingSaveData)
+        {
+            var building = _buildingsController.AllBuildings.OfType<ISaveableBuilding>()
+                .FirstOrDefault(b => b.BuildingID == data.buildingID);
+            
+            if (building != null)
+            {
+                building.LoadFromSaveData(data);
+                Debug.Log($"Loaded building with ID: {data.buildingID}");
+            }
+            else
+            {
+                Debug.LogWarning($"Building with ID {data.buildingID} not found!");
+            }
+        }
+        
+        Debug.Log($"Game loaded from slot {currentSlot.Value}.");
+    }
+    else
+    {
+        Debug.LogWarning($"Save slot {currentSlot.Value} not found.");
+    }
+}
+
+
+    private void DeleteSave()
     {
         if (currentSlot == null)
         {
@@ -213,14 +294,14 @@ public class SaveLoadManager : MonoBehaviour
             File.Delete(filePath);
             Debug.Log($"Save slot {currentSlot.Value} deleted.");
             UpdateSlotTexts();
+            ClearCurrentSaveSlot();
         }
         else
         {
             Debug.LogWarning($"Save slot {currentSlot.Value} does not exist.");
         }
-
-        ClearCurrentSaveSlot();
     }
+
     public async void LoadLastSave()
     {
         int? latestSlot = null;
@@ -253,60 +334,58 @@ public class SaveLoadManager : MonoBehaviour
             Debug.LogWarning("No saves found to load.");
         }
     }
+
     public void ClearCurrentSaveSlot()
     {
-            int slotNum = 0;
-            foreach (var slot in _saveSlots)
+        Debug.Log("ClearSlot");
+        int slotNum = 0;
+        foreach (var slot in _saveSlots)
+        {
+            var unselectedText = slot.transform.GetComponentInChildren<UnselectedText>(true);
+            var selectedText = slot.transform.GetComponentInChildren<SelectedText>(true);
+
+            if (currentSlot == slotNum)
             {
-                var unselectedText = slot.transform.GetComponentInChildren<UnselectedText>(true);
-                var selectedText = slot.transform.GetComponentInChildren<SelectedText>(true);
-
-                if (currentSlot == slotNum)
-                {
-                    if (unselectedText != null) unselectedText.gameObject.SetActive(true);
-                    if (selectedText != null) selectedText.gameObject.SetActive(false);
-                }
-
-                slotNum++;
+                if (unselectedText != null) unselectedText.gameObject.SetActive(true);
+                if (selectedText != null) selectedText.gameObject.SetActive(false);
             }
+
+            slotNum++;
+        }
+
         currentSlot = null;
     }
-    public void UpdateSlotTexts()
+
+    private void UpdateSlotTexts()
     {
         for (int i = 0; i < _slotTexts.Count; i++)
         {
-
             string filePath = GetFilePath(i);
             if (File.Exists(filePath))
             {
                 DateTime lastWriteTime = File.GetLastWriteTime(filePath);
                 string json = File.ReadAllText(filePath);
-                GameData gameData = JsonUtility.FromJson<GameData>(json);
+                CombinedGameData gameData = JsonUtility.FromJson<CombinedGameData>(json);
 
-                _slotTexts[i].text = $"СОХРАНЕНИЕ {lastWriteTime:dd.MM.yyyy HH:mm} {gameData.GetDate().ToString("yyyy-MM-dd")}";
+                _slotTexts[i].text = $"СОХРАНЕНИЕ - {gameData.mainGameData.GetDate().ToString("yyyy-MM-dd")}" +
+                                     $" {gameData.mainGameData.periodOfDay} {lastWriteTime}";
             }
             else
             {
-                _slotTexts[i].text = "СВОБОДНО";
+                _slotTexts[i].text = $"МЕСТО ДЛЯ СОХРАНЕНИЯ";
             }
         }
     }
-    public bool SaveExists()
-    {
-        return currentSlot != null && File.Exists(GetFilePath(currentSlot.Value));
-    }
+
     private static string GetFilePath(int slotIndex)
     {
-        return Path.Combine(Application.persistentDataPath, $"saveSlot{slotIndex}.json");
+        return $"{Application.persistentDataPath}/save_slot_{slotIndex + 1}.json";
     }
 
-    public void SetLoadedFromMainMenu()
+    public void SetStartedNewGame()
     {
         IsStartedFromMainMenu = true;
     }
-    
-    public static void SetStartedNewGame()
-    {
-        IsStartedFromMainMenu = false;
-    }
 }
+
+

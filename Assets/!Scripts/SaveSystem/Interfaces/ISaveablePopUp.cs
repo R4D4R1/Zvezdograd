@@ -1,6 +1,6 @@
 public interface ISaveablePopUp
 {
-    int PopUpId { get; }
+    int PopUpID { get; }
     PopUpSaveData GetSaveData();
     void LoadFromSaveData(PopUpSaveData data);
 }

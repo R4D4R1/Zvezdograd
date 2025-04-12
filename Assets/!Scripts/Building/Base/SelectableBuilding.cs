@@ -13,11 +13,11 @@ public class SelectableBuilding : MonoBehaviour
 
     public string BuildingLabel { get; private set; }
     public string BuildingDescription { get; private set; }
-    protected int BuildingId { get; private set; }
+    public int BuildingId { get; private set; }
 
     protected TimeController TimeController;
     protected ResourceViewModel ResourceViewModel;
-    protected BuildingController BuildingController;
+    protected BuildingsController BuildingsController;
     protected PeopleUnitsController PeopleUnitsController;
     protected MainGameController MainGameController;
     protected PopUpsController PopUpsController;
@@ -26,14 +26,14 @@ public class SelectableBuilding : MonoBehaviour
     public void Construct(
         TimeController timeController,
         ResourceViewModel resourceViewModel,
-        BuildingController buildingController,
+        BuildingsController buildingsController,
         PeopleUnitsController peopleUnitsController,
         MainGameController mainGameController,
         PopUpsController popUpsController)
     {
         TimeController = timeController;
         ResourceViewModel = resourceViewModel;
-        BuildingController = buildingController;
+        BuildingsController = buildingsController;
         PeopleUnitsController = peopleUnitsController;
         MainGameController = mainGameController;
         PopUpsController = popUpsController;

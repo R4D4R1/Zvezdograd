@@ -61,7 +61,7 @@ public class FactoryBuilding : RepairableBuilding,ISaveableBuilding
                     }
                     else
                     {
-                        BuildingController.GetCityHallBuilding().ArmyMaterialsSent();
+                        BuildingsController.GetCityHallBuilding().ArmyMaterialsSent();
                     }
 
                     BuildingIsSelectable = true;
@@ -106,13 +106,13 @@ public class FactoryBuilding : RepairableBuilding,ISaveableBuilding
         SetGreyMaterials();
     }
     
-    public new int BuildingId => base.BuildingId;
+    public new int BuildingID => base.BuildingID;
     
     public override BuildingSaveData GetSaveData()
     {
         return new FactoryBuildingSaveData
         {
-            buildingId = BuildingId,
+            buildingID = BuildingID,
             buildingIsSelectable = BuildingIsSelectable,
             turnsToCreateArmyMaterials = TurnsToCreateArmyMaterials,
             turnsToCreateReadyMaterials = TurnsToCreateReadyMaterials,

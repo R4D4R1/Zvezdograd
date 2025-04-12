@@ -20,7 +20,7 @@ public class InfoPopUp : MonoBehaviour
     protected PopUpFactory PopUpFactory;
     protected PeopleUnitsController PeopleUnitsController;
     protected TimeController TimeController;
-    protected BuildingController BuildingController;
+    protected BuildingsController BuildingsController;
     protected MainGameController MainGameController;
     protected MainGameUIController MainGameUIController;
     protected TutorialController TutorialController;
@@ -33,7 +33,7 @@ public class InfoPopUp : MonoBehaviour
         PopUpFactory popUpFactory,
         PeopleUnitsController peopleUnitsController,
         TimeController timeController,
-        BuildingController buildingController,
+        BuildingsController buildingsController,
         MainGameController mainGameController,
         MainGameUIController mainGameUIController,
         TutorialController tutorialController,
@@ -44,7 +44,7 @@ public class InfoPopUp : MonoBehaviour
         PopUpFactory = popUpFactory;
         PeopleUnitsController = peopleUnitsController;
         TimeController = timeController;
-        BuildingController = buildingController;
+        BuildingsController = buildingsController;
         MainGameController = mainGameController;
         MainGameUIController = mainGameUIController;
         TutorialController = tutorialController;

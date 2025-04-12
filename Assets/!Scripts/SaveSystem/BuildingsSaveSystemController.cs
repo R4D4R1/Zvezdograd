@@ -15,12 +15,12 @@ public class BuildingsSaveSystemController : MonoBehaviour
         Formatting = Formatting.Indented
     };
 
-    [Inject] private BuildingController _buildingController;
+    [Inject] private BuildingsController _buildingsController;
 
     public void SaveBuildings()
     {
         var saveDataDict = new Dictionary<string, List<BuildingSaveData>>();
-        var allBuildings = _buildingController.AllBuildings;
+        var allBuildings = _buildingsController.AllBuildings;
 
         foreach (var obj in allBuildings)
         {
@@ -55,7 +55,7 @@ public class BuildingsSaveSystemController : MonoBehaviour
 
         var json = File.ReadAllText(GetSavePath());
         var wrapper = JsonConvert.DeserializeObject<SaveDataWrapper>(json, _settings);
-        var allBuildings = _buildingController.AllBuildings;
+        var allBuildings = _buildingsController.AllBuildings;
 
         foreach (var obj in allBuildings)
         {
@@ -65,7 +65,7 @@ public class BuildingsSaveSystemController : MonoBehaviour
 
                 if (wrapper.dataByType.TryGetValue(typeName, out var buildingList))
                 {
-                    var data = buildingList.Find(d => d.buildingId == saveable.BuildingId);
+                    var data = buildingList.Find(d => d.buildingID == saveable.BuildingID);
                     if (data != null)
                     {
                         saveable.LoadFromSaveData(data);

@@ -24,7 +24,7 @@ public class CityHallPopUp : QuestPopUp
     {
         base.Init();
 
-        _cityHallBuilding = BuildingController.GetCityHallBuilding();
+        _cityHallBuilding = BuildingsController.GetCityHallBuilding();
 
         PeopleUnitsController.OnUnitCreatedByPeopleUnitController
             .Subscribe(_ => UpdateCreateUnitGOButtonState())

@@ -67,13 +67,13 @@ public class CollectableBuilding : ChangeMaterialsBuilding, ISaveableBuilding
         SetGreyMaterials();
     }
 
-    public new int BuildingId => base.BuildingId;
+    public new int BuildingID => base.BuildingId;
 
     public BuildingSaveData GetSaveData()
     {
         return new CollectableBuildingSaveData
         {
-            buildingId = BuildingId,
+            buildingID = BuildingID,
             buildingIsSelectable = BuildingIsSelectable,
             rawMaterialsLeft = RawMaterialsLeft,
             turnsToCollect = TurnsToCollect,

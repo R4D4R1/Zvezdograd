@@ -91,7 +91,7 @@ public class QuestPopUp : EnoughPopUp,ISaveablePopUp
     private void CompleteQuest(GameObject quest, int stabilityToGet, int relationshipWithGovToGet)
     {
         ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, stabilityToGet));
-        BuildingController.GetCityHallBuilding().ModifyRelationWithGov(relationshipWithGovToGet);
+        BuildingsController.GetCityHallBuilding().ModifyRelationWithGov(relationshipWithGovToGet);
 
         quest.SetActive(false);
         _questDeadlines.Remove(quest);
@@ -100,7 +100,7 @@ public class QuestPopUp : EnoughPopUp,ISaveablePopUp
     private void LoseQuest(GameObject quest, int stabilityToLose, int relationshipWithGovToLose)
     {
         ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, -stabilityToLose));
-        BuildingController.GetCityHallBuilding().ModifyRelationWithGov(-relationshipWithGovToLose);
+        BuildingsController.GetCityHallBuilding().ModifyRelationWithGov(-relationshipWithGovToLose);
 
         quest.SetActive(false);
         _questDeadlines.Remove(quest);
@@ -133,7 +133,6 @@ public class QuestPopUp : EnoughPopUp,ISaveablePopUp
 
     protected void SetButtonState(GameObject btnsParent, bool activeState)
     {
-        Debug.Log($"Setting button {btnsParent} - {activeState}");
         IsBtnActive = activeState;
         btnsParent.transform.GetChild(0).gameObject.SetActive(activeState);
         btnsParent.transform.GetChild(1).gameObject.SetActive(!activeState);
@@ -144,13 +143,13 @@ public class QuestPopUp : EnoughPopUp,ISaveablePopUp
         // UPDATE UI TEXT
     }
     
-    public new int PopUpId => base.PopUpId;
+    public new int PopUpID => base.PopUpId;
     
     public virtual PopUpSaveData GetSaveData()
     {
         return new QuestPopUpSaveData
         {
-            popUpId = PopUpId,
+            popUpID = PopUpID,
             isBtnActive = IsBtnActive
         };
     }

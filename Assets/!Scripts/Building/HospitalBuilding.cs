@@ -96,13 +96,13 @@ public class HospitalBuilding : RepairableBuilding,ISaveableBuilding
         ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Medicine, -hospitalConfig.MedicineToHealInjuredUnit));
     }
     
-    public new int BuildingId => base.BuildingId;
+    public new int BuildingID => base.BuildingID;
 
     public override BuildingSaveData GetSaveData()
     {
         return new HospitalBuildingSaveData
         {
-            buildingId = BuildingId,
+            buildingID = BuildingID,
             buildingIsSelectable = BuildingIsSelectable,
             turnsToGiveMedicine = TurnsToGiveMedicine,
             daysToGiveMedicine = DaysToGiveMedicine,

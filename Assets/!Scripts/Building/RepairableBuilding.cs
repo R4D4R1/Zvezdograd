@@ -131,13 +131,13 @@
         private GameObject _intactBuildingModel;
         private GameObject _damagedBuildingModel;
         
-        public new int BuildingId => base.BuildingId;
+        public new int BuildingID => base.BuildingId;
         
         public virtual BuildingSaveData GetSaveData()
         {
             return new RepairableBuildingSaveData
             {
-                buildingId = BuildingId,
+                buildingID = BuildingID,
                 buildingIsSelectable = BuildingIsSelectable,
                 turnsToRepair = TurnsToRepair,
                 currentState = CurrentState

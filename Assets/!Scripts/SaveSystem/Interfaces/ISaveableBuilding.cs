@@ -1,6 +1,6 @@
 public interface ISaveableBuilding
 {
-    int BuildingId { get; }
+    int BuildingID { get; }
     BuildingSaveData GetSaveData();
     void LoadFromSaveData(BuildingSaveData data);
 }

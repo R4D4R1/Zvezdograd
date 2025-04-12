@@ -51,13 +51,13 @@ public class FoodTrucksBuilding : RepairableBuilding,ISaveableBuilding
         return false;
     }
     
-    public new int BuildingId => base.BuildingId;
+    public new int BuildingID => base.BuildingID;
 
     public override BuildingSaveData GetSaveData()
     {
         return new FoodTrucksBuildingSaveData
         {
-            buildingId = BuildingId,
+            buildingID = BuildingID,
             buildingIsSelectable = BuildingIsSelectable,
             turnsToToGiveProvision = TurnsToToGiveProvision,
             isFoodGivenAwayToday = IsFoodGivenAwayToday,

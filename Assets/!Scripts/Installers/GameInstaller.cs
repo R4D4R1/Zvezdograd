@@ -48,11 +48,10 @@ public class GameInstaller : MonoInstaller
         Container.Bind<EventController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<TimeController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<PeopleUnitsController>().FromComponentInHierarchy().AsSingle();
-        Container.Bind<BuildingController>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<BuildingsController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<BlurController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<TutorialController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<EffectsController>().FromComponentInHierarchy().AsSingle();
-        Container.Bind<BuildingsSaveSystemController>().FromComponentInHierarchy().AsSingle();
 
         Container.Bind<PopUpFactory>()
             .AsSingle()
