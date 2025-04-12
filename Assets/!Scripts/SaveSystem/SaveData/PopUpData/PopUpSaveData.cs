@@ -1,6 +1,7 @@
-using System;
-[Serializable]
+using Newtonsoft.Json;
+
+[JsonObject(MemberSerialization.OptIn)]
 public class PopUpSaveData
 {
-    public int popUpID;
+    [JsonProperty] public int popUpID;
 }

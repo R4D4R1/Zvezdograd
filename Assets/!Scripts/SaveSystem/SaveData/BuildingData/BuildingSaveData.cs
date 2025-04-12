@@ -1,12 +1,8 @@
-// using Newtonsoft.Json;
-// [JsonObject(MemberSerialization.OptIn)]
+using Newtonsoft.Json;
 
-using System;
-[Serializable]
+[JsonObject(MemberSerialization.OptIn)]
 public class BuildingSaveData
 {
-    // [JsonProperty] public int buildingID;
-    // [JsonProperty] public bool buildingIsSelectable;
-    public int buildingID;
-    public bool buildingIsSelectable;
+    [JsonProperty] public int buildingID;
+    [JsonProperty] public bool buildingIsSelectable;
 }
