@@ -171,7 +171,7 @@ public class CityHallBuilding : RepairableBuilding,ISaveableBuilding
 
     public new int BuildingID => base.BuildingID;
 
-    public override BuildingSaveData GetSaveData()
+    public override BuildingSaveData SaveData()
     {
         return new CityHallBuildingSaveData
         {
@@ -191,7 +191,7 @@ public class CityHallBuilding : RepairableBuilding,ISaveableBuilding
         };
     }
 
-    public override void LoadFromSaveData(BuildingSaveData data)
+    public override void LoadData(BuildingSaveData data)
     {
         var save = data as CityHallBuildingSaveData;
         if (save == null) return;
@@ -207,7 +207,7 @@ public class CityHallBuilding : RepairableBuilding,ISaveableBuilding
         _isWorking = save.isWorking;
         _isCreatingActionPoints = save.isCreatingActionPoints;
         TurnsToRepair = save.turnsToRepair;
-        CurrentState = save.currentState;
+        SetState(save.currentState);
         
         if (save.buildingIsSelectable)
             RestoreOriginalMaterials();

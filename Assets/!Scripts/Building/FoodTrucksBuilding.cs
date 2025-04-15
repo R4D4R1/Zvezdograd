@@ -1,7 +1,5 @@
-using System.Threading.Tasks;
 using UnityEngine;
 using UniRx;
-using UnityEngine.Serialization;
 
 public class FoodTrucksBuilding : RepairableBuilding,ISaveableBuilding
 {
@@ -9,8 +7,8 @@ public class FoodTrucksBuilding : RepairableBuilding,ISaveableBuilding
     [SerializeField] private FoodTrucksBuildingConfig foodTrucksConfig;
     public FoodTrucksBuildingConfig FoodTrucksBuildingConfig => foodTrucksConfig;
 
-    private int TurnsToToGiveProvision { get; set; }
-    private bool IsFoodGivenAwayToday { get; set; }
+    private int _turnsToToGiveProvision { get; set; }
+    private bool _isFoodGivenAwayToday { get; set; }
 
     public override void Init()
     {
@@ -21,19 +19,19 @@ public class FoodTrucksBuilding : RepairableBuilding,ISaveableBuilding
 
         UpdateAmountOfTurnsNeededToDoSmth();
         
-        IsFoodGivenAwayToday = false;
+        _isFoodGivenAwayToday = false;
     }
 
     private void UpdateAmountOfTurnsNeededToDoSmth()
     {
-        TurnsToToGiveProvision = UpdateAmountOfTurnsNeededToDoSmth(foodTrucksConfig.TurnsToGiveProvisionOriginal);
+        _turnsToToGiveProvision = UpdateAmountOfTurnsNeededToDoSmth(foodTrucksConfig.TurnsToGiveProvisionOriginal);
     }
 
     public void SendPeopleToGiveProvision()
     {
-        IsFoodGivenAwayToday = true;
+        _isFoodGivenAwayToday = true;
         PeopleUnitsController.AssignUnitsToTask(foodTrucksConfig.PeopleToGiveProvision,
-            TurnsToToGiveProvision, foodTrucksConfig.TurnsToRestFromProvisionJob);
+            _turnsToToGiveProvision, foodTrucksConfig.TurnsToRestFromProvisionJob);
 
         ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Provision, -foodTrucksConfig.FoodToGive));
         ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, foodTrucksConfig.StabilityAddValue));
@@ -41,42 +39,42 @@ public class FoodTrucksBuilding : RepairableBuilding,ISaveableBuilding
 
     public bool FoodWasGivenAwayToday()
     {
-        if (IsFoodGivenAwayToday)
+        if (_isFoodGivenAwayToday)
         {
             return true;
         }
         
-        IsFoodGivenAwayToday = false;
+        _isFoodGivenAwayToday = false;
         ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, -foodTrucksConfig.StabilityRemoveValue));
         return false;
     }
     
     public new int BuildingID => base.BuildingID;
 
-    public override BuildingSaveData GetSaveData()
+    public override BuildingSaveData SaveData()
     {
         return new FoodTrucksBuildingSaveData
         {
             buildingID = BuildingID,
             buildingIsSelectable = BuildingIsSelectable,
-            turnsToToGiveProvision = TurnsToToGiveProvision,
-            isFoodGivenAwayToday = IsFoodGivenAwayToday,
+            turnsToToGiveProvision = _turnsToToGiveProvision,
+            isFoodGivenAwayToday = _isFoodGivenAwayToday,
             turnsToRepair = TurnsToRepair,
             currentState = CurrentState
         };
     }
     
-    public override void LoadFromSaveData(BuildingSaveData data)
+    public override void LoadData(BuildingSaveData data)
     {
         var save = data as FoodTrucksBuildingSaveData;
         if (save == null) return;
         
         BuildingIsSelectable = save.buildingIsSelectable;
-        TurnsToToGiveProvision = save.turnsToToGiveProvision;
-        IsFoodGivenAwayToday = save.isFoodGivenAwayToday;
+        _turnsToToGiveProvision = save.turnsToToGiveProvision;
+        _isFoodGivenAwayToday = save.isFoodGivenAwayToday;
         TurnsToRepair = save.turnsToRepair;
-        CurrentState = save.currentState;
-        
+        SetState(save.currentState);
+
         if (save.buildingIsSelectable)
             RestoreOriginalMaterials();
         else

@@ -161,7 +161,7 @@ public class CityHallPopUp : QuestPopUp
         }
     }
     
-    public override void LoadFromSaveData(PopUpSaveData data)
+    public override void LoadData(PopUpSaveData data)
     {
         var save = data as QuestPopUpSaveData;
         if (save == null) return;

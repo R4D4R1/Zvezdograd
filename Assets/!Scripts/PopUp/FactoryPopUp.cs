@@ -88,7 +88,7 @@ public class FactoryPopUp : EnoughPopUp,ISaveablePopUp
 
     public new int PopUpID => base.PopUpId;
 
-    public PopUpSaveData GetSaveData()
+    public PopUpSaveData SaveData()
     {
         return new FactoryPopUpSaveData()
         {
@@ -97,7 +97,7 @@ public class FactoryPopUp : EnoughPopUp,ISaveablePopUp
         };
     }
 
-    public void LoadFromSaveData(PopUpSaveData data)
+    public void LoadData(PopUpSaveData data)
     {
         var save = data as FactoryPopUpSaveData;
         if (save == null) return;

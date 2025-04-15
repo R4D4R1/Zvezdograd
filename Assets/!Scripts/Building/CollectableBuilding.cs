@@ -69,7 +69,7 @@ public class CollectableBuilding : ChangeMaterialsBuilding, ISaveableBuilding
 
     public new int BuildingID => base.BuildingId;
 
-    public BuildingSaveData GetSaveData()
+    public BuildingSaveData SaveData()
     {
         return new CollectableBuildingSaveData
         {
@@ -81,7 +81,7 @@ public class CollectableBuilding : ChangeMaterialsBuilding, ISaveableBuilding
         };
     }
 
-    public void LoadFromSaveData(BuildingSaveData data)
+    public void LoadData(BuildingSaveData data)
     {
         var save = data as CollectableBuildingSaveData;
         if (save == null) return;

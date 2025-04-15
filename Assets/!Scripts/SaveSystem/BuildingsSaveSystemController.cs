@@ -26,7 +26,7 @@ public class BuildingsSaveSystemController : MonoBehaviour
         {
             if (obj is ISaveableBuilding saveable)
             {
-                var data = saveable.GetSaveData();
+                var data = saveable.SaveData();
                 var typeName = obj.GetType().Name;
 
                 if (!saveDataDict.ContainsKey(typeName))
@@ -68,7 +68,7 @@ public class BuildingsSaveSystemController : MonoBehaviour
                     var data = buildingList.Find(d => d.buildingID == saveable.BuildingID);
                     if (data != null)
                     {
-                        saveable.LoadFromSaveData(data);
+                        saveable.LoadData(data);
                     }
                 }
             }

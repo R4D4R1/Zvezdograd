@@ -5,29 +5,52 @@ using UnityEngine;
 using UnityEngine.UI;
 using UniRx;
 
-public class QuestPopUp : EnoughPopUp,ISaveablePopUp
+public class QuestPopUp : EnoughPopUp, ISaveablePopUp
 {
     [SerializeField] private GameObject questObjectPrefab;
     [SerializeField] private Transform questGroupTransform;
 
-    private readonly Dictionary<GameObject, QuestData> _questDeadlines = new();
+    private readonly Dictionary<GameObject, QuestData> _quests = new();
     public bool IsBtnActive;
-    
+
     private struct QuestData
     {
-        public readonly string QuestName;
+        public string QuestName;
         public int DeadlineInDays;
-        public readonly int StabilityToLose;
-        public readonly int RelationshipWithGovToLose;
+        public int UnitSize;
+        public int TurnsToWork;
+        public int TurnsToRest;
+        public int MaterialsToGet;
+        public int MaterialsToLose;
+        public int StabilityToGet;
+        public int StabilityToLose;
+        public int RelationshipWithGovToGet;
+        public int RelationshipWithGovToLose;
+        public string BuildingType;
 
-        public QuestData(string questName, int deadlineInDays, int stabilityToLose, int relationshipWithGovToLose)
+        public QuestData(
+            string questName, int deadlineInDays, int unitSize,
+            int turnsToWork, int turnsToRest,
+            int materialsToGet, int materialsToLose,
+            int stabilityToGet, int stabilityToLose,
+            int relationshipWithGovToGet, int relationshipWithGovToLose,
+            string buildingType)
         {
             QuestName = questName;
             DeadlineInDays = deadlineInDays;
+            UnitSize = unitSize;
+            TurnsToWork = turnsToWork;
+            TurnsToRest = turnsToRest;
+            MaterialsToGet = materialsToGet;
+            MaterialsToLose = materialsToLose;
+            StabilityToGet = stabilityToGet;
             StabilityToLose = stabilityToLose;
+            RelationshipWithGovToGet = relationshipWithGovToGet;
             RelationshipWithGovToLose = relationshipWithGovToLose;
+            BuildingType = buildingType;
         }
     }
+
 
     public override void Init()
     {
@@ -39,9 +62,9 @@ public class QuestPopUp : EnoughPopUp,ISaveablePopUp
 
     private void OnNextDay()
     {
-        foreach (var quest in _questDeadlines.Keys.ToList())
+        foreach (var quest in _quests.Keys.ToList())
         {
-            var data = _questDeadlines[quest];
+            var data = _quests[quest];
             data.DeadlineInDays--;
 
             if (data.DeadlineInDays <= 0)
@@ -50,7 +73,7 @@ public class QuestPopUp : EnoughPopUp,ISaveablePopUp
             }
             else
             {
-                _questDeadlines[quest] = data;
+                _quests[quest] = data;
                 quest.GetComponent<TextMeshProUGUI>().text = $"{data.QuestName}  {data.DeadlineInDays} дн.";
             }
         }
@@ -85,7 +108,13 @@ public class QuestPopUp : EnoughPopUp,ISaveablePopUp
             });
         }
 
-        _questDeadlines[quest] = new QuestData(questName, deadlineInDays, stabilityToLose, relationshipWithGovToLose);
+        _quests[quest] = new QuestData(
+    questName, deadlineInDays, unitSize,
+    turnsToWork, turnsToRest,
+    materialsToGet, materialsToLose,
+    stabilityToGet, stabilityToLose,
+    relationshipWithGovToGet, relationshipWithGovToLose,
+    buildingType);
     }
 
     private void CompleteQuest(GameObject quest, int stabilityToGet, int relationshipWithGovToGet)
@@ -94,7 +123,7 @@ public class QuestPopUp : EnoughPopUp,ISaveablePopUp
         BuildingsController.GetCityHallBuilding().ModifyRelationWithGov(relationshipWithGovToGet);
 
         quest.SetActive(false);
-        _questDeadlines.Remove(quest);
+        _quests.Remove(quest);
     }
 
     private void LoseQuest(GameObject quest, int stabilityToLose, int relationshipWithGovToLose)
@@ -103,7 +132,7 @@ public class QuestPopUp : EnoughPopUp,ISaveablePopUp
         BuildingsController.GetCityHallBuilding().ModifyRelationWithGov(-relationshipWithGovToLose);
 
         quest.SetActive(false);
-        _questDeadlines.Remove(quest);
+        _quests.Remove(quest);
     }
 
     private bool ProcessResources(string buildingType, int materialsToGet, int materialsToLose)
@@ -140,26 +169,71 @@ public class QuestPopUp : EnoughPopUp,ISaveablePopUp
 
     protected virtual void UpdateAllText()
     {
-        // UPDATE UI TEXT
+        // Обновление текста
     }
-    
+
     public new int PopUpID => base.PopUpId;
-    
-    public virtual PopUpSaveData GetSaveData()
+
+    public virtual PopUpSaveData SaveData()
     {
-        return new QuestPopUpSaveData
+        var saveData = new QuestPopUpSaveData
         {
             popUpID = PopUpID,
             isBtnActive = IsBtnActive
         };
+
+        foreach (var quest in _quests.Values)
+        {
+            saveData.savedQuests.Add(new QuestSaveData
+            {
+                QuestName = quest.QuestName,
+                DeadlineInDays = quest.DeadlineInDays,
+                UnitSize = quest.UnitSize,
+                TurnsToWork = quest.TurnsToWork,
+                TurnsToRest = quest.TurnsToRest,
+                MaterialsToGet = quest.MaterialsToGet,
+                MaterialsToLose = quest.MaterialsToLose,
+                StabilityToGet = quest.StabilityToGet,
+                StabilityToLose = quest.StabilityToLose,
+                RelationshipWithGovToGet = quest.RelationshipWithGovToGet,
+                RelationshipWithGovToLose = quest.RelationshipWithGovToLose,
+                BuildingType = quest.BuildingType
+            });
+        }
+        return saveData;
     }
 
-    public virtual void LoadFromSaveData(PopUpSaveData data)
+    public virtual void LoadData(PopUpSaveData data)
     {
+        foreach (var quest in _quests.Keys.ToList())
+        {
+            Destroy(quest);
+        }
+        _quests.Clear();
+
         var save = data as QuestPopUpSaveData;
         if (save == null) return;
-        
+
         IsBtnActive = save.isBtnActive;
         UpdateAllText();
+
+        foreach (var questSave in save.savedQuests)
+        {
+            EnableQuest(
+                questSave.BuildingType,
+                questSave.QuestName,
+                questSave.DeadlineInDays,
+                questSave.UnitSize,
+                questSave.TurnsToWork,
+                questSave.TurnsToRest,
+                questSave.MaterialsToGet,
+                questSave.MaterialsToLose,
+                questSave.StabilityToGet,
+                questSave.StabilityToLose,
+                questSave.RelationshipWithGovToGet,
+                questSave.RelationshipWithGovToLose
+            );
+        }
+
     }
 }

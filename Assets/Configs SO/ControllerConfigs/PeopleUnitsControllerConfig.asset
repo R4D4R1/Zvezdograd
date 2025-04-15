@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startPeopleUnitAmount: 8
   durationOfAnimationOfTransitionOfUnits: 0.75
-  chanceOfInjuringRandomReadyUnit: 100
+  chanceOfInjuringRandomReadyUnit: 33

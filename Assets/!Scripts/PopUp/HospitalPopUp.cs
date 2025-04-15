@@ -126,7 +126,7 @@ public class HospitalPopUp : QuestPopUp
             SetButtonState(_healUnitBtn, true);
         }
     }
-    public override PopUpSaveData GetSaveData()
+    public override PopUpSaveData SaveData()
     {
         return new HospitalQuestPopUpSaveData()
         {
@@ -136,7 +136,7 @@ public class HospitalPopUp : QuestPopUp
         };
     }
     
-    public override void LoadFromSaveData(PopUpSaveData data)
+    public override void LoadData(PopUpSaveData data)
     {
         var save = data as HospitalQuestPopUpSaveData;
         if (save == null) return;

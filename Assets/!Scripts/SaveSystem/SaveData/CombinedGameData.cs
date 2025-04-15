@@ -1,10 +1,10 @@
-using System;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
-[Serializable]
+[JsonObject(MemberSerialization.OptIn)]
 public class CombinedGameData
 {
-    public GameData mainGameData;
-    public List<PopUpSaveData> popUpSaveData = new();
-    public List<BuildingSaveData> buildingSaveData = new();
+    [JsonProperty] public GameData mainGameData;
+    [JsonProperty] public List<PopUpSaveData> popUpSaveData = new();
+    [JsonProperty] public List<BuildingSaveData> buildingSaveData = new();
 }

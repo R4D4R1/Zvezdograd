@@ -24,9 +24,9 @@ public class PopUpsController : MonoInit
         CollectPopUp = FindFirstObjectByType<CollectPopUp>();
         RepairPopUp = FindFirstObjectByType<RepairPopUp>();
         EventPopUp = FindFirstObjectByType<EventPopUp>();
-        
+
         AllPopUps = new List<FullScreenPopUp>(FindObjectsByType<FullScreenPopUp>(FindObjectsSortMode.None));
-        
+
         FoodTrucksPopUp.Init();
         HospitalPopUp.Init();
         CityHallPopUp.Init();

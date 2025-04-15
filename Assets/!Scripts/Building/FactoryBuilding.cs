@@ -45,7 +45,7 @@ public class FactoryBuilding : RepairableBuilding,ISaveableBuilding
                 if (TurnsToRepair == 0)
                 {
                     BuildingIsSelectable = true;
-                    CurrentState = State.Intact;
+                    SetState(State.Intact);
                     RestoreOriginalMaterials();
                 }
             }
@@ -108,7 +108,7 @@ public class FactoryBuilding : RepairableBuilding,ISaveableBuilding
     
     public new int BuildingID => base.BuildingID;
     
-    public override BuildingSaveData GetSaveData()
+    public override BuildingSaveData SaveData()
     {
         return new FactoryBuildingSaveData
         {
@@ -123,7 +123,7 @@ public class FactoryBuilding : RepairableBuilding,ISaveableBuilding
         };
     }
 
-    public override void LoadFromSaveData(BuildingSaveData data)
+    public override void LoadData(BuildingSaveData data)
     {
         var save = data as FactoryBuildingSaveData;
         if (save == null) return;
@@ -134,7 +134,7 @@ public class FactoryBuilding : RepairableBuilding,ISaveableBuilding
         _turnsToWork = save.turnsToWork;
         _isWorking = save.isWorking;
         TurnsToRepair = save.turnsToRepair;
-        CurrentState = save.currentState;
+        SetState(save.currentState);
         
         if (save.buildingIsSelectable)
             RestoreOriginalMaterials();
