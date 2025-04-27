@@ -15,7 +15,7 @@ public class EnoughPopUp : FullScreenPopUp
     
     private void GenerateOrLoadPopUpId()
     {
-        string uniqueKey = $"PopUp_{gameObject.GetInstanceID()}";
+        string uniqueKey = $"PopUp_{gameObject.name}";
 
         if (PlayerPrefs.HasKey(uniqueKey))
         {
@@ -28,6 +28,7 @@ public class EnoughPopUp : FullScreenPopUp
             PlayerPrefs.Save();
         }
     }
+
     
     protected bool HasEnoughPeople(int requiredPeople)
     {

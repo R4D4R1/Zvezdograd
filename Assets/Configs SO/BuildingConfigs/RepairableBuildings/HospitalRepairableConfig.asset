@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d65b841b685198d4fba86b3ebde9ff91, type: 3}
   m_Name: HospitalRepairableConfig
   m_EditorClassIdentifier: 
-  damagedBuildingLabel: "\u0420\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u043D\u044B\u0439
-    \u0433\u043E\u0441\u043F\u0438\u0442\u0430\u043B\u044C"
+  damagedBuildingLabel: "\u0413\u043E\u0441\u043F\u0438\u0442\u0430\u043B\u044C"
   damagedBuildingDescription: "\u0411\u0435\u0437 \u043D\u043E\u0440\u043C\u0430\u043B\u044C\u043D\u043E
     \u0444\u0443\u043D\u043A\u0446\u0438\u043E\u043D\u0438\u0440\u043E\u0432\u0430\u044E\u0449\u0435\u0433\u043E
     \u0433\u043E\u0441\u043F\u0438\u0442\u0430\u043B\u044F \u043C\u044B \u043D\u0435
@@ -24,4 +23,3 @@ MonoBehaviour:
   _turnsToRepairOriginal: 4
   _turnsToRestFromRepair: 1
   _buildingType: 1
-  _state: 0

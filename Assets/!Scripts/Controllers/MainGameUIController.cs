@@ -19,23 +19,24 @@ public class MainGameUIController : MonoInit
     public readonly Subject<Unit> OnUITurnOff = new();
     public readonly Subject<Unit> OnMainMenuLoad = new();
 
-    private TutorialController _tutorialController;
-    private LoadLevelController _loadLevelController;
-    private MainGameController _mainGameController;
-    private SettingsController _settingsController;
+    [Inject] private TutorialController _tutorialController;
+    [Inject] private LoadLevelController _loadLevelController;
+    [Inject] private MainGameController _mainGameController;
+    [Inject] private SettingsController _settingsController;
+    //[Inject] private SaveLoadController _saveLoadController;
 
-    [Inject]
-    public void Construct(
-        TutorialController tutorialController,
-        LoadLevelController loadLevelController,
-        MainGameController mainGameController,
-        SettingsController settingsController)
-    {
-        _tutorialController = tutorialController;
-        _loadLevelController = loadLevelController;
-        _mainGameController = mainGameController;
-        _settingsController = settingsController;
-    }
+    // [Inject]
+    // public void Construct(
+    //     TutorialController tutorialController,
+    //     LoadLevelController loadLevelController,
+    //     MainGameController mainGameController,
+    //     SettingsController settingsController)
+    // {
+    //     _tutorialController = tutorialController;
+    //     _loadLevelController = loadLevelController;
+    //     _mainGameController = mainGameController;
+    //     _settingsController = settingsController;
+    // }
 
     public override UniTask Init()
     {
@@ -105,6 +106,18 @@ public class MainGameUIController : MonoInit
     public void CloseSettingsMenu()
     {
         _settingsController.Deactivate();
+    }
+
+    public void OpenSaveMenu()
+    {
+        var _saveLoadController = FindFirstObjectByType<SaveLoadController>();
+        _saveLoadController.Activate();
+    }
+
+    public void CloseSaveMenu()
+    {
+        var _saveLoadController = FindFirstObjectByType<SaveLoadController>();
+        _saveLoadController.Deactivate();
     }
 
     private void SetCanvasGroupState(CanvasGroup canvasGroup, bool interactive)

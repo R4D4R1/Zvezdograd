@@ -8,5 +8,6 @@ public class GlobalInstaller : MonoInstaller
         Container.Bind<SoundController>().FromComponentInHierarchy().AsSingle().NonLazy();
         Container.Bind<LoadLevelController>().FromComponentInHierarchy().AsSingle().NonLazy();
         Container.Bind<SettingsController>().FromComponentInHierarchy().AsSingle().NonLazy();
+        Container.Bind<SaveLoadController>().FromComponentInHierarchy().AsSingle().NonLazy();
     }
 }

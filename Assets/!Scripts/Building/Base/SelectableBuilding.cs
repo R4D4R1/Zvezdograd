@@ -50,13 +50,11 @@ public class SelectableBuilding : MonoBehaviour
         BuildingIsSelectable = true;
 
         GenerateOrLoadBuildingId();
-
-        // Debug.Log($"{name} Init");
     }
 
     private void GenerateOrLoadBuildingId()
     {
-        string uniqueKey = $"Building_{gameObject.GetInstanceID()}";
+        string uniqueKey = $"Building_{gameObject.name}";
 
         if (PlayerPrefs.HasKey(uniqueKey))
         {

@@ -26,7 +26,9 @@ public class TimeController : MonoInit
     [Range(1, 3), SerializeField] private int increaseMaxAPValue;
     [Range(1, 3), SerializeField] private int increaseAddAPValue;
 
+    [HideInInspector]
     [FormerlySerializedAs("_localIncreaseMaxAPValue")] public int LocalIncreaseMaxAPValue;
+    [HideInInspector]
     [FormerlySerializedAs("_localIncreaseAddAPValue")] public int LocalIncreaseAddAPValue;
 
     private readonly DateTime _startDate = new(1942, 10, 30);

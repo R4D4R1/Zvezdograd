@@ -637,4 +637,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   loaderCanvas: {fileID: 341525735648109282}
   progressBar: {fileID: 2017716464157830669}
-  Test: 0
+  testMode: 0

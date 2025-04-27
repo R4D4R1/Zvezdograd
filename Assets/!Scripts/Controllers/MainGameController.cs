@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using DG.Tweening;
 using UniRx;
 using Zenject;
+using System;
 
 public class MainGameController : MonoInit
 {
@@ -35,9 +36,12 @@ public class MainGameController : MonoInit
         MainGameControllerConfig = mainGameControllerConfig;
     }
 
+    [Inject] private TimeController _timeController;
+    [Inject] private MainGameUIController _mainGameUIController;
+
     public override async UniTask Init()
     {
-        base.Init();
+        await base.Init();
 
         notificationsParent.SetActive(false);
         OnGameStarted.OnNext(Unit.Default);
@@ -49,12 +53,20 @@ public class MainGameController : MonoInit
             .SetEase(Ease.Linear)
             .AsyncWaitForCompletion();
 
-        startPopUp.ShowPopUp();
+        if (_timeController.CurrentPeriod == TimeController.PeriodOfDay.Morning && _timeController.CurrentDate == new DateTime(1942, 10, 30))
+            startPopUp.ShowPopUp();
+        else
+        {
+            Destroy(startPopUp);
+            Destroy(tutorialPopUp);
+            ShowCity();
+            _mainGameUIController.TurnOnUI();
+            _timeController.EnableNextTurnLogic();
+        }
 
         await UniTask.Delay(5000);
-        notificationsParent.SetActive(true);
+        notificationsParent.GetComponent<CanvasGroup>().alpha = 1.0f;
     }
-
 
     public void ShowCity() => AnimateCamera(MainGameControllerConfig.CameraCityShowY);
 

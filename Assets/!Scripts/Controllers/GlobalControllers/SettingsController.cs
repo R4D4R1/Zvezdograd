@@ -42,6 +42,20 @@ public class SettingsController : MonoInit
         Init();
     }
 
+    public void Activate()
+    {
+        _canvasGroup.alpha = 1;
+        _canvasGroup.interactable = true;
+        _canvasGroup.blocksRaycasts = true;
+    }
+
+    public void Deactivate()
+    {
+        _canvasGroup.alpha = 0;
+        _canvasGroup.interactable = false;
+        _canvasGroup.blocksRaycasts = false;
+    }
+
     public override UniTask Init()
     {
         base.Init();
@@ -184,10 +198,6 @@ public class SettingsController : MonoInit
             Screen.SetResolution(resolution.width, resolution.height, _isFullscreen);
         }
     }
-
-    public void Activate() => _canvasGroup.alpha = 1;
-
-    public void Deactivate() => _canvasGroup.alpha = 0;
 }
 
 [System.Serializable]

@@ -25,7 +25,7 @@ public class GameInstaller : MonoInstaller
     [SerializeField] private GameObject infoPopUpPrefab;
     [SerializeField] private GameObject specialPopUpPrefab;
     [SerializeField] private GameObject notificationPrefab;
-
+    
     public override void InstallBindings()
     {
         if (!Camera.main)
@@ -53,7 +53,7 @@ public class GameInstaller : MonoInstaller
         Container.Bind<TutorialController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<EffectsController>().FromComponentInHierarchy().AsSingle();
 
-        Container.Bind<PopUpFactory>()
+        Container.Bind<PopUpFactory>() 
             .AsSingle()
             .WithArguments(Container, parentPopUpPrefab, parentNotificationsPrefab, infoPopUpPrefab, specialPopUpPrefab, notificationPrefab);
 
@@ -62,5 +62,7 @@ public class GameInstaller : MonoInstaller
 
         Container.Bind<ResourceModel>().AsSingle();
         Container.Bind<ResourceViewModel>().AsSingle();
+        
+        Container.Bind<SaveLoadController>().FromResolve().AsSingle();
     }
 }

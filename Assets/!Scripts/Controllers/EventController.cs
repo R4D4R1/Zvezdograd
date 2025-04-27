@@ -49,6 +49,9 @@ public class EventController : MonoInit
             .AddTo(this);
 
         LoadEvents().Forget();
+
+        OnPeriodChanged();
+
         return UniTask.CompletedTask;
     }
 
@@ -62,8 +65,6 @@ public class EventController : MonoInit
 
         if (hasInternet)
         {
-            //Debug.Log("Есть интернет, пытаюсь скачать файл...");
-
             using var www = UnityEngine.Networking.UnityWebRequest.Get(EventFileUrl);
             await www.SendWebRequest();
 
@@ -71,7 +72,6 @@ public class EventController : MonoInit
             {
                 jsonContent = www.downloadHandler.text;
                 File.WriteAllText(persistentPath, jsonContent);
-                //Debug.Log("Файл успешно скачан и сохранён.");
             }
             else
             {
@@ -99,7 +99,6 @@ public class EventController : MonoInit
     {
         if (File.Exists(path))
         {
-            //Debug.Log("Файл загружен из локального хранилища.");
             return File.ReadAllText(path);
         }
 

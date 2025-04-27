@@ -7,6 +7,7 @@ public class UIController : MonoBehaviour
 
     [Inject] private LoadLevelController _loadLevelController;
     [Inject] private SettingsController _settingsController;
+    [Inject] private SaveLoadController _saveLoadController;
 
     // ReSharper disable once AsyncVoidMethod
     public async void StartNewGame()
@@ -30,5 +31,15 @@ public class UIController : MonoBehaviour
     public void CloseSettingsMenu()
     {
         _settingsController.Deactivate();
+    }
+
+    public void OpenSaveMenu()
+    {
+        _saveLoadController.Activate();
+    }
+
+    public void CloseSaveMenu()
+    {
+        _saveLoadController.Deactivate();
     }
 }
