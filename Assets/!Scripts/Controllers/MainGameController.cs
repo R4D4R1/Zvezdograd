@@ -43,7 +43,7 @@ public class MainGameController : MonoInit
     {
         await base.Init();
 
-        notificationsParent.SetActive(false);
+        notificationsParent.GetComponent<CanvasGroup>().alpha = 0.0f;
         OnGameStarted.OnNext(Unit.Default);
 
         blackImage.color = Color.black;
@@ -57,8 +57,8 @@ public class MainGameController : MonoInit
             startPopUp.ShowPopUp();
         else
         {
-            Destroy(startPopUp);
-            Destroy(tutorialPopUp);
+            Destroy(startPopUp.gameObject);
+            Destroy(tutorialPopUp.gameObject);
             ShowCity();
             _mainGameUIController.TurnOnUI();
             _timeController.EnableNextTurnLogic();

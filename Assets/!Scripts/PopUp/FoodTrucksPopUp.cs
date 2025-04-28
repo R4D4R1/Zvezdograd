@@ -11,15 +11,15 @@ public class FoodTrucksPopUp : QuestPopUp
     {
         base.Init();
 
-        _building = BuildingsController.GetFoodTruckBuilding();
+        _building = _buildingsController.GetFoodTruckBuilding();
         
         SetButtonState(giveFoodBtnParent,true);
 
-        TimeController.OnNextDayEvent
+        _timeController.OnNextDayEvent
             .Subscribe(_ => OnNextDayEvent())
             .AddTo(this);
         
-        EventController.OnQuestTriggered
+        _eventController.OnQuestTriggered
             .Subscribe(popupEvent =>
             {
                 if (popupEvent.buildingType == _building.Type.ToString())
@@ -35,7 +35,7 @@ public class FoodTrucksPopUp : QuestPopUp
 
     private void OnNextDayEvent()
     {
-        if (BuildingsController.GetFoodTruckBuilding().FoodWasGivenAwayToday())
+        if (_buildingsController.GetFoodTruckBuilding().FoodWasGivenAwayToday())
         {
             SetButtonState(giveFoodBtnParent,true);
         }
@@ -46,16 +46,16 @@ public class FoodTrucksPopUp : QuestPopUp
         if (CanGiveAwayProvision())
         {
             SetButtonState(giveFoodBtnParent,false);
-            BuildingsController.GetFoodTruckBuilding().SendPeopleToGiveProvision();
+            _buildingsController.GetFoodTruckBuilding().SendPeopleToGiveProvision();
         }
     }
 
     private bool CanGiveAwayProvision()
     {
         return 
-                HasEnoughPeople(BuildingsController.GetFoodTruckBuilding().FoodTrucksBuildingConfig.PeopleToGiveProvision) &&
+                HasEnoughPeople(_buildingsController.GetFoodTruckBuilding().FoodTrucksBuildingConfig.PeopleToGiveProvision) &&
                 HasEnoughResources(ResourceModel.ResourceType.Provision, 
-                    BuildingsController.GetFoodTruckBuilding().FoodTrucksBuildingConfig.FoodToGive) &&
+                    _buildingsController.GetFoodTruckBuilding().FoodTrucksBuildingConfig.FoodToGive) &&
                 CanUseActionPoint();
     }
 

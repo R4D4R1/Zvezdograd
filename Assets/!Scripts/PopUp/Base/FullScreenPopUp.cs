@@ -6,12 +6,12 @@ public class FullScreenPopUp : InfoPopUp
     public override void ShowPopUp()
     {
         base.ShowPopUp();
-        TimeController.DisableNextTurnLogic();
+        _timeController.DisableNextTurnLogic();
     }
 
     public override void HidePopUp()
     {
         base.HidePopUp();
-        TimeController.EnableNextTurnLogic();
+        _timeController.EnableNextTurnLogic();
     }
 }

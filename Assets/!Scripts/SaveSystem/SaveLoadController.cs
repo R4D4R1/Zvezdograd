@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using TMPro;
+using UniRx;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -29,8 +30,10 @@ public class SaveLoadController : MonoBehaviour
     private static PeopleUnitsController _peopleUnitsController;
     private static PopUpsController _popUpsController;
     private static BuildingsController _buildingsController;
+    private static MainGameUIController _mainGameUIController;
     private CanvasGroup _canvasGroup;
 
+    public readonly Subject<Unit> OnCloseSaveMenuBtnClicked = new();
 
     private static readonly JsonSerializerSettings settings = new()
     {
@@ -38,17 +41,6 @@ public class SaveLoadController : MonoBehaviour
         Formatting = Formatting.Indented,
         ReferenceLoopHandling = ReferenceLoopHandling.Ignore
     };
-    public void InjectDependencies(ResourceViewModel resourceViewModel,
-    TimeController timeController, PeopleUnitsController peopleUnitsController,
-    PopUpsController popUpsController, BuildingsController buildingsController)
-    {
-        _saveButton.gameObject.SetActive(true);
-        _resourceViewModel = resourceViewModel;
-        _timeController = timeController;
-        _peopleUnitsController = peopleUnitsController;
-        _popUpsController = popUpsController;
-        _buildingsController = buildingsController;
-    }
 
     [Inject]
     public void Construct(LoadLevelController loadLevelController)
@@ -56,11 +48,44 @@ public class SaveLoadController : MonoBehaviour
         _loadLevelController = loadLevelController;
     }
 
+    public void InjectMainGameDependencies(ResourceViewModel resourceViewModel,
+    TimeController timeController, PeopleUnitsController peopleUnitsController,
+    PopUpsController popUpsController, BuildingsController buildingsController,
+    MainGameUIController mainGameUIController)
+    {
+        _resourceViewModel = resourceViewModel;
+        _timeController = timeController;
+        _peopleUnitsController = peopleUnitsController;
+        _popUpsController = popUpsController;
+        _buildingsController = buildingsController;
+
+        mainGameUIController.OnOpenSaveMenuBtnClicked
+            .Subscribe(_ => OnOpenkBtnClicked())
+            .AddTo(this);
+    }
+
+    public void SubscribeUIControllerInMainMenu(UIController uIController)
+    {
+        uIController.OnOpenSaveMenuBtnClicked
+            .Subscribe(_ => OnOpenkBtnClicked())
+            .AddTo(this);
+    }
+
     public void Activate()
     {
         _canvasGroup.alpha = 1;
         _canvasGroup.interactable = true;
         _canvasGroup.blocksRaycasts = true;
+
+        if(SceneManager.GetActiveScene().name == Scenes.MAIN_MENU)
+        {
+            _saveButton.gameObject.SetActive(false);
+        }
+
+        if (SceneManager.GetActiveScene().name == Scenes.GAME_SCENE)
+        {
+            _saveButton.gameObject.SetActive(true);
+        }
     }
 
     public void Deactivate()
@@ -91,7 +116,19 @@ public class SaveLoadController : MonoBehaviour
 
         _loadButton.onClick.AddListener(OnLoadGameBtnClicked);
         _deleteButton.onClick.AddListener(OnDeleteSaveBtnClicked);
-        //_backButton.onClick.AddListener(OnBackBtnClicked);
+        _backButton.onClick.AddListener(OnCloseBtnClicked);
+    }
+
+    private void OnOpenkBtnClicked()
+    {
+        Activate();
+    }
+
+    private void OnCloseBtnClicked()
+    {
+        Deactivate();
+        ClearCurrentSaveSlot();
+        OnCloseSaveMenuBtnClicked.OnNext(Unit.Default);
     }
 
     public void SelectSlot(int slotIndex)
@@ -209,6 +246,7 @@ public class SaveLoadController : MonoBehaviour
         {
             if (SceneManager.GetActiveScene().name == Scenes.MAIN_MENU)
             {
+                Deactivate();
                 await _loadLevelController.LoadSceneAsync(Scenes.GAME_SCENE);
             }
 
@@ -218,6 +256,7 @@ public class SaveLoadController : MonoBehaviour
             {
                 ClearCurrentSaveSlot();
             }
+
         }
         else
         {

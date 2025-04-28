@@ -42,12 +42,12 @@ public class SpecialPopUp : ReturnToPoolPopUp
 
     private void Init()
     {
-        _collectPopUp = PopUpsController.CollectPopUp;
-        _repairPopUp = PopUpsController.RepairPopUp;
-        _factoryPopUp = PopUpsController.FactoryPopUp;
-        _cityHallPopUp = PopUpsController.CityHallPopUp;
-        _foodTrucksPopUp = PopUpsController.FoodTrucksPopUp;
-        _hospitalPopUp = PopUpsController.HospitalPopUp;
+        _collectPopUp = _popUpsController.CollectPopUp;
+        _repairPopUp = _popUpsController.RepairPopUp;
+        _factoryPopUp = _popUpsController.FactoryPopUp;
+        _cityHallPopUp = _popUpsController.CityHallPopUp;
+        _foodTrucksPopUp = _popUpsController.FoodTrucksPopUp;
+        _hospitalPopUp = _popUpsController.HospitalPopUp;
     }
 
     public void ShowPopUp(string label, string description, string button)
@@ -90,13 +90,13 @@ public class SpecialPopUp : ReturnToPoolPopUp
                 _hospitalPopUp.ShowPopUp();
                 break;
             case PopUpFuncs.OpenNextTutorialPopUp:
-                TutorialController.ShowTutorial();
+                _tutorialController.ShowTutorial();
                 break;
         }
 
         if (CurrentFunc != PopUpFuncs.OpenNextTutorialPopUp)
         {
-            MainGameUIController.TurnOffUI();
+            _mainGameUIController.TurnOffUI();
         }
 
         HidePopUp();

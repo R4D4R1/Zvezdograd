@@ -19,24 +19,24 @@ public class HospitalPopUp : QuestPopUp
     {
         base.Init();
 
-        _building = BuildingsController.GetHospitalBuilding();
+        _building = _buildingsController.GetHospitalBuilding();
         
         SetButtonState(giveMedicineBtnParent, true);
         UpdateAllText();
 
-        TimeController.OnNextDayEvent
+        _timeController.OnNextDayEvent
             .Subscribe(_ => OnNextDayEvent())
             .AddTo(this);
         
-        PeopleUnitsController.OnUnitInjuredByPeopleUnitController
+        _peopleUnitsController.OnUnitInjuredByPeopleUnitController
             .Subscribe(_ => CreateHealGOPrefabIfNeeded())
             .AddTo(this);
         
-        PeopleUnitsController.OnUnitHealedByPeopleUnitController
+        _peopleUnitsController.OnUnitHealedByPeopleUnitController
             .Subscribe(_ => UpdateHealUnitGOButtonState())
             .AddTo(this);
         
-        EventController.OnQuestTriggered
+        _eventController.OnQuestTriggered
             .Subscribe(popupEvent =>
             {
                 if (popupEvent.buildingType == _building.Type.ToString())
@@ -64,7 +64,7 @@ public class HospitalPopUp : QuestPopUp
 
     private void OnNextDayEvent()
     {
-        if (BuildingsController.GetHospitalBuilding().MedicineWasGiven())
+        if (_buildingsController.GetHospitalBuilding().MedicineWasGiven())
         {
             SetButtonState(giveMedicineBtnParent, true);
         }
@@ -76,14 +76,14 @@ public class HospitalPopUp : QuestPopUp
     {
         if (!CanGiveAwayMedicine()) return;
         SetButtonState(giveMedicineBtnParent, false);
-        BuildingsController.GetHospitalBuilding().SendPeopleToGiveMedicine();
+        _buildingsController.GetHospitalBuilding().SendPeopleToGiveMedicine();
     }
 
     private bool CanGiveAwayMedicine()
     {
-        return HasEnoughPeople(BuildingsController.GetHospitalBuilding().HospitalBuildingConfig.PeopleToGiveMedicine) &&
+        return HasEnoughPeople(_buildingsController.GetHospitalBuilding().HospitalBuildingConfig.PeopleToGiveMedicine) &&
                HasEnoughResources(ResourceModel.ResourceType.Medicine,
-                   BuildingsController.GetHospitalBuilding().HospitalBuildingConfig.MedicineToGive) &&
+                   _buildingsController.GetHospitalBuilding().HospitalBuildingConfig.MedicineToGive) &&
                CanUseActionPoint();
     }
 
@@ -104,7 +104,7 @@ public class HospitalPopUp : QuestPopUp
     protected override void UpdateAllText()
     {
         medicineTimerText.text = "Осталось времени до раздачи - " +
-                                 BuildingsController.GetHospitalBuilding().DaysToGiveMedicine + " дн.";
+                                 _buildingsController.GetHospitalBuilding().DaysToGiveMedicine + " дн.";
     }
 
     private void SetHealButtonState(GameObject btnsParent, bool activeState)
@@ -116,7 +116,7 @@ public class HospitalPopUp : QuestPopUp
     
     private void UpdateHealUnitGOButtonState()
     {
-        if (PeopleUnitsController.InjuredUnits.Count == 0 && _healUnitBtn)
+        if (_peopleUnitsController.InjuredUnits.Count == 0 && _healUnitBtn)
         {
             _healUnitBtn.SetActive(false);
             _healUnitBtn = null;
@@ -146,7 +146,7 @@ public class HospitalPopUp : QuestPopUp
         
         SetButtonState(giveMedicineBtnParent,IsBtnActive);
 
-        if (PeopleUnitsController.InjuredUnits.Count > 0)
+        if (_peopleUnitsController.InjuredUnits.Count > 0)
         {
             _healUnitBtn.SetActive(true);
             SetHealButtonState(_healUnitBtn,_isHealing);

@@ -24,13 +24,13 @@ public class CityHallPopUp : QuestPopUp
     {
         base.Init();
 
-        _cityHallBuilding = BuildingsController.GetCityHallBuilding();
+        _cityHallBuilding = _buildingsController.GetCityHallBuilding();
 
-        PeopleUnitsController.OnUnitCreatedByPeopleUnitController
+        _peopleUnitsController.OnUnitCreatedByPeopleUnitController
             .Subscribe(_ => UpdateCreateUnitGOButtonState())
             .AddTo(this);
 
-        EventController.OnQuestTriggered
+        _eventController.OnQuestTriggered
             .Subscribe(popupEvent =>
             {
                 if (popupEvent.buildingType == _cityHallBuilding.Type.ToString())
@@ -45,7 +45,7 @@ public class CityHallPopUp : QuestPopUp
             })
             .AddTo(this);
 
-        EventController.OnNewActionPointsAdded
+        _eventController.OnNewActionPointsAdded
             .Subscribe(_ => EnableNewActionPointsQuest())
             .AddTo(this);
 
@@ -121,7 +121,7 @@ public class CityHallPopUp : QuestPopUp
         
         helpFromGovTimerText.text = $"Помощь от гос-ва прибудет через {_cityHallBuilding.DaysLeftToReceiveGovHelp} дн.";
 
-        createPeopleText.text = $"Организовать новое подразделение, осталось {PeopleUnitsController.NotCreatedUnits.Count}";
+        createPeopleText.text = $"Организовать новое подразделение, осталось {_peopleUnitsController.NotCreatedUnits.Count}";
     }
 
     private string GetRelationText(int relation)
@@ -151,7 +151,7 @@ public class CityHallPopUp : QuestPopUp
     // METHOD TO ENABLE CREATE NEW UNITS BUTTON OR DEACTIVATE IT WHEN NO MORE UNITS TO CREATE
     private void UpdateCreateUnitGOButtonState()
     {
-        if (PeopleUnitsController.NotCreatedUnits.Count > 0)
+        if (_peopleUnitsController.NotCreatedUnits.Count > 0)
         {
             SetButtonState(createNewUnitBtnParent,true);
         }

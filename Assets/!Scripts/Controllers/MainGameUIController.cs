@@ -8,6 +8,7 @@ using UnityEngine.Serialization;
 
 public class MainGameUIController : MonoInit
 {
+    [SerializeField] private GameObject mainMenuBtns;
     [FormerlySerializedAs("_settingsMenu")] [SerializeField] private GameObject settingsMenu;
     [FormerlySerializedAs("_turnOffUIParent")] [SerializeField] private GameObject turnOffUIParent;
     [SerializeField] private float fadeDuration = 0.5f;
@@ -18,6 +19,7 @@ public class MainGameUIController : MonoInit
     public readonly Subject<Unit> OnUITurnOn = new();
     public readonly Subject<Unit> OnUITurnOff = new();
     public readonly Subject<Unit> OnMainMenuLoad = new();
+    public readonly Subject<Unit> OnOpenSaveMenuBtnClicked = new();
 
     [Inject] private TutorialController _tutorialController;
     [Inject] private LoadLevelController _loadLevelController;
@@ -25,18 +27,6 @@ public class MainGameUIController : MonoInit
     [Inject] private SettingsController _settingsController;
     //[Inject] private SaveLoadController _saveLoadController;
 
-    // [Inject]
-    // public void Construct(
-    //     TutorialController tutorialController,
-    //     LoadLevelController loadLevelController,
-    //     MainGameController mainGameController,
-    //     SettingsController settingsController)
-    // {
-    //     _tutorialController = tutorialController;
-    //     _loadLevelController = loadLevelController;
-    //     _mainGameController = mainGameController;
-    //     _settingsController = settingsController;
-    // }
 
     public override UniTask Init()
     {
@@ -44,6 +34,12 @@ public class MainGameUIController : MonoInit
 
         _tutorialController.OnTutorialStarted
             .Subscribe(_ => TurnOnUIForTutorial())
+            .AddTo(this);
+
+        var saveLoadController = FindFirstObjectByType<SaveLoadController>();
+
+        saveLoadController.OnCloseSaveMenuBtnClicked
+            .Subscribe(_ => CloseSaveMenu())
             .AddTo(this);
 
         _turnOffUICanvasGroup = turnOffUIParent.GetComponent<CanvasGroup>() 
@@ -110,14 +106,13 @@ public class MainGameUIController : MonoInit
 
     public void OpenSaveMenu()
     {
-        var _saveLoadController = FindFirstObjectByType<SaveLoadController>();
-        _saveLoadController.Activate();
+        mainMenuBtns.SetActive(false);
+        OnOpenSaveMenuBtnClicked.OnNext(Unit.Default);
     }
 
-    public void CloseSaveMenu()
+    private void CloseSaveMenu()
     {
-        var _saveLoadController = FindFirstObjectByType<SaveLoadController>();
-        _saveLoadController.Deactivate();
+        mainMenuBtns.SetActive(true);
     }
 
     private void SetCanvasGroupState(CanvasGroup canvasGroup, bool interactive)

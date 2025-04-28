@@ -55,7 +55,7 @@ public class QuestPopUp : EnoughPopUp, ISaveablePopUp
     public override void Init()
     {
         base.Init();
-        TimeController.OnNextDayEvent
+        _timeController.OnNextDayEvent
             .Subscribe(_ => OnNextDay())
             .AddTo(this);
     }
@@ -102,7 +102,7 @@ public class QuestPopUp : EnoughPopUp, ISaveablePopUp
 
                 if (ProcessResources(buildingType, materialsToGet, materialsToLose))
                 {
-                    PeopleUnitsController.AssignUnitsToTask(unitSize, turnsToWork, turnsToRest);
+                    _peopleUnitsController.AssignUnitsToTask(unitSize, turnsToWork, turnsToRest);
                     CompleteQuest(quest, stabilityToGet, relationshipWithGovToGet);
                 }
             });
@@ -119,8 +119,8 @@ public class QuestPopUp : EnoughPopUp, ISaveablePopUp
 
     private void CompleteQuest(GameObject quest, int stabilityToGet, int relationshipWithGovToGet)
     {
-        ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, stabilityToGet));
-        BuildingsController.GetCityHallBuilding().ModifyRelationWithGov(relationshipWithGovToGet);
+        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, stabilityToGet));
+        _buildingsController.GetCityHallBuilding().ModifyRelationWithGov(relationshipWithGovToGet);
 
         quest.SetActive(false);
         _quests.Remove(quest);
@@ -128,8 +128,8 @@ public class QuestPopUp : EnoughPopUp, ISaveablePopUp
 
     private void LoseQuest(GameObject quest, int stabilityToLose, int relationshipWithGovToLose)
     {
-        ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, -stabilityToLose));
-        BuildingsController.GetCityHallBuilding().ModifyRelationWithGov(-relationshipWithGovToLose);
+        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, -stabilityToLose));
+        _buildingsController.GetCityHallBuilding().ModifyRelationWithGov(-relationshipWithGovToLose);
 
         quest.SetActive(false);
         _quests.Remove(quest);
@@ -144,8 +144,8 @@ public class QuestPopUp : EnoughPopUp, ISaveablePopUp
         if (!HasEnoughResources(type, materialsToLose)) return false;
         if (!HasEnoughSpaceForResources(type, materialsToGet)) return false;
 
-        ResourceViewModel.ModifyResourceCommand.Execute((type, materialsToGet));
-        ResourceViewModel.ModifyResourceCommand.Execute((type, -materialsToLose));
+        _resourceViewModel.ModifyResourceCommand.Execute((type, materialsToGet));
+        _resourceViewModel.ModifyResourceCommand.Execute((type, -materialsToLose));
         return true;
     }
 

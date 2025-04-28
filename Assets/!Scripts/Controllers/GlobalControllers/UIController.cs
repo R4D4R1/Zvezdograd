@@ -1,13 +1,26 @@
+using Cysharp.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 using Zenject;
+using UniRx;
 
 public class UIController : MonoBehaviour
 {
+    [SerializeField] private GameObject mainMenuBtns;
+
+    public readonly Subject<Unit> OnOpenSaveMenuBtnClicked = new();
 
     [Inject] private LoadLevelController _loadLevelController;
     [Inject] private SettingsController _settingsController;
     [Inject] private SaveLoadController _saveLoadController;
+
+
+    private void Start()
+    {
+        _saveLoadController.OnCloseSaveMenuBtnClicked
+            .Subscribe(_ => CloseSaveMenu())
+            .AddTo(this);
+    }
 
     // ReSharper disable once AsyncVoidMethod
     public async void StartNewGame()
@@ -35,11 +48,17 @@ public class UIController : MonoBehaviour
 
     public void OpenSaveMenu()
     {
-        _saveLoadController.Activate();
+        mainMenuBtns.SetActive(false);
+        OnOpenSaveMenuBtnClicked.OnNext(Unit.Default);
     }
 
-    public void CloseSaveMenu()
+    private void CloseSaveMenu()
     {
-        _saveLoadController.Deactivate();
+        mainMenuBtns.SetActive(true);
+    }
+
+    public void LoadLastSave()
+    {
+        _saveLoadController.LoadLastSave();
     }
 }

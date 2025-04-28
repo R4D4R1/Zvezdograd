@@ -32,7 +32,7 @@ public class EnoughPopUp : FullScreenPopUp
     
     protected bool HasEnoughPeople(int requiredPeople)
     {
-        if (PeopleUnitsController.ReadyUnits.Count >= requiredPeople)
+        if (_peopleUnitsController.ReadyUnits.Count >= requiredPeople)
             return true;
 
         ShowError("Недостаточно подразделений");
@@ -41,7 +41,7 @@ public class EnoughPopUp : FullScreenPopUp
 
     protected bool HasEnoughResources(ResourceModel.ResourceType resourceType, int requiredAmount)
     {
-        if (ResourceViewModel.GetResourceValue(resourceType) >= requiredAmount)
+        if (_resourceViewModel.GetResourceValue(resourceType) >= requiredAmount)
             return true;
 
         ShowError("Недостаточно ресурсов");
@@ -50,7 +50,7 @@ public class EnoughPopUp : FullScreenPopUp
     
     protected bool HasEnoughSpaceForResources(ResourceModel.ResourceType resourceType, int materialsToGet)
     {
-        if (ResourceViewModel.GetResourceValue(resourceType) + materialsToGet <= ResourceViewModel.GetMaxResourceValue(resourceType))
+        if (_resourceViewModel.GetResourceValue(resourceType) + materialsToGet <= _resourceViewModel.GetMaxResourceValue(resourceType))
             return true;
         
         ShowError("Недостаточно места для ресурсов");
@@ -59,7 +59,7 @@ public class EnoughPopUp : FullScreenPopUp
 
     protected bool CanUseActionPoint()
     {
-        if (TimeController.OnActionPointUsed())
+        if (_timeController.OnActionPointUsed())
             return true;
 
         ShowError("Недостаточно очков действий");

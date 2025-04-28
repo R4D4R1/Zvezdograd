@@ -16,16 +16,16 @@ public class InfoPopUp : MonoBehaviour
     private const float FADE_DURATION = 0.25f;
 
     // Dependencies
-    protected ResourceViewModel ResourceViewModel;
-    protected PopUpFactory PopUpFactory;
-    protected PeopleUnitsController PeopleUnitsController;
-    protected TimeController TimeController;
-    protected BuildingsController BuildingsController;
-    protected MainGameController MainGameController;
-    protected MainGameUIController MainGameUIController;
-    protected TutorialController TutorialController;
-    protected PopUpsController PopUpsController;
-    protected EventController EventController;
+    protected ResourceViewModel _resourceViewModel;
+    protected PopUpFactory _popUpFactory;
+    protected PeopleUnitsController _peopleUnitsController;
+    protected TimeController _timeController;
+    protected BuildingsController _buildingsController;
+    protected MainGameController _mainGameController;
+    protected MainGameUIController _mainGameUIController;
+    protected TutorialController _tutorialController;
+    protected PopUpsController _popUpsController;
+    protected EventController _eventController;
 
     [Inject]
     public void Construct(
@@ -40,16 +40,16 @@ public class InfoPopUp : MonoBehaviour
         PopUpsController popUpsController,
         EventController eventController)
     {
-        ResourceViewModel = resourceViewModel;
-        PopUpFactory = popUpFactory;
-        PeopleUnitsController = peopleUnitsController;
-        TimeController = timeController;
-        BuildingsController = buildingsController;
-        MainGameController = mainGameController;
-        MainGameUIController = mainGameUIController;
-        TutorialController = tutorialController;
-        PopUpsController = popUpsController;
-        EventController = eventController;
+        _resourceViewModel = resourceViewModel;
+        _popUpFactory = popUpFactory;
+        _peopleUnitsController = peopleUnitsController;
+        _timeController = timeController;
+        _buildingsController = buildingsController;
+        _mainGameController = mainGameController;
+        _mainGameUIController = mainGameUIController;
+        _tutorialController = tutorialController;
+        _popUpsController = popUpsController;
+        _eventController = eventController;
     }
 
     private void OnEnable()
@@ -93,7 +93,7 @@ public class InfoPopUp : MonoBehaviour
         });
 
         SetAlpha(0);
-        MainGameUIController.TurnOnUI();
+        _mainGameUIController.TurnOnUI();
     }
 
     public void HideStartInfoPopUpPopUp()

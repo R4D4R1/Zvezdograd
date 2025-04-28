@@ -20,7 +20,7 @@ public class FactoryPopUp : EnoughPopUp,ISaveablePopUp
     public override void Init()
     {
         base.Init();
-        BuildingsController.GetCityHallBuilding().OnMilitaryHelpSent
+        _buildingsController.GetCityHallBuilding().OnMilitaryHelpSent
             .Subscribe(_ => SetCreateArmyMaterialsBtnState(true))
             .AddTo(this);
 
