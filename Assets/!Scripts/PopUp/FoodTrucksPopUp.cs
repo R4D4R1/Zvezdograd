@@ -5,13 +5,15 @@ public class FoodTrucksPopUp : QuestPopUp
 {
     [SerializeField] private GameObject giveFoodBtnParent;
     
-    private FoodTrucksBuilding _building;
-    
+    private FoodTrucksBuilding _foodTrucksBuilding;
+
+    public readonly Subject<SelectableBuilding> OnBuildingHighlighted = new();
+
     public override void Init()
     {
         base.Init();
 
-        _building = _buildingsController.GetFoodTruckBuilding();
+        _foodTrucksBuilding = _buildingsController.GetFoodTruckBuilding();
         
         SetButtonState(giveFoodBtnParent,true);
 
@@ -22,12 +24,14 @@ public class FoodTrucksPopUp : QuestPopUp
         _eventController.OnQuestTriggered
             .Subscribe(popupEvent =>
             {
-                if (popupEvent.buildingType == _building.Type.ToString())
+                if (popupEvent.buildingType == _foodTrucksBuilding.Type.ToString())
                 {
                     EnableQuest(
                         popupEvent.buildingType, popupEvent.questText, popupEvent.deadlineInDays, popupEvent.unitSize,
                         popupEvent.turnsToWork, popupEvent.turnsToRest, popupEvent.materialsToGet, popupEvent.materialsToLose,
                         popupEvent.stabilityToGet, popupEvent.stabilityToLose, popupEvent.relationshipWithGovToGet, popupEvent.relationshipWithGovToLose);
+
+                    OnBuildingHighlighted.OnNext(_foodTrucksBuilding);
                 }
             })
             .AddTo(this);

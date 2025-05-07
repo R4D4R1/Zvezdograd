@@ -57,7 +57,6 @@ public class CityHallBuilding : RepairableBuilding,ISaveableBuilding
             if (!_isCreatingActionPoints)
             {
                 _turnsToCreateNewUnit--;
-                Debug.Log(_turnsToCreateNewUnit);
 
                 if (_turnsToCreateNewUnit == 0)
                 {

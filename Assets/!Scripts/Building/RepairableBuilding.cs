@@ -1,11 +1,15 @@
 using UnityEngine;
 using UniRx;
+using System.Collections.Generic;
 
 public class RepairableBuilding : ChangeMaterialsBuilding, ISaveableBuilding
 {
     [Header("REPAIRABLE SETTINGS")]
     [SerializeField] private RepairableBuildingConfig repairableConfig;
     public RepairableBuildingConfig RepairableBuildingConfig => repairableConfig;
+
+    [Header("Smoke Effect")]
+    [SerializeField] private List<GameObject> smokeEffects = new();
 
     protected int TurnsToRepair { get; set; }
 
@@ -34,8 +38,6 @@ public class RepairableBuilding : ChangeMaterialsBuilding, ISaveableBuilding
     {
         base.Init();
 
-        FindBuildingModels();
-
         SetState(State.Intact);
 
         TimeController.OnNextTurnBtnClickBetween
@@ -61,7 +63,7 @@ public class RepairableBuilding : ChangeMaterialsBuilding, ISaveableBuilding
         {
             TurnsToRepair--;
 
-            if (TurnsToRepair == 0)
+            if (TurnsToRepair <= 0)
             {
                 BuildingIsSelectable = true;
                 RestoreOriginalMaterials();
@@ -102,41 +104,24 @@ public class RepairableBuilding : ChangeMaterialsBuilding, ISaveableBuilding
     protected void SetState(State newState)
     {
         _currentState = newState;
-        UpdateBuildingModel();
+        UpdateSmokeEffect();
     }
 
-    private void FindBuildingModels()
+    private void UpdateSmokeEffect()
     {
-        IntactBuilding intactComponent = GetComponentInChildren<IntactBuilding>();
-        DamagedBuilding damagedComponent = GetComponentInChildren<DamagedBuilding>();
-
-        if (intactComponent)
-            _intactBuildingModel = intactComponent.gameObject;
+        if (smokeEffects != null)
+        {
+            bool shouldShowSmoke = _currentState == State.Damaged || _currentState == State.Repairing;
+            foreach ( var smokeEffect in smokeEffects)
+                smokeEffect.SetActive(shouldShowSmoke);
+        }
         else
-            Debug.LogError("IntactBuilding component not found on any child object.");
-
-        if (damagedComponent)
-            _damagedBuildingModel = damagedComponent.gameObject;
-        else
-            Debug.LogError("DamagedBuilding component not found on any child object.");
+        {
+            Debug.LogWarning("Smoke effect is not assigned in the inspector.");
+        }
     }
 
-    private void UpdateBuildingModel()
-    {
-        SetModelActive(_intactBuildingModel, _currentState == State.Intact);
-        SetModelActive(_damagedBuildingModel, _currentState != State.Intact);
-    }
-
-    private void SetModelActive(GameObject model, bool isActive)
-    {
-        if (model)
-            model.SetActive(isActive);
-    }
-
-    private GameObject _intactBuildingModel;
-    private GameObject _damagedBuildingModel;
-
-    public new int BuildingID => base.BuildingId;
+    public int BuildingID => base.BuildingId;
 
     public virtual BuildingSaveData SaveData()
     {

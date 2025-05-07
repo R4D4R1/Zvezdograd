@@ -583,6 +583,10 @@ PrefabInstance:
       propertyPath: _backButton
       value: 
       objectReference: {fileID: 3121911009047922707}
+    - target: {fileID: 89871374447460668, guid: 116e0146df139b74797429c9a8ce71c7, type: 3}
+      propertyPath: autoSaveSlot
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1394944478502808302, guid: 116e0146df139b74797429c9a8ce71c7, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -782,7 +786,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 508274011314761828, guid: 77ee8f01f470a7e47bdac962402cc539, type: 3}
       propertyPath: testMode
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2414561299985339342, guid: 77ee8f01f470a7e47bdac962402cc539, type: 3}
       propertyPath: m_LocalPosition.x

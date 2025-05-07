@@ -42,15 +42,13 @@ public class GameInitializer : MonoBehaviour
     }
 
     // ReSharper disable once AsyncVoidMethod
-    private void Start()
+    private void  Start()
     {
         _blurController.Init();
         _mainGameUIController.Init();
-        _buildingSelectionController.Init();
         _buildingsController.Init();
-        
         _popUpsController.Init();
-
+        _buildingSelectionController.Init();
         _mainGameController.Init();
         _timeController.Init();
         _peopleUnitsController.Init();

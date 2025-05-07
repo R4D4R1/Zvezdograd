@@ -1,9 +1,8 @@
-using System.Threading.Tasks;
 using UnityEngine;
 using UniRx;
 using UnityEngine.Serialization;
 
-public class FactoryBuilding : RepairableBuilding,ISaveableBuilding
+public class FactoryBuilding : RepairableBuilding, ISaveableBuilding
 {
     [FormerlySerializedAs("_factoryConfig")]
     [Header("FACTORY CONFIG")]

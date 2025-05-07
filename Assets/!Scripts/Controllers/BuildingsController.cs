@@ -10,7 +10,6 @@ public class BuildingsController : MonoInit
     public List<SelectableBuilding> AllBuildings { get; private set; } = new();
     private List<RepairableBuilding> RegularBuildings { get; } = new();
     private List<RepairableBuilding> SpecialBuildings { get; } = new();
-    //private List<FactoryBuilding> FactoryBuildings { get; } = new();
     
     public readonly Subject<Unit> OnBuildingBombed = new();
 

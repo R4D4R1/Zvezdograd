@@ -5,15 +5,18 @@ using UnityEngine.EventSystems;
 using Zenject;
 using UniRx;
 using UnityEngine.Serialization;
+using UnityEngine.UIElements;
 
 public class BuildingSelectionController : MonoInit
 {
-    [FormerlySerializedAs("_canvas")] [SerializeField] private Canvas canvas;
-    [FormerlySerializedAs("_outlineColor")] [SerializeField] private Color outlineColor;
-    [FormerlySerializedAs("_outlineWidth")] [Range(0f, 1f), SerializeField] private float outlineWidth;
+    [SerializeField] private Canvas canvas;
+    [SerializeField] private Color defaultOutlineColor;
+    [SerializeField] private Color highlightOutlineColor;
+    [Range(0f, 1f), SerializeField] private float outlineWidth;
 
     private SelectableBuilding _currentHoveredObject;
     private SelectableBuilding _selectedBuilding;
+    private SelectableBuilding _highlightBuilding;
     private GameObject _currentPopUp;
     private bool _isActivated;
 
@@ -26,12 +29,14 @@ public class BuildingSelectionController : MonoInit
     private MainGameController _mainGameController;
     private TutorialController _tutorialController;
     private EventController _eventController;
+    private PopUpsController _popUpsController;
 
     [Inject]
     public void Construct(PopUpFactory popUpFactory, Camera mainCamera,
         SoundController soundController, TimeController timeController,
         MainGameUIController mainGameUIController, MainGameController mainGameController,
-        TutorialController tutorialController,EventController eventController)
+        TutorialController tutorialController, EventController eventController,
+        PopUpsController popUpsController)
     {
         _popUpFactory = popUpFactory;
         _mainCamera = mainCamera;
@@ -41,11 +46,41 @@ public class BuildingSelectionController : MonoInit
         _mainGameController = mainGameController;
         _tutorialController = tutorialController;
         _eventController = eventController;
+        _popUpsController = popUpsController;
     }
 
     public override UniTask Init()
     {
         base.Init();
+
+        foreach (var building in FindObjectsByType<SelectableBuilding>(FindObjectsSortMode.None))
+        {
+            building.OnPointerEnterSubject
+                .Where(_ => _isActivated)
+                .Subscribe(OnBuildingHovered)
+                .AddTo(this);
+
+            building.OnPointerExitSubject
+                .Where(_ => _isActivated)
+                .Subscribe(_ => OnBuildingHoverExit())
+                .AddTo(this);
+
+            building.OnPointerClickSubject
+                .Where(_ => _isActivated)
+                .Subscribe(OnBuildingClicked)
+                .AddTo(this);
+        }
+
+        foreach (var gameObject in FindObjectsByType<BackgroundClickCatcher>(FindObjectsSortMode.None))
+        {
+            gameObject.OnBackgroundClicked
+                .Where(_ => _isActivated)
+                .Subscribe(_ => Deselect())
+                .AddTo(this);
+        }
+
+        _timeController.OnNextTurnBtnClickStarted
+            .Subscribe(_ => OnHighilightedBuildingDisable()).AddTo(this);
 
         _timeController.OnNextTurnBtnClickStarted
             .Subscribe(_ => Deselect()).AddTo(this);
@@ -67,25 +102,28 @@ public class BuildingSelectionController : MonoInit
 
         _tutorialController.OnTutorialStarted
             .Subscribe(_ => { SetSelectionControllerState(false); Deselect(); }).AddTo(this);
-        
+
         _eventController.OnGameOverStarted
             .Subscribe(_ => { SetSelectionControllerState(false); Deselect(); }).AddTo(this);
 
-        
+        _popUpsController.HospitalPopUp.OnBuildingHighlighted
+            .Subscribe(HighlightBuilding)
+            .AddTo(this);
+
+        _popUpsController.CityHallPopUp.OnBuildingHighlighted
+            .Subscribe(HighlightBuilding)
+            .AddTo(this);
+
+        _popUpsController.FoodTrucksPopUp.OnBuildingHighlighted
+            .Subscribe(HighlightBuilding)
+        .AddTo(this);
+
         return UniTask.CompletedTask;
     }
 
     private void OnEnable() => _tutorialController.OnTutorialEnd.AddListener(Deselect);
     private void OnDisable() => _tutorialController.OnTutorialEnd.RemoveAllListeners();
 
-    private void Update()
-    {
-        if (_isActivated)
-        {
-            HandleHover();
-            HandleSelection();
-        }
-    }
 
     private void SetSelectionControllerState(bool isActive)
     {
@@ -93,71 +131,6 @@ public class BuildingSelectionController : MonoInit
         if (_mainGameController.GameOverState != MainGameController.GameOverStateEnum.Playing)
         {
             _isActivated = false;
-        }
-    }
-
-    private void HandleHover()
-    {
-        if (EventSystem.current.IsPointerOverGameObject()) return;
-
-        Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit hit))
-        {
-            var hitObject = hit.collider.GetComponentInParent<SelectableBuilding>();
-
-            if (hitObject && hitObject.BuildingIsSelectable)
-            {
-                if (_currentHoveredObject != hitObject)
-                {
-                    DisableOutline(_currentHoveredObject, exclude: _selectedBuilding);
-                    _currentHoveredObject = hitObject;
-                    EnableOutline(_currentHoveredObject, exclude: _selectedBuilding);
-                }
-            }
-            else
-            {
-                DisableOutline(_currentHoveredObject, exclude: _selectedBuilding);
-                _currentHoveredObject = null;
-            }
-        }
-        else
-        {
-            DisableOutline(_currentHoveredObject, exclude: _selectedBuilding);
-            _currentHoveredObject = null;
-        }
-    }
-
-    private void HandleSelection()
-    {
-        if (EventSystem.current.IsPointerOverGameObject()) return;
-
-        if (Input.GetMouseButtonDown(0))
-        {
-            Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit))
-            {
-                var hitObject = hit.collider.GetComponentInParent<SelectableBuilding>();
-
-                if (hitObject && hitObject.BuildingIsSelectable)
-                {
-                    if (hitObject == _selectedBuilding) return;
-
-                    Deselect();
-                    _selectedBuilding = hitObject;
-                    EnableOutline(_selectedBuilding);
-                    _soundController?.PlaySelectionSound();
-
-                    ShowBuildingPopUp(hitObject, hit.point);
-                }
-                else
-                {
-                    Deselect();
-                }
-            }
-            else
-            {
-                Deselect();
-            }
         }
     }
 
@@ -223,13 +196,17 @@ public class BuildingSelectionController : MonoInit
         _currentPopUp.transform.localPosition = localPoint + new Vector2(rectTransform.rect.width * 0.5f, rectTransform.rect.height * 0.5f);
     }
 
-    private void EnableOutline(SelectableBuilding building, SelectableBuilding exclude = null)
+    private void EnableOutline(SelectableBuilding building, Color color, SelectableBuilding exclude = null)
     {
         if (building && building != exclude)
         {
             var outline = building.GetComponentInChildren<Outline>();
-            if (outline) outline.enabled = true;
-            _soundController?.PlayHoverSound();
+            if (outline)
+            {
+                outline.OutlineColor = color;
+                outline.OutlineWidth = outlineWidth;
+                outline.enabled = true;
+            }
         }
     }
 
@@ -238,15 +215,29 @@ public class BuildingSelectionController : MonoInit
         if (building && building != exclude)
         {
             var outline = building.GetComponentInChildren<Outline>();
-            if (outline) outline.enabled = false;
+            if (outline)
+            {
+                outline.enabled = false;
+            }
         }
+    }
+
+    private async void HighlightBuilding(SelectableBuilding building)
+    {
+        await UniTask.Yield();
+
+        _highlightBuilding = building;
+        EnableOutline(building, highlightOutlineColor);
     }
 
     private void Deselect()
     {
         foreach (var outline in FindObjectsByType<Outline>(FindObjectsSortMode.None))
         {
-            outline.enabled = false;
+            if (outline.gameObject != _highlightBuilding?.gameObject && outline.isActiveAndEnabled)
+            {
+                outline.enabled = false;
+            }
         }
 
         foreach (var popup in FindObjectsByType<InfoPopUp>(FindObjectsSortMode.None))
@@ -256,5 +247,45 @@ public class BuildingSelectionController : MonoInit
 
         _selectedBuilding = null;
         _currentPopUp = null;
+    }
+
+    private void OnBuildingHovered(SelectableBuilding building)
+    {
+        if (building == _selectedBuilding || building == _highlightBuilding) return;
+        DisableOutline(_currentHoveredObject, exclude: _selectedBuilding);
+        _currentHoveredObject = building;
+        EnableOutline(building,defaultOutlineColor, exclude: _selectedBuilding);
+        _soundController?.PlayHoverSound();
+    }
+
+    private void OnBuildingHoverExit()
+    {
+        DisableOutline(_currentHoveredObject, exclude: _selectedBuilding);
+        _currentHoveredObject = null;
+    }
+
+    private void OnBuildingClicked(SelectableBuilding building)
+    {
+        if (!building.BuildingIsSelectable) return;
+
+        if (building == _selectedBuilding) return;
+
+        if (building == _highlightBuilding)
+        {
+            _highlightBuilding = null;
+        }
+
+        Deselect();
+        _selectedBuilding = building;
+        EnableOutline(building, defaultOutlineColor);
+        _soundController?.PlaySelectionSound();
+
+        Vector3 centerPoint = building.GetComponent<Collider>().bounds.center;
+        ShowBuildingPopUp(building, centerPoint);
+    }
+
+    private void OnHighilightedBuildingDisable()
+    {
+        _highlightBuilding = null;
     }
 }

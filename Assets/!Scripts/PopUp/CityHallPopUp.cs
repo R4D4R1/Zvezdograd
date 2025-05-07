@@ -20,6 +20,10 @@ public class CityHallPopUp : QuestPopUp
     
     private CityHallBuilding _cityHallBuilding;
     private bool LastMilitaryHelpSent;
+
+    public readonly Subject<SelectableBuilding> OnBuildingHighlighted = new();
+
+
     public override void Init()
     {
         base.Init();
@@ -41,6 +45,8 @@ public class CityHallPopUp : QuestPopUp
                         popupEvent.materialsToLose,
                         popupEvent.stabilityToGet, popupEvent.stabilityToLose, popupEvent.relationshipWithGovToGet,
                         popupEvent.relationshipWithGovToLose);
+
+                    OnBuildingHighlighted.OnNext(_cityHallBuilding);
                 }
             })
             .AddTo(this);

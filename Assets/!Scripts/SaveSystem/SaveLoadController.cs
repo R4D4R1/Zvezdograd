@@ -13,12 +13,12 @@ using Zenject;
 [RequireComponent(typeof(CanvasGroup))]
 public class SaveLoadController : MonoBehaviour
 {
-    [SerializeField] private List<GameObject> _saveSlots;
-    [SerializeField] private List<Button> _slotButtons;
-    [SerializeField] private Button _saveButton;
-    [SerializeField] private Button _loadButton;
-    [SerializeField] private Button _deleteButton;
-    [SerializeField] private Button _backButton;
+    [SerializeField] private List<GameObject> saveSlots;
+    [SerializeField] private Button saveButton;
+    [SerializeField] private Button loadButton;
+    [SerializeField] private Button deleteButton;
+    [SerializeField] private Button backButton;
+    [SerializeField, Range(0, 4)] private int autoSaveSlot;
 
     private List<TextMeshProUGUI> _slotTexts = new();
     private static int? currentSlot;
@@ -32,6 +32,8 @@ public class SaveLoadController : MonoBehaviour
     private static BuildingsController _buildingsController;
     private static MainGameUIController _mainGameUIController;
     private CanvasGroup _canvasGroup;
+
+    private bool _isAutoSave;
 
     public readonly Subject<Unit> OnCloseSaveMenuBtnClicked = new();
 
@@ -62,6 +64,10 @@ public class SaveLoadController : MonoBehaviour
         mainGameUIController.OnOpenSaveMenuBtnClicked
             .Subscribe(_ => OnOpenkBtnClicked())
             .AddTo(this);
+
+        timeController.OnNextDayEvent
+            .Subscribe(_ => AutoSave())
+            .AddTo(this);
     }
 
     public void SubscribeUIControllerInMainMenu(UIController uIController)
@@ -79,12 +85,12 @@ public class SaveLoadController : MonoBehaviour
 
         if(SceneManager.GetActiveScene().name == Scenes.MAIN_MENU)
         {
-            _saveButton.gameObject.SetActive(false);
+            saveButton.gameObject.SetActive(false);
         }
 
         if (SceneManager.GetActiveScene().name == Scenes.GAME_SCENE)
         {
-            _saveButton.gameObject.SetActive(true);
+            saveButton.gameObject.SetActive(true);
         }
     }
 
@@ -98,9 +104,10 @@ public class SaveLoadController : MonoBehaviour
     private void Start()
     {
         _canvasGroup = GetComponent<CanvasGroup>();
-        _saveButton.gameObject.SetActive(false);
+        saveButton.gameObject.SetActive(false);
+        _isAutoSave = false;
 
-        foreach (var slot in _saveSlots)
+        foreach (var slot in saveSlots)
         {
             _slotTexts.Add(slot.GetComponentInChildren<TextMeshProUGUI>());
         }
@@ -108,15 +115,24 @@ public class SaveLoadController : MonoBehaviour
         UpdateSlotTexts();
 
         // Привязка событий к кнопкам
-        for (int i = 0; i < _slotButtons.Count; i++)
+        for (int i = 0; i < saveSlots.Count; i++)
         {
-            int index = i;  // Локальная копия индекса для использования в лямбде
-            _slotButtons[i].onClick.AddListener(() => SelectSlot(index));
+            int index = i;
+            var button = saveSlots[i].GetComponent<Button>();
+            if (button != null)
+            {
+                button.onClick.AddListener(() => SelectSlot(index));
+            }
+            else
+            {
+                Debug.LogWarning($"Save slot at index {i} does not have a Button component.");
+            }
         }
 
-        _loadButton.onClick.AddListener(OnLoadGameBtnClicked);
-        _deleteButton.onClick.AddListener(OnDeleteSaveBtnClicked);
-        _backButton.onClick.AddListener(OnCloseBtnClicked);
+
+        loadButton.onClick.AddListener(OnLoadGameBtnClicked);
+        deleteButton.onClick.AddListener(OnDeleteSaveBtnClicked);
+        backButton.onClick.AddListener(OnCloseBtnClicked);
     }
 
     private void OnOpenkBtnClicked()
@@ -134,10 +150,9 @@ public class SaveLoadController : MonoBehaviour
     public void SelectSlot(int slotIndex)
     {
         currentSlot = slotIndex;
-        Debug.Log($"Selected save slot: {currentSlot}");
         int slotNum = 0;
 
-        foreach (var slot in _saveSlots)
+        foreach (var slot in saveSlots)
         {
             var unselectedText = slot.transform.GetComponentInChildren<UnselectedText>(true);
             var selectedText = slot.transform.GetComponentInChildren<SelectedText>(true);
@@ -159,13 +174,17 @@ public class SaveLoadController : MonoBehaviour
     {
         if (currentSlot == null)
         {
-            Debug.LogWarning("No save slot selected. Cannot save the game.");
+            Debug.LogWarning("No save slot selected.");
             return;
         }
 
-        string filePath = GetFilePath(currentSlot.Value);
+        SaveToSlot(currentSlot.Value, isAuto: false);
+    }
 
-        // Сбор основной информации
+    private void SaveToSlot(int slotIndex, bool isAuto)
+    {
+        string filePath = GetFilePath(slotIndex);
+
         GameData gameData = new GameData
         {
             periodOfDay = _timeController.CurrentPeriod,
@@ -185,52 +204,30 @@ public class SaveLoadController : MonoBehaviour
 
         foreach (var unit in _peopleUnitsController._allUnits)
         {
-            PeopleUnitData unitData = new PeopleUnitData
+            gameData.allUnitsData.Add(new PeopleUnitData
             {
                 currentState = unit.GetCurrentState(),
                 position = unit.transform.position,
                 busyTime = unit.BusyTurns,
                 restingTime = unit.RestingTurns
-            };
-            gameData.allUnitsData.Add(unitData);
+            });
         }
 
-        // Сбор попапов и зданий по интерфейсам
-        var allPopups = _popUpsController.AllPopUps.OfType<ISaveablePopUp>();
-        var allBuildings = _buildingsController.AllBuildings.OfType<ISaveableBuilding>();
+        var popUps = _popUpsController.AllPopUps.OfType<ISaveablePopUp>();
+        var buildings = _buildingsController.AllBuildings.OfType<ISaveableBuilding>();
 
-        List<PopUpSaveData> popUpSaves = allPopups.Select(p => p.SaveData()).ToList();
-        List<BuildingSaveData> buildingSaves = allBuildings.Select(b => b.SaveData()).ToList();
-
-        foreach (var p in popUpSaves)
-        {
-            Debug.Log(p);
-        }
-        foreach (var p in buildingSaves)
-        {
-            Debug.Log(p);
-        }
-
-        Debug.Log(popUpSaves);
-        Debug.Log(buildingSaves);
-
-        // Комбинирование данных
         CombinedGameData combined = new CombinedGameData
         {
             mainGameData = gameData,
-            popUpSaveData = popUpSaves,
-            buildingSaveData = buildingSaves
+            popUpSaveData = popUps.Select(p => p.SaveData()).ToList(),
+            buildingSaveData = buildings.Select(b => b.SaveData()).ToList()
         };
 
         string json = JsonConvert.SerializeObject(combined, settings);
         File.WriteAllText(filePath, json);
 
-        Debug.Log(json);
-
-        Debug.Log($"Game saved to slot {currentSlot.Value}. Path: {filePath}");
-
-        ClearCurrentSaveSlot();
-        UpdateSlotTexts();
+        if (!isAuto) ClearCurrentSaveSlot();
+        UpdateSingleSlotText(slotIndex);
     }
 
     private async void OnLoadGameBtnClicked()
@@ -309,7 +306,6 @@ public class SaveLoadController : MonoBehaviour
                 if (popup != null)
                 {
                     popup.LoadData(data);
-                    Debug.Log($"Loaded popup with ID: {data.popUpID}");
                 }
                 else
                 {
@@ -333,15 +329,12 @@ public class SaveLoadController : MonoBehaviour
                     Debug.LogWarning($"Building with ID {data.buildingID} not found!");
                 }
             }
-
-            Debug.Log($"Game loaded from slot {currentSlot.Value}.");
         }
         else
         {
             Debug.LogWarning($"Save slot {currentSlot.Value} not found.");
         }
     }
-
 
     private void OnDeleteSaveBtnClicked()
     {
@@ -355,7 +348,6 @@ public class SaveLoadController : MonoBehaviour
         if (File.Exists(filePath))
         {
             File.Delete(filePath);
-            Debug.Log($"Save slot {currentSlot.Value} deleted.");
             UpdateSlotTexts();
             ClearCurrentSaveSlot();
         }
@@ -370,7 +362,7 @@ public class SaveLoadController : MonoBehaviour
         int? latestSlot = null;
         DateTime latestTime = DateTime.MinValue;
 
-        for (int i = 0; i < _saveSlots.Count; i++)
+        for (int i = 0; i < saveSlots.Count; i++)
         {
             string filePath = GetFilePath(i);
             if (File.Exists(filePath))
@@ -400,9 +392,8 @@ public class SaveLoadController : MonoBehaviour
 
     public void ClearCurrentSaveSlot()
     {
-        Debug.Log("ClearSlot");
         int slotNum = 0;
-        foreach (var slot in _saveSlots)
+        foreach (var slot in saveSlots)
         {
             var unselectedText = slot.transform.GetComponentInChildren<UnselectedText>(true);
             var selectedText = slot.transform.GetComponentInChildren<SelectedText>(true);
@@ -423,30 +414,50 @@ public class SaveLoadController : MonoBehaviour
     {
         for (int i = 0; i < _slotTexts.Count; i++)
         {
-            string filePath = GetFilePath(i);
-            if (File.Exists(filePath))
-            {
-                DateTime lastWriteTime = File.GetLastWriteTime(filePath);
-                string json = File.ReadAllText(filePath);
-                CombinedGameData gameData = JsonConvert.DeserializeObject<CombinedGameData>(json, settings);
-
-                _slotTexts[i].text = $"СОХРАНЕНИЕ - {gameData.mainGameData.GetDate().ToString("yyyy-MM-dd")}" +
-                                     $" {gameData.mainGameData.periodOfDay} {lastWriteTime}";
-            }
-            else
-            {
-                _slotTexts[i].text = $"МЕСТО ДЛЯ СОХРАНЕНИЯ";
-            }
+            _slotTexts[i].text = GetSlotText(i);
         }
     }
+    private void UpdateSingleSlotText(int slotIndex)
+    {
+        if (slotIndex >= 0 && slotIndex < _slotTexts.Count)
+        {
+            _slotTexts[slotIndex].text = GetSlotText(slotIndex);
+        }
+    }
+    private void AutoSave()
+    {
+        _isAutoSave = true;
+        SaveToSlot(autoSaveSlot, isAuto: true);
+        _isAutoSave = false;
+    }
+
 
     private static string GetFilePath(int slotIndex)
     {
         return $"{Application.persistentDataPath}/save_slot_{slotIndex + 1}.json";
     }
 
-    public void SetStartedNewGame()
+    private string GetSlotText(int slotIndex)
     {
-        IsStartedFromMainMenu = true;
+        string filePath = GetFilePath(slotIndex);
+
+        if (!File.Exists(filePath)) return "МЕСТО ДЛЯ СОХРАНЕНИЯ";
+
+        try
+        {
+            string json = File.ReadAllText(filePath);
+            CombinedGameData combined = JsonConvert.DeserializeObject<CombinedGameData>(json, settings);
+            DateTime lastWriteTime = File.GetLastWriteTime(filePath);
+            var date = combined.mainGameData.GetDate();
+            var periodOfDay = combined.mainGameData.periodOfDay;
+            var label = (slotIndex == autoSaveSlot) ? "АВТОСОХРАНЕНИЕ" : $"СОХРАНЕНИЕ {slotIndex + 1}";
+
+            return $"{label} {date:dd.MM.yyyy} {periodOfDay} {lastWriteTime}";
+        }
+        catch
+        {
+            return "Ошибка чтения";
+        }
     }
+
 }

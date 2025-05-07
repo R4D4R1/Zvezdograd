@@ -143,12 +143,6 @@ public class PeopleUnitsController : MonoInit
                 OnUnitInjuredByPeopleUnitController.OnNext(Unit.Default);
 
                 UpdateReadyUnits();
-
-                Debug.Log($"Unit {randomUnit.name} has been injured.");
-            }
-            else
-            {
-                Debug.Log("No ready units available to injure.");
             }
         }
     }

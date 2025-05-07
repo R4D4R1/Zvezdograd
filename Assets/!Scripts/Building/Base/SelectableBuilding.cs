@@ -1,8 +1,10 @@
+using UniRx;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 using Zenject;
 
-public class SelectableBuilding : MonoBehaviour
+public class SelectableBuilding : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     [Header("DEFAULT SETTINGS")]
     [FormerlySerializedAs("_selectableBuildingConfig")]
@@ -11,6 +13,9 @@ public class SelectableBuilding : MonoBehaviour
     [FormerlySerializedAs("buildingIsSelectable")] [HideInInspector] 
     public bool BuildingIsSelectable = true;
 
+    public readonly Subject<SelectableBuilding> OnPointerEnterSubject = new();
+    public readonly Subject<SelectableBuilding> OnPointerExitSubject = new();
+    public readonly Subject<SelectableBuilding> OnPointerClickSubject = new();
     public string BuildingLabel { get; private set; }
     public string BuildingDescription { get; private set; }
     public int BuildingId { get; private set; }
@@ -66,5 +71,20 @@ public class SelectableBuilding : MonoBehaviour
             PlayerPrefs.SetInt(uniqueKey, BuildingId);
             PlayerPrefs.Save();
         }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        OnPointerEnterSubject.OnNext(this);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        OnPointerExitSubject.OnNext(this);
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        OnPointerClickSubject.OnNext(this);
     }
 }
