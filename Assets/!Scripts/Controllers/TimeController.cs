@@ -8,6 +8,7 @@ using Cysharp.Threading.Tasks;
 using Zenject;
 using UniRx;
 using UnityEngine.Serialization;
+using UnityEngine.InputSystem;
 
 public class TimeController : MonoInit
 {
@@ -42,6 +43,7 @@ public class TimeController : MonoInit
     private TimeControllerConfig _timeControllerConfig;
     private TutorialController _tutorialController;
     private BuildingsController _buildingsController;
+    private PlayerInputActions _inputActions;
 
     public Button NextTurnButton => nextTurnBtn;
     public DateTime CurrentDate => _currentDate.Value;
@@ -121,14 +123,28 @@ public class TimeController : MonoInit
         UpdateTime();
         return UniTask.CompletedTask;
     }
-
-    private void OnEnable() => _tutorialController.OnTutorialEnd.AddListener(EnableNextTurnLogic);
-
-    private void OnDisable() => _tutorialController.OnTutorialEnd.RemoveAllListeners();
-
-    private void Update()
+    private void Awake()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && nextTurnBtn.interactable)
+        _inputActions = new PlayerInputActions();
+    }
+
+    private void OnEnable()
+    {
+        _inputActions.Gameplay.Enable();
+        _inputActions.Gameplay.NextTurn.performed += OnNextTurnPerformed;
+        _tutorialController.OnTutorialEnd.AddListener(EnableNextTurnLogic);
+    }
+
+    private void OnDisable()
+    {
+        _inputActions.Gameplay.Disable();
+        _inputActions.Gameplay.NextTurn.performed -= OnNextTurnPerformed;
+        _tutorialController.OnTutorialEnd.RemoveAllListeners();
+    }
+
+    private void OnNextTurnPerformed(InputAction.CallbackContext context)
+    {
+        if (nextTurnBtn.interactable)
         {
             EndTurnButtonClicked().Forget();
         }
