@@ -24,7 +24,7 @@ public class TutorialController : MonoBehaviour
     [FormerlySerializedAs("_popUpParent")] [SerializeField] private Transform popUpParent;
     [FormerlySerializedAs("onTutorialEnd")] [SerializeField] public UnityEvent OnTutorialEnd;
 
-    private GameObject _currentPopUp;
+    private InfoPopUp _currentPopUp;
     private readonly Queue<SelectableBuilding> _tutorialBuildings = new();
     private readonly Queue<RectTransform> _uiTutorials = new();
     private readonly Dictionary<SelectableBuilding, string> _buildingDescriptions = new();
@@ -119,7 +119,7 @@ public class TutorialController : MonoBehaviour
         _currentPopUp = _popUpFactory.CreateSpecialPopUp();
         _currentPopUp.transform.position = UITutorial.transform.position;
 
-        var popUpObject = _currentPopUp.GetComponent<SpecialPopUp>();
+        var popUpObject = _currentPopUp as SpecialPopUp;
         var label = _uiTutorialsLabels.GetValueOrDefault(UITutorial, "NO LABEL!");
         var description = _uiTutorialsDescriptions.GetValueOrDefault(UITutorial, "NO DESCRIPTION!");
 

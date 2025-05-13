@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using DG.Tweening;
 using Zenject;
+using UniRx;
 
 public class InfoPopUp : MonoBehaviour
 {
@@ -14,6 +15,9 @@ public class InfoPopUp : MonoBehaviour
 
     protected const float SCALE_DURATION = 0.25f;
     private const float FADE_DURATION = 0.25f;
+
+    public readonly Subject<Unit> OnPopUpHide = new();
+
 
     // Dependencies
     protected ResourceViewModel _resourceViewModel;
@@ -93,6 +97,7 @@ public class InfoPopUp : MonoBehaviour
         });
 
         SetAlpha(0);
+        //OnPopUpHide.OnNext(Unit.Default);
         _mainGameUIController.TurnOnUI();
     }
 

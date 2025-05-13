@@ -40,7 +40,7 @@ public class BlurController : MonoInit
             .Subscribe(_ => BlurBackGroundSmoothly())
             .AddTo(this);
 
-        _mainGameController.OnGameStarted
+        _mainGameController.OnNewGameStarted
             .Subscribe(_ => BlurBackGroundNow())
             .AddTo(this);
 

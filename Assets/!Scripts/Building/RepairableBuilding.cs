@@ -11,7 +11,13 @@ public class RepairableBuilding : ChangeMaterialsBuilding, ISaveableBuilding
     [Header("Smoke Effect")]
     [SerializeField] private List<GameObject> smokeEffects = new();
 
-    protected int TurnsToRepair { get; set; }
+    private int _turnsToRepair;
+
+    protected int TurnsToRepair
+    {
+        get { return _turnsToRepair; }
+        set { _turnsToRepair = value; }
+    }
 
     private State _currentState;
     public State CurrentState => _currentState;
@@ -40,11 +46,11 @@ public class RepairableBuilding : ChangeMaterialsBuilding, ISaveableBuilding
 
         SetState(State.Intact);
 
-        TimeController.OnNextTurnBtnClickBetween
+        _timeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => TryTurnOnBuilding())
             .AddTo(this);
 
-        TimeController.OnNextTurnBtnClickBetween
+        _timeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => UpdateAmountOfTurnsNeededToDoSMTH())
             .AddTo(this);
 
@@ -54,16 +60,16 @@ public class RepairableBuilding : ChangeMaterialsBuilding, ISaveableBuilding
     private void UpdateAmountOfTurnsNeededToDoSMTH()
     {
         if (_currentState != State.Repairing)
-            TurnsToRepair = UpdateAmountOfTurnsNeededToDoSmth(repairableConfig.TurnsToRepairOriginal);
+            _turnsToRepair = UpdateAmountOfTurnsNeededToDoSmth(repairableConfig.TurnsToRepairOriginal);
     }
 
     protected virtual void TryTurnOnBuilding()
     {
         if (_currentState == State.Repairing)
         {
-            TurnsToRepair--;
+            _turnsToRepair--;
 
-            if (TurnsToRepair <= 0)
+            if (_turnsToRepair <= 0)
             {
                 BuildingIsSelectable = true;
                 RestoreOriginalMaterials();
@@ -76,13 +82,13 @@ public class RepairableBuilding : ChangeMaterialsBuilding, ISaveableBuilding
     {
         if (_currentState == State.Damaged)
         {
-            PeopleUnitsController.AssignUnitsToTask(
+            _peopleUnitsController.AssignUnitsToTask(
                 repairableConfig.PeopleToRepair,
-                TurnsToRepair,
+                _turnsToRepair,
                 repairableConfig.TurnsToRestFromRepair
             );
 
-            ResourceViewModel.ModifyResourceCommand.Execute(
+            _resourceViewModel.ModifyResourceCommand.Execute(
                 (ResourceModel.ResourceType.ReadyMaterials, -repairableConfig.BuildingMaterialsToRepair)
             );
 
@@ -129,7 +135,7 @@ public class RepairableBuilding : ChangeMaterialsBuilding, ISaveableBuilding
         {
             buildingID = BuildingID,
             buildingIsSelectable = BuildingIsSelectable,
-            turnsToRepair = TurnsToRepair,
+            turnsToRepair = _turnsToRepair,
             currentState = _currentState
         };
     }
@@ -140,7 +146,7 @@ public class RepairableBuilding : ChangeMaterialsBuilding, ISaveableBuilding
         if (save == null) return;
 
         BuildingIsSelectable = save.buildingIsSelectable;
-        TurnsToRepair = save.turnsToRepair;
+        _turnsToRepair = save.turnsToRepair;
         SetState(save.currentState);
 
         if (BuildingIsSelectable)

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _peopleToGiveProvision: 1
   _turnsToGiveProvisionOriginal: 2
-  _turnsToRestFromProvisionJob: 2
+  _turnsToRestFromProvisionJob: 1
   _foodToGive: 1
   _stabilityAddValue: 5
   _stabilityRemoveValue: 5

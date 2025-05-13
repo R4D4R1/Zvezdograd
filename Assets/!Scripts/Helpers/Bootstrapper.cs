@@ -11,7 +11,6 @@ public class Bootstrapper : MonoBehaviour
         _loadLevelController = loadLevelController;
     }
 
-    // ReSharper disable once AsyncVoidMethod
     private async void Start()
     {
         if(Application.platform == RuntimePlatform.Android)

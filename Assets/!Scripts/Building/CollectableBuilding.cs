@@ -17,11 +17,11 @@ public class CollectableBuilding : ChangeMaterialsBuilding, ISaveableBuilding
     {
         base.Init();
 
-        TimeController.OnNextTurnBtnClickBetween
+        _timeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => TryTurnOnBuilding())
             .AddTo(this);
 
-        TimeController.OnNextTurnBtnClickBetween
+        _timeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => UpdateTurnsDependingOnStability())
             .AddTo(this);
 
@@ -45,7 +45,7 @@ public class CollectableBuilding : ChangeMaterialsBuilding, ISaveableBuilding
             if (_turnsToWork == 0)
             {
                 RawMaterialsLeft -= config.RawMaterialsGet;
-                ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.RawMaterials, config.RawMaterialsGet));
+                _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.RawMaterials, config.RawMaterialsGet));
 
                 BuildingIsSelectable = true;
                 RestoreOriginalMaterials();
@@ -57,7 +57,7 @@ public class CollectableBuilding : ChangeMaterialsBuilding, ISaveableBuilding
     {
         UpdateTurnsDependingOnStability();
 
-        PeopleUnitsController.AssignUnitsToTask(
+        _peopleUnitsController.AssignUnitsToTask(
             config.PeopleToCollect, TurnsToCollect, config.TurnsToRest);
         
         _turnsToWork = TurnsToCollect;
@@ -67,7 +67,7 @@ public class CollectableBuilding : ChangeMaterialsBuilding, ISaveableBuilding
         SetGreyMaterials();
     }
 
-    public new int BuildingID => base.BuildingId;
+    public int BuildingID => base.BuildingId;
 
     public BuildingSaveData SaveData()
     {

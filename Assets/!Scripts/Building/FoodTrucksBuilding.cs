@@ -13,7 +13,7 @@ public class FoodTrucksBuilding : RepairableBuilding,ISaveableBuilding
     public override void Init()
     {
         base.Init();
-        TimeController.OnNextTurnBtnClickBetween
+        _timeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => UpdateAmountOfTurnsNeededToDoSmth())
             .AddTo(this);
 
@@ -30,11 +30,11 @@ public class FoodTrucksBuilding : RepairableBuilding,ISaveableBuilding
     public void SendPeopleToGiveProvision()
     {
         _isFoodGivenAwayToday = true;
-        PeopleUnitsController.AssignUnitsToTask(foodTrucksConfig.PeopleToGiveProvision,
+        _peopleUnitsController.AssignUnitsToTask(foodTrucksConfig.PeopleToGiveProvision,
             _turnsToToGiveProvision, foodTrucksConfig.TurnsToRestFromProvisionJob);
 
-        ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Provision, -foodTrucksConfig.FoodToGive));
-        ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, foodTrucksConfig.StabilityAddValue));
+        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Provision, -foodTrucksConfig.FoodToGive));
+        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, foodTrucksConfig.StabilityAddValue));
     }
 
     public bool FoodWasGivenAwayToday()
@@ -45,7 +45,7 @@ public class FoodTrucksBuilding : RepairableBuilding,ISaveableBuilding
         }
         
         _isFoodGivenAwayToday = false;
-        ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, -foodTrucksConfig.StabilityRemoveValue));
+        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, -foodTrucksConfig.StabilityRemoveValue));
         return false;
     }
     

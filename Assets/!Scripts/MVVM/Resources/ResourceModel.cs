@@ -16,26 +16,17 @@ public class ResourceModel
     public readonly int MaxReadyMaterials;
     public readonly int MaxStability;
 
-    private readonly MainGameController _mainGameController;
+    public readonly Subject<MainGameController.GameOverStateEnum> OnStabilityLose = new();
 
     [Inject]
     public ResourceModel(MainGameController mainGameController, ResourcesConfig resourceConfig)
-    {
-        _mainGameController = mainGameController;
-
-        // SetResourceValue(ResourceType.Provision, resourceConfig.Provision);
-        // SetResourceValue(ResourceType.Medicine, resourceConfig.Medicine);
-        // SetResourceValue(ResourceType.RawMaterials, resourceConfig.RawMaterials);
-        // SetResourceValue(ResourceType.ReadyMaterials, resourceConfig.ReadyMaterials);
-        // SetResourceValue(ResourceType.Stability, resourceConfig.Stability);
-        
+    {        
         Provision = new ReactiveProperty<int>(resourceConfig.Provision);
         Medicine = new ReactiveProperty<int>(resourceConfig.Medicine);
         RawMaterials = new ReactiveProperty<int>(resourceConfig.RawMaterials);
         ReadyMaterials = new ReactiveProperty<int>(resourceConfig.ReadyMaterials);
         Stability = new ReactiveProperty<int>(resourceConfig.Stability);
 
-        // Use config for max values
         MaxProvision = resourceConfig.MaxProvision;
         MaxMedicine = resourceConfig.MaxMedicine;
         MaxRawMaterials = resourceConfig.MaxRawMaterials;
@@ -63,7 +54,7 @@ public class ResourceModel
                 Stability.Value = Mathf.Clamp(Stability.Value + value, 0, MaxStability);
                 if (Stability.Value == 0)
                 {
-                    _mainGameController.GameOverState = MainGameController.GameOverStateEnum.StabilityLose;
+                    OnStabilityLose.OnNext(MainGameController.GameOverStateEnum.StabilityLose);
                 }
                 break;
         }

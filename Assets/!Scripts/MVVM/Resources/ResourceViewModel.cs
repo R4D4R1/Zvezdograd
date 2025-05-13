@@ -41,9 +41,4 @@ public class ResourceViewModel
             _ => 0
         };
     }
-
-    private void ModifyResource(ResourceModel.ResourceType type, int value)
-    {
-        Model.ModifyResource(type, value);
-    }
 }

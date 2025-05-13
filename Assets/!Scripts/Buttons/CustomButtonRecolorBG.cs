@@ -5,10 +5,9 @@ using UnityEngine.UI;
 
 public class CustomButtonRecolorBG : CustomButtonBase
 {
-    private Image _backgroundImage;
-    [SerializeField] private float _duration;
-    [SerializeField] private Color _toColor;
+    [SerializeField] private Color toColor;
     private Color _originalColor;
+    private Image _backgroundImage;
 
     private void Start()
     {
@@ -20,7 +19,7 @@ public class CustomButtonRecolorBG : CustomButtonBase
     {
         base.OnPointerEnter(eventData);
 
-        _backgroundImage.DOColor(_toColor, _duration)
+        _backgroundImage.DOColor(toColor, ANIMATION_DURATION)
             .SetEase(Ease.InOutSine);
     }
 
@@ -28,7 +27,7 @@ public class CustomButtonRecolorBG : CustomButtonBase
     {
         base.OnPointerExit(eventData);
 
-        _backgroundImage.DOColor(_originalColor, _duration)
+        _backgroundImage.DOColor(_originalColor, ANIMATION_DURATION)
         .SetEase(Ease.InOutSine);
     }
 
@@ -36,7 +35,7 @@ public class CustomButtonRecolorBG : CustomButtonBase
     {
         base.OnPointerClick(eventData);
 
-        _backgroundImage.DOColor(_originalColor, _duration)
+        _backgroundImage.DOColor(_originalColor, ANIMATION_DURATION)
         .SetEase(Ease.InOutSine);
     }
 }

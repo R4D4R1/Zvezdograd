@@ -11,7 +11,7 @@ public class QuestPopUp : EnoughPopUp, ISaveablePopUp
     [SerializeField] private Transform questGroupTransform;
 
     private readonly Dictionary<GameObject, QuestData> _quests = new();
-    public bool IsBtnActive;
+    [HideInInspector] public bool IsBtnActive;
 
     private struct QuestData
     {
@@ -172,7 +172,7 @@ public class QuestPopUp : EnoughPopUp, ISaveablePopUp
         // Обновление текста
     }
 
-    public new int PopUpID => base.PopUpId;
+    public int PopUpID => base.PopUpId;
 
     public virtual PopUpSaveData SaveData()
     {

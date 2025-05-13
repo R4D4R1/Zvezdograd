@@ -31,6 +31,9 @@ public class GameData
     public int stability;
 
     [JsonProperty]
+    public bool isSnowing;
+
+    [JsonProperty]
     public List<PeopleUnitData> allUnitsData;
 
     public DateTime GetDate() => DateTime.Parse(dateString);
@@ -41,7 +44,7 @@ public class GameData
 public class PeopleUnitData
 {
     [JsonProperty]
-    public Vector2 position;
+    public float xPosition;
     [JsonProperty]
     public PeopleUnit.UnitState currentState;
     [JsonProperty]

@@ -76,7 +76,7 @@ public class FactoryPopUp : EnoughPopUp,ISaveablePopUp
 
     private string FormatResourceDemand(int rawMaterials, int people)
     {
-        return $"Необходимо \n {rawMaterials} сырья \n {people} подразделений";
+        return $" сырья {rawMaterials} \n подразделений {people}";
     }
 
     private void SetCreateArmyMaterialsBtnState(bool activeState)
@@ -86,7 +86,7 @@ public class FactoryPopUp : EnoughPopUp,ISaveablePopUp
         backArmyBtn.SetActive(!activeState);
     }
 
-    public new int PopUpID => base.PopUpId;
+    public int PopUpID => base.PopUpId;
 
     public PopUpSaveData SaveData()
     {

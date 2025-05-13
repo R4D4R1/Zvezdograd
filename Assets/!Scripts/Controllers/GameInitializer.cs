@@ -1,5 +1,6 @@
 using UnityEngine;
 using Zenject;
+using Cysharp.Threading.Tasks;
 
 public class GameInitializer : MonoBehaviour
 {
@@ -12,7 +13,7 @@ public class GameInitializer : MonoBehaviour
     private BlurController _blurController;
     private PopUpsController _popUpsController;
     private EventController _eventController;
-    private EffectsController _effectsController;
+    private SnowEffects _effectsController;
 
     [Inject]
     public void Construct(
@@ -26,7 +27,7 @@ public class GameInitializer : MonoBehaviour
         PopUpsController popUpsController,
         EventController eventController,
         TutorialController tutorialController,
-        EffectsController effectsController
+        SnowEffects effectsController
         )
     {
         _mainGameUIController = mainGameUIController;
@@ -41,18 +42,38 @@ public class GameInitializer : MonoBehaviour
         _effectsController = effectsController;
     }
 
-    // ReSharper disable once AsyncVoidMethod
-    private void  Start()
+    private void Start()
     {
-        _blurController.Init();
-        _mainGameUIController.Init();
-        _buildingsController.Init();
-        _popUpsController.Init();
-        _buildingSelectionController.Init();
-        _mainGameController.Init();
-        _timeController.Init();
-        _peopleUnitsController.Init();
-        _eventController.Init();
-        _effectsController.Init();
+        StartAsync().Forget();
     }
+
+    private async UniTaskVoid StartAsync()
+    {
+        await _blurController.Init();
+        await _mainGameUIController.Init();
+        await _buildingsController.Init();
+        await _popUpsController.Init();
+        await _buildingSelectionController.Init();
+
+        await _timeController.Init();
+        await _peopleUnitsController.Init();
+        await _eventController.Init();
+        await _effectsController.Init();
+
+        await _mainGameController.Init();
+    }
+
+    //private async UniTaskVoid Start()
+    //{
+    //    _blurController.Init();
+    //    _mainGameUIController.Init();
+    //    _buildingsController.Init();
+    //    _popUpsController.Init();
+    //    _buildingSelectionController.Init();
+    //    _mainGameController.Init();
+    //    _timeController.Init();
+    //    _peopleUnitsController.Init();
+    //    _eventController.Init();
+    //    _effectsController.Init();
+    //}
 }

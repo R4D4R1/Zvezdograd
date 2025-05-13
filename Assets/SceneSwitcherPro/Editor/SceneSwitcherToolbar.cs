@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Linq;
 using System.IO;
 
+#pragma warning disable UDR0001
 [InitializeOnLoad]
 public static class SceneSwitcherToolbar
 {
@@ -15,7 +16,7 @@ public static class SceneSwitcherToolbar
     private static string lastActiveScene = "";
     private static VisualElement toolbarUI;
 
-    private static float positionOffset = 180f; // Move closer to Play button
+    private static float positionOffset = 280f; // Move closer to Play button
     private static float dropdownBoxHeight = 20f; // Dropdown button height
 
     private static bool fetchAllScenes
@@ -30,7 +31,7 @@ public static class SceneSwitcherToolbar
         SelectCurrentScene(); // Automatically select the open scene
 
         // Hook into scene change events
-        EditorSceneManager.activeSceneChangedInEditMode += (prev, current) => UpdateSceneSelection();
+        EditorSceneManager.activeSceneChangedInEditMode += static (prev, current) => UpdateSceneSelection();
         EditorApplication.playModeStateChanged += OnPlayModeChanged;
 
         EditorApplication.delayCall += AddToolbarUI;
@@ -202,7 +203,7 @@ public static class SceneSwitcherToolbar
     {
         if (state == PlayModeStateChange.EnteredPlayMode || state == PlayModeStateChange.ExitingPlayMode)
         {
-            EditorApplication.delayCall += () => AddToolbarUI();
+            EditorApplication.delayCall += static () => AddToolbarUI();
         }
     }
 }

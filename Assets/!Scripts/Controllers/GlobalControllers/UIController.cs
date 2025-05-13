@@ -14,7 +14,6 @@ public class UIController : MonoBehaviour
     [Inject] private SettingsController _settingsController;
     [Inject] private SaveLoadController _saveLoadController;
 
-
     private void Start()
     {
         _saveLoadController.OnCloseSaveMenuBtnClicked

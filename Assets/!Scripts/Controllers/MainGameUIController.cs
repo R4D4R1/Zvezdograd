@@ -1,10 +1,10 @@
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using DG.Tweening;
 using Zenject;
 using UniRx;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 public class MainGameUIController : MonoInit
 {
@@ -14,30 +14,56 @@ public class MainGameUIController : MonoInit
     [SerializeField] private float fadeDuration = 0.5f;
 
     private CanvasGroup _turnOffUICanvasGroup;
-    private InfoPopUp _popUpToClose;
+
+    public readonly Subject<Unit> OnMenuTurnOn = new();
+    public readonly Subject<Unit> OnMenuTurnOff = new();
 
     public readonly Subject<Unit> OnUITurnOn = new();
     public readonly Subject<Unit> OnUITurnOff = new();
     public readonly Subject<Unit> OnMainMenuLoad = new();
     public readonly Subject<Unit> OnOpenSaveMenuBtnClicked = new();
 
-    [Inject] private TutorialController _tutorialController;
-    [Inject] private LoadLevelController _loadLevelController;
-    [Inject] private MainGameController _mainGameController;
-    [Inject] private SettingsController _settingsController;
-    //[Inject] private SaveLoadController _saveLoadController;
+    private TutorialController _tutorialController;
+    private LoadLevelController _loadLevelController;
+    private MainGameController _mainGameController;
+    private SettingsController _settingsController;
+    private TimeController _timeController;
 
-
-    public override UniTask Init()
+    [Inject]
+    public void Construct(
+        TutorialController tutorialController, LoadLevelController loadLevelController,
+        MainGameController mainGameController, SettingsController settingsController,
+        TimeController timeController)
     {
-        base.Init();
+        _tutorialController = tutorialController;
+        _loadLevelController = loadLevelController;
+        _mainGameController = mainGameController;
+        _settingsController = settingsController;
+        _timeController = timeController;
+    }
+
+
+    public override async UniTask Init()
+    {
+        await base.Init();
 
         _tutorialController.OnTutorialStarted
             .Subscribe(_ => TurnOnUIForTutorial())
             .AddTo(this);
 
-        var saveLoadController = FindFirstObjectByType<SaveLoadController>();
+        _timeController.OnNextTurnBtnClickStarted
+            .Subscribe(_ => TurnOffUI())
+            .AddTo(this);
 
+        _timeController.OnNextTurnBtnClickEnded
+            .Subscribe(_ => TurnOnUI())
+            .AddTo(this);
+
+        _mainGameController.OnGameStartedFromLoad
+            .Subscribe(_ => TurnOnUI())
+            .AddTo(this);
+
+        var saveLoadController = FindFirstObjectByType<SaveLoadController>();
         saveLoadController.OnCloseSaveMenuBtnClicked
             .Subscribe(_ => CloseSaveMenu())
             .AddTo(this);
@@ -48,21 +74,22 @@ public class MainGameUIController : MonoInit
         // Устанавливаем начальное состояние UI
         SetCanvasGroupState(_turnOffUICanvasGroup, false);
         _turnOffUICanvasGroup.alpha = 0;
-        return UniTask.CompletedTask;
     }
+
+
 
     public void TurnOnMenu()
     {
         settingsMenu.SetActive(true);
         TurnOffUI();
-        _mainGameController.HideCity();
+        OnMenuTurnOn.OnNext(Unit.Default);
     }
 
     public void TurnOffMenu()
     {
         settingsMenu.SetActive(false);
-        _mainGameController.ShowCity();
         TurnOnUI();
+        OnMenuTurnOff.OnNext(Unit.Default);
     }
 
     private void TurnOnUIForTutorial()
@@ -73,6 +100,8 @@ public class MainGameUIController : MonoInit
 
     public void TurnOnUI()
     {
+        Debug.Log("TurnOnUI");
+
         OnUITurnOn.OnNext(Unit.Default);
 
         _turnOffUICanvasGroup.DOFade(1f, fadeDuration)
@@ -81,7 +110,9 @@ public class MainGameUIController : MonoInit
 
     public void TurnOffUI()
     {
-        if(_mainGameController.GameOverState == MainGameController.GameOverStateEnum.Playing)
+        Debug.Log("TurnOffUI");
+
+        if (_mainGameController.GameOverState == MainGameController.GameOverStateEnum.Playing)
             OnUITurnOff.OnNext(Unit.Default);
 
         _turnOffUICanvasGroup.DOFade(0f, fadeDuration)

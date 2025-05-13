@@ -23,7 +23,6 @@ public class CityHallPopUp : QuestPopUp
 
     public readonly Subject<SelectableBuilding> OnBuildingHighlighted = new();
 
-
     public override void Init()
     {
         base.Init();
@@ -123,7 +122,7 @@ public class CityHallPopUp : QuestPopUp
         }
         
         relationWithGovernmentText.text = $"Отношение с правительством {GetRelationText(_cityHallBuilding.RelationWithGovernment)}" +
-                                          $" {_cityHallBuilding.RelationWithGovernment}";
+                                          $" ({_cityHallBuilding.RelationWithGovernment} / 10)";
         
         helpFromGovTimerText.text = $"Помощь от гос-ва прибудет через {_cityHallBuilding.DaysLeftToReceiveGovHelp} дн.";
 

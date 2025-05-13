@@ -20,16 +20,32 @@ public class ResourceView : MonoBehaviour
     private ResourceViewModel _viewModel;
     private PopUpFactory _popUpFactory;
     private ResourcesConfig _resourcesConfig;
+    private EventController _eventController;
 
     [Inject]
-    public void Construct(ResourceViewModel viewModel, PopUpFactory popUpFactory, ResourcesConfig resourcesConfig)
+    public void Construct(ResourceViewModel viewModel, PopUpFactory popUpFactory,
+        ResourcesConfig resourcesConfig, EventController eventController)
     {
         _viewModel = viewModel;
         _popUpFactory = popUpFactory;
         _resourcesConfig = resourcesConfig;
+        _eventController = eventController;
         BindUI();
+        SubscribeToEvents();
     }
     
+    private void SubscribeToEvents()
+    {
+        _eventController.OnProvisionLost
+            .Subscribe(_ => RemoveProvisionorEvent(1))
+            .AddTo(this);
+    }
+
+    private void RemoveProvisionorEvent(int value)
+    {
+        _viewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Provision, -value));
+    }
+
     private void BindUI()
     {
         provisionSlider.maxValue = _viewModel.Model.MaxProvision;

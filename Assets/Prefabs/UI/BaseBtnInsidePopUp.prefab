@@ -126,8 +126,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70b686c99d75c37459cf5f33f00642a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _duration: 0.2
-  _toColor: {r: 0.5773585, g: 0, b: 0.11320747, a: 1}
+  toColor: {r: 0.3679245, g: 0, b: 0, a: 1}
 --- !u!114 &5732048439346753575
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -204,9 +204,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5ef31128e419bd42a31db956d97e151, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _duration: 0.2
-  _toColor: {r: 1, g: 0, b: 0.19607843, a: 1}
-  _image: {fileID: 1493707279259825597}
+  toColor: {r: 1, g: 0, b: 0.19607843, a: 1}
+  image: {fileID: 1493707279259825597}
 --- !u!114 &3224155222212858865
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -219,8 +218,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d381df23e9e3b5243a23008abd13ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _toColor: {r: 1, g: 1, b: 1, a: 1}
-  _duration: 0.2
+  toColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &2546327431915744198
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -233,9 +231,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7f3a9855a82b3045a1f7345ca58414c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _originalScale: 1
-  _toScale: 1.05
-  _duration: 0.2
+  originalScale: 1
+  toScale: 1.05
 --- !u!114 &3876807960096888159
 MonoBehaviour:
   m_ObjectHideFlags: 0

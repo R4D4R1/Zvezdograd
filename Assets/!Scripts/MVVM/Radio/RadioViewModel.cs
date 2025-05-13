@@ -5,8 +5,8 @@ using System;
 
 public class RadioViewModel
 {
-    public ReactiveProperty<string> CurrentSong { get; private set; } = new ReactiveProperty<string>();
-    public ReactiveProperty<bool> IsPlaying { get; private set; } = new ReactiveProperty<bool>(false);
+    public ReactiveProperty<string> CurrentSong { get; private set; } = new();
+    public ReactiveProperty<bool> IsPlaying { get; private set; } = new(false);
 
     private AudioSource _audioSource;
     private List<RadioModel> _songs;

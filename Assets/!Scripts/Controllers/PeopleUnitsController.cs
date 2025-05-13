@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using DG.Tweening;
 using System.Linq;
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using Zenject;
 using UniRx;
@@ -10,14 +9,13 @@ using UniRx;
 public class PeopleUnitsController : MonoInit
 {
     public List<PeopleUnit> _allUnits;
-    private PeopleUnitsControllerConfig _config;
-
-    public List<PeopleUnit> ReadyUnits { get; } = new();
-    public Queue<PeopleUnit> InjuredUnits { get; } = new();
+    public List<PeopleUnit> ReadyUnits { get; set; } = new();
+    public Queue<PeopleUnit> InjuredUnits { get; set; } = new();
     private List<PeopleUnit> CreatedUnits { get; set; } = new();
-    public Queue<PeopleUnit> NotCreatedUnits { get; } = new();
-    private List<float> InitialPositions { get; } = new();
+    public Queue<PeopleUnit> NotCreatedUnits { get; set; } = new();
+    private List<float> InitialPositions { get; set; } = new();
 
+    private PeopleUnitsControllerConfig _config;
     private TimeController _timeController;
     private BuildingsController _buildingsController;
 
@@ -26,7 +24,8 @@ public class PeopleUnitsController : MonoInit
     public readonly Subject<Unit> OnUnitHealedByPeopleUnitController = new();
 
     [Inject]
-    public void Construct(PeopleUnitsControllerConfig config, BuildingsController buildingsController, TimeController timeController)
+    public void Construct(PeopleUnitsControllerConfig config, BuildingsController buildingsController,
+        TimeController timeController)
     {
         _config = config;
         _buildingsController = buildingsController;
@@ -55,6 +54,11 @@ public class PeopleUnitsController : MonoInit
         
         _buildingsController.GetCityHallBuilding().OnNewActionPointsStartedCreating
             .Subscribe(RemoveReadyUnitsForNewActionPoints)
+            .AddTo(this);
+
+        var saveLoadController = FindFirstObjectByType<SaveLoadController>();
+        saveLoadController.OnSaveLoaded
+            .Subscribe(_ => UpdateUnitsOnLoadSave())
             .AddTo(this);
 
         PeopleUnit anyUnit = FindFirstObjectByType<PeopleUnit>();
@@ -129,12 +133,12 @@ public class PeopleUnitsController : MonoInit
 
     private void TryInjureRandomReadyUnit()
     {
-        var randomValue = Random.Range(0, 100);
+        var randomValue = UnityEngine.Random.Range(0, 100);
         if (randomValue <= _config.ChanceOfInjuringRandomReadyUnit)
         {
             if (ReadyUnits.Count > 0)
             {
-                var randomIndex = Random.Range(0, ReadyUnits.Count);
+                var randomIndex = UnityEngine.Random.Range(0, ReadyUnits.Count);
                 var randomUnit = ReadyUnits[randomIndex];
 
                 randomUnit.SetState(PeopleUnit.UnitState.Injured, 0, 0);
@@ -170,13 +174,36 @@ public class PeopleUnitsController : MonoInit
 
     private bool AreUnitsReady(int units) => units <= ReadyUnits.Count;
 
-    public void UpdateReadyUnits()
+    private void UpdateReadyUnits()
     {
         ReadyUnits.Clear();
 
         foreach (var unit in _allUnits.Where(unit => unit.GetCurrentState() == PeopleUnit.UnitState.Ready))
         {
             ReadyUnits.Add(unit);
+        }
+
+        AnimateUnitPositions();
+    }
+
+    private void UpdateUnitsOnLoadSave()
+    {
+        ReadyUnits.Clear();
+        foreach (var unit in _allUnits.Where(unit => unit.GetCurrentState() == PeopleUnit.UnitState.Ready))
+        {
+            ReadyUnits.Add(unit);
+        }
+
+        NotCreatedUnits.Clear();
+        foreach (var unit in _allUnits.Where(unit => unit.GetCurrentState() == PeopleUnit.UnitState.NotCreated))
+        {
+            NotCreatedUnits.Enqueue(unit);
+        }
+
+        CreatedUnits.Clear();
+        foreach (var unit in _allUnits.Where(unit => unit.GetCurrentState() != PeopleUnit.UnitState.NotCreated))
+        {
+            CreatedUnits.Add(unit);
         }
 
         AnimateUnitPositions();
@@ -201,7 +228,7 @@ public class PeopleUnitsController : MonoInit
     {
         for (int i = 0; i < amountOfReadyUnitsToCreateNewActionPoints; i++)
         {
-            var randomIndex = Random.Range(0, ReadyUnits.Count);
+            var randomIndex = UnityEngine.Random.Range(0, ReadyUnits.Count);
             var unit = ReadyUnits[randomIndex];
 
             unit.SetState(PeopleUnit.UnitState.NotCreated, 0, 0);

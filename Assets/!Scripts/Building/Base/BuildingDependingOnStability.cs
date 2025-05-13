@@ -1,9 +1,8 @@
 public class BuildingDependingOnStability : SelectableBuilding
 {
-    
     protected int UpdateAmountOfTurnsNeededToDoSmth(int turnsToDoWorkOriginal)
     {
-        var stability = ResourceViewModel.Stability.Value;
+        var stability = _resourceViewModel.Stability.Value;
         var turnToDoWork = 0;
 
         if (stability > 75)

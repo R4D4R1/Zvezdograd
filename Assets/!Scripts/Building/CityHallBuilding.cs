@@ -23,16 +23,17 @@ public class CityHallBuilding : RepairableBuilding,ISaveableBuilding
     public readonly Subject<Unit> OnNewActionPointsCreated = new();
     public readonly Subject<Unit> OnLastMilitaryHelpSent = new();
     public readonly Subject<Unit> OnMilitaryHelpSent = new();
+    public readonly Subject<MainGameController.GameOverStateEnum> OnArmyMaterialsSentWin = new();
 
     public override void Init()
     {
         base.Init();
 
-        TimeController.OnNextDayEvent
+        _timeController.OnNextDayEvent
             .Subscribe(_ => OnNextDayEvent())
             .AddTo(this);
 
-        TimeController.OnNextTurnBtnClickBetween
+        _timeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => OnNextTurnEvent())
             .AddTo(this);
 
@@ -47,10 +48,10 @@ public class CityHallBuilding : RepairableBuilding,ISaveableBuilding
     
     private void OnNextTurnEvent()
     {
-        CheckIfCreatedNewUnit();
+        CheckEveryTurn();
     }
     
-    private void CheckIfCreatedNewUnit()
+    private void CheckEveryTurn()
     {
         if (_isWorking)
         {
@@ -127,23 +128,23 @@ public class CityHallBuilding : RepairableBuilding,ISaveableBuilding
         var foodAmount = RelationWithGovernment < 4 ? 2 : RelationWithGovernment < 9 ? 3 : 4;
         var medicineAmount = RelationWithGovernment < 4 ? 1 : 2;
 
-        ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Provision, foodAmount));
-        ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Medicine, medicineAmount));
+        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Provision, foodAmount));
+        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Medicine, medicineAmount));
     }
 
     public void ArmyMaterialsSent()
     {
         _amountOfHelpSent++;
         IsMaterialsSent = true;
-        ModifyRelationWithGov(2);
+        ModifyRelationWithGov(cityHallConfig.AmountOfRelationAddForArmySent);
 
         if (_amountOfHelpSent >= cityHallConfig.AmountOfHelpNeededToSend)
         {
             OnLastMilitaryHelpSent.OnNext(Unit.Default);
-            TimeController.WaitDaysAndExecute(MainGameController.MainGameControllerConfig.DayAfterLastArmyMaterialSendWin, () =>
+            _timeController.WaitDaysAndExecute(_mainGameController._mainGameControllerConfig.DayAfterLastArmyMaterialSendWin, () =>
             {
-                MainGameController.GameOverState = MainGameController.GameOverStateEnum.Win;
-                Debug.Log("Победа спустя 3 игровых дня");
+                OnArmyMaterialsSentWin.OnNext(MainGameController.GameOverStateEnum.WinBySendingArmyMaterials);
+                Debug.Log("Победа спустя _mainGameController.MainGameControllerConfig.DayAfterLastArmyMaterialSendWin игровых дня");
             });
         }
     }
@@ -152,7 +153,7 @@ public class CityHallBuilding : RepairableBuilding,ISaveableBuilding
     {
         _isWorking = true;
         _turnsToCreateNewUnit = cityHallConfig.TurnsToCreateNewUnitOriginal;
-        ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.ReadyMaterials, -cityHallConfig.ReadyMaterialsToCreateNewPeopleUnit));
+        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.ReadyMaterials, -cityHallConfig.ReadyMaterialsToCreateNewPeopleUnit));
     }
     
     public void ActionPointsStartedCreating(int amountOfReadyUnitsToCreateNewActionPoints)
@@ -212,9 +213,5 @@ public class CityHallBuilding : RepairableBuilding,ISaveableBuilding
             RestoreOriginalMaterials();
         else
             SetGreyMaterials();
-        
-        // PopUpsController.CityHallPopUp.UpdateAllText();
-        // PopUpsController.CityHallPopUp.SetButtonState
-        //     (PopUpsController.CityHallPopUp.CreateNewUnitBtnParent, !(_turnsToCreateNewUnit>0));
     }
 }

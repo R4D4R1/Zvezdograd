@@ -49,7 +49,7 @@ public class GameInstaller : MonoInstaller
         Container.Bind<BuildingsController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<BlurController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<TutorialController>().FromComponentInHierarchy().AsSingle();
-        Container.Bind<EffectsController>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<SnowEffects>().FromComponentInHierarchy().AsSingle();
 
         Container.Bind<PopUpFactory>() 
             .AsSingle()

@@ -7,7 +7,6 @@ using DG.Tweening;
 using Cysharp.Threading.Tasks;
 using Zenject;
 using UniRx;
-using UnityEngine.Serialization;
 using UnityEngine.InputSystem;
 
 public class TimeController : MonoInit
@@ -22,15 +21,12 @@ public class TimeController : MonoInit
     [SerializeField] private TextMeshProUGUI actionPointsText;
 
     [SerializeField] private Button nextTurnBtn;
-    [FormerlySerializedAs("_btnScripts")] [SerializeField] private MonoBehaviour[] btnScripts;
 
     [Range(1, 3), SerializeField] private int increaseMaxAPValue;
     [Range(1, 3), SerializeField] private int increaseAddAPValue;
 
-    [HideInInspector]
-    [FormerlySerializedAs("_localIncreaseMaxAPValue")] public int LocalIncreaseMaxAPValue;
-    [HideInInspector]
-    [FormerlySerializedAs("_localIncreaseAddAPValue")] public int LocalIncreaseAddAPValue;
+    [HideInInspector] public int LocalIncreaseMaxAPValue;
+    [HideInInspector] public int LocalIncreaseAddAPValue;
 
     private readonly DateTime _startDate = new(1942, 10, 30);
     public List<DelayedAction> DelayedActions = new();
@@ -39,11 +35,9 @@ public class TimeController : MonoInit
     private ReactiveProperty<PeriodOfDay> _currentPeriod;
     private ReactiveProperty<int> _currentActionPoints;
 
-    private PopUpsController _popUpsController;
-    private TimeControllerConfig _timeControllerConfig;
-    private TutorialController _tutorialController;
-    private BuildingsController _buildingsController;
     private PlayerInputActions _inputActions;
+
+    private CustomButtonBase[] _btnScripts;
 
     public Button NextTurnButton => nextTurnBtn;
     public DateTime CurrentDate => _currentDate.Value;
@@ -57,9 +51,9 @@ public class TimeController : MonoInit
 
     public enum PeriodOfDay
     {
-        Morning,
-        Noon,
-        Evening,
+        Утро,
+        Полдень,
+        Вечер,
     }
 
     public class DelayedAction
@@ -74,30 +68,48 @@ public class TimeController : MonoInit
         }
     }
 
+    private PopUpsController _popUpsController;
+    private TimeControllerConfig _timeControllerConfig;
+    private TutorialController _tutorialController;
+    private BuildingsController _buildingsController;
+    private MainGameUIController _mainGameUIController;
+    private MainGameController _mainGameController;
+
+
     [Inject]
-    public void Construct(PopUpsController popUpsController, TimeControllerConfig timeControllerConfig,
-        TutorialController tutorialController, BuildingsController buildingsController)
+    public void Construct(
+        PopUpsController popUpsController, TimeControllerConfig timeControllerConfig,
+        TutorialController tutorialController, BuildingsController buildingsController,
+        MainGameUIController mainGameUIController, MainGameController mainGameController)
     {
         _popUpsController = popUpsController;
         _timeControllerConfig = timeControllerConfig;
         _tutorialController = tutorialController;
         _buildingsController = buildingsController;
+        _mainGameUIController = mainGameUIController;
+        _mainGameController = mainGameController;
     }
+
 
     public override UniTask Init()
     {
         base.Init();
 
+        LocalIncreaseMaxAPValue = 0;
+        LocalIncreaseAddAPValue = 0;
+
         _currentDate = new ReactiveProperty<DateTime>(_startDate);
-        _currentPeriod = new ReactiveProperty<PeriodOfDay>(PeriodOfDay.Morning);
+        _currentPeriod = new ReactiveProperty<PeriodOfDay>(PeriodOfDay.Утро);
         _currentActionPoints = new ReactiveProperty<int>(_timeControllerConfig.ActionPointsMaxValue);
+
+        _btnScripts = nextTurnBtn.GetComponents<CustomButtonBase>();
 
         _currentDate.Subscribe(_ => UpdateTime()).AddTo(this);
         _currentPeriod.Subscribe(_ => UpdateTime()).AddTo(this);
 
         _currentActionPoints.Subscribe(value =>
             actionPointsText.text =
-                $"ОД  {value} / {_timeControllerConfig.ActionPointsMaxValue + LocalIncreaseMaxAPValue}"
+                $"ОЧКИ ДЕЙСТВИЯ  {value} / {_timeControllerConfig.ActionPointsMaxValue + LocalIncreaseMaxAPValue}"
         ).AddTo(this);
 
         nextTurnBtn.OnClickAsObservable()
@@ -117,12 +129,22 @@ public class TimeController : MonoInit
             .Subscribe(_ => DisableNextTurnLogic())
             .AddTo(this);
 
-        LocalIncreaseMaxAPValue = 0;
-        LocalIncreaseAddAPValue = 0;
+        _mainGameUIController.OnMenuTurnOn
+            .Subscribe(_ => DisableNextTurnLogic())
+            .AddTo(this);
+
+        _mainGameUIController.OnMenuTurnOff
+            .Subscribe(_ => EnableNextTurnLogic())
+            .AddTo(this);
+
+        _mainGameController.OnGameStartedFromLoad
+            .Subscribe(_ => EnableNextTurnLogic())
+            .AddTo(this);
 
         UpdateTime();
         return UniTask.CompletedTask;
     }
+
     private void Awake()
     {
         _inputActions = new PlayerInputActions();
@@ -174,15 +196,16 @@ public class TimeController : MonoInit
     {
         switch (_currentPeriod.Value)
         {
-            case PeriodOfDay.Morning:
-                _currentPeriod.Value = PeriodOfDay.Noon;
+            case PeriodOfDay.Утро:
+                _currentPeriod.Value = PeriodOfDay.Полдень;
                 break;
-            case PeriodOfDay.Noon:
-                _currentPeriod.Value = PeriodOfDay.Evening;
+            case PeriodOfDay.Полдень:
+                _currentPeriod.Value = PeriodOfDay.Вечер;
                 break;
-            case PeriodOfDay.Evening:
-                _currentPeriod.SetValueAndForceNotify(PeriodOfDay.Morning);
+            case PeriodOfDay.Вечер:
+                _currentPeriod.SetValueAndForceNotify(PeriodOfDay.Утро);
                 _currentDate.Value = _currentDate.Value.AddDays(1);
+
                 OnNextDayEvent.OnNext(Unit.Default);
                 ProcessDelayedActions();
                 break;
@@ -197,30 +220,24 @@ public class TimeController : MonoInit
 
     private void UpdateLighting()
     {
-        morningLight.enabled = _currentPeriod.Value == PeriodOfDay.Morning;
-        noonLight.enabled = _currentPeriod.Value == PeriodOfDay.Noon;
-        eveningLight.enabled = _currentPeriod.Value == PeriodOfDay.Evening;
+        morningLight.enabled = _currentPeriod.Value == PeriodOfDay.Утро;
+        noonLight.enabled = _currentPeriod.Value == PeriodOfDay.Полдень;
+        eveningLight.enabled = _currentPeriod.Value == PeriodOfDay.Вечер;
     }
 
     private void UpdateText()
     {
         dayText.text = _currentDate.Value.ToString("d MMMM");
 
-        periodText.text = _currentPeriod.Value switch
-        {
-            PeriodOfDay.Morning => "Утро",
-            PeriodOfDay.Noon => "Полдень",
-            PeriodOfDay.Evening => "Вечер",
-            _ => periodText.text
-        };
+        periodText.text = _currentPeriod.ToString();
     }
 
     private async UniTaskVoid EndTurnButtonClicked()
     {
         OnNextTurnBtnClickStarted.OnNext(Unit.Default);
-        nextTurnBtn.interactable = false;
+        DisableNextTurnLogic();
 
-        foreach (var script in btnScripts) script.enabled = false;
+        foreach (var script in _btnScripts) script.enabled = false;
 
         await blackoutImage.DOFade(1, _timeControllerConfig.NextTurnFadeTime / 2).AsyncWaitForCompletion();
         
@@ -230,9 +247,9 @@ public class TimeController : MonoInit
 
         await blackoutImage.DOFade(0, _timeControllerConfig.NextTurnFadeTime / 2).AsyncWaitForCompletion();
 
-        foreach (var script in btnScripts) script.enabled = true;
+        foreach (var script in _btnScripts) script.enabled = true;
 
-        if (!_popUpsController.EventPopUp.IsActive)
+        if (!_popUpsController.EventPopUp.IsActive && _mainGameController.GameOverState == MainGameController.GameOverStateEnum.Playing)
         {
             EnableNextTurnLogic();
             OnNextTurnBtnClickEnded.OnNext(Unit.Default);

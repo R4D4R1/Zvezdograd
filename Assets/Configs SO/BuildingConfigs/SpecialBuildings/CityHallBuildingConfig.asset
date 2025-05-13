@@ -19,3 +19,4 @@ MonoBehaviour:
   relationWithGovernmentOriginal: 4
   turnsToCreateNewUnitOriginal: 3
   turnsToCreateNewActionPoints: 5
+  amountOfRelationAddForArmySent: 1

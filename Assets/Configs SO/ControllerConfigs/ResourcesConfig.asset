@@ -16,7 +16,7 @@ MonoBehaviour:
   _medicine: 5
   _rawMaterials: 5
   _readyMaterials: 5
-  _stability: 55
+  _stability: 1
   _maxProvision: 10
   _maxMedicine: 10
   _maxRawMaterials: 10

@@ -3,6 +3,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using Cysharp.Threading.Tasks;
+
 
 public class PeopleUnit : MonoBehaviour
 {
@@ -94,6 +96,7 @@ public class PeopleUnit : MonoBehaviour
     private void EnableUnit()
     {
         _image.DOColor(Color.white, 0.5f);
+        gameObject.SetActive(true);
     }
 
     private void DisableUnit()
@@ -101,11 +104,12 @@ public class PeopleUnit : MonoBehaviour
         Color targetColor = currentState switch
         {
             UnitState.Busy => new Color(0.392f, 0.392f, 0.392f),
+            UnitState.Resting => new Color(0.392f, 0.392f, 0.392f),
             UnitState.Injured => new Color(0.545f, 0f, 0f),
             _ => _image.color
         };
 
-        _image.DOColor(targetColor, 0.5f);
+        _image.DOColor(targetColor, 0.5f).SetEase(Ease.InOutSine).ToUniTask();
     }
 
     private void UpdateStatusText()

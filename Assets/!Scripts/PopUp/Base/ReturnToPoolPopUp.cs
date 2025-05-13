@@ -22,6 +22,6 @@ public class ReturnToPoolPopUp : InfoPopUp
     private async UniTaskVoid DelayAndReturnToPool()
     {
         await UniTask.Delay((int)(RETURN_TO_POOL_TIME_SECONDS * 1000));
-        _popUpFactory.ReturnInfoPopUpToPool(this);
+        _popUpFactory.ReturnPopUpToPool(this);
     }
 }

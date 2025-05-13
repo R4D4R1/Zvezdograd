@@ -17,7 +17,7 @@ public class BuildingSelectionController : MonoInit
     private SelectableBuilding _currentHoveredObject;
     private SelectableBuilding _selectedBuilding;
     private SelectableBuilding _highlightBuilding;
-    private GameObject _currentPopUp;
+    private InfoPopUp _currentPopUp;
     private bool _isActivated;
 
     // Injected dependencies
@@ -79,7 +79,7 @@ public class BuildingSelectionController : MonoInit
                 .AddTo(this);
         }
 
-        _timeController.OnNextTurnBtnClickStarted
+        _timeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => OnHighilightedBuildingDisable()).AddTo(this);
 
         _timeController.OnNextTurnBtnClickStarted
@@ -94,7 +94,7 @@ public class BuildingSelectionController : MonoInit
         _mainGameUIController.OnUITurnOn
             .Subscribe(_ => SetSelectionControllerState(true)).AddTo(this);
 
-        _mainGameController.OnGameStarted
+        _mainGameController.OnNewGameStarted
             .Subscribe(_ => SetSelectionControllerState(false)).AddTo(this);
 
         _tutorialController.OnNewBuildingTutorialShow
@@ -144,12 +144,27 @@ public class BuildingSelectionController : MonoInit
                     if (repairable.Type == RepairableBuilding.BuildingType.LivingArea)
                     {
                         _currentPopUp = _popUpFactory.CreateInfoPopUp();
-                        _currentPopUp.GetComponent<InfoPopUp>().ShowPopUp(building.BuildingLabel, building.BuildingDescription);
+                        //_currentPopUp.OnPopUpHide
+                        //    .Take(1)
+                        //    .Subscribe(_ =>
+                        //    {
+
+                        //    })
+                        //    .AddTo(_currentPopUp);
+
+                        _currentPopUp.ShowPopUp(building.BuildingLabel, building.BuildingDescription);
                     }
                     else
                     {
                         _currentPopUp = _popUpFactory.CreateSpecialPopUp();
-                        var popup = _currentPopUp.GetComponent<SpecialPopUp>();
+                        var popup = _currentPopUp as SpecialPopUp;
+                        //popup.OnPopUpHide
+                        //    .Take(1)
+                        //    .Subscribe(_ =>
+                        //    {
+
+                        //    })
+                        //    .AddTo(popup);
                         popup.ShowPopUp(building.BuildingLabel, building.BuildingDescription, "ОТКРЫТЬ");
                         popup.CurrentFunc = repairable.Type switch
                         {
@@ -251,6 +266,7 @@ public class BuildingSelectionController : MonoInit
 
     private void OnBuildingHovered(SelectableBuilding building)
     {
+        if (!building.BuildingIsSelectable) return;
         if (building == _selectedBuilding || building == _highlightBuilding) return;
         DisableOutline(_currentHoveredObject, exclude: _selectedBuilding);
         _currentHoveredObject = building;
@@ -260,6 +276,7 @@ public class BuildingSelectionController : MonoInit
 
     private void OnBuildingHoverExit()
     {
+        if (!_currentHoveredObject) return;
         DisableOutline(_currentHoveredObject, exclude: _selectedBuilding);
         _currentHoveredObject = null;
     }
@@ -267,9 +284,7 @@ public class BuildingSelectionController : MonoInit
     private void OnBuildingClicked(SelectableBuilding building)
     {
         if (!building.BuildingIsSelectable) return;
-
         if (building == _selectedBuilding) return;
-
         if (building == _highlightBuilding)
         {
             _highlightBuilding = null;

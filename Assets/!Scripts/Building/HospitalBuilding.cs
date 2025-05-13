@@ -1,7 +1,5 @@
-using System.Threading.Tasks;
 using UniRx;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class HospitalBuilding : RepairableBuilding,ISaveableBuilding
 {
@@ -9,7 +7,7 @@ public class HospitalBuilding : RepairableBuilding,ISaveableBuilding
     [SerializeField] private HospitalBuildingConfig hospitalConfig;
     public HospitalBuildingConfig HospitalBuildingConfig => hospitalConfig;
 
-    private int TurnsToGiveMedicine { get; set; }
+    private int _turnsToGiveMedicine { get; set; }
     public int DaysToGiveMedicine { get; private set; }
 
     private bool _medicineWasGivenAwayInLastTwoDays;
@@ -18,12 +16,11 @@ public class HospitalBuilding : RepairableBuilding,ISaveableBuilding
     
     public readonly Subject<Unit> OnHospitalUnitHealed = new();
 
-
     public override void Init()
     {
         base.Init();
 
-        TimeController.OnNextTurnBtnClickBetween
+        _timeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => OnNextTurnEvent())
             .AddTo(this);
 
@@ -43,7 +40,7 @@ public class HospitalBuilding : RepairableBuilding,ISaveableBuilding
     
     private void UpdateAmountOfTurnsNeededToDoSmth()
     {
-        TurnsToGiveMedicine = UpdateAmountOfTurnsNeededToDoSmth(hospitalConfig.TurnsToGiveMedicineOriginal);
+        _turnsToGiveMedicine = UpdateAmountOfTurnsNeededToDoSmth(hospitalConfig.TurnsToGiveMedicineOriginal);
     }
 
     private void CheckIfHealedInjuredUnit()
@@ -63,9 +60,9 @@ public class HospitalBuilding : RepairableBuilding,ISaveableBuilding
     {
         _medicineWasGivenAwayInLastTwoDays = true;
 
-        PeopleUnitsController.AssignUnitsToTask(hospitalConfig.PeopleToGiveMedicine, TurnsToGiveMedicine, hospitalConfig.TurnsToRestFromMedicine);
-        ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Medicine, -hospitalConfig.MedicineToGive));
-        ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, hospitalConfig.StabilityAddValue));
+        _peopleUnitsController.AssignUnitsToTask(hospitalConfig.PeopleToGiveMedicine, _turnsToGiveMedicine, hospitalConfig.TurnsToRestFromMedicine);
+        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Medicine, -hospitalConfig.MedicineToGive));
+        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, hospitalConfig.StabilityAddValue));
     }
 
     public bool MedicineWasGiven()
@@ -84,7 +81,7 @@ public class HospitalBuilding : RepairableBuilding,ISaveableBuilding
         }
         _medicineWasGivenAwayInLastTwoDays = false;
 
-        ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability,
+        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability,
             -hospitalConfig.StabilityRemoveValue));
         return false;
     }
@@ -93,7 +90,7 @@ public class HospitalBuilding : RepairableBuilding,ISaveableBuilding
     {
         _isWorking = true;
         _turnsToCreateNewUnit = hospitalConfig.TurnsToHealInjuredUnit;
-        ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Medicine, -hospitalConfig.MedicineToHealInjuredUnit));
+        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Medicine, -hospitalConfig.MedicineToHealInjuredUnit));
     }
     
     public new int BuildingID => base.BuildingID;
@@ -104,7 +101,7 @@ public class HospitalBuilding : RepairableBuilding,ISaveableBuilding
         {
             buildingID = BuildingID,
             buildingIsSelectable = BuildingIsSelectable,
-            turnsToGiveMedicine = TurnsToGiveMedicine,
+            turnsToGiveMedicine = _turnsToGiveMedicine,
             daysToGiveMedicine = DaysToGiveMedicine,
             medicineWasGivenAwayInLastTwoDays = _medicineWasGivenAwayInLastTwoDays,
             isWorking = _isWorking,
@@ -120,7 +117,7 @@ public class HospitalBuilding : RepairableBuilding,ISaveableBuilding
         if (save == null) return;
 
         BuildingIsSelectable = save.buildingIsSelectable;
-        TurnsToGiveMedicine = save.turnsToGiveMedicine;
+        _turnsToGiveMedicine = save.turnsToGiveMedicine;
         DaysToGiveMedicine = save.daysToGiveMedicine;
         _medicineWasGivenAwayInLastTwoDays = save.medicineWasGivenAwayInLastTwoDays;
         _isWorking = save.isWorking;

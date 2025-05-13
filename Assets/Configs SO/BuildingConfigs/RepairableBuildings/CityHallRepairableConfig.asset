@@ -19,6 +19,6 @@ MonoBehaviour:
     \u043F\u0440\u0430\u0432\u0438\u0442\u0435\u043B\u044C\u0441\u0442\u0432\u0430"
   _buildingMaterialsToRepair: 2
   _peopleToRepair: 2
-  _turnsToRepairOriginal: 4
+  _turnsToRepairOriginal: 3
   _turnsToRestFromRepair: 2
   _buildingType: 4

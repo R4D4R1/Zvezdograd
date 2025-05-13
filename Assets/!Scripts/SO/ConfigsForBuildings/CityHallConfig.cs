@@ -13,6 +13,7 @@ public class CityHallBuildingConfig : ScriptableObject
     [SerializeField, Range(1, 10)] private int relationWithGovernmentOriginal;
     [SerializeField, Range(1, 5)] private int turnsToCreateNewUnitOriginal;
     [SerializeField, Range(1, 5)] private int turnsToCreateNewActionPoints;
+    [SerializeField, Range(1, 3)] private int amountOfRelationAddForArmySent;
 
     public int DaysLeftToSendArmyMaterialsOriginal => daysLeftToSendArmyMaterialsOriginal;
     public int DaysLeftToReceiveGovHelpOriginal => daysLeftToReceiveGovHelpOriginal;
@@ -21,4 +22,5 @@ public class CityHallBuildingConfig : ScriptableObject
     public int RelationWithGovernmentOriginal => relationWithGovernmentOriginal;
     public int TurnsToCreateNewUnitOriginal => turnsToCreateNewUnitOriginal;
     public int TurnsToCreateNewActionPoints => turnsToCreateNewActionPoints;
+    public int AmountOfRelationAddForArmySent => amountOfRelationAddForArmySent;
 }

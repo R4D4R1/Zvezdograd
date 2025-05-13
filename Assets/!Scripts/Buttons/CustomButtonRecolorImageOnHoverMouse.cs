@@ -5,15 +5,14 @@ using UnityEngine.UI;
 
 public class CustomButtonRecolorImageOnHoverMouse : CustomButtonBase
 {
-    private Image _backgroundImage;
-    [SerializeField] private float _duration;
-    [SerializeField] private Color _toColor;
-    [SerializeField] Image _image;
+    [SerializeField] private Color toColor;
+    [SerializeField] Image image;
     private Color _originalColor;
+    private Image _backgroundImage;
 
     private void Start()
     {
-        _backgroundImage = _image;
+        _backgroundImage = image;
         _originalColor = _backgroundImage.color;
     }
 
@@ -21,7 +20,7 @@ public class CustomButtonRecolorImageOnHoverMouse : CustomButtonBase
     {
         base.OnPointerEnter(eventData);
 
-        _backgroundImage.DOColor(_toColor, _duration)
+        _backgroundImage.DOColor(toColor, ANIMATION_DURATION)
             .SetEase(Ease.InOutSine);
     }
 
@@ -29,7 +28,7 @@ public class CustomButtonRecolorImageOnHoverMouse : CustomButtonBase
     {
         base.OnPointerExit(eventData);
 
-        _backgroundImage.DOColor(_originalColor, _duration)
+        _backgroundImage.DOColor(_originalColor, ANIMATION_DURATION)
         .SetEase(Ease.InOutSine);
     }
 
@@ -37,7 +36,7 @@ public class CustomButtonRecolorImageOnHoverMouse : CustomButtonBase
     {
         base.OnPointerClick(eventData);
 
-        _backgroundImage.DOColor(_originalColor, _duration)
+        _backgroundImage.DOColor(_originalColor, ANIMATION_DURATION)
         .SetEase(Ease.InOutSine);
     }
 }

@@ -5,9 +5,7 @@ using UnityEngine.EventSystems;
 
 public class CustomButtonRecolorText : CustomButtonBase
 {
-    [SerializeField] private Color _toColor;
-    [SerializeField] private float _duration;
-
+    [SerializeField] private Color toColor;
     private TMP_Text _buttonText;
     private Color _originalColor;
 
@@ -21,7 +19,7 @@ public class CustomButtonRecolorText : CustomButtonBase
     {
         base.OnPointerEnter(eventData);
 
-            _buttonText.DOColor(_toColor, _duration)
+            _buttonText.DOColor(toColor, ANIMATION_DURATION)
             .SetEase(Ease.InOutSine);
     }
 
@@ -29,7 +27,7 @@ public class CustomButtonRecolorText : CustomButtonBase
     {
         base.OnPointerExit(eventData);
 
-            _buttonText.DOColor(_originalColor, _duration)
+            _buttonText.DOColor(_originalColor, ANIMATION_DURATION)
             .SetEase(Ease.InOutSine);
     }
 
@@ -37,7 +35,7 @@ public class CustomButtonRecolorText : CustomButtonBase
     {
         base.OnPointerClick(eventData);
 
-        _buttonText.DOColor(_originalColor, _duration)
+        _buttonText.DOColor(_originalColor, ANIMATION_DURATION)
             .SetEase(Ease.InOutSine);
     }
 }

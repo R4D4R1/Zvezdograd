@@ -14,7 +14,8 @@ public class EventController : MonoInit
     [SerializeField] private Transform cameraPointA;
     [SerializeField] private Transform cameraPointB;
     [SerializeField,Range(1,5)] private float gameOverAnimationDuration;
-    
+    [SerializeField] private bool useLocalFileIfAvailable = true;
+
     private bool _isGameOver;
     private Dictionary<string, PopupEvent> _specificEvents;
 
@@ -23,8 +24,12 @@ public class EventController : MonoInit
     private MainGameController _mainGameController;
     private Camera _camera;
 
+    [HideInInspector]
+    public bool IsSnowing = false;
+
     public readonly Subject<Unit> OnSnowStarted = new();
     public readonly Subject<Unit> OnNewActionPointsAdded = new();
+    public readonly Subject<Unit> OnProvisionLost = new();
     public readonly Subject<PopupEvent> OnQuestTriggered = new();
     public readonly Subject<Unit> OnGameOverStarted = new();
 
@@ -63,7 +68,14 @@ public class EventController : MonoInit
 
         bool hasInternet = Application.internetReachability != NetworkReachability.NotReachable;
 
-        if (hasInternet)
+        // Check if we should prefer local file even if there's internet
+        if (useLocalFileIfAvailable || !hasInternet)
+        {
+            Debug.LogWarning("Используем локальный файл...");
+            jsonContent = TryLoadLocalFile(persistentPath);
+            if (jsonContent == null) return;
+        }
+        else
         {
             using var www = UnityEngine.Networking.UnityWebRequest.Get(EventFileUrl);
             await www.SendWebRequest();
@@ -79,12 +91,6 @@ public class EventController : MonoInit
                 jsonContent = TryLoadLocalFile(persistentPath);
                 if (jsonContent == null) return;
             }
-        }
-        else
-        {
-            Debug.LogWarning("Интернет не найден, пробую использовать локальный файл...");
-            jsonContent = TryLoadLocalFile(persistentPath);
-            if (jsonContent == null) return;
         }
 
         var specificEventsData = JsonConvert.DeserializeObject<PopupEventData>(jsonContent);
@@ -112,7 +118,7 @@ public class EventController : MonoInit
 
         switch (_mainGameController.GameOverState)
         {
-            case MainGameController.GameOverStateEnum.Win:
+            case MainGameController.GameOverStateEnum.WinBySendingArmyMaterials:
                 StartGameOver("ПОБЕДА",
                     "Вы смогли вовремя отправить все материалы и дождаться помощи от правительства. " +
                     "Дружеская техника проезжает по нашим дорогам и движется на передовую чтобы спасти нашу страну.");
@@ -157,10 +163,14 @@ public class EventController : MonoInit
         switch (popupEvent.subEvent)
         {
             case "Snow":
+                IsSnowing = true;
                 OnSnowStarted.OnNext(Unit.Default);
                 break;
             case "NewActionPoints":
                 OnNewActionPointsAdded.OnNext(Unit.Default);
+                break;
+            case "FoodGotLost":
+                OnProvisionLost.OnNext(Unit.Default);
                 break;
         }
     }

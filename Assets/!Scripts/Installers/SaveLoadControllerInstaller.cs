@@ -3,18 +3,39 @@ using Zenject;
 
 public class SaveLoadControllerInstaller : MonoBehaviour
 {
-    [Inject] private ResourceViewModel _resourceViewModel;
-    [Inject] private TimeController _timeController;
-    [Inject] private PeopleUnitsController _peopleUnitsController;
-    [Inject] private PopUpsController _popUpsController;
-    [Inject] private BuildingsController _buildingsController;
-    [Inject] private MainGameUIController _mainGameUIController;
+    private ResourceViewModel _resourceViewModel;
+    private TimeController _timeController;
+    private PeopleUnitsController _peopleUnitsController;
+    private PopUpsController _popUpsController;
+    private BuildingsController _buildingsController;
+    private MainGameUIController _mainGameUIController;
+    private EventController _eventController;
+    private MainGameController _mainGameController;
+
+
+    [Inject]
+    public void Construct(
+        ResourceViewModel resourceViewModel, TimeController timeController,
+        PeopleUnitsController peopleUnitsController, PopUpsController popUpsController,
+        BuildingsController buildingsController, MainGameUIController mainGameUIController,
+        EventController eventController, MainGameController mainGameController)
+    {
+        _resourceViewModel = resourceViewModel;
+        _timeController = timeController;
+        _peopleUnitsController = peopleUnitsController;
+        _popUpsController = popUpsController;
+        _buildingsController = buildingsController;
+        _mainGameUIController = mainGameUIController;
+        _eventController = eventController;
+        _mainGameController = mainGameController;
+    }
 
     private void Start()
     {
         var saveLoadController = FindFirstObjectByType<SaveLoadController>();
         saveLoadController.InjectMainGameDependencies(_resourceViewModel, _timeController,
-            _peopleUnitsController, _popUpsController, _buildingsController, _mainGameUIController);
+            _peopleUnitsController, _popUpsController, _buildingsController, _mainGameUIController,
+            _eventController, _mainGameController);
     }
 }
 

@@ -10,6 +10,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Zenject;
 
+#pragma warning disable UDR0001
 [RequireComponent(typeof(CanvasGroup))]
 public class SaveLoadController : MonoBehaviour
 {
@@ -30,12 +31,14 @@ public class SaveLoadController : MonoBehaviour
     private static PeopleUnitsController _peopleUnitsController;
     private static PopUpsController _popUpsController;
     private static BuildingsController _buildingsController;
+    private static EventController _eventController;
+    private static MainGameController _mainGameController;
     private static MainGameUIController _mainGameUIController;
     private CanvasGroup _canvasGroup;
 
-    private bool _isAutoSave;
-
     public readonly Subject<Unit> OnCloseSaveMenuBtnClicked = new();
+    public readonly Subject<Unit> OnSaveLoaded = new();
+    public readonly Subject<bool> OnSnowChangeState = new();
 
     private static readonly JsonSerializerSettings settings = new()
     {
@@ -53,21 +56,34 @@ public class SaveLoadController : MonoBehaviour
     public void InjectMainGameDependencies(ResourceViewModel resourceViewModel,
     TimeController timeController, PeopleUnitsController peopleUnitsController,
     PopUpsController popUpsController, BuildingsController buildingsController,
-    MainGameUIController mainGameUIController)
+    MainGameUIController mainGameUIController, EventController eventController,
+    MainGameController mainGameController)
     {
         _resourceViewModel = resourceViewModel;
         _timeController = timeController;
         _peopleUnitsController = peopleUnitsController;
         _popUpsController = popUpsController;
         _buildingsController = buildingsController;
+        _eventController = eventController;
+        _mainGameController = mainGameController;
+        _mainGameUIController = mainGameUIController;
 
-        mainGameUIController.OnOpenSaveMenuBtnClicked
+        _mainGameUIController.OnOpenSaveMenuBtnClicked
             .Subscribe(_ => OnOpenkBtnClicked())
             .AddTo(this);
 
-        timeController.OnNextDayEvent
+        _timeController.OnNextDayEvent
             .Subscribe(_ => AutoSave())
             .AddTo(this);
+
+        _mainGameController.OnNewGameStarted
+            .Subscribe(_ => StartNewGame())
+            .AddTo(this);
+    }
+
+    public void StartNewGame()
+    {
+        OnSnowChangeState.OnNext(false);
     }
 
     public void SubscribeUIControllerInMainMenu(UIController uIController)
@@ -83,7 +99,7 @@ public class SaveLoadController : MonoBehaviour
         _canvasGroup.interactable = true;
         _canvasGroup.blocksRaycasts = true;
 
-        if(SceneManager.GetActiveScene().name == Scenes.MAIN_MENU)
+        if (SceneManager.GetActiveScene().name == Scenes.MAIN_MENU)
         {
             saveButton.gameObject.SetActive(false);
         }
@@ -105,7 +121,6 @@ public class SaveLoadController : MonoBehaviour
     {
         _canvasGroup = GetComponent<CanvasGroup>();
         saveButton.gameObject.SetActive(false);
-        _isAutoSave = false;
 
         foreach (var slot in saveSlots)
         {
@@ -130,8 +145,8 @@ public class SaveLoadController : MonoBehaviour
         }
 
 
-        loadButton.onClick.AddListener(OnLoadGameBtnClicked);
-        deleteButton.onClick.AddListener(OnDeleteSaveBtnClicked);
+        loadButton.onClick.AddListener(LoadGame);
+        deleteButton.onClick.AddListener(DeleteSave);
         backButton.onClick.AddListener(OnCloseBtnClicked);
     }
 
@@ -149,6 +164,13 @@ public class SaveLoadController : MonoBehaviour
 
     public void SelectSlot(int slotIndex)
     {
+        string filePathToAutoSaveSlot = GetFilePath(autoSaveSlot);
+        if (!File.Exists(filePathToAutoSaveSlot) && slotIndex == autoSaveSlot)
+        {
+            Debug.LogWarning($"Слот автосохранения пуст. Выбор невозможен.");
+            return;
+        }
+
         currentSlot = slotIndex;
         int slotNum = 0;
 
@@ -157,14 +179,10 @@ public class SaveLoadController : MonoBehaviour
             var unselectedText = slot.transform.GetComponentInChildren<UnselectedText>(true);
             var selectedText = slot.transform.GetComponentInChildren<SelectedText>(true);
 
-            if (unselectedText != null) unselectedText.gameObject.SetActive(false);
-            if (selectedText != null) selectedText.gameObject.SetActive(true);
+            bool isCurrent = currentSlot == slotNum;
 
-            if (currentSlot != slotNum)
-            {
-                if (unselectedText != null) unselectedText.gameObject.SetActive(true);
-                if (selectedText != null) selectedText.gameObject.SetActive(false);
-            }
+            if (unselectedText != null) unselectedText.gameObject.SetActive(!isCurrent);
+            if (selectedText != null) selectedText.gameObject.SetActive(isCurrent);
 
             slotNum++;
         }
@@ -175,6 +193,12 @@ public class SaveLoadController : MonoBehaviour
         if (currentSlot == null)
         {
             Debug.LogWarning("No save slot selected.");
+            return;
+        }
+
+        if (currentSlot == autoSaveSlot)
+        {
+            Debug.LogWarning("Нельзя сохранять вручную в слот автосохранения.");
             return;
         }
 
@@ -193,6 +217,7 @@ public class SaveLoadController : MonoBehaviour
             localIncreaseMaxAPValue = _timeController.LocalIncreaseMaxAPValue,
             localIncreaseAddAPValue = _timeController.LocalIncreaseAddAPValue,
             currentActionPoints = _timeController.CurrentActionPoints,
+            isSnowing = _eventController.IsSnowing,
 
             provision = _resourceViewModel.Provision.Value,
             medicine = _resourceViewModel.Medicine.Value,
@@ -207,7 +232,7 @@ public class SaveLoadController : MonoBehaviour
             gameData.allUnitsData.Add(new PeopleUnitData
             {
                 currentState = unit.GetCurrentState(),
-                position = unit.transform.position,
+                xPosition = unit.transform.position.x,
                 busyTime = unit.BusyTurns,
                 restingTime = unit.RestingTurns
             });
@@ -230,7 +255,7 @@ public class SaveLoadController : MonoBehaviour
         UpdateSingleSlotText(slotIndex);
     }
 
-    private async void OnLoadGameBtnClicked()
+    private async void LoadGame()
     {
         if (currentSlot == null)
         {
@@ -258,10 +283,11 @@ public class SaveLoadController : MonoBehaviour
         else
         {
             Debug.LogWarning($"Save slot {currentSlot.Value} does not exist.");
+            ClearCurrentSaveSlot();
         }
     }
 
-    private static void LoadDataFromCurrentSlot()
+    private void LoadDataFromCurrentSlot()
     {
         string filePath = GetFilePath(currentSlot.Value);
 
@@ -277,6 +303,7 @@ public class SaveLoadController : MonoBehaviour
             _timeController.DelayedActions = gameData.delayedActions;
             _timeController.LocalIncreaseMaxAPValue = gameData.localIncreaseMaxAPValue;
             _timeController.LocalIncreaseAddAPValue = gameData.localIncreaseAddAPValue;
+            _eventController.IsSnowing = gameData.isSnowing;
 
             // Load units
             List<PeopleUnit> units = _peopleUnitsController._allUnits;
@@ -284,7 +311,7 @@ public class SaveLoadController : MonoBehaviour
             {
                 var unit = units[i];
                 var unitData = gameData.allUnitsData[i];
-                unit.transform.position = unitData.position;
+                unit.transform.position = new Vector3(unitData.xPosition, unit.transform.position.y, 0);
                 unit.SetState(unitData.currentState, unitData.busyTime, unitData.restingTime);
             }
 
@@ -294,8 +321,6 @@ public class SaveLoadController : MonoBehaviour
             _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.RawMaterials, gameData.rawMaterials - _resourceViewModel.RawMaterials.Value));
             _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.ReadyMaterials, gameData.readyMaterials - _resourceViewModel.ReadyMaterials.Value));
             _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, gameData.stability - _resourceViewModel.Stability.Value));
-
-            _peopleUnitsController.UpdateReadyUnits();
 
             // Load popups - ensure all popups have proper IDs assigned
             foreach (var data in combined.popUpSaveData)
@@ -329,6 +354,8 @@ public class SaveLoadController : MonoBehaviour
                     Debug.LogWarning($"Building with ID {data.buildingID} not found!");
                 }
             }
+            OnSnowChangeState.OnNext(_eventController.IsSnowing);
+            OnSaveLoaded.OnNext(Unit.Default);
         }
         else
         {
@@ -336,11 +363,18 @@ public class SaveLoadController : MonoBehaviour
         }
     }
 
-    private void OnDeleteSaveBtnClicked()
+    private void DeleteSave()
     {
         if (currentSlot == null)
         {
             Debug.LogWarning("No save slot selected. Cannot delete save.");
+            return;
+        }
+
+        if (currentSlot == autoSaveSlot)
+        {
+            Debug.LogWarning("Cannot delete autosave.");
+            ClearCurrentSaveSlot();
             return;
         }
 
@@ -354,6 +388,7 @@ public class SaveLoadController : MonoBehaviour
         else
         {
             Debug.LogWarning($"Save slot {currentSlot.Value} does not exist.");
+            ClearCurrentSaveSlot();
         }
     }
 
@@ -382,7 +417,7 @@ public class SaveLoadController : MonoBehaviour
 
             await _loadLevelController.LoadSceneAsync(Scenes.GAME_SCENE);
 
-            OnLoadGameBtnClicked();
+            LoadGame();
         }
         else
         {
@@ -417,6 +452,7 @@ public class SaveLoadController : MonoBehaviour
             _slotTexts[i].text = GetSlotText(i);
         }
     }
+
     private void UpdateSingleSlotText(int slotIndex)
     {
         if (slotIndex >= 0 && slotIndex < _slotTexts.Count)
@@ -424,13 +460,11 @@ public class SaveLoadController : MonoBehaviour
             _slotTexts[slotIndex].text = GetSlotText(slotIndex);
         }
     }
+
     private void AutoSave()
     {
-        _isAutoSave = true;
         SaveToSlot(autoSaveSlot, isAuto: true);
-        _isAutoSave = false;
     }
-
 
     private static string GetFilePath(int slotIndex)
     {
@@ -441,7 +475,10 @@ public class SaveLoadController : MonoBehaviour
     {
         string filePath = GetFilePath(slotIndex);
 
-        if (!File.Exists(filePath)) return "МЕСТО ДЛЯ СОХРАНЕНИЯ";
+        if (!File.Exists(filePath))
+        {
+            return (slotIndex == autoSaveSlot) ? "МЕСТО ДЛЯ АВТОСОХРАНЕНИЯ" : "МЕСТО ДЛЯ СОХРАНЕНИЯ";
+        }
 
         try
         {
@@ -450,7 +487,7 @@ public class SaveLoadController : MonoBehaviour
             DateTime lastWriteTime = File.GetLastWriteTime(filePath);
             var date = combined.mainGameData.GetDate();
             var periodOfDay = combined.mainGameData.periodOfDay;
-            var label = (slotIndex == autoSaveSlot) ? "АВТОСОХРАНЕНИЕ" : $"СОХРАНЕНИЕ {slotIndex + 1}";
+            var label = (slotIndex == autoSaveSlot) ? "АВТОСОХРАНЕНИЕ" : $"СОХРАНЕНИЕ";
 
             return $"{label} {date:dd.MM.yyyy} {periodOfDay} {lastWriteTime}";
         }

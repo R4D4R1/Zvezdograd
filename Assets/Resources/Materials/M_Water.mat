@@ -114,14 +114,14 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _Metallic: 0.5
+    - _Metallic: 0.75
     - _OcclusionStrength: 1
-    - _Occlussion: 0.75
+    - _Occlussion: 1
     - _Parallax: 0.005
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _Smoothness: 0.75
+    - _Smoothness: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -129,7 +129,7 @@ Material:
     - _Surface: 0
     - _Test: 0
     - _Transparency: 0.8
-    - _Wave_Height: 3
+    - _Wave_Height: 2
     - _Wave_Speed: 0.05
     - _Wave_Stength: 10
     - _WorkflowMode: 1
@@ -137,9 +137,9 @@ Material:
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _Deep_Color: {r: 0.026999643, g: 0, b: 0.4792453, a: 1}
+    - _Deep_Color: {r: 0.17021184, g: 0.46339005, b: 0.8018868, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _Shalow_Color: {r: 0.7150943, g: 1, b: 0.9965255, a: 1}
+    - _Shalow_Color: {r: 0.7688679, g: 1, b: 0.98089814, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _Wave_Direction: {r: 1, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []

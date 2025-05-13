@@ -20,7 +20,7 @@ public class FactoryBuilding : RepairableBuilding, ISaveableBuilding
     {
         base.Init();
 
-        TimeController.OnNextTurnBtnClickBetween
+        _timeController.OnNextTurnBtnClickBetween
             .Subscribe(_ => UpdateAmountOfTurnsNeededToDoSMTH())
             .AddTo(this);
 
@@ -56,11 +56,11 @@ public class FactoryBuilding : RepairableBuilding, ISaveableBuilding
                 {
                     if (_isCreatingReadyMaterials)
                     {
-                        ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.ReadyMaterials, factoryConfig.ReadyMaterialsGet));
+                        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.ReadyMaterials, factoryConfig.ReadyMaterialsGet));
                     }
                     else
                     {
-                        BuildingsController.GetCityHallBuilding().ArmyMaterialsSent();
+                        _buildingsController.GetCityHallBuilding().ArmyMaterialsSent();
                     }
 
                     BuildingIsSelectable = true;
@@ -73,12 +73,12 @@ public class FactoryBuilding : RepairableBuilding, ISaveableBuilding
 
     public void CreateReadyMaterials()
     {
-        PeopleUnitsController.AssignUnitsToTask(
+        _peopleUnitsController.AssignUnitsToTask(
             factoryConfig.PeopleToCreateReadyMaterials,
             TurnsToCreateReadyMaterials,
             factoryConfig.TurnsToRestFromReadyMaterials
         );
-        ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.RawMaterials, -factoryConfig.RawMaterialsToCreateReadyMaterials));
+        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.RawMaterials, -factoryConfig.RawMaterialsToCreateReadyMaterials));
 
         BuildingIsSelectable = false;
         _isWorking = true;
@@ -90,12 +90,12 @@ public class FactoryBuilding : RepairableBuilding, ISaveableBuilding
 
     public void CreateArmyMaterials()
     {
-        PeopleUnitsController.AssignUnitsToTask(
+        _peopleUnitsController.AssignUnitsToTask(
             factoryConfig.PeopleToCreateArmyMaterials,
             TurnsToCreateArmyMaterials,
             factoryConfig.TurnsToRestFromArmyMaterials
         );
-        ResourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.RawMaterials, -factoryConfig.RawMaterialsToCreateArmyMaterials));
+        _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.RawMaterials, -factoryConfig.RawMaterialsToCreateArmyMaterials));
 
         BuildingIsSelectable = false;
         _isWorking = true;

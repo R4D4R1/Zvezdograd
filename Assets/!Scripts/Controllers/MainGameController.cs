@@ -1,10 +1,10 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.UI;
 using DG.Tweening;
 using UniRx;
 using Zenject;
 using System;
+using UnityEngine.UI;
 
 public class MainGameController : MonoInit
 {
@@ -13,69 +13,113 @@ public class MainGameController : MonoInit
     [SerializeField] private Image blackImage;
     [SerializeField] private GameObject notificationsParent;
 
-    [HideInInspector]
-    public GameOverStateEnum GameOverState;
+    public GameOverStateEnum GameOverState { get; private set; }
 
-    public readonly Subject<Unit> OnGameStarted = new();
+    public readonly Subject<Unit> OnNewGameStarted = new();
+    public readonly Subject<Unit> OnGameStartedFromLoad = new();
 
     public enum GameOverStateEnum
     {
         Playing,
-        Win,
+        WinBySendingArmyMaterials,
         StabilityLose,
         NoTimeLeftLose,
     }
 
+    public MainGameControllerConfig _mainGameControllerConfig {  get; private set; }
     private Camera _mainCamera;
-    public MainGameControllerConfig MainGameControllerConfig { get; private set; }
+    private TimeController _timeController;
+    private MainGameUIController _mainGameUIController;
+    private BuildingsController _buildingsController;
+    private ResourceModel _resourceModel;
+    private EventController _eventController;
+
 
     [Inject]
-    public void Construct(Camera mainCamera, MainGameControllerConfig mainGameControllerConfig)
+    public void Construct(
+        MainGameControllerConfig mainGameControllerConfig, Camera mainCamera,
+        TimeController timeController, MainGameUIController mainGameUIController,
+        BuildingsController buildingsController, ResourceModel resourceModel,
+        EventController eventController
+        )
     {
+        _mainGameControllerConfig = mainGameControllerConfig;
         _mainCamera = mainCamera;
-        MainGameControllerConfig = mainGameControllerConfig;
+        _timeController = timeController;
+        _mainGameUIController = mainGameUIController;
+        _buildingsController = buildingsController;
+        _resourceModel = resourceModel;
+        _eventController = eventController;
     }
-
-    [Inject] private TimeController _timeController;
-    [Inject] private MainGameUIController _mainGameUIController;
 
     public override async UniTask Init()
     {
         await base.Init();
 
         notificationsParent.GetComponent<CanvasGroup>().alpha = 0.0f;
-        OnGameStarted.OnNext(Unit.Default);
-
         blackImage.color = Color.black;
 
         await blackImage
-            .DOFade(0, MainGameControllerConfig.BlackoutTime)
-            .SetEase(Ease.Linear)
+            .DOFade(0, _mainGameControllerConfig.BlackoutTime)
+            .SetEase(Ease.InOutSine)
             .AsyncWaitForCompletion();
 
-        if (_timeController.CurrentPeriod == TimeController.PeriodOfDay.Morning && _timeController.CurrentDate == new DateTime(1942, 10, 30))
+        _mainGameUIController.OnMenuTurnOn
+            .Subscribe(_ => HideCity())
+            .AddTo(this);
+
+        _mainGameUIController.OnMenuTurnOff
+            .Subscribe(_ => ShowCity())
+            .AddTo(this);
+
+        _buildingsController.GetCityHallBuilding().OnArmyMaterialsSentWin
+            .Subscribe(SetGameOverState)
+            .AddTo(this);
+
+        _resourceModel.OnStabilityLose
+            .Subscribe(SetGameOverState)
+            .AddTo(this);
+
+        _eventController.OnGameOverStarted
+            .Subscribe(_ =>
+            {
+                //    blackImage
+                //.DOFade(0, blackoutTime)
+                //.SetEase(Ease.InOutSine);
+                notificationsParent.SetActive(false);
+            })
+            .AddTo(this);
+
+        if (_timeController.CurrentPeriod == TimeController.PeriodOfDay.Утро && _timeController.CurrentDate == new DateTime(1942, 10, 30))
+        {
+            OnNewGameStarted.OnNext(Unit.Default);
             startPopUp.ShowPopUp();
+        }
         else
         {
             Destroy(startPopUp.gameObject);
             Destroy(tutorialPopUp.gameObject);
             ShowCity();
-            _mainGameUIController.TurnOnUI();
-            _timeController.EnableNextTurnLogic();
+            OnGameStartedFromLoad.OnNext(Unit.Default);
         }
 
         await UniTask.Delay(5000);
         notificationsParent.GetComponent<CanvasGroup>().alpha = 1.0f;
     }
 
-    public void ShowCity() => AnimateCamera(MainGameControllerConfig.CameraCityShowY);
+    private void ShowCity() => AnimateCamera(_mainGameControllerConfig.CameraCityShowY);
 
-    public void HideCity() => AnimateCamera(MainGameControllerConfig.CameraCityHideY);
+    private void HideCity() => AnimateCamera(_mainGameControllerConfig.CameraCityHideY);
 
     private void AnimateCamera(float targetYPosition)
     {
         _mainCamera.transform
-            .DOLocalMoveY(targetYPosition, MainGameControllerConfig.ShowCityDuration)
-            .SetEase(MainGameControllerConfig.EaseType);
+            .DOLocalMoveY(targetYPosition, _mainGameControllerConfig.ShowCityDuration)
+            .SetEase(_mainGameControllerConfig.EaseType);
+    }
+
+    public void SetGameOverState(GameOverStateEnum state)
+    {
+        GameOverState = state;
     }
 }

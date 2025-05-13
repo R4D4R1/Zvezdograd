@@ -27,14 +27,16 @@ public class PopUpFactory
         _container = container;
     }
 
-    public GameObject CreateInfoPopUp()
+    public InfoPopUp CreateInfoPopUp()
     {
-        return GetOrCreate(_infoPopUpPool, _infoPopUpPrefab, _parentPopUp);
+        var go = GetOrCreate(_infoPopUpPool, _infoPopUpPrefab, _parentPopUp);
+        return go.GetComponent<InfoPopUp>();
     }
 
-    public GameObject CreateSpecialPopUp()
+    public SpecialPopUp CreateSpecialPopUp()
     {
-        return GetOrCreate(_specialPopUpPool, _specialPopUpPrefab, _parentPopUp);
+        var go = GetOrCreate(_specialPopUpPool, _specialPopUpPrefab, _parentPopUp);
+        return go.GetComponent<SpecialPopUp>();
     }
 
     public GameObject CreateNotification(string message, bool isIncrease)
@@ -63,7 +65,7 @@ public class PopUpFactory
         return _container.InstantiatePrefab(prefab, parent);
     }
 
-    public void ReturnInfoPopUpToPool(InfoPopUp popUp)
+    public void ReturnPopUpToPool(InfoPopUp popUp)
     {
         popUp.gameObject.SetActive(false);
 

@@ -8,7 +8,7 @@ public class HospitalPopUp : QuestPopUp
     [SerializeField] private TextMeshProUGUI medicineTimerText;
     [SerializeField] private GameObject giveMedicineBtnParent;
     [SerializeField] private Transform healGOParent;
-    [SerializeField] private GameObject healUnitBtn;
+    [SerializeField] private GameObject healInjuredUnitBtn;
     
     private HospitalBuilding _hospitalBuilding;
     private bool _isHealing;
@@ -56,11 +56,11 @@ public class HospitalPopUp : QuestPopUp
 
     private void CreateHealGOPrefabIfNeeded()
     {
-        if (!healUnitBtn.activeSelf)
+        if (!healInjuredUnitBtn.activeSelf)
         {
-            healUnitBtn.SetActive(true);
-            healUnitBtn.transform.GetChild(0).GetComponent<Button>().onClick.AddListener(HealInjuredUnit);
-            SetHealButtonState(healUnitBtn, true);
+            healInjuredUnitBtn.SetActive(true);
+            healInjuredUnitBtn.transform.GetChild(0).GetComponent<Button>().onClick.AddListener(HealInjuredUnit);
+            SetHealButtonState(healInjuredUnitBtn, true);
         }
     }
 
@@ -93,7 +93,7 @@ public class HospitalPopUp : QuestPopUp
     {
         if (!CanHealInjuredUnit()) return;
         _hospitalBuilding.InjuredUnitStartedHealing();
-        SetHealButtonState(healUnitBtn, false);
+        SetHealButtonState(healInjuredUnitBtn, false);
     }
 
     private bool CanHealInjuredUnit()
@@ -118,14 +118,14 @@ public class HospitalPopUp : QuestPopUp
     
     private void UpdateHealUnitGOButtonState()
     {
-        if (_peopleUnitsController.InjuredUnits.Count == 0 && healUnitBtn)
+        if (_peopleUnitsController.InjuredUnits.Count == 0 && healInjuredUnitBtn)
         {
-            healUnitBtn.SetActive(false);
-            healUnitBtn = null;
+            healInjuredUnitBtn.SetActive(false);
+            healInjuredUnitBtn = null;
         }
-        else if (healUnitBtn)
+        else if (healInjuredUnitBtn)
         {
-            SetButtonState(healUnitBtn, true);
+            SetButtonState(healInjuredUnitBtn, true);
         }
     }
     public override PopUpSaveData SaveData()
@@ -150,8 +150,8 @@ public class HospitalPopUp : QuestPopUp
 
         if (_peopleUnitsController.InjuredUnits.Count > 0)
         {
-            healUnitBtn.SetActive(true);
-            SetHealButtonState(healUnitBtn,_isHealing);
+            healInjuredUnitBtn.SetActive(true);
+            SetHealButtonState(healInjuredUnitBtn,_isHealing);
         }
         
         UpdateAllText();
