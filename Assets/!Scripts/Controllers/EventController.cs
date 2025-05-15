@@ -158,6 +158,8 @@ public class EventController : MonoInit
     {
         if (string.IsNullOrEmpty(popupEvent.subEvent)) return;
 
+        Debug.Log(popupEvent.subEvent);
+
         switch (popupEvent.subEvent)
         {
             case "Snow":

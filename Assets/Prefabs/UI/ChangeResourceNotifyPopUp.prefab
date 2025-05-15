@@ -140,7 +140,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fadeDuration: 1
-  delayBeforeFade: 2
+  delayBeforeFade: 3
 --- !u!1 &8499879190349806726
 GameObject:
   m_ObjectHideFlags: 0

@@ -103,8 +103,8 @@ public class PeopleUnit : MonoBehaviour
     {
         Color targetColor = currentState switch
         {
-            UnitState.Busy => new Color(0.15f, 0.15f, 0.15f),
-            UnitState.Resting => new Color(0.3f, 0.3f, 0.3f),
+            UnitState.Busy => new Color(0.392f, 0.392f, 0.392f),
+            UnitState.Resting => new Color(0.392f, 0.392f, 0.392f),
             UnitState.Injured => new Color(0.545f, 0f, 0f),
             _ => _image.color
         };

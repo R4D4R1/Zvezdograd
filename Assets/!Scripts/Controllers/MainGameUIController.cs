@@ -100,6 +100,8 @@ public class MainGameUIController : MonoInit
 
     public void TurnOnUI()
     {
+        Debug.Log("TurnOnUI");
+
         OnUITurnOn.OnNext(Unit.Default);
 
         _turnOffUICanvasGroup.DOFade(1f, fadeDuration)
@@ -108,6 +110,8 @@ public class MainGameUIController : MonoInit
 
     public void TurnOffUI()
     {
+        Debug.Log("TurnOffUI");
+
         if (_mainGameController.GameOverState == MainGameController.GameOverStateEnum.Playing)
             OnUITurnOff.OnNext(Unit.Default);
 
