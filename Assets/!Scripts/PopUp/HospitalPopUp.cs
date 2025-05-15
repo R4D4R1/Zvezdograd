@@ -29,7 +29,7 @@ public class HospitalPopUp : QuestPopUp
             .AddTo(this);
         
         _peopleUnitsController.OnUnitInjuredByPeopleUnitController
-            .Subscribe(_ => CreateHealGOPrefabIfNeeded())
+            .Subscribe(_ => ActivateHealGOPrefab())
             .AddTo(this);
         
         _peopleUnitsController.OnUnitHealedByPeopleUnitController
@@ -54,7 +54,7 @@ public class HospitalPopUp : QuestPopUp
         _isHealing = false;
     }
 
-    private void CreateHealGOPrefabIfNeeded()
+    private void ActivateHealGOPrefab()
     {
         if (!healInjuredUnitBtn.activeSelf)
         {
@@ -121,7 +121,6 @@ public class HospitalPopUp : QuestPopUp
         if (_peopleUnitsController.InjuredUnits.Count == 0 && healInjuredUnitBtn)
         {
             healInjuredUnitBtn.SetActive(false);
-            healInjuredUnitBtn = null;
         }
         else if (healInjuredUnitBtn)
         {

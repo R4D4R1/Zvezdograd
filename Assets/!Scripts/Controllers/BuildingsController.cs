@@ -18,7 +18,8 @@ public class BuildingsController : MonoInit
     private ResourceViewModel _resourceViewModel;
 
     [Inject]
-    public void Construct(TimeController timeController, BuildingControllerConfig buildingControllerConfig, ResourceViewModel resourceViewModel)
+    public void Construct(TimeController timeController, BuildingControllerConfig buildingControllerConfig,
+        ResourceViewModel resourceViewModel)
     {
         _timeController = timeController;
         _buildingControllerConfig = buildingControllerConfig;
@@ -84,38 +85,47 @@ public class BuildingsController : MonoInit
 
     private RepairableBuilding ChooseBuildingToBomb()
     {
-        var candidates = SpecialBuildings
-            .Where(b => b.CurrentState == RepairableBuilding.State.Intact && b.BuildingIsSelectable)
-            .ToList();
+        var useSpecial = Random.Range(0, 100) < _buildingControllerConfig.ChanceOfBombingSpecialBuilding;
 
-        candidates.AddRange(RegularBuildings
-            .Where(b => b.CurrentState == RepairableBuilding.State.Intact));
+        List<RepairableBuilding> candidates;
+
+        if (useSpecial)
+        {
+            candidates = SpecialBuildings
+                .Where(b => b.CurrentState == RepairableBuilding.State.Intact && b.BuildingIsSelectable)
+                .ToList();
+        }
+        else
+        {
+            candidates = RegularBuildings
+                .Where(b => b.CurrentState == RepairableBuilding.State.Intact)
+                .ToList();
+        }
 
         if (!candidates.Any())
         {
-            Debug.Log("NO BUILDING FOR BOMBING");
+            Debug.Log($"NO {(useSpecial ? "SPECIAL" : "REGULAR")} BUILDING FOR BOMBING");
             return null;
         }
 
         var factoryBuildings = GetAllSpecialBuildings<FactoryBuilding>();
         var damagedFactoriesCount = factoryBuildings.Count(f => f.CurrentState == RepairableBuilding.State.Damaged);
 
-        // Перемешиваем список кандидатов для случайности
+        // Перемешиваем кандидатов для случайного выбора
         var shuffled = candidates.OrderBy(_ => Random.value).ToList();
 
         foreach (var candidate in shuffled)
         {
-            // если это завод и уже есть разбомбленный завод — пропускаем
+            // если это завод и уже есть один разбомбленный — пропускаем
             if (candidate is FactoryBuilding && damagedFactoriesCount >= 1)
                 continue;
 
             return candidate;
         }
 
-        Debug.Log("NO VALID BUILDING TO BOMB AFTER FILTERING FACTORY RULE");
+        Debug.Log("NO VALID BUILDING TO BOMB");
         return null;
     }
-
 
 
     private T GetSpecialBuilding<T>() where T : RepairableBuilding
