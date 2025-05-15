@@ -15,4 +15,4 @@ MonoBehaviour:
   chanceOfBombingBuilding: 25
   chanceOfBombingSpecialBuilding: 25
   stabilityRemoveValueForRegularBombedBuilding: 2
-  stabilityRemoveValueForSpecialBombedBuilding: 5
+  stabilityRemoveValueForSpecialBombedBuilding: 3
