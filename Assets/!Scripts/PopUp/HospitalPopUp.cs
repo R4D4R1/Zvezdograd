@@ -127,18 +127,26 @@ public class HospitalPopUp : QuestPopUp
             SetButtonState(healInjuredUnitBtn, true);
         }
     }
+
     public override PopUpSaveData SaveData()
     {
-        return new HospitalQuestPopUpSaveData()
+        var baseSaveData = base.SaveData() as QuestPopUpSaveData;
+
+        var hospitalSaveData = new HospitalQuestPopUpSaveData
         {
-            popUpID = PopUpID,
-            isBtnActive = IsBtnActive,
+            popUpID = baseSaveData.popUpID,
+            isBtnActive = baseSaveData.isBtnActive,
+            savedQuests = baseSaveData.savedQuests,
             IsHealing = _isHealing
         };
+
+        return hospitalSaveData;
     }
-    
+
     public override void LoadData(PopUpSaveData data)
     {
+        base.LoadData(data);
+
         var save = data as HospitalQuestPopUpSaveData;
         if (save == null) return;
         
@@ -147,12 +155,9 @@ public class HospitalPopUp : QuestPopUp
         
         SetButtonState(giveMedicineBtnParent,IsBtnActive);
 
-        if (_peopleUnitsController.InjuredUnits.Count > 0)
-        {
-            healInjuredUnitBtn.SetActive(true);
-            SetHealButtonState(healInjuredUnitBtn,_isHealing);
-        }
-        
+        healInjuredUnitBtn.SetActive(_peopleUnitsController.InjuredUnits.Count > 0);
+        SetHealButtonState(healInjuredUnitBtn, _isHealing);
+
         UpdateAllText();
     }
 }

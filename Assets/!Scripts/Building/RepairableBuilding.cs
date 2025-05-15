@@ -47,7 +47,7 @@ public class RepairableBuilding : ChangeMaterialsBuilding, ISaveableBuilding
         SetState(State.Intact);
 
         _timeController.OnNextTurnBtnClickBetween
-            .Subscribe(_ => TryTurnOnBuilding())
+            .Subscribe(_ => NextTurn())
             .AddTo(this);
 
         _timeController.OnNextTurnBtnClickBetween
@@ -63,7 +63,7 @@ public class RepairableBuilding : ChangeMaterialsBuilding, ISaveableBuilding
             _turnsToRepair = UpdateAmountOfTurnsNeededToDoSmth(repairableConfig.TurnsToRepairOriginal);
     }
 
-    protected virtual void TryTurnOnBuilding()
+    protected virtual void NextTurn()
     {
         if (_currentState == State.Repairing)
         {

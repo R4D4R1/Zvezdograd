@@ -168,6 +168,8 @@ public class CityHallPopUp : QuestPopUp
     
     public override void LoadData(PopUpSaveData data)
     {
+        base.LoadData(data);
+
         var save = data as QuestPopUpSaveData;
         if (save == null) return;
         

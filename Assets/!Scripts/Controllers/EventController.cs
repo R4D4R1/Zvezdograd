@@ -34,7 +34,7 @@ public class EventController : MonoInit
     public readonly Subject<Unit> OnGameOverStarted = new();
 
     private const string FileName = "specificEvents.json";
-    private const string EventFileUrl = "https://drive.google.com/uc?export=download&id=1ntL2TWuR70Dpi8gooGGMTca0V9LKadUB";
+    private const string EventFileUrl = "https://drive.google.com/uc?export=download&id=1m2oEvzu-1W5dA53_i66Zm7CjzfS1PHDz";
 
     [Inject]
     public void Construct(PopUpsController popUpsController, TimeController timeController,

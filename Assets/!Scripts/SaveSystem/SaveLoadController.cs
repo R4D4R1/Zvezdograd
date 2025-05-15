@@ -44,7 +44,14 @@ public class SaveLoadController : MonoBehaviour
     {
         TypeNameHandling = TypeNameHandling.All,
         Formatting = Formatting.Indented,
-        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+        ContractResolver = new IgnoreUnityPropertiesResolver(),
+        Error = (sender, args) =>
+        {
+            // Обработка ошибок сериализации
+            Debug.LogWarning($"Error during serialization: {args.ErrorContext.Error.Message}");
+            args.ErrorContext.Handled = true;
+        }
     };
 
     [Inject]
@@ -322,6 +329,8 @@ public class SaveLoadController : MonoBehaviour
             _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.ReadyMaterials, gameData.readyMaterials - _resourceViewModel.ReadyMaterials.Value));
             _resourceViewModel.ModifyResourceCommand.Execute((ResourceModel.ResourceType.Stability, gameData.stability - _resourceViewModel.Stability.Value));
 
+            OnSaveLoaded.OnNext(Unit.Default);
+
             // Load popups - ensure all popups have proper IDs assigned
             foreach (var data in combined.popUpSaveData)
             {
@@ -355,7 +364,6 @@ public class SaveLoadController : MonoBehaviour
                 }
             }
             OnSnowChangeState.OnNext(_eventController.IsSnowing);
-            OnSaveLoaded.OnNext(Unit.Default);
         }
         else
         {
@@ -463,7 +471,8 @@ public class SaveLoadController : MonoBehaviour
 
     private void AutoSave()
     {
-        SaveToSlot(autoSaveSlot, isAuto: true);
+        if(_mainGameController.GameOverState == MainGameController.GameOverStateEnum.Playing)
+            SaveToSlot(autoSaveSlot, isAuto: true);
     }
 
     private static string GetFilePath(int slotIndex)

@@ -33,7 +33,7 @@ public class FactoryBuilding : RepairableBuilding, ISaveableBuilding
         TurnsToCreateArmyMaterials = UpdateAmountOfTurnsNeededToDoSmth(factoryConfig.TurnsToCreateArmyMaterialsOriginal);
     }
 
-    protected override void TryTurnOnBuilding()
+    protected override void NextTurn()
     {
         if (!BuildingIsSelectable)
         {

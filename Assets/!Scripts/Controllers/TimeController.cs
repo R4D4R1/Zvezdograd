@@ -30,7 +30,7 @@ public class TimeController : MonoInit
 
     private readonly DateTime _startDate = new(1942, 10, 30);
     public List<DelayedAction> DelayedActions = new();
-
+    public int DaysSinceStart { get; private set; } = 0;
     private ReactiveProperty<DateTime> _currentDate;
     private ReactiveProperty<PeriodOfDay> _currentPeriod;
     private ReactiveProperty<int> _currentActionPoints;
@@ -205,7 +205,7 @@ public class TimeController : MonoInit
             case PeriodOfDay.Вечер:
                 _currentPeriod.SetValueAndForceNotify(PeriodOfDay.Утро);
                 _currentDate.Value = _currentDate.Value.AddDays(1);
-
+                DaysSinceStart++;
                 OnNextDayEvent.OnNext(Unit.Default);
                 ProcessDelayedActions();
                 break;

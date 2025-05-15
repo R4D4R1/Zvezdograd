@@ -206,6 +206,12 @@ public class PeopleUnitsController : MonoInit
             CreatedUnits.Add(unit);
         }
 
+        InjuredUnits.Clear();
+        foreach (var unit in _allUnits.Where(unit => unit.GetCurrentState() == PeopleUnit.UnitState.Injured))
+        {
+            InjuredUnits.Enqueue(unit);
+        }
+
         AnimateUnitPositions();
     }
 

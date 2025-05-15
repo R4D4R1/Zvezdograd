@@ -24,6 +24,7 @@ public class CityHallBuilding : RepairableBuilding,ISaveableBuilding
     public readonly Subject<Unit> OnLastMilitaryHelpSent = new();
     public readonly Subject<Unit> OnMilitaryHelpSent = new();
     public readonly Subject<MainGameController.GameOverStateEnum> OnArmyMaterialsSentWin = new();
+    public readonly Subject<Unit> OnDidntSendArmyMaterialsInTime = new();
 
     public override void Init()
     {
@@ -75,6 +76,11 @@ public class CityHallBuilding : RepairableBuilding,ISaveableBuilding
                     _isWorking = false;
                 }
             }
+        }
+
+        if (_timeController.DaysSinceStart >= (cityHallConfig.DaysLeftToSendArmyMaterialsOriginal * cityHallConfig.AmountOfHelpNeededToSend + 2))
+        {
+            _mainGameController.SetGameOverState(MainGameController.GameOverStateEnum.NoTimeLeftLose);
         }
     }
 
@@ -141,7 +147,7 @@ public class CityHallBuilding : RepairableBuilding,ISaveableBuilding
             _timeController.WaitDaysAndExecute(_mainGameController._mainGameControllerConfig.DayAfterLastArmyMaterialSendWin, () =>
             {
                 OnArmyMaterialsSentWin.OnNext(MainGameController.GameOverStateEnum.WinBySendingArmyMaterials);
-                Debug.Log("Победа спустя _mainGameController.MainGameControllerConfig.DayAfterLastArmyMaterialSendWin игровых дня");
+                Debug.Log($"Победа спустя {_mainGameController._mainGameControllerConfig.DayAfterLastArmyMaterialSendWin} игровых дня");
             });
         }
     }
