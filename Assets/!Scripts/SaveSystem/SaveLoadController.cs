@@ -463,9 +463,7 @@ public class SaveLoadController : MonoBehaviour
 
     private void AutoSave()
     {
-        Debug.Log(_mainGameController.GameOverState);
-        if(_mainGameController.GameOverState == MainGameController.GameOverStateEnum.Playing)
-            SaveToSlot(autoSaveSlot, isAuto: true);
+        SaveToSlot(autoSaveSlot, isAuto: true);
     }
 
     private static string GetFilePath(int slotIndex)

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   daysLeftToSendArmyMaterialsOriginal: 3
   daysLeftToReceiveGovHelpOriginal: 3
-  amountOfHelpNeededToSend: 1
+  amountOfHelpNeededToSend: 5
   readyMaterialsToCreateNewPeopleUnit: 1
   relationWithGovernmentOriginal: 4
   turnsToCreateNewUnitOriginal: 3

@@ -109,7 +109,7 @@ public class PeopleUnit : MonoBehaviour
             _ => _image.color
         };
 
-        _image.DOColor(targetColor, 0.5f).SetEase(Ease.InOutSine);
+        _image.DOColor(targetColor, 0.5f).SetEase(Ease.InOutSine).ToUniTask();
     }
 
     private void UpdateStatusText()

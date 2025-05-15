@@ -183,7 +183,7 @@ public class PeopleUnitsController : MonoInit
             ReadyUnits.Add(unit);
         }
 
-        AnimateCreatedUnitPositions();
+        AnimateUnitPositions();
     }
 
     private void UpdateUnitsOnLoadSave()
@@ -206,10 +206,10 @@ public class PeopleUnitsController : MonoInit
             CreatedUnits.Add(unit);
         }
 
-        AnimateCreatedUnitPositions();
+        AnimateUnitPositions();
     }
 
-    private void AnimateCreatedUnitPositions()
+    private void AnimateUnitPositions()
     {
         CreatedUnits = CreatedUnits
             .Select((unit, index) => (unit, index))
