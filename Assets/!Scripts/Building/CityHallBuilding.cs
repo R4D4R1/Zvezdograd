@@ -115,11 +115,8 @@ public class CityHallBuilding : RepairableBuilding,ISaveableBuilding
         if (RelationWithGovernment > 1)
         {
             RelationWithGovernment -= 2;
-            Debug.Log("DID NOT SEND ARMY MATERIALS");
             return true;
         }
-
-        Debug.Log("GAME OVER");
         return false;
     }
 
