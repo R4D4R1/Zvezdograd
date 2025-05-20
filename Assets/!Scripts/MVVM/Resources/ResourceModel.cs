@@ -18,6 +18,15 @@ public class ResourceModel
 
     public readonly Subject<MainGameController.GameOverStateEnum> OnStabilityLose = new();
 
+    public enum ResourceType
+    {
+        Provision,
+        Medicine,
+        RawMaterials,
+        ReadyMaterials,
+        Stability
+    }
+
     [Inject]
     public ResourceModel(MainGameController mainGameController, ResourcesConfig resourceConfig)
     {        
@@ -58,15 +67,6 @@ public class ResourceModel
                 }
                 break;
         }
-    }
-
-    public enum ResourceType
-    {
-        Provision,
-        Medicine,
-        RawMaterials,
-        ReadyMaterials,
-        Stability
     }
 }
 

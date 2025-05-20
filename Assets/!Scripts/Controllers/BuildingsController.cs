@@ -17,6 +17,10 @@ public class BuildingsController : MonoInit
     private BuildingControllerConfig _buildingControllerConfig;
     private ResourceViewModel _resourceViewModel;
 
+    public CityHallBuilding GetCityHallBuilding() => GetSpecialBuilding<CityHallBuilding>();
+    public FoodTrucksBuilding GetFoodTruckBuilding() => GetSpecialBuilding<FoodTrucksBuilding>();
+    public HospitalBuilding GetHospitalBuilding() => GetSpecialBuilding<HospitalBuilding>();
+
     [Inject]
     public void Construct(TimeController timeController, BuildingControllerConfig buildingControllerConfig,
         ResourceViewModel resourceViewModel)
@@ -127,7 +131,6 @@ public class BuildingsController : MonoInit
         return null;
     }
 
-
     private T GetSpecialBuilding<T>() where T : RepairableBuilding
     {
         return SpecialBuildings.OfType<T>().FirstOrDefault();
@@ -138,7 +141,4 @@ public class BuildingsController : MonoInit
         return SpecialBuildings.OfType<T>().ToList();
     }
     
-    public CityHallBuilding GetCityHallBuilding() => GetSpecialBuilding<CityHallBuilding>();
-    public FoodTrucksBuilding GetFoodTruckBuilding() => GetSpecialBuilding<FoodTrucksBuilding>();
-    public HospitalBuilding GetHospitalBuilding() => GetSpecialBuilding<HospitalBuilding>();
 }
