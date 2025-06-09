@@ -252,7 +252,7 @@ MonoBehaviour:
   hoverSound: {fileID: 8300000, guid: bdb08458eee8f714d87101d84fb4b99b, type: 3}
   selectionSound: {fileID: 8300000, guid: 7abccce1359ba0d4a8421bcc212783c5, type: 3}
   buttonPressSound: {fileID: 8300000, guid: aebae0e89d575dc43ae340319487ef87, type: 3}
-  mainMenuSound: {fileID: 8300000, guid: 1cf25b17a4573924fbb97dc373d10d7d, type: 3}
+  mainMenuSound: {fileID: 8300000, guid: 802c8c85c6782b14bb90d37310c5a0de, type: 3}
   SFXAudioSource: {fileID: 3568074334552752264}
 --- !u!82 &3568074334552752264
 AudioSource:

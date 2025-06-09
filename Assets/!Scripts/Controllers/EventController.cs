@@ -14,7 +14,6 @@ public class EventController : MonoInit
     [SerializeField] private Transform cameraPointA;
     [SerializeField] private Transform cameraPointB;
     [SerializeField,Range(1,5)] private float gameOverAnimationDuration;
-    [SerializeField] private bool useLocalFileIfAvailable = true;
 
     private bool _isGameOver;
     private Dictionary<string, PopupEvent> _specificEvents;
@@ -34,7 +33,7 @@ public class EventController : MonoInit
     public readonly Subject<Unit> OnGameOverStarted = new();
 
     private const string FileName = "specificEvents.json";
-    private const string EventFileUrl = "https://drive.google.com/uc?export=download&id=1m2oEvzu-1W5dA53_i66Zm7CjzfS1PHDz";
+    //private const string EventFileUrl = "https://drive.google.com/uc?export=download&id=1m2oEvzu-1W5dA53_i66Zm7CjzfS1PHDz";
 
     [Inject]
     public void Construct(PopUpsController popUpsController, TimeController timeController,
@@ -63,38 +62,36 @@ public class EventController : MonoInit
     private async UniTaskVoid LoadEvents()
     {
         _specificEvents = new Dictionary<string, PopupEvent>();
-        var persistentPath = Path.Combine(Application.persistentDataPath, FileName);
+
         string jsonContent;
+        string streamingAssetsPath = Path.Combine(Application.streamingAssetsPath, FileName);
 
-        bool hasInternet = Application.internetReachability != NetworkReachability.NotReachable;
+#if UNITY_ANDROID && !UNITY_EDITOR
+    // Android: читаем через UnityWebRequest
+    using var www = UnityEngine.Networking.UnityWebRequest.Get(streamingAssetsPath);
+    await www.SendWebRequest();
 
-        // Check if we should prefer local file even if there's internet
-        if (useLocalFileIfAvailable || !hasInternet)
+    if (www.result == UnityEngine.Networking.UnityWebRequest.Result.Success)
+    {
+        jsonContent = www.downloadHandler.text;
+    }
+    else
+    {
+        Debug.LogError($"[EventController] Не удалось загрузить файл событий: {www.error}");
+        return;
+    }
+#else
+        // ПК, Editor, iOS
+        if (!File.Exists(streamingAssetsPath))
         {
-            Debug.LogWarning("Используем локальный файл...");
-            jsonContent = TryLoadLocalFile(persistentPath);
-            if (jsonContent == null) return;
-        }
-        else
-        {
-            Debug.LogWarning("Качаем файл...");
-
-            using var www = UnityEngine.Networking.UnityWebRequest.Get(EventFileUrl);
-            await www.SendWebRequest();
-
-            if (www.result == UnityEngine.Networking.UnityWebRequest.Result.Success)
-            {
-                jsonContent = www.downloadHandler.text;
-                File.WriteAllText(persistentPath, jsonContent);
-            }
-            else
-            {
-                Debug.LogWarning($"Ошибка при скачивании: {www.error}");
-                jsonContent = TryLoadLocalFile(persistentPath);
-                if (jsonContent == null) return;
-            }
+            Debug.LogError($"[EventController] Файл не найден: {streamingAssetsPath}");
+            return;
         }
 
+        jsonContent = File.ReadAllText(streamingAssetsPath);
+#endif
+
+        // Десериализация
         var specificEventsData = JsonConvert.DeserializeObject<PopupEventData>(jsonContent);
         foreach (var e in specificEventsData.events)
         {
@@ -102,6 +99,8 @@ public class EventController : MonoInit
             _specificEvents[key] = e;
         }
     }
+
+
 
     private string TryLoadLocalFile(string path)
     {
